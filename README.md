@@ -8,7 +8,7 @@ Introduction page of cyber security roadmap and dedicated virtual machine traini
 
 <kbd> <br> [Penetration Testing][penetration-testing] <br> </kbd> <kbd> <br> [Red Team][red-team] <br> </kbd> <kbd> <br> [ICS Security][ics-security] <br> </kbd> 
   
-<kbd> <br> [Digital Forensic][digital-forensic] <br> </kbd><kbd> <br> [Blue Team][blue-team] <br> </kbd> <kbd> <br> [Security Audit][security-audit] <br> </kbd>
+<kbd> <br> [Digital Forensic][digital-forensic] <br> </kbd> <kbd> <br> [Blue Team][blue-team] <br> </kbd> <kbd> <br> [Security Audit][security-audit] <br> </kbd>
   
 </div>
 
