@@ -1,0 +1,2 @@
+# Exposed Session Variables
+
