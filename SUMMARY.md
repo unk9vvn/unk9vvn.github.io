@@ -1,10 +1,8 @@
 # Table of contents
 
-* [Page 1](README.md)
-
 ## Reverse Engineering
 
-* [Page 2](reverse-engineering/page-2.md)
+* [Page 2](README.md)
 
 ## Malware Analysis
 
