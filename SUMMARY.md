@@ -151,3 +151,23 @@
   * [Injection Attack](web/api-attacks/injection-attack.md)
   * [Improper Assets Management](web/api-attacks/improper-assets-management.md)
   * [Insufficient Logging and Monitoring](web/api-attacks/insufficient-logging-and-monitoring.md)
+
+## Mobile
+
+* [Page 1](mobile/page-1.md)
+
+## Cloud
+
+* [Page 2](cloud/page-2.md)
+
+## Network
+
+* [Page 3](network/page-3.md)
+
+## Wireless
+
+* [Page 4](wireless/page-4.md)
+
+## iot
+
+* [Page 5](iot/page-5.md)
