@@ -1,2 +1,0 @@
-# Broken Object Level Authorization
-

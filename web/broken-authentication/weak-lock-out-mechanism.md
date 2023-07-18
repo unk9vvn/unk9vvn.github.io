@@ -1,2 +1,0 @@
-# Weak Lock Out Mechanism
-

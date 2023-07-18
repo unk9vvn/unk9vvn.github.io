@@ -1,2 +1,0 @@
-# Bypassing Authentication Schema
-

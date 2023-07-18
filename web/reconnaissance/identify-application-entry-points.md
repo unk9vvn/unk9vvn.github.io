@@ -1,2 +1,0 @@
-# Identify Application Entry Points
-

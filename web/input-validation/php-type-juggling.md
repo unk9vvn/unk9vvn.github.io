@@ -1,2 +1,0 @@
-# PHP Type Juggling
-

@@ -1,2 +1,0 @@
-# REST and SOAP
-
