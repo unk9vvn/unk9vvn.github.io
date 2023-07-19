@@ -162,7 +162,17 @@
 
 ## Cloud
 
-* [Page 2](cloud/page-2.md)
+* [Reconnaissance](cloud/reconnaissance.md)
+* [SaaS](cloud/saas.md)
+* [IaaS](cloud/iaas.md)
+* [Azure](cloud/azure.md)
+* [AWS](cloud/aws.md)
+* [GCP](cloud/gcp.md)
+* [IBM](cloud/ibm.md)
+* [Digital Ocean](cloud/digital-ocean.md)
+* [Kubernetes](cloud/kubernetes.md)
+* [CI/CD](cloud/ci-cd.md)
+* [Active Directory](cloud/active-directory.md)
 
 ## Network
 
