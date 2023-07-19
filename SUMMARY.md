@@ -176,7 +176,12 @@
 
 ## Network
 
-* [Page 3](network/page-3.md)
+* [Introduction](network/introduction.md)
+* [Intelligence Gathering](network/intelligence-gathering.md)
+* [Vulnerability Analysis](network/vulnerability-analysis.md)
+* [Logical Vulnerabilities](network/logical-vulnerabilities.md)
+* [Exploitation of Remote Services (User-Mode)](network/exploitation-of-remote-services-user-mode.md)
+* [Exploitation of Remote Services (Kernel-Mode)](network/exploitation-of-remote-services-kernel-mode.md)
 
 ## Wireless
 
