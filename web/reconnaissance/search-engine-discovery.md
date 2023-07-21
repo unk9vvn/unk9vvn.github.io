@@ -10,9 +10,9 @@
 
 Here are some examples of Dorks used in the Google search engine:
 
-```
+```bash
 cache:$WEBSITE
-site:$WEBSITE intitle:"ورود" | intext:"ورود"
+site:$WEBSITE intitle:"ورود" | intext:"ورود"a
 site:$WEBSITE inurl:login OR inurl:secure OR inurl:admin
 site:$WEBSITE ext:doc | ext:docx | ext:xls | ext:xlsx | ext:pdf
 site:$WEBSITE filetype:bak inurl:php "mysql_connect"
@@ -24,7 +24,7 @@ site:*.$WEBSITE site:help.$WEBSITE
 
 Here are some examples of search keywords used in the Shodan search engine:
 
-```
+```bash
 "Schneider Electric" port:"502"
 "Schneider Electric" port:"502" country:"IL"
 country:"IR" os:"2008 R2"
@@ -44,7 +44,7 @@ ssl.cert.subject.cn:example.com
 
 Using GitHub we can find sensitive infos.
 
-```
+```bash
 filename:WebServers.xml 
 filename:.bash_history 
 filename:secrets.yml password 
@@ -109,7 +109,7 @@ extension:json googleusercontent client_secret
 
 Search for hosts with an SNMP service whose reported location is exactly this phrase:
 
-```
+```bash
 service.snmp.oid_system.location="Sitting on the Dock of the Bay"
 "Schneider Electric" and ip: 23.20.0.0/14
 not services.service_name: HTTP
@@ -129,7 +129,7 @@ location.country: Russia
 
 Here are some examples of search keywords used in the Zoomeye search engine:
 
-```
+```bash
 webapp: wordpress
 ver: 2.1
 app: ProFTPD
