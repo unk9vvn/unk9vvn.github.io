@@ -34,7 +34,7 @@
 
 ```bash
 ┌──(web㉿unk9vvn)-[~]
-└─$ ffuf -w /usr/share/seclists/Discovery/Web-Content/common.txt -u $WEBSITE/FUZZ -mc 200 -c -v
+└─$ sudo ffuf -w /usr/share/seclists/Discovery/Web-Content/common.txt -u $WEBSITE/FUZZ -mc 200 -c -v
 ```
 
 ### Subdomain Fuzzing
@@ -157,4 +157,10 @@ _active scan_
 
 ### Using search engines
 
-[https://mxtoolbox.com](https://mxtoolbox.com)
+#### MxToolbox
+
+{% embed url="https://mxtoolbox.com" %}
+
+#### DNSdumpster
+
+{% embed url="https://dnsdumpster.com" %}
