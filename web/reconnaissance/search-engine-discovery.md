@@ -12,7 +12,7 @@ Here are some examples of Dorks used in the Google search engine:
 
 ```bash
 cache:$WEBSITE
-site:$WEBSITE intitle:"ورود" | intext:"ورود"a
+site:$WEBSITE intitle:"ورود" | intext:"ورود"
 site:$WEBSITE inurl:login OR inurl:secure OR inurl:admin
 site:$WEBSITE ext:doc | ext:docx | ext:xls | ext:xlsx | ext:pdf
 site:$WEBSITE filetype:bak inurl:php "mysql_connect"
