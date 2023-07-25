@@ -1,2 +1,0 @@
-# HTTP Strict Transport Security
-

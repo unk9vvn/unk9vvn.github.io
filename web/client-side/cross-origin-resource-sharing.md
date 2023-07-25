@@ -1,2 +1,0 @@
-# Cross Origin Resource Sharing
-

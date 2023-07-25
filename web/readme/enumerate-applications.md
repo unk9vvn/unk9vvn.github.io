@@ -1,2 +1,0 @@
-# Enumerate Applications
-

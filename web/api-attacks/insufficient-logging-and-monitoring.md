@@ -1,2 +1,0 @@
-# Insufficient Logging and Monitoring
-
