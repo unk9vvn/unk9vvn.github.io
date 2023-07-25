@@ -1,2 +1,0 @@
-# RIA Cross Domain Policy
-
