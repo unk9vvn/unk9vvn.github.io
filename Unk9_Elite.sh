@@ -1,7 +1,7 @@
 #!/bin/bash
 # v4.0
 # ┌──(elite㉿unk9vvn)-[~]
-# └─$ sudo su;chmod +x Unk9_Kali.sh;./Unk9_Elite.sh
+# └─$ sudo su;chmod +x Unk9_Elite.sh;./Unk9_Elite.sh
 
 
 
