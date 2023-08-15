@@ -1183,9 +1183,6 @@ blue_team ()
 	# Install Nodejs NPM
 	npm install 
 
-	# Install Rust
-	cargo install 
-
 	# Install Golang
 	go install -v github.com/alphasoc/google/stenographer@latest
 	ln -s ~/go/bin/stenographer /usr/bin/stenographer
@@ -1251,9 +1248,6 @@ security_audit ()
 
 	# Install Nodejs NPM
 	npm install -g snyk @sandworm/audit
-
-	# Install Rust
-	cargo install 
 
 	# Install Golang
 	go install -v github.com/google/osv-scanner/cmd/osv-scanner@latest
@@ -1383,12 +1377,12 @@ main ()
 
 	# Install Unk9_Elite
     if [ ! -d "/usr/share/unk9_elite" ]; then
-		mkdir -p /usr/share/unk9_elite
-		curl -s -o /usr/share/unk9_elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-		bash /usr/share/unk9_elite/unk9_elite.sh
+	mkdir -p /usr/share/unk9_elite
+	curl -s -o /usr/share/unk9_elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
+	bash /usr/share/unk9_elite/unk9_elite.sh
     elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
         curl -s -o /usr/share/unk9_elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-		bash /usr/share/unk9_elite/unk9_elite.sh
+	bash /usr/share/unk9_elite/unk9_elite.sh
     fi
 }
 
@@ -1401,34 +1395,34 @@ select opt in "${installer[@]}"
 do
     case $opt in
         "Penetrating Testing")
-			penetrating_testing
-			break
+		penetrating_testing
+		break
         	;;
         "Red Team")
-			red_team
-			break
+		red_team
+		break
         	;;
         "ICS Security")
-			ics_security
-			break
+		ics_security
+		break
         	;;
         "Digital Forensic")
-			digital_forensic
-			break
+		digital_forensic
+		break
         	;;
         "Blue Team")
-			blue_team
-			break
+		blue_team
+		break
         	;;
         "Security Audit")
-			security_audit
-			break
+		security_audit
+		break
         	;;
         "Exit")
-			exit
+		exit
            	;;
         *)
            	printf "$RED"     "[X] Invalid select item."
-			;;			
+		;;			
    	esac
 done
