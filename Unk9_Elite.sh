@@ -5,6 +5,7 @@
 
 
 
+
 RED='\e[1;31m%s\e[0m\n'
 GREEN='\e[1;32m%s\e[0m\n'
 YELLOW='\e[1;33m%s\e[0m\n'
@@ -159,6 +160,9 @@ penetrating_testing ()
 	pip3 install pacu
 	pip3 install whispers
 	pip3 install s3scanner
+	pip3 install roadrecon
+	pip3 install roadlib
+	pip3 install roadtx
 	pip3 install festin
 	pip3 install cloudsplaining
 	pip3 install custodian
@@ -192,6 +196,7 @@ penetrating_testing ()
 	pip3 install Stegano
 	pip3 install truffleHog
 	pip3 install kiwi
+	pip3 install Depix
 	pip3 install stego-lsb
 	pip3 install diffy
 	pip3 install stegoveritas
@@ -220,11 +225,15 @@ penetrating_testing ()
 	pip3 install hiphp
 	pip3 install pasteme-cli
 	pip3 install aiodnsbrute
+	pip3 install wsrepl
 	pip3 install apachetomcatscanner
 	pip3 install sysplant
 	pip3 install anomark
 	pip3 install semgrep
 	pip3 install dotdotfarm
+	pip3 install unblob
+	pip3 install datasets
+	pip3 install ssh-mitm
 
 	# Install Ruby GEM
 	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg
@@ -573,7 +582,7 @@ EOF
 
 	# Install HLR-Lookups
 	if [ ! -d "/usr/share/HLR-Lookups" ]; then
-		https://github.com/SigPloiter/HLR-Lookups /usr/share/HLR-Lookups
+		git clone https://github.com/SigPloiter/HLR-Lookups /usr/share/HLR-Lookups
 		cat > /usr/bin/hlrlookups << EOF
 #!/bin/bash
 cd /usr/share/HLR-Lookups;python3 hlr-lookups.py "\$@"
@@ -594,131 +603,145 @@ EOF
 		printf "$GREEN"  "[*] Failed Installing HLR-Lookups"
 	fi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	# Install CredNinja
-	if [ ! -d "/usr/share/credninja" ]; then
-		git clone https://github.com/Warflop/CredNinja /usr/share/credninja
-		echo '#!/bin/bash' > /usr/bin/credninja
-		echo 'cd /usr/share/credninja;python3 CredNinja.py "$@"' >> /usr/bin/credninja
-		chmod +x /usr/bin/credninja;chmod 755 /usr/share/credninja/*
-		printf "$GREEN"  "[*] Sucess Installing CredNinja"
-	else
-		printf "$GREEN"  "[*] Sucess Installed CredNinja"
-	fi
-
-	# Install VHostScan
-	if [ ! -d "/usr/share/vhostscan" ]; then
-		git clone https://github.com/codingo/VHostScan /usr/share/vhostscan
-		chmod 755 /usr/share/vhostscan/*;cd /usr/share/vhostscan
-		pip install -r requirements.txt;python3 setup.py install
-		printf "$GREEN"  "[*] Sucess Installing VHostScan"
-	else
-		printf "$GREEN"  "[*] Sucess Installed VHostScan"
-	fi
-
 	# Install Infoga
-	if [ ! -d "/usr/share/infoga" ]; then
-		git clone https://github.com/m4ll0k/Infoga /usr/share/infoga
-		echo '#!/bin/bash' > /usr/bin/infoga
-		echo 'cd /usr/share/infoga;python2 infoga.py "$@"' >> /usr/bin/infoga
-		chmod +x /usr/bin/infoga;chmod 755 /usr/share/infoga/*
+	if [ ! -d "/usr/share/Infoga" ]; then
+		git clone https://github.com/m4ll0k/Infoga /usr/share/Infoga
+		cat > /usr/bin/infoga << EOF
+#!/bin/bash
+cd /usr/share/infoga;python2 infoga.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/infoga.desktop << EOF
+[Desktop Entry]
+Name=Infoga
+Exec=/usr/bin/infoga
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/infoga;chmod 755 /usr/share/Infoga/*
+		cd /usr/share/Infoga
 		pip2 install -r requirements.txt;python2 setup.py install
 		printf "$GREEN"  "[*] Sucess Installing Infoga"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Infoga"
+		printf "$GREEN"  "[*] Failed Installing Infoga"
 	fi
 
 	# Install CheckStyle
-	if [ ! -d "/usr/share/checkstyle" ]; then
-		mkdir /usr/share/checkstyle
-		wget https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.9.3/checkstyle-10.9.3-all.jar -O /usr/share/checkstyle/checkstyle-10.9.3-all.jar
-		echo '#!/bin/bash' > /usr/bin/checkstyle
-		echo 'cd /usr/share/checkstyle;java -jar checkstyle-10.9.3-all.jar "$@"' >> /usr/bin/checkstyle
-		chmod +x /usr/bin/checkstyle;chmod 755 /usr/share/checkstyle/*
+	if [ ! -d "/usr/share/CheckStyle" ]; then
+		mkdir -p /usr/share/CheckStyle
+		wget https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.2/checkstyle-10.12.2-all.jar -O /usr/share/CheckStyle/checkstyle.jar
+		cat > /usr/bin/checkstyle << EOF
+#!/bin/bash
+cd /usr/share/CheckStyle;java -jar checkstyle.jar "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/checkstyle.desktop << EOF
+[Desktop Entry]
+Name=CheckStyle
+Exec=/usr/bin/checkstyle
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/checkstyle;chmod 755 /usr/share/CheckStyle/*
 		printf "$GREEN"  "[*] Sucess Installing CheckStyle"
 	else
-		printf "$GREEN"  "[*] Sucess Installed CheckStyle"
-	fi
-
-	# Install Drozer
-	if [ ! -d "/usr/share/drozer" ]; then
-		wget https://github.com/WithSecureLabs/drozer/releases/download/2.4.4/drozer_2.4.4.deb -O /tmp/drozer.deb
-		chmod +x /tmp/drozer.deb;dpkg -i /tmp/drozer.deb;rm -f /tmp/drozer.deb
-		printf "$GREEN"  "[*] Sucess Installing Drozer"
-	else
-		printf "$GREEN"  "[*] Sucess Installed Drozer"
+		printf "$GREEN"  "[*] Failed Installing CheckStyle"
 	fi
 
 	# Install Genymotion
 	if [ ! -d "/usr/share/genymotion" ]; then
-		mkdir /user/share/genymotion
-		wget https://dl.genymotion.com/releases/genymotion-3.3.3/genymotion-3.3.3-linux_x64.bin -O /user/share/genymotion/genymotion-linux.bin
+		mkdir -p /user/share/genymotion
+		wget https://dl.genymotion.com/releases/genymotion-3.5.0/genymotion-3.5.0-linux_x64.bin -O /user/share/genymotion/genymotion-linux.bin
 		cd /user/share/genymotion;chmod +x genymotion-linux.bin;./genymotion-linux.bin -y
 		printf "$GREEN"  "[*] Sucess Installing Genymotion"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Genymotion"
+		printf "$GREEN"  "[*] Failed Installing Genymotion"
 	fi
 
 	# Install PhoneInfoga
-	if [ ! -d "/usr/share/phoneinfoga" ]; then
-		wget https://github.com/sundowndev/phoneinfoga/releases/download/v2.10.4/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/phoneinfoga.tar.gz
-		mkdir /usr/share/phoneinfoga;chmod +x /usr/share/phoneinfoga;cd /tmp
-		tar -xvf phoneinfoga.tar.gz;mv phoneinfoga /var/share/phoneinfoga/phoneinfoga;rm -f /tmp/phoneinfoga.tar.gz
-		ln -f -s /usr/share/phoneinfoga/phoneinfoga /usr/bin/phoneinfoga
+	if [ ! -d "/usr/share/PhoneInfoga" ]; then
+		wget https://github.com/sundowndev/phoneinfoga/releases/download/v2.10.8/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/phoneinfoga.tar.gz
+		mkdir -p /usr/share/PhoneInfoga;chmod +x /usr/share/PhoneInfoga;cd /tmp
+		tar -xvf phoneinfoga.tar.gz;mv phoneinfoga /var/share/PhoneInfoga/phoneinfoga;rm -f /tmp/phoneinfoga.tar.gz
+		ln -f -s /usr/share/PhoneInfoga/phoneinfoga /usr/bin/phoneinfoga
+		cat > /home/$USER/.local/share/applications/phoneinfoga.desktop << EOF
+[Desktop Entry]
+Name=PhoneInfoga
+Exec=/usr/bin/phoneinfoga
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/phoneinfoga;chmod 755 /usr/share/PhoneInfoga/*
 		printf "$GREEN"  "[*] Sucess Installing PhoneInfoga"
 	else
-		printf "$GREEN"  "[*] Sucess Installed PhoneInfoga"
+		printf "$GREEN"  "[*] Failed Installing PhoneInfoga"
 	fi
 
 	# Install MobSF
-	if [ ! -d "/usr/share/mobsf" ]; then
+	if [ ! -d "/usr/share/MobSF" ]; then
 		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/mobsf
-		echo '#!/bin/bash' > /usr/bin/mobsf
-		echo 'cd /usr/share/mobsf;./run.sh > /dev/null &' >> /usr/bin/mobsf
-		echo 'sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &' >> /usr/bin/mobsf
-		chmod +x /usr/bin/mobsf;cd /usr/share/mobsf;chmod 755 *;./setup.sh
+		cat > /usr/bin/mobsf << EOF
+#!/bin/bash
+cd /usr/share/mobsf;./run.sh > /dev/null &
+sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
+EOF
+		cat > /home/$USER/.local/share/applications/mobsf.desktop << EOF
+[Desktop Entry]
+Name=MobSF
+Exec=/usr/bin/mobsf
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/mobsf;chmod 755 /usr/share/MobSF/*
+		cd /usr/share/mobsf;chmod 755 *;./setup.sh
 		printf "$GREEN"  "[*] Sucess Installing MobSF"
 	else
-		printf "$GREEN"  "[*] Sucess Installed MobSF"
+		printf "$GREEN"  "[*] Failed Installing MobSF"
 	fi
 
 	# Install Findomain
-	if [ ! -d "/usr/share/findomain" ]; then
-		wget https://github.com/findomain/findomain/releases/latest/download/findomain-linux.zip -O /tmp/findomain.zip
-		unzip /tmp/findomain.zip -d /usr/share/findomain
-		chmod +x /usr/share/findomain/*;rm -f /tmp/findomain.zip
-		ln -s /usr/share/findomain/findomain /usr/bin/findomain
+	if [ ! -d "/usr/share/Findomain" ]; then
+		wget https://github.com/Findomain/Findomain/releases/download/9.0.0/findomain-linux.zip -O /tmp/findomain-linux.zip
+		unzip /tmp/findomain-linux.zip -d /usr/share/Findomain;rm -f /tmp/findomain-linux.zip
+		ln -f -s /usr/share/Findomain/findomain /usr/bin/findomain
+		cat > /usr/bin/findomain << EOF
+#!/bin/bash
+cd /usr/share/Findomain;bash findomain "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/findomain.desktop << EOF
+[Desktop Entry]
+Name=Findomain
+Exec=/usr/bin/findomain
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/findomain;chmod 755 /usr/share/Findomain/*
 		printf "$GREEN"  "[*] Sucess Installing Findomain"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Findomain"
+		printf "$GREEN"  "[*] Failed Installing Findomain"
 	fi
 
 	# Install Angry-IP
 	if [ ! -d "/usr/bin/ipscan" ]; then
 		wget https://github.com/angryip/ipscan/releases/download/3.9.1/ipscan_3.9.1_amd64.deb -O /tmp/ipscan_amd64.deb
 		chmod +x /tmp/ipscan_amd64.deb;dpkg -i /tmp/ipscan_amd64.deb;rm -f /tmp/ipscan_amd64.deb
+		ln -f -s /usr/share/Findomain/findomain /usr/bin/findomain
 		printf "$GREEN"  "[*] Sucess Installing Angry-IP"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Angry-IP"
+		printf "$GREEN"  "[*] Failed Installing Angry-IP"
 	fi
 
 	# Install RustScan
@@ -731,22 +754,54 @@ EOF
 	fi
 
 	# Install GEF
-	if [ ! -f "~/.gef-2b72f5d0d9f0f218a91cd1ca5148e45923b950d5.py" ]; then
-		bash -c "$(wget https://gef.blah.cat/sh -O -)"
+	if [ ! -f "~/.gef-6a6e2a05ca8e08ac6845dce655a432fc4e029486.py" ]; then
+		bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
+		cat > /home/$USER/.local/share/applications/findomain.desktop << EOF
+[Desktop Entry]
+Name=Findomain
+Exec=/usr/bin/findomain
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/findomain;chmod 755 /usr/share/Findomain/*
 		printf "$GREEN"  "[*] Sucess Installing GEF"
 	else
 		printf "$GREEN"  "[*] Sucess Installed GEF"
 	fi
 
-	# Install sn0int
-	if [ ! -f "/etc/apt/sources.list.d/apt-vulns-sexy.list" ]; then
-		gpg -a --export --keyring /usr/share/keyrings/debian-maintainers.gpg kpcyrd@archlinux.org | tee /etc/apt/trusted.gpg.d/apt-vulns-sexy.gpg
-		echo deb http://apt.vulns.sexy stable main | tee /etc/apt/sources.list.d/apt-vulns-sexy.list
-		apt update;apt install -qy sn0int
-		printf "$GREEN"  "[*] Sucess Installing sn0int"
+	# Install HashPump
+	if [ ! -d "/usr/share/HashPump" ]; then
+		git clone https://github.com/bwall/HashPump /usr/share/HashPump
+		cat > /usr/bin/hashpump << EOF
+#!/bin/bash
+cd /usr/share/HashPump;bash hashpump "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/hashpump.desktop << EOF
+[Desktop Entry]
+Name=HashPump
+Exec=/usr/bin/hashpump
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/HashPump;chmod 755 /usr/share/HashPump/*;;make install
+		printf "$GREEN"  "[*] Sucess Installing HashPump"
 	else
-		printf "$GREEN"  "[*] Sucess Installed sn0int"
+		printf "$GREEN"  "[*] Sucess Installed HashPump"
 	fi
+
+
+
+
+
+
+
+
 
 	# Install HashPump
 	if [ ! -d "/usr/share/hashpump" ]; then
@@ -885,13 +940,12 @@ EOF
 red_team ()
 {
 	# Install Repository Tools
-	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 
+	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain
 
 	# Install Python3 pip
 	pip install pivotnacci nim linux-exploit-suggester donut-shellcode xortool auto-py-to-exe py2exe certipy viper-framework updog pwncat sceptre atheris networkx aclpwn pastehunter neo4j-driver 
-
-	# Install Python2 PIP2
-	pip2 install getsploit 
+	pip3 install datasets
+	pip3 install coercer
 
 	# Install Ruby GEM
 	gem install evil-winrm 
@@ -991,13 +1045,11 @@ ics_security ()
 digital_forensic ()
 {
 	# Install Repository Tools
-	apt install -qy ghidra foremost capstone-tool autopsy exiftool procdump oletools inetsim outguess steghide steghide-doc osslsigncode hexyl audacity stenographer dnstwist stegosuite qpdf kafkacat sigma-align oscanner procdump forensics-all 
+	apt install -qy ghidra foremost capstone-tool autopsy exiftool procdump oletools inetsim outguess steghide steghide-doc osslsigncode hexyl audacity stenographer dnstwist stegosuite qpdf kafkacat sigma-align oscanner procdump forensics-all sysmonforlinux syslog-ng-core syslog-ng-scl
 
 	# Install Python3 pip
 	pip install iocextract threatingestor decompyle3 uncompyle6 stix stix-validator xortool stringsifter radare2 stegcracker tinyscript dnfile dotnetfile malchive libcsce mwcp chepy attackcti heralding pylibemu ivre harpoon cve-bin-tool aws_ir Dshell libcloudforensics rekall threatbus pngcheck unipacker ioc_fanger ioc-scan stix2 intelmq otx-misp stegpy openioc-to-stix threat_intel eql hachoir pymetasec qiling fwhunt-scan pyhindsight phishing-tracker apiosintDS
-
-	# Install Python2 PIP2
-	pip2 install balbuzard
+	pip3 install datasets
 
 	# Install Ruby GEM
 	gem install pedump
@@ -1172,10 +1224,8 @@ blue_team ()
 	apt install -qy httpry sshguard clamav suricata chkrootkit nebula cacti 
 
 	# Install Python3 pip
-	pip install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa crowdsec conpot honeypots msticpy demonhunter iamactionhunter
-
-	# Install Python2 PIP2
-	pip2 install 
+	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa crowdsec conpot honeypots msticpy demonhunter iamactionhunter
+	pip3 install datasets
 
 	# Install Ruby GEM
 	gem install 
@@ -1238,10 +1288,8 @@ security_audit ()
 	apt install -qy flawfinder afl-clang gvm openvas pskracker ropper mdbtools lynis cppcheck findbugs buildah
 
 	# Install Python3 pip
-	pip install angr angrop quark-engine wapiti3 boofuzz ropgadget pwntools capstone checkov atheris r2env pyscan-rs
-
-	# Install Python2 PIP2
-	pip2 install 
+	pip3 install angr angrop quark-engine wapiti3 boofuzz ropgadget pwntools capstone checkov atheris r2env pyscan-rs
+	pip3 install datasets
 
 	# Install Ruby GEM
 	gem install one_gadget brakeman net-http-persistent bundler-audit 
@@ -1371,6 +1419,28 @@ main ()
 	# Initialize Repository Tools
 	dpkg --add-architecture i386 && apt update && apt -y install wine32
 
+	# Add Microsoft Repository Tools
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+	mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+	wget -q https://packages.microsoft.com/config/debian/11/prod.list
+	mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+	chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+	chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+	apt update
+
+	# Add Wazuh Repository Tools
+	curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
+	echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+	apt update
+
+	# Add syslog-ng Repository Tools
+	wget -qO - https://ose-repo.syslog-ng.com/apt/syslog-ng-ose-pub.asc | sudo apt-key add -
+	echo "deb https://ose-repo.syslog-ng.com/apt/ stable ubuntu-focal" | sudo tee -a /etc/apt/sources.list.d/syslog-ng-ose.list
+	apt update
+
+	# Install ChatGPT
+	curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
+	
 	# Install Python3 pip
 	pip3 install colorama
 	pip3 install pysnmp
