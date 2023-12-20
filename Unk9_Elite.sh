@@ -131,7 +131,7 @@ EOF
 penetrating_testing ()
 {
 	# Install Repository Tools
-	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser massdns goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan 
+	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder amass cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan sentrypeer spooftooph
 
 	# Install Python3 pip
 	pip3 install pyjwt
@@ -155,6 +155,7 @@ penetrating_testing ()
 	pip3 install mongoaudit
 	pip3 install cheroot
 	pip3 install angr
+	pip3 install ggshield
 	pip3 install slowloris
 	pip3 install brute
 	pip3 install pacu
@@ -162,6 +163,7 @@ penetrating_testing ()
 	pip3 install s3scanner
 	pip3 install roadrecon
 	pip3 install roadlib
+	pip3 install gcp_scanner
 	pip3 install roadtx
 	pip3 install festin
 	pip3 install cloudsplaining
@@ -175,6 +177,7 @@ penetrating_testing ()
 	pip3 install mailspoof
 	pip3 install raccoon-scanner
 	pip3 install apkleaks
+	pip3 install n0s1
 	pip3 install bbqsql
 	pip3 install baboossh
 	pip3 install selenium
@@ -184,6 +187,7 @@ penetrating_testing ()
 	pip3 install PyJWT
 	pip3 install mobsf
 	pip3 install aws-gate
+	pip3 install proxyhub
 	pip3 install njsscan
 	pip3 install detect-secrets
 	pip3 install regexploit
@@ -217,6 +221,9 @@ penetrating_testing ()
 	pip3 install gitfive
 	pip3 install shodan
 	pip3 install postmaniac
+	pip3 install crlfsuite
+	pip3 install modelscan
+	pip3 install APIFuzzer
 	pip3 install PyExfil
 	pip3 install wsgidav
 	pip3 install defaultcreds-cheat-sheet
@@ -227,10 +234,14 @@ penetrating_testing ()
 	pip3 install aiodnsbrute
 	pip3 install wsrepl
 	pip3 install apachetomcatscanner
+	pip3 install uefi_firmware
+	pip3 install instaloader
 	pip3 install sysplant
 	pip3 install anomark
 	pip3 install semgrep
 	pip3 install dotdotfarm
+	pip3 install gorilla-cli
+	pip3 install knowsmore
 	pip3 install unblob
 	pip3 install datasets
 	pip3 install ssh-mitm
@@ -239,7 +250,7 @@ penetrating_testing ()
 	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg
 
 	# Install Nodejs NPM
-	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos apk-mitm fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor 
+	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos apk-mitm fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor dompurify jsdom
 
 	# Install Golang
 	go install github.com/tomnomnom/assetfinder@latest
@@ -304,6 +315,8 @@ penetrating_testing ()
 	ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 	go install github.com/securebinary/firebaseExploiter@latest
 	ln -fs ~/go/bin/firebaseExploiter /usr/bin/firebaseExploiter
+	go install github.com/devanshbatham/headerpwn@v0.0.3
+	ln -fs ~/go/bin/headerpwn /usr/bin/headerpwn
 	go install github.com/dwisiswant0/cf-check@latest
 	ln -fs ~/go/bin/cf-check /usr/bin/cf-check
 	go install github.com/takshal/freq@latest
@@ -336,6 +349,15 @@ penetrating_testing ()
 	ln -fs ~/go/bin/jsluice /usr/bin/jsluice
 	go install github.com/bitquark/shortscan/cmd/shortscan@latest
 	ln -fs ~/go/bin/shortscan /usr/bin/shortscan
+	go install github.com/dwisiswant0/ipfuscator@latest
+	ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
+	go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest
+	ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor
+	go install github.com/g0ldencybersec/CloudRecon@latest
+	ln -fs ~/go/bin/CloudRecon /usr/bin/CloudRecon
+	go install github.com/projectdiscovery/alterx/cmd/alterx@latest
+	ln -fs ~/go/bin/alterx /usr/bin/alterx
+
 
 	# Install Sn1per
 	if [ ! -d "/usr/share/sniper" ]; then
@@ -789,24 +811,7 @@ Icon=gnome-panel-launcher
 Type=Application
 Hidden=false
 EOF
-		chmod +x /usr/bin/HashPump;chmod 755 /usr/share/HashPump/*;;make install
-		printf "$GREEN"  "[*] Sucess Installing HashPump"
-	else
-		printf "$GREEN"  "[*] Sucess Installed HashPump"
-	fi
-
-
-
-
-
-
-
-
-
-	# Install HashPump
-	if [ ! -d "/usr/share/hashpump" ]; then
-		git clone https://github.com/bwall/HashPump /usr/share/hashpump
-		chmod 755 /usr/share/hashpump/*;cd /usr/share/hashpump;make install
+		chmod +x /usr/bin/HashPump;chmod 755 /usr/share/HashPump/*;make install
 		printf "$GREEN"  "[*] Sucess Installing HashPump"
 	else
 		printf "$GREEN"  "[*] Sucess Installed HashPump"
@@ -814,138 +819,262 @@ EOF
 
 	# Install RSAtool
 	if [ ! -d "/usr/share/RSAtool" ]; then
-		git clone https://github.com/ius/rsatool /usr/share/rsatool
-		echo '#!/bin/bash' > /usr/bin/rsatool
-		echo 'cd /usr/share/rsatool;pyhton3 rsatool.py "$@"' >> /usr/bin/rsatool
-		chmod +x /usr/bin/rsatool;chmod 755 /usr/share/rsatool/*;cd /usr/share/rsatool;python3 setup.py install
+		git clone https://github.com/ius/rsatool /usr/share/RSAtool
+		cat > /usr/bin/rsatool << EOF
+#!/bin/bash
+cd /usr/share/RSAtool;python3 rsatool.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/rsatool.desktop << EOF
+[Desktop Entry]
+Name=RSAtool
+Exec=/usr/bin/rsatool
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/rsatool;chmod 755 /usr/share/RSAtool/*
 		printf "$GREEN"  "[*] Sucess Installing RSAtool"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RSAtool"
 	fi
 
 	# Install RsaCtfTool
-	if [ ! -d "/usr/share/rsactftool" ]; then
-		git clone https://github.com/RsaCtfTool/RsaCtfTool /usr/share/rsactftool
-		echo '#!/bin/bash' > /usr/bin/rsactftool
-		echo 'cd /usr/share/rsactftool;python3 RsaCtfTool.py "$@"' >> /usr/bin/rsactftool
-		chmod +x /usr/bin/rsactftool;chmod 755 /usr/share/rsactftool/*
-		pip -r /usr/share/rsactftool/requirements.txt
+	if [ ! -d "/usr/share/RsaCtfTool" ]; then
+		git clone https://github.com/RsaCtfTool/RsaCtfTool /usr/share/RsaCtfTool
+		cat > /usr/bin/rsactftool << EOF
+#!/bin/bash
+cd /usr/share/RsaCtfTool;python3 RsaCtfTool.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/rsactftool.desktop << EOF
+[Desktop Entry]
+Name=RsaCtfTool
+Exec=/usr/bin/rsactftool
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/rsactftool;chmod 755 /usr/share/RsaCtfTool/*
 		printf "$GREEN"  "[*] Sucess Installing RsaCtfTool"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RsaCtfTool"
 	fi
 
 	# Install PEMCrack
-	if [ ! -d "/usr/share/pemcrack" ]; then
-		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/pemcrack
-		cd /usr/share/pemcrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
-		ln -f -s /usr/share/pemcrack/pemcrack /usr/bin/pemcrack
+	if [ ! -d "/usr/share/PEMCrack" ]; then
+		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/PEMCrack
+		cd /usr/share/PEMCrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
+		ln -fs /usr/share/PEMCrack/pemcrack /usr/bin/pemcrack
+		cat > /home/$USER/.local/share/applications/pemcrack.desktop << EOF
+[Desktop Entry]
+Name=PEMCrack
+Exec=/usr/bin/pemcrack
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/pemcrack;chmod 755 /usr/share/PEMCrack/*
 		printf "$GREEN"  "[*] Sucess Installing PEMCrack"
 	else
 		printf "$GREEN"  "[*] Sucess Installed PEMCrack"
 	fi
 
 	# Install DyMerge
-	if [ ! -d "/usr/share/dymerge" ]; then
-		git clone https://github.com/k4m4/dymerge /usr/share/dymerge
-		echo '#!/bin/bash' > /usr/bin/dymerge
-		echo 'cd /usr/share/dymerge;python3 dymerge.py "$@"' >> /usr/bin/dymerge
-		chmod +x /usr/bin/dymerge;chmod 755 /usr/share/dymerge/*
+	if [ ! -d "/usr/share/DyMerge" ]; then
+		git clone https://github.com/k4m4/dymerge /usr/share/DyMerge
+		cat > /usr/bin/dymerge << EOF
+#!/bin/bash
+cd /usr/share/DyMerge;python3 dymerge.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/dymerge.desktop << EOF
+[Desktop Entry]
+Name=DyMerge
+Exec=/usr/bin/dymerge
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/dymerge;chmod 755 /usr/share/DyMerge/*
 		printf "$GREEN"  "[*] Sucess Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Sucess Installed DyMerge"
 	fi
 
-	# Install JWT Tool
-	if [ ! -d "/usr/share/jwt_tool" ]; then
-		git clone https://github.com/ticarpi/jwt_tool /usr/share/jwt_tool
-		echo '#!/bin/bash' > /usr/bin/jwttool
-		echo 'cd /usr/share/jwt_tool;python3 jwt_tool.py "$@"' >> /usr/bin/jwttool
-		chmod +x /usr/bin/jwttool;chmod 755 /usr/share/jwt_tool/*
-		pip install termcolor cprint pycryptodomex requests
-		printf "$GREEN"  "[*] Sucess Installing JWT Tool"
+	# Install JWT-Tool
+	if [ ! -d "/usr/share/JWT_Tool" ]; then
+		git clone https://github.com/ticarpi/jwt_tool /usr/share/JWT_Tool
+		pip3 install termcolor cprint pycryptodomex requests
+		cat > /usr/bin/jwt_tool << EOF
+#!/bin/bash
+cd /usr/share/JWT_Tool;python3 jwt_tool.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/jwt_tool.desktop << EOF
+[Desktop Entry]
+Name=JWT-Tool
+Exec=/usr/bin/jwt_tool
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/jwt_tool;chmod 755 /usr/share/JWT_Tool/*
+		printf "$GREEN"  "[*] Sucess Installing JWT-Tool"
 	else
-		printf "$GREEN"  "[*] Sucess Installed JWT Tool"
+		printf "$GREEN"  "[*] Sucess Installed JWT-Tool"
 	fi
 
 	# Install Poodle
-	if [ ! -d "/usr/share/poodle-PoC" ]; then
-		git clone https://github.com/mpgn/poodle-PoC /usr/share/poodle-PoC
-		echo '#!/bin/bash' > /usr/bin/poodle
-		echo 'cd /usr/share/poodle-PoC;python3 poodle-exploit.py "$@"' >> /usr/bin/poodle
-		chmod +x /usr/bin/poodle;chmod 755 /usr/share/poodle-PoC/*
+	if [ ! -d "/usr/share/Poodle" ]; then
+		git clone https://github.com/mpgn/poodle-PoC /usr/share/Poodle
+		cat > /usr/bin/poodle << EOF
+#!/bin/bash
+cd /usr/share/Poodle;python3 poodle-exploit.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/poodle.desktop << EOF
+[Desktop Entry]
+Name=Poodle
+Exec=/usr/bin/poodle
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/poodle;chmod 755 /usr/share/Poodle/*
 		printf "$GREEN"  "[*] Sucess Installing Poodle"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Poodle"
-	
+	fi
+
 	# Install certSniff
-	if [ ! -d "/usr/share/certsniff" ]; then
-		git clone https://github.com/A-poc/certSniff /usr/share/certsniff
-		echo '#!/bin/bash' > /usr/bin/certsniff
-		echo 'cd /usr/share/certsniff;python3 certSniff.py "$@"' >> /usr/bin/certsniff
-		chmod +x /usr/bin/certsniff;chmod 755 /usr/share/certsniff/*
-		pip install -r /usr/share/certsniff/requirements.txt
+	if [ ! -d "/usr/share/certSniff" ]; then
+		git clone https://github.com/A-poc/certSniff /usr/share/certSniff
+		cat > /usr/bin/certsniff << EOF
+#!/bin/bash
+cd /usr/share/certSniff;python3 certSniff.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/certsniff.desktop << EOF
+[Desktop Entry]
+Name=certSniff
+Exec=/usr/bin/certsniff
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/certsniff;chmod 755 /usr/share/certSniff/*
 		printf "$GREEN"  "[*] Sucess Installing certSniff"
 	else
 		printf "$GREEN"  "[*] Sucess Installed certSniff"
 	fi
 
 	# Install HashExtender
-	if [ ! -d "/usr/share/hash_extender" ]; then
-		git clone https://github.com/iagox86/hash_extender /usr/share/hash_extender
-		cd /usr/share/hash_extender;make;chmod 755 /usr/share/hash_extender/*
-		ln -f -s /usr/share/hash_extender /usr/bin/hashextender
+	if [ ! -d "/usr/share/HashExtender" ]; then
+		git clone https://github.com/iagox86/hash_extender /usr/share/HashExtender
+		cd /usr/share/HashExtender;make
+		ln -fs /usr/share/HashExtender /usr/bin/hashextender
+		cat > /home/$USER/.local/share/applications/hashextender.desktop << EOF
+[Desktop Entry]
+Name=HashExtender
+Exec=/usr/bin/hashextender
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/hashextender;chmod 755 /usr/share/HashExtender/*
 		printf "$GREEN"  "[*] Sucess Installing HashExtender"
 	else
 		printf "$GREEN"  "[*] Sucess Installed HashExtender"
 	fi
 
 	# Install SpoofCheck
-	if [ ! -d "/usr/share/spoofcheck" ]; then
-		git clone https://github.com/BishopFox/spoofcheck /usr/share/spoofcheck
-		echo '#!/bin/bash' > /usr/bin/spoofcheck
-		echo 'cd /usr/share/spoofcheck;python2 spoofcheck.py "$@"' >> /usr/bin/spoofcheck
-		chmod +x /usr/bin/spoofcheck;chmod 755 /usr/share/spoofcheck/*
-		pip2 install -r /usr/share/spoofcheck/requirements.txt
+	if [ ! -d "/usr/share/SpoofCheck" ]; then
+		git clone https://github.com/BishopFox/spoofcheck /usr/share/SpoofCheck
+		pip2 install -r /usr/share/SpoofCheck/requirements.txt
+		cat > /usr/bin/spoofcheck << EOF
+#!/bin/bash
+cd /usr/share/SpoofCheck;python2 spoofcheck.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/spoofcheck.desktop << EOF
+[Desktop Entry]
+Name=SpoofCheck
+Exec=/usr/bin/spoofcheck
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/spoofcheck;chmod 755 /usr/share/SpoofCheck/*
 		printf "$GREEN"  "[*] Sucess Installing SpoofCheck"
 	else
 		printf "$GREEN"  "[*] Sucess Installed SpoofCheck"
 	fi
 
-	# Install Memcrashed-DDoS
-	if [ -d "/usr/share/memcrashed-DDoS" ]; then
-		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/memcrashed-DDoS
-		echo '#!/bin/bash' > /usr/bin/memcrashed
-		echo 'cd /usr/share/memcrashed-DDoS;python3 Memcrashed.py "$@"' >> /usr/bin/memcrashed
-		chmod +x /usr/bin/memcrashed;chmod 755 /usr/share/memcrashed-DDoS/*
-		pip install -r /usr/share/memcrashed-DDoS/requirements.txt
-		printf "$GREEN"  "[*] Sucess Installing Memcrashed-DDoS"
+	# Install Memcrashed
+	if [ ! -d "/usr/share/Memcrashed" ]; then
+		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/Memcrashed
+		pip3 install -r /usr/share/Memcrashed/requirements.txt
+		cat > /usr/bin/memcrashed << EOF
+#!/bin/bash
+cd /usr/share/Memcrashed;python3 Memcrashed.py "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/memcrashed.desktop << EOF
+[Desktop Entry]
+Name=Memcrashed
+Exec=/usr/bin/memcrashed
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/memcrashed;chmod 755 /usr/share/Memcrashed/*
+		printf "$GREEN"  "[*] Sucess Installing Memcrashed"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Memcrashed-DDoS"
-	fi
-
-	# Install cheat.sh
-	if [ -d "/usr/share/memcrashed-DDoS" ]; then
-		PATH_DIR="$HOME/bin";mkdir -p "$PATH_DIR"
-		curl https://cht.sh/:cht.sh > "$PATH_DIR/cht.sh"
-		chmod +x "$PATH_DIR/cht.sh"
-		printf "$GREEN"  "[*] Sucess Installing cheat.sh"
-	else
-		printf "$GREEN"  "[*] Sucess Installed cheat.sh"
+		printf "$GREEN"  "[*] Sucess Installed Memcrashed"
 	fi
 }
-
 
 
 red_team ()
 {
 	# Install Repository Tools
-	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain
+	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain merlin
 
 	# Install Python3 pip
-	pip install pivotnacci nim linux-exploit-suggester donut-shellcode xortool auto-py-to-exe py2exe certipy viper-framework updog pwncat sceptre atheris networkx aclpwn pastehunter neo4j-driver 
+	pip3 install donut-shellcode
+	pip3 install xortool
+	pip3 install auto-py-to-exe
+	pip3 install certipy
+	pip3 install viper-framework
+	pip3 install updog
+	pip3 install pwncat
+	pip3 install sceptre
+	pip3 install networkx
+	pip3 install atheris
+	pip3 install aclpwn
+	pip3 install pastehunter
+	pip3 install neo4j-driver 
+	pip3 install pivotnacci
 	pip3 install datasets
 	pip3 install coercer
+	pip3 install rarce
+	pip3 install krbjack
+	pip3 install adidnsdump
+	pip3 install sysplant
+	pip3 install powerpwn
 
 	# Install Ruby GEM
 	gem install evil-winrm 
@@ -953,66 +1082,75 @@ red_team ()
 	# Install Nodejs NPM
 	npm install 
 
-	# Install Rust
-	cargo install 
-
 	# Install Golang
-	go install github.com/optiv/ScareCrow@latest
-	ln -f -s ~/go/bin/ScareCrow /usr/bin/scarecrow
 	go install github.com/justmao945/mallory/cmd/mallory@latest
-	ln -f -s ~/go/bin/mallory /usr/bin/mallory
+	ln -fs ~/go/bin/mallory /usr/bin/mallory
 	go install github.com/Tylous/ZipExec@latest
-	ln -f -s ~/go/bin/ZipExec /usr/bin/ZipExec
+	ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 	go install github.com/redcode-labs/Coldfire@latest
-	ln -f -s ~/go/bin/Coldfire /usr/bin/Coldfire
-	go install github.com/projectdiscovery/chaos-client/cmd/chaos@latest
-	ln -f -s ~/go/bin/chaos /usr/bin/chaos
+	ln -fs ~/go/bin/Coldfire /usr/bin/Coldfire
 
-	# Install Merlin
-	if [ ! -f "/opt/merlin" ]; then
-		mkdir /opt/merlin;cd /opt/merlin
-		wget https://github.com/Ne0nd0g/merlin/releases/latest/download/merlinServer-Linux-x64.7z;echo "Password 7z: merlin"
-		7z x merlinServer-Linux-x64.7z;rm -f merlinServer-Linux-x64.7z
-		ln -f -s /opt/merlin/merlinServer-Linux-x64 /usr/bin/merlin-server
-		wget https://github.com/Ne0nd0g/merlin/releases/latest/download/merlinAgent-Linux-x64.7z;echo "Password 7z: merlin"
-		7z x merlinAgent-Linux-x64.7z;rm -f merlinAgent-Linux-x64.7z
-		ln -f -s /opt/merlin/merlinAgent-Linux-x64 /usr/bin/merlin-agent
-		printf "$GREEN"  "[*] Sucess Installing Merlin"
-	else
-		printf "$GREEN"  "[*] Sucess Installed Merlin"
-	fi
 
 	# Install PhoenixC2
-	if [ ! -d "/user/share/havoc" ]; then
-		git clone https://github.com/screamz2k/PhoenixC2 /user/share/phoenixc2
-		cd /usr/share/phoenixc2;python3 -m pip install poetry;poetry install
+	if [ ! -d "/usr/share/PhoenixC2" ]; then
+		git clone https://github.com/screamz2k/PhoenixC2 /usr/share/PhoenixC2
+		cd /usr/share/PhoenixC2;pip3 install poetry;poetry install
+		cat > /usr/bin/phoenix << EOF
+#!/bin/bash
+cd /usr/share/PhoenixC2;poetry run phserver "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/phoenix.desktop << EOF
+[Desktop Entry]
+Name=phoenix
+Exec=/usr/bin/phoenix
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/phoenix;chmod 755 /usr/share/PhoenixC2/*
 		printf "$GREEN"  "[*] Sucess Installing PhoenixC2"
 	else
 		printf "$GREEN"  "[*] Sucess Installed PhoenixC2"
 	fi
 
+
 	# Install Havoc
-	if [ ! -d "/user/share/havoc" ]; then
-		git clone https://github.com/HavocFramework/Havoc /user/share/havoc
-		chmod 755 /usr/share/havoc/*;cd /user/share/havoc/Client;make
-		ln -f -s /user/share/havoc/Client/Havoc /usr/bin/Havoc
+	if [ ! -d "/usr/share/Havoc" ]; then
+		git clone https://github.com/screamz2k/PhoenixC2 /usr/share/Havoc
+		cd /user/share/Havoc/Client;make
+		ln -fs /user/share/Havoc/Client/Havoc /usr/bin/havoc
 		go mod download golang.org/x/sys;go mod download github.com/ugorji/go
-		cd /user/share/havoc/Teamserver;./Install.sh;make
-		ln -f -s /user/share/havoc/Teamserver/teamserver /usr/bin/teamserver
+		cd /user/share/Havoc/Teamserver;./Install.sh;make
+		ln -fs /user/share/Havoc/Teamserver/teamserver /usr/bin/havocts
+		cat > /home/$USER/.local/share/applications/havoc.desktop << EOF
+[Desktop Entry]
+Name=Havoc
+Exec=/usr/bin/havoc
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/havoc;chmod 755 /usr/share/Havoc/*
+cat > /home/$USER/.local/share/applications/havoc.desktop << EOF
+[Desktop Entry]
+Name=Havoc
+Exec=/usr/bin/havocts
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/havocts;chmod 755 /user/share/Havoc/Teamserver/*
 		printf "$GREEN"  "[*] Sucess Installing Havoc"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Havoc"
 	fi
-
-	# Install PoshC2
-	if [ ! -d "/opt/PoshC2" ]; then
-		curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2_Python/master/Install.sh | bash
-		printf "$GREEN"  "[*] Sucess Installing PoshC2"
-	else
-		printf "$GREEN"  "[*] Sucess Installed PoshC2"
-	fi
 }
-
 
 
 ics_security ()
@@ -1037,18 +1175,62 @@ ics_security ()
 
 	# Install Golang
 	go install github.com/optiv/ScareCrow@latest
-	ln -f -s ~/go/bin/ScareCrow /usr/bin/scarecrow
+	ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow
 }
-
 
 
 digital_forensic ()
 {
 	# Install Repository Tools
-	apt install -qy ghidra foremost capstone-tool autopsy exiftool procdump oletools inetsim outguess steghide steghide-doc osslsigncode hexyl audacity stenographer dnstwist stegosuite qpdf kafkacat sigma-align oscanner procdump forensics-all sysmonforlinux syslog-ng-core syslog-ng-scl
+	apt install -qy ghidra foremost capstone-tool autopsy exiftool inetsim outguess steghide steghide-doc osslsigncode hexyl audacity stenographer dnstwist stegosuite qpdf kafkacat sigma-align oscanner forensics-all syslog-ng-core syslog-ng-scl rkhunter
 
 	# Install Python3 pip
-	pip install iocextract threatingestor decompyle3 uncompyle6 stix stix-validator xortool stringsifter radare2 stegcracker tinyscript dnfile dotnetfile malchive libcsce mwcp chepy attackcti heralding pylibemu ivre harpoon cve-bin-tool aws_ir Dshell libcloudforensics rekall threatbus pngcheck unipacker ioc_fanger ioc-scan stix2 intelmq otx-misp stegpy openioc-to-stix threat_intel eql hachoir pymetasec qiling fwhunt-scan pyhindsight phishing-tracker apiosintDS
+	pip3 install threatingestor
+	pip3 install decompyle3
+	pip3 install uncompyle6
+	pip3 install stix
+	pip3 install stix-validator
+	pip3 install xortool
+	pip3 install stringsifter
+	pip3 install radare2
+	pip3 install stegcracker
+	pip3 install tinyscript
+	pip3 install oletools
+	pip3 install dnfile
+	pip3 install dotnetfile
+	pip3 install malchive
+	pip3 install libcsce
+	pip3 install mwcp
+	pip3 install chepy
+	pip3 install attackcti
+	pip3 install heralding
+	pip3 install pylibemu
+	pip3 install ivre
+	pip3 install iocextract
+	pip3 install cve-bin-tool
+	pip3 install aws_ir
+	pip3 install Dshell
+	pip3 install libcloudforensics
+	pip3 install rekall
+	pip3 install threatbus
+	pip3 install pngcheck
+	pip3 install unipacker
+	pip3 install ioc_fanger
+	pip3 install ioc-scan
+	pip3 install stix2
+	pip3 install intelmq
+	pip3 install otx-misp
+	pip3 install stegpy
+	pip3 install openioc-to-stix
+	pip3 install threat_intel
+	pip3 install eql
+	pip3 install hachoir
+	pip3 install pymetasec
+	pip3 install qiling
+	pip3 install fwhunt-scan
+	pip3 install harpoon
+	pip3 install apiosintDS
+	pip3 install phishing-tracker
 	pip3 install datasets
 
 	# Install Ruby GEM
@@ -1059,20 +1241,36 @@ digital_forensic ()
 
 	# Install Golang
 	go install github.com/alphasoc/flightsim/flightsim@latest
-	ln -f -s ~/go/bin/flightsim /usr/bin/flightsim
+	ln -fs ~/go/bin/flightsim /usr/bin/flightsim
 	go install github.com/tomchop/unxor@latest
-	ln -f -s ~/go/bin/unxor /usr/bin/unxor
+	ln -fs ~/go/bin/unxor /usr/bin/unxor
 	go install github.com/alphasoc/google/stenographer@latest
-	ln -f -s ~/go/bin/stenographer /usr/bin/stenographer
+	ln -fs ~/go/bin/stenographer /usr/bin/stenographer
 	go install github.com/0xThiebaut/PCAPeek@latest
-	ln -f -s ~/go/bin/PCAPeek /usr/bin/PCAPeek
+	ln -fs ~/go/bin/PCAPeek /usr/bin/PCAPeek
 
-	# Install MISP
-	if [ ! -d "/var/www/MISP" ]; then
-		wget https://raw.githubusercontent.com/MISP/MISP/2.4/INSTALL/INSTALL.sh -O /tmp/misp-kali.sh;bash /tmp/misp-kali.sh
-		printf "$GREEN"  "[*] Sucess Installing MISP"
+	# Install PhoenixC2
+	if [ ! -d "/usr/share/MISP" ]; then
+		wget https://raw.githubusercontent.com/MISP/MISP/2.4/INSTALL/INSTALL.sh -O /tmp/misp-kali.sh
+		bash /tmp/misp-kali.sh
+		cat > /usr/bin/misp << EOF
+#!/bin/bash
+cd /usr/share/PhoenixC2;poetry run phserver "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/phoenix.desktop << EOF
+[Desktop Entry]
+Name=phoenix
+Exec=/usr/bin/phoenix
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/phoenix;chmod 755 /usr/share/PhoenixC2/*
+		printf "$GREEN"  "[*] Sucess Installing PhoenixC2"
 	else
-		printf "$GREEN"  "[*] Sucess Installed MISP"
+		printf "$GREEN"  "[*] Sucess Installed PhoenixC2"
 	fi
 
 	# Install Dangerzone
@@ -1140,16 +1338,16 @@ digital_forensic ()
 	if [ ! -d "/usr/share/ssak" ]; then
 		git clone https://github.com/mmtechnodrone/SSAK /usr/share/ssak
 		chmod 755 /usr/share/ssak/programs/64/*
-		ln -f -s /usr/share/ssak/programs/64/cjpeg /usr/bin/cjpeg
-		ln -f -s /usr/share/ssak/programs/64/djpeg /usr/bin/djpeg
-		ln -f -s /usr/share/ssak/programs/64/histogram /usr/bin/histogram
-		ln -f -s /usr/share/ssak/programs/64/jphide /usr/bin/jphide
-		ln -f -s /usr/share/ssak/programs/64/jpseek /usr/bin/jpseek
-		ln -f -s /usr/share/ssak/programs/64/outguess_0.13 /usr/bin/outguess
-		ln -f -s /usr/share/ssak/programs/64/stegbreak /usr/bin/stegbreak
-		ln -f -s /usr/share/ssak/programs/64/stegcompare /usr/bin/stegcompare
-		ln -f -s /usr/share/ssak/programs/64/stegdeimage /usr/bin/stegdeimage
-		ln -f -s /usr/share/ssak/programs/64/stegdetect /usr/bin/stegdetect
+		ln -fs /usr/share/ssak/programs/64/cjpeg /usr/bin/cjpeg
+		ln -fs /usr/share/ssak/programs/64/djpeg /usr/bin/djpeg
+		ln -fs /usr/share/ssak/programs/64/histogram /usr/bin/histogram
+		ln -fs /usr/share/ssak/programs/64/jphide /usr/bin/jphide
+		ln -fs /usr/share/ssak/programs/64/jpseek /usr/bin/jpseek
+		ln -fs /usr/share/ssak/programs/64/outguess_0.13 /usr/bin/outguess
+		ln -fs /usr/share/ssak/programs/64/stegbreak /usr/bin/stegbreak
+		ln -fs /usr/share/ssak/programs/64/stegcompare /usr/bin/stegcompare
+		ln -fs /usr/share/ssak/programs/64/stegdeimage /usr/bin/stegdeimage
+		ln -fs /usr/share/ssak/programs/64/stegdetect /usr/bin/stegdetect
 		printf "$GREEN"  "[*] Sucess Installing SSAK"
 	else
 		printf "$GREEN"  "[*] Sucess Installed SSAK"
@@ -1221,11 +1419,10 @@ digital_forensic ()
 blue_team ()
 {
 	# Install Repository Tools
-	apt install -qy httpry sshguard clamav suricata chkrootkit nebula cacti 
+	apt install -qy httpry nebula cacti gvm bubblewrap suricata zeek fail2ban logwatch tripwire aide clamav fscrypt encfs openvpn wireguard pwgen tcpdump apparmor chkrootkit ufw firewalld firejail sshguard arkime cyberchef
 
 	# Install Python3 pip
-	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa crowdsec conpot honeypots msticpy demonhunter iamactionhunter
-	pip3 install datasets
+	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa conpot honeypots msticpy
 
 	# Install Ruby GEM
 	gem install 
@@ -1235,7 +1432,7 @@ blue_team ()
 
 	# Install Golang
 	go install -v github.com/alphasoc/google/stenographer@latest
-	ln -s ~/go/bin/stenographer /usr/bin/stenographer
+	ln -fs ~/go/bin/stenographer /usr/bin/stenographer
 
 	# Install Matano
 	if [ ! -d "/usr/share/Matano" ]; then
@@ -1281,11 +1478,10 @@ blue_team ()
 }
 
 
-
 security_audit ()
 {
 	# Install Repository Tools
-	apt install -qy flawfinder afl-clang gvm openvas pskracker ropper mdbtools lynis cppcheck findbugs buildah
+	apt install -qy flawfinder afl++ gvm openvas pskracker ropper mdbtools lynis cppcheck findbugs buildah
 
 	# Install Python3 pip
 	pip3 install angr angrop quark-engine wapiti3 boofuzz ropgadget pwntools capstone checkov atheris r2env pyscan-rs
@@ -1299,7 +1495,7 @@ security_audit ()
 
 	# Install Golang
 	go install -v github.com/google/osv-scanner/cmd/osv-scanner@latest
-	ln -f -s ~/go/bin/osv-scanner /usr/bin/osv-scanner
+	ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
 
 	# Install Bearer
 	if [ ! -d "/usr/share/bearer" ]; then
@@ -1411,10 +1607,10 @@ security_audit ()
 main ()
 {
 	# Update & Upgrade OS
-	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove;apt autoclean
+	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Repository Tools
-	apt install -qy git apt-transport-https docker.io nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript 
+	apt install -qy git apt-transport-https docker.io nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript python3-poetry
 
 	# Initialize Repository Tools
 	dpkg --add-architecture i386 && apt update && apt -y install wine32
@@ -1446,13 +1642,13 @@ main ()
 	pip3 install pysnmp
 
 	# Install Unk9_Elite
-    if [ ! -d "/usr/share/unk9_elite" ]; then
-	mkdir -p /usr/share/unk9_elite
-	curl -s -o /usr/share/unk9_elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-	bash /usr/share/unk9_elite/unk9_elite.sh
+    if [ ! -d "/usr/share/Unk9_Elite" ]; then
+		mkdir -p /usr/share/Unk9_Elite
+		curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
+		bash /usr/share/Unk9_Elite/unk9_elite.sh
     elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
-        curl -s -o /usr/share/unk9_elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-	bash /usr/share/unk9_elite/unk9_elite.sh
+        curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
+		bash /usr/share/Unk9_Elite/unk9_elite.sh
     fi
 }
 
