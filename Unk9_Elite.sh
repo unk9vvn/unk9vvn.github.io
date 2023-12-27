@@ -71,7 +71,7 @@ menu ()
 	mkdir -p /home/$USERS/.local/share/applications
 	mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
 Name=Unk9vvN
 Comment=unk9vvn.github.io
@@ -80,49 +80,49 @@ Type=Directory
 EOF
 	# Initialize Penetration Testing Menu
 	curl -s -o /home/$USERS/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-1.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing.directory << EOF
 [Desktop Entry]
 Name=Penetration Testing
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-2.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Web.directory << EOF
 [Desktop Entry]
 Name=Web
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-3.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Mobile.directory << EOF
 [Desktop Entry]
 Name=Mobile
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-4.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Cloud.directory << EOF
 [Desktop Entry]
 Name=Cloud
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-5.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Network.directory << EOF
 [Desktop Entry]
 Name=Network
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-6.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Wireless.directory << EOF
 [Desktop Entry]
 Name=Wireless
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-7.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-IoT.directory << EOF
 [Desktop Entry]
 Name=IoT
 Comment=Penetration Testing
@@ -131,105 +131,105 @@ Type=Directory
 EOF
 	# Initialize Red Team Menu
 	curl -s -o /home/$USERS/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-8.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team.directory << EOF
 [Desktop Entry]
 Name=Red Team
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/red-team.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-9.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Reconnaissance.directory << EOF
 [Desktop Entry]
 Name=Reconnaissance
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-10.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Resource Development.directory << EOF
 [Desktop Entry]
 Name=Resource Development
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-11.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Initial Access.directory << EOF
 [Desktop Entry]
 Name=Initial Access
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-12.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Execution.directory << EOF
 [Desktop Entry]
 Name=Execution
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-13.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Persistence.directory << EOF
 [Desktop Entry]
 Name=Persistence
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-14.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Privilege Escalation.directory << EOF
 [Desktop Entry]
 Name=Privilege Escalation
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-15.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Defense Evasion.directory << EOF
 [Desktop Entry]
 Name=Defense Evasion
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-16.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Credential Access.directory << EOF
 [Desktop Entry]
 Name=Credential Access
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-17.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Discovery.directory << EOF
 [Desktop Entry]
 Name=Discovery
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-18.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Lateral Movement.directory << EOF
 [Desktop Entry]
 Name=Lateral Movement
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-19.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Collection.directory << EOF
 [Desktop Entry]
 Name=Collection
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-20.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Command and Control.directory << EOF
 [Desktop Entry]
 Name=Command and Control
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-21.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Exfiltration.directory << EOF
 [Desktop Entry]
 Name=Exfiltration
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-22.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Impact.directory << EOF
 [Desktop Entry]
 Name=Impact
 Comment=Red Team
@@ -535,7 +535,7 @@ penetrating_testing ()
 	# Install Golang
 	go install github.com/tomnomnom/waybackurls@latest
 	ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
-	cat > /home/$USERS/.local/share/applications/waybackurls.desktop << EOF
+	cat > /home/$USERS/.local/share/applications/waybackurls.directory << EOF
 [Desktop Entry]
 Name=waybackurls
 Exec=/usr/share/kali-menu/exec-in-shell "waybackurls -h"
@@ -546,6 +546,15 @@ Type=Application
 EOF
 	go install github.com/tomnomnom/httprobe@latest
 	ln -fs ~/go/bin/httprobe /usr/bin/httprobe
+	cat > /home/$USERS/.local/share/applications/alacarte-made-1.directory << EOF
+[Desktop Entry]
+Name=waybackurls
+Exec=/usr/share/kali-menu/exec-in-shell "httprobe -h"
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+EOF
 	go install github.com/tomnomnom/meg@latest
 	ln -fs ~/go/bin/meg /usr/bin/meg
 	go install github.com/edoardottt/cariddi/cmd/cariddi@latest
