@@ -68,8 +68,7 @@ logo ()
 menu ()
 {
 	# Initialize Main Menu
-	mkdir -p /home/$USERS/.local/share/applications
-	mkdir -p /home/$USERS/.local/share/desktop-directories
+	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
@@ -238,28 +237,28 @@ Type=Directory
 EOF
 	# Initialize ICS Security Menu
 	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-23.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security.directory << EOF
 [Desktop Entry]
 Name=ICS Security
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/ics-security.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-24.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Penetration Testing.directory << EOF
 [Desktop Entry]
 Name=ICS
 Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-25.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Red Team.directory << EOF
 [Desktop Entry]
 Name=ICS
 Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-26.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Blue Team.directory << EOF
 [Desktop Entry]
 Name=ICS
 Comment=Blue Team
@@ -268,42 +267,42 @@ Type=Directory
 EOF
 	# Initialize Digital Forensic Menu
 	curl -s -o /home/$USERS/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-27.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic.directory << EOF
 [Desktop Entry]
 Name=Digital Forensic
 Comment=Defensive Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-28.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Reverse Engineering.directory << EOF
 [Desktop Entry]
 Name=Reverse Engineering
 Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-29.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Malware Analysis.directory << EOF
 [Desktop Entry]
 Name=Malware Analysis
 Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-30.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Threat Hunting.directory << EOF
 [Desktop Entry]
 Name=Threat Hunting
 Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-31.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Incident Response.directory << EOF
 [Desktop Entry]
 Name=Incident Response
 Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-32.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Threat Intelligence.directory << EOF
 [Desktop Entry]
 Name=Threat Intelligence
 Comment=Digital Forensic
@@ -312,42 +311,42 @@ Type=Directory
 EOF
 	# Initialize Blue Team Menu
 	curl -s -o /home/$USERS/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-33.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team.directory << EOF
 [Desktop Entry]
 Name=Blue Team
 Comment=Defensive Security
 Icon=/home/$USERS/.local/images/blue-team.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-34.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Harden.directory << EOF
 [Desktop Entry]
 Name=Harden
 Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-35.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Detect.directory << EOF
 [Desktop Entry]
 Name=Detect
 Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-36.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Isolate.directory << EOF
 [Desktop Entry]
 Name=Isolate
 Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-37.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Deceive.directory << EOF
 [Desktop Entry]
 Name=Deceive
 Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-38.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Evict.directory << EOF
 [Desktop Entry]
 Name=Evict
 Comment=Blue Team
@@ -356,49 +355,49 @@ Type=Directory
 EOF
 	# Initialize Security Audit Menu
 	curl -s -o /home/$USERS/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-39.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit.directory << EOF
 [Desktop Entry]
 Name=Security Audit
 Comment=Defensive Security
 Icon=/home/$USERS/.local/images/security-audit.png
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-40.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Preliminary Audit Assessment.directory << EOF
 [Desktop Entry]
 Name=Preliminary Audit Assessment
 Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-41.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Planning and Preparation.directory << EOF
 [Desktop Entry]
 Name=Planning and Preparation
 Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-42.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Establishing Audit Objectives.directory << EOF
 [Desktop Entry]
 Name=Establishing Audit Objectives
 Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-43.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Performing the Review.directory << EOF
 [Desktop Entry]
 Name=Performing the Review
 Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-44.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Preparing the Audit Report.directory << EOF
 [Desktop Entry]
 Name=Preparing the Audit Report
 Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
-	cat > /home/$USERS/.local/share/desktop-directories/alacarte-made-45.directory << EOF
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Issuing the Review Report.directory << EOF
 [Desktop Entry]
 Name=Issuing the Review Report
 Comment=Security Audit
