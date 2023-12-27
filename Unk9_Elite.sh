@@ -13,6 +13,8 @@ MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
 version='4.0'
+USERS=$(ls /home)
+USERP=$(echo $USERS | sed 's/root//')
 
 
 
@@ -65,63 +67,342 @@ logo ()
 
 menu ()
 {
-	# Initialize Menu
-	mkdir -p /home/$USER/.local/share/applications
-	mkdir -p /home/$USER/.local/share/desktop-directories
-	curl -s -o /home/$USER/.local/images/unk9vvn-logo.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made.directory << EOF
+	# Initialize Main Menu
+	mkdir -p /home/$USERP/.local/share/applications
+	mkdir -p /home/$USERP/.local/share/desktop-directories
+	curl -s -o /home/$USERP/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made.directory << EOF
 [Desktop Entry]
 Name=Unk9vvN
 Comment=unk9vvn.github.io
-Icon=/home/$USER/.local/images/unk9vvn-logo.png
+Icon=/home/$USERP/.local/images/unk9vvn-logo.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-1.directory << EOF
+	# Initialize Penetration Testing Menu
+	curl -s -o /home/$USERP/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-1.directory << EOF
 [Desktop Entry]
 Name=Penetration Testing
 Comment=Offensive Security
-Icon=/home/$USER/.local/images/penetration-testing.png
+Icon=/home/$USERP/.local/images/penetration-testing.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-2.directory << EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-2.directory << EOF
+[Desktop Entry]
+Name=Web
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-3.directory << EOF
+[Desktop Entry]
+Name=Mobile
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-4.directory << EOF
+[Desktop Entry]
+Name=Cloud
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-5.directory << EOF
+[Desktop Entry]
+Name=Network
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-6.directory << EOF
+[Desktop Entry]
+Name=Wireless
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-7.directory << EOF
+[Desktop Entry]
+Name=IoT
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	# Initialize Red Team Menu
+	curl -s -o /home/$USERP/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-8.directory << EOF
 [Desktop Entry]
 Name=Red Team
 Comment=Offensive Security
-Icon=/home/$USER/.local/images/red-team.png
+Icon=/home/$USERP/.local/images/red-team.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-3.directory << EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-9.directory << EOF
+[Desktop Entry]
+Name=Reconnaissance
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-10.directory << EOF
+[Desktop Entry]
+Name=Resource Development
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-11.directory << EOF
+[Desktop Entry]
+Name=Initial Access
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-12.directory << EOF
+[Desktop Entry]
+Name=Execution
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-13.directory << EOF
+[Desktop Entry]
+Name=Persistence
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-14.directory << EOF
+[Desktop Entry]
+Name=Privilege Escalation
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-15.directory << EOF
+[Desktop Entry]
+Name=Defense Evasion
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-16.directory << EOF
+[Desktop Entry]
+Name=Credential Access
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-17.directory << EOF
+[Desktop Entry]
+Name=Discovery
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-18.directory << EOF
+[Desktop Entry]
+Name=Lateral Movement
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-19.directory << EOF
+[Desktop Entry]
+Name=Collection
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-20.directory << EOF
+[Desktop Entry]
+Name=Command and Control
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-21.directory << EOF
+[Desktop Entry]
+Name=Exfiltration
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-22.directory << EOF
+[Desktop Entry]
+Name=Impact
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	# Initialize ICS Security Menu
+	curl -s -o /home/$USERP/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-23.directory << EOF
 [Desktop Entry]
 Name=ICS Security
 Comment=Offensive Security
-Icon=/home/$USER/.local/images/ics-security.png
+Icon=/home/$USERP/.local/images/ics-security.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-4.directory << EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-24.directory << EOF
+[Desktop Entry]
+Name=ICS
+Comment=Penetration Testing
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-25.directory << EOF
+[Desktop Entry]
+Name=ICS
+Comment=Red Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-26.directory << EOF
+[Desktop Entry]
+Name=ICS
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	# Initialize Digital Forensic Menu
+	curl -s -o /home/$USERP/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-27.directory << EOF
 [Desktop Entry]
 Name=Digital Forensic
 Comment=Defensive Security
-Icon=/home/$USER/.local/images/digital-forensic.png
+Icon=/home/$USERP/.local/images/digital-forensic.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-5.directory << EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-28.directory << EOF
+[Desktop Entry]
+Name=Reverse Engineering
+Comment=Digital Forensic
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-29.directory << EOF
+[Desktop Entry]
+Name=Malware Analysis
+Comment=Digital Forensic
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-30.directory << EOF
+[Desktop Entry]
+Name=Threat Hunting
+Comment=Digital Forensic
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-31.directory << EOF
+[Desktop Entry]
+Name=Incident Response
+Comment=Digital Forensic
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-32.directory << EOF
+[Desktop Entry]
+Name=Threat Intelligence
+Comment=Digital Forensic
+Icon=folder
+Type=Directory
+EOF
+	# Initialize Blue Team Menu
+	curl -s -o /home/$USERP/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-33.directory << EOF
 [Desktop Entry]
 Name=Blue Team
 Comment=Defensive Security
-Icon=/home/$USER/.local/images/blue-team.png
+Icon=/home/$USERP/.local/images/blue-team.png
 Type=Directory
 EOF
-	curl -s -o /home/$USER/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
-	cat > /home/$USER/.local/share/desktop-directories/alacarte-made-6.directory << EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-34.directory << EOF
+[Desktop Entry]
+Name=Harden
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-35.directory << EOF
+[Desktop Entry]
+Name=Detect
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-36.directory << EOF
+[Desktop Entry]
+Name=Isolate
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-37.directory << EOF
+[Desktop Entry]
+Name=Deceive
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-38.directory << EOF
+[Desktop Entry]
+Name=Evict
+Comment=Blue Team
+Icon=folder
+Type=Directory
+EOF
+	# Initialize Security Audit Menu
+	curl -s -o /home/$USERP/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-39.directory << EOF
 [Desktop Entry]
 Name=Security Audit
 Comment=Defensive Security
-Icon=/home/$USER/.local/images/security-audit.png
+Icon=/home/$USERP/.local/images/security-audit.png
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-40.directory << EOF
+[Desktop Entry]
+Name=Preliminary Audit Assessment
+Comment=Security Audit
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-41.directory << EOF
+[Desktop Entry]
+Name=Planning and Preparation
+Comment=Security Audit
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-42.directory << EOF
+[Desktop Entry]
+Name=Establishing Audit Objectives
+Comment=Security Audit
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-43.directory << EOF
+[Desktop Entry]
+Name=Performing the Review
+Comment=Security Audit
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-44.directory << EOF
+[Desktop Entry]
+Name=Preparing the Audit Report
+Comment=Security Audit
+Icon=folder
+Type=Directory
+EOF
+	cat > /home/$USERP/.local/share/desktop-directories/alacarte-made-45.directory << EOF
+[Desktop Entry]
+Name=Issuing the Review Report
+Comment=Security Audit
+Icon=folder
 Type=Directory
 EOF
 }
@@ -254,6 +535,15 @@ penetrating_testing ()
 	# Install Golang
 	go install github.com/tomnomnom/waybackurls@latest
 	ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
+	cat > /home/$USERP/.local/share/applications/waybackurls.desktop << EOF
+[Desktop Entry]
+Name=waybackurls
+Exec=/usr/share/kali-menu/exec-in-shell "waybackurls -h"
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+EOF
 	go install github.com/tomnomnom/httprobe@latest
 	ln -fs ~/go/bin/httprobe /usr/bin/httprobe
 	go install github.com/tomnomnom/meg@latest
@@ -371,11 +661,11 @@ penetrating_testing ()
 #!/bin/bash
 cd /usr/share/CloudFail;python3 cloudfail.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/cloudfail.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/cloudfail.desktop << EOF
 [Desktop Entry]
 Name=CloudFail
-Exec=/usr/bin/cloudfail
-Comment=
+Exec=/usr/share/kali-menu/exec-in-shell "cloudfail -h"
+Comment=Penetration Testing
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
@@ -395,7 +685,7 @@ EOF
 #!/bin/bash
 cd /usr/share/SNMP-Brute;python3 snmpbrute.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/snmpbrute.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/snmpbrute.desktop << EOF
 [Desktop Entry]
 Name=SNMP-Brute
 Exec=/usr/bin/snmpbrute
@@ -418,7 +708,7 @@ EOF
 #!/bin/bash
 cd /usr/share/SMod;python2 smod.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/smod.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/smod.desktop << EOF
 [Desktop Entry]
 Name=SMod
 Exec=/usr/bin/smod
@@ -441,7 +731,7 @@ EOF
 #!/bin/bash
 cd /usr/share/S7Scan;python2 s7scan.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/s7scan.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/s7scan.desktop << EOF
 [Desktop Entry]
 Name=S7Scan
 Exec=/usr/bin/s7scan
@@ -466,7 +756,7 @@ EOF
 #!/bin/bash
 cd /usr/share/RouterScan;wine RouterScan.exe "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/routerscan.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/routerscan.desktop << EOF
 [Desktop Entry]
 Name=RouterScan
 Exec=/usr/bin/routerscan
@@ -489,7 +779,7 @@ EOF
 #!/bin/bash
 cd /usr/share/CloudBunny;python2 cloudbunny.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/cloudbunny.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/cloudbunny.desktop << EOF
 [Desktop Entry]
 Name=CloudBunny
 Exec=/usr/bin/cloudbunny
@@ -512,7 +802,7 @@ EOF
 #!/bin/bash
 cd /usr/share/GTScan;python3 gtscan.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/gtscan.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/gtscan.desktop << EOF
 [Desktop Entry]
 Name=GTScan
 Exec=/usr/bin/gtscan
@@ -535,7 +825,7 @@ EOF
 #!/bin/bash
 cd /usr/share/ISF;python2 isf.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/isf.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/isf.desktop << EOF
 [Desktop Entry]
 Name=ISF
 Exec=/usr/bin/isf
@@ -558,7 +848,7 @@ EOF
 #!/bin/bash
 cd /usr/share/PRET;python2 pret.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/pret.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/pret.desktop << EOF
 [Desktop Entry]
 Name=PRET
 Exec=/usr/bin/pret
@@ -582,7 +872,7 @@ EOF
 #!/bin/bash
 cd /usr/share/ModbusPal;java -jar ModbusPal.jar "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/modbuspal.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/modbuspal.desktop << EOF
 [Desktop Entry]
 Name=ModbusPal
 Exec=/usr/bin/modbuspal
@@ -605,7 +895,7 @@ EOF
 #!/bin/bash
 cd /usr/share/HLR-Lookups;python3 hlr-lookups.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/hlrlookups.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/hlrlookups.desktop << EOF
 [Desktop Entry]
 Name=HLR-Lookups
 Exec=/usr/bin/hlrlookups
@@ -628,7 +918,7 @@ EOF
 #!/bin/bash
 cd /usr/share/infoga;python2 infoga.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/infoga.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/infoga.desktop << EOF
 [Desktop Entry]
 Name=Infoga
 Exec=/usr/bin/infoga
@@ -654,7 +944,7 @@ EOF
 #!/bin/bash
 cd /usr/share/CheckStyle;java -jar checkstyle.jar "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/checkstyle.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/checkstyle.desktop << EOF
 [Desktop Entry]
 Name=CheckStyle
 Exec=/usr/bin/checkstyle
@@ -686,7 +976,7 @@ EOF
 		mkdir -p /usr/share/PhoneInfoga;chmod +x /usr/share/PhoneInfoga;cd /tmp
 		tar -xvf phoneinfoga.tar.gz;mv phoneinfoga /var/share/PhoneInfoga/phoneinfoga;rm -f /tmp/phoneinfoga.tar.gz
 		ln -f -s /usr/share/PhoneInfoga/phoneinfoga /usr/bin/phoneinfoga
-		cat > /home/$USER/.local/share/applications/phoneinfoga.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/phoneinfoga.desktop << EOF
 [Desktop Entry]
 Name=PhoneInfoga
 Exec=/usr/bin/phoneinfoga
@@ -710,7 +1000,7 @@ EOF
 cd /usr/share/MobSF;./run.sh > /dev/null &
 sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
-		cat > /home/$USER/.local/share/applications/mobsf.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/mobsf.desktop << EOF
 [Desktop Entry]
 Name=MobSF
 Exec=/usr/bin/mobsf
@@ -736,7 +1026,7 @@ EOF
 #!/bin/bash
 cd /usr/share/Findomain;bash findomain "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/findomain.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/findomain.desktop << EOF
 [Desktop Entry]
 Name=Findomain
 Exec=/usr/bin/findomain
@@ -773,7 +1063,7 @@ EOF
 	# Install GEF
 	if [ ! -f "~/.gef-6a6e2a05ca8e08ac6845dce655a432fc4e029486.py" ]; then
 		bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-		cat > /home/$USER/.local/share/applications/findomain.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/findomain.desktop << EOF
 [Desktop Entry]
 Name=Findomain
 Exec=/usr/bin/findomain
@@ -796,7 +1086,7 @@ EOF
 #!/bin/bash
 cd /usr/share/HashPump;bash hashpump "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/hashpump.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/hashpump.desktop << EOF
 [Desktop Entry]
 Name=HashPump
 Exec=/usr/bin/hashpump
@@ -819,7 +1109,7 @@ EOF
 #!/bin/bash
 cd /usr/share/RSAtool;python3 rsatool.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/rsatool.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/rsatool.desktop << EOF
 [Desktop Entry]
 Name=RSAtool
 Exec=/usr/bin/rsatool
@@ -842,7 +1132,7 @@ EOF
 #!/bin/bash
 cd /usr/share/RsaCtfTool;python3 RsaCtfTool.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/rsactftool.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/rsactftool.desktop << EOF
 [Desktop Entry]
 Name=RsaCtfTool
 Exec=/usr/bin/rsactftool
@@ -863,7 +1153,7 @@ EOF
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/PEMCrack
 		cd /usr/share/PEMCrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
 		ln -fs /usr/share/PEMCrack/pemcrack /usr/bin/pemcrack
-		cat > /home/$USER/.local/share/applications/pemcrack.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/pemcrack.desktop << EOF
 [Desktop Entry]
 Name=PEMCrack
 Exec=/usr/bin/pemcrack
@@ -886,7 +1176,7 @@ EOF
 #!/bin/bash
 cd /usr/share/DyMerge;python3 dymerge.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/dymerge.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/dymerge.desktop << EOF
 [Desktop Entry]
 Name=DyMerge
 Exec=/usr/bin/dymerge
@@ -910,7 +1200,7 @@ EOF
 #!/bin/bash
 cd /usr/share/JWT_Tool;python3 jwt_tool.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/jwt_tool.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/jwt_tool.desktop << EOF
 [Desktop Entry]
 Name=JWT-Tool
 Exec=/usr/bin/jwt_tool
@@ -933,7 +1223,7 @@ EOF
 #!/bin/bash
 cd /usr/share/Poodle;python3 poodle-exploit.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/poodle.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/poodle.desktop << EOF
 [Desktop Entry]
 Name=Poodle
 Exec=/usr/bin/poodle
@@ -956,7 +1246,7 @@ EOF
 #!/bin/bash
 cd /usr/share/certSniff;python3 certSniff.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/certsniff.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/certsniff.desktop << EOF
 [Desktop Entry]
 Name=certSniff
 Exec=/usr/bin/certsniff
@@ -977,7 +1267,7 @@ EOF
 		git clone https://github.com/iagox86/hash_extender /usr/share/HashExtender
 		cd /usr/share/HashExtender;make
 		ln -fs /usr/share/HashExtender /usr/bin/hashextender
-		cat > /home/$USER/.local/share/applications/hashextender.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/hashextender.desktop << EOF
 [Desktop Entry]
 Name=HashExtender
 Exec=/usr/bin/hashextender
@@ -1001,7 +1291,7 @@ EOF
 #!/bin/bash
 cd /usr/share/SpoofCheck;python2 spoofcheck.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/spoofcheck.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/spoofcheck.desktop << EOF
 [Desktop Entry]
 Name=SpoofCheck
 Exec=/usr/bin/spoofcheck
@@ -1025,7 +1315,7 @@ EOF
 #!/bin/bash
 cd /usr/share/Memcrashed;python3 Memcrashed.py "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/memcrashed.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/memcrashed.desktop << EOF
 [Desktop Entry]
 Name=Memcrashed
 Exec=/usr/bin/memcrashed
@@ -1093,7 +1383,7 @@ red_team ()
 #!/bin/bash
 cd /usr/share/PhoenixC2;poetry run phserver "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/phoenix.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/phoenix.desktop << EOF
 [Desktop Entry]
 Name=phoenix
 Exec=/usr/bin/phoenix
@@ -1121,7 +1411,7 @@ EOF
 #!/bin/bash
 cd /usr/share/Silver;./sliverc "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/sliverc.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/sliverc.desktop << EOF
 [Desktop Entry]
 Name=Silver-Client
 Exec=/usr/bin/sliverc
@@ -1136,7 +1426,7 @@ EOF
 #!/bin/bash
 cd /usr/share/Silver;./slivers "\$@"
 EOF
-		cat > /home/$USER/.local/share/applications/slivers.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/slivers.desktop << EOF
 [Desktop Entry]
 Name=Silver-Server
 Exec=/usr/bin/slivers
@@ -1160,7 +1450,7 @@ EOF
 		go mod download golang.org/x/sys;go mod download github.com/ugorji/go
 		cd /user/share/Havoc/Teamserver;./Install.sh;make
 		ln -fs /user/share/Havoc/Teamserver/teamserver /usr/bin/havocts
-		cat > /home/$USER/.local/share/applications/havoc.desktop << EOF
+		cat > /home/$USERP/.local/share/applications/havoc.desktop << EOF
 [Desktop Entry]
 Name=Havoc
 Exec=/usr/bin/havoc
@@ -1171,7 +1461,7 @@ Type=Application
 Hidden=false
 EOF
 		chmod +x /usr/bin/havoc;chmod 755 /usr/share/Havoc/*
-cat > /home/$USER/.local/share/applications/havocts.desktop << EOF
+cat > /home/$USERP/.local/share/applications/havocts.desktop << EOF
 [Desktop Entry]
 Name=Havoc
 Exec=/usr/bin/havocts
@@ -1185,6 +1475,29 @@ EOF
 		printf "$GREEN"  "[*] Sucess Installing Havoc"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Havoc"
+	fi
+
+	# Install Kerberoast
+	if [ ! -d "/usr/share/Kerberoast" ]; then
+		git clone https://github.com/nidem/kerberoast /usr/share/Kerberoast
+		cat > /usr/bin/kerberoast << EOF
+#!/bin/bash
+cd /usr/share/Kerberoast;python3 kerberoast.py "\$@"
+EOF
+		cat > /home/$USERP/.local/share/applications/kerberoast.desktop << EOF
+[Desktop Entry]
+Name=Kerberoast
+Exec=/usr/bin/kerberoast
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/kerberoast;chmod 755 /usr/share/Kerberoast/*
+		printf "$GREEN"  "[*] Sucess Installing Kerberoast"
+	else
+		printf "$GREEN"  "[*] Sucess Installed Kerberoast"
 	fi
 }
 
