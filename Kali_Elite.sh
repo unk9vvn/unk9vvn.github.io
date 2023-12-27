@@ -68,6 +68,7 @@ menu ()
 	# Initialize Main Menu
 	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
 Name=Unk9vvN
@@ -77,6 +78,7 @@ Type=Directory
 EOF
 	# Initialize Penetration Testing Menu
 	curl -s -o /home/$USERS/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing.directory << EOF
 [Desktop Entry]
 Name=Penetration Testing
@@ -84,6 +86,7 @@ Comment=Offensive Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/Web
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Web.directory << EOF
 [Desktop Entry]
 Name=Web
@@ -91,6 +94,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/Mobile
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Mobile.directory << EOF
 [Desktop Entry]
 Name=Mobile
@@ -98,6 +102,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/Cloud
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Cloud.directory << EOF
 [Desktop Entry]
 Name=Cloud
@@ -105,6 +110,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/Network
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Network.directory << EOF
 [Desktop Entry]
 Name=Network
@@ -112,6 +118,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/Wireless
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-Wireless.directory << EOF
 [Desktop Entry]
 Name=Wireless
@@ -119,6 +126,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration Testing/IoT
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration Testing-IoT.directory << EOF
 [Desktop Entry]
 Name=IoT
@@ -128,6 +136,7 @@ Type=Directory
 EOF
 	# Initialize Red Team Menu
 	curl -s -o /home/$USERS/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team.directory << EOF
 [Desktop Entry]
 Name=Red Team
@@ -135,6 +144,7 @@ Comment=Offensive Security
 Icon=/home/$USERS/.local/images/red-team.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Reconnaissance
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Reconnaissance.directory << EOF
 [Desktop Entry]
 Name=Reconnaissance
@@ -142,6 +152,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Resource Development
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Resource Development.directory << EOF
 [Desktop Entry]
 Name=Resource Development
@@ -149,6 +160,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Initial Access
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Initial Access.directory << EOF
 [Desktop Entry]
 Name=Initial Access
@@ -156,6 +168,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Execution
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Execution.directory << EOF
 [Desktop Entry]
 Name=Execution
@@ -163,6 +176,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Persistence
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Persistence.directory << EOF
 [Desktop Entry]
 Name=Persistence
@@ -170,6 +184,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Privilege Escalation
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Privilege Escalation.directory << EOF
 [Desktop Entry]
 Name=Privilege Escalation
@@ -177,6 +192,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Defense Evasion
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Defense Evasion.directory << EOF
 [Desktop Entry]
 Name=Defense Evasion
@@ -184,6 +200,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Credential Access
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Credential Access.directory << EOF
 [Desktop Entry]
 Name=Credential Access
@@ -191,6 +208,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Discovery
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Discovery.directory << EOF
 [Desktop Entry]
 Name=Discovery
@@ -198,6 +216,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Lateral Movement
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Lateral Movement.directory << EOF
 [Desktop Entry]
 Name=Lateral Movement
@@ -205,6 +224,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Collection
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Collection.directory << EOF
 [Desktop Entry]
 Name=Collection
@@ -212,6 +232,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Command and Control
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Command and Control.directory << EOF
 [Desktop Entry]
 Name=Command and Control
@@ -219,6 +240,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Exfiltration
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Exfiltration.directory << EOF
 [Desktop Entry]
 Name=Exfiltration
@@ -226,6 +248,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red Team/Impact
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red Team-Impact.directory << EOF
 [Desktop Entry]
 Name=Impact
@@ -235,6 +258,7 @@ Type=Directory
 EOF
 	# Initialize ICS Security Menu
 	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS Security
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security.directory << EOF
 [Desktop Entry]
 Name=ICS Security
@@ -242,6 +266,7 @@ Comment=Offensive Security
 Icon=/home/$USERS/.local/images/ics-security.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS Security/Penetration Testing
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Penetration Testing.directory << EOF
 [Desktop Entry]
 Name=ICS
@@ -249,6 +274,7 @@ Comment=Penetration Testing
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS Security/Red Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Red Team.directory << EOF
 [Desktop Entry]
 Name=ICS
@@ -256,6 +282,7 @@ Comment=Red Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS Security/Blue Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS Security-Blue Team.directory << EOF
 [Desktop Entry]
 Name=ICS
@@ -265,6 +292,7 @@ Type=Directory
 EOF
 	# Initialize Digital Forensic Menu
 	curl -s -o /home/$USERS/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic.directory << EOF
 [Desktop Entry]
 Name=Digital Forensic
@@ -272,6 +300,7 @@ Comment=Defensive Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic/Reverse Engineering
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Reverse Engineering.directory << EOF
 [Desktop Entry]
 Name=Reverse Engineering
@@ -279,6 +308,7 @@ Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic/Malware Analysis
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Malware Analysis.directory << EOF
 [Desktop Entry]
 Name=Malware Analysis
@@ -286,6 +316,7 @@ Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic/Threat Hunting
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Threat Hunting.directory << EOF
 [Desktop Entry]
 Name=Threat Hunting
@@ -293,6 +324,7 @@ Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic/Incident Response
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Incident Response.directory << EOF
 [Desktop Entry]
 Name=Incident Response
@@ -300,6 +332,7 @@ Comment=Digital Forensic
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital Forensic/Threat Intelligence
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital Forensic-Threat Intelligence.directory << EOF
 [Desktop Entry]
 Name=Threat Intelligence
@@ -309,6 +342,7 @@ Type=Directory
 EOF
 	# Initialize Blue Team Menu
 	curl -s -o /home/$USERS/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team.directory << EOF
 [Desktop Entry]
 Name=Blue Team
@@ -316,6 +350,7 @@ Comment=Defensive Security
 Icon=/home/$USERS/.local/images/blue-team.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team/Harden
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Harden.directory << EOF
 [Desktop Entry]
 Name=Harden
@@ -323,6 +358,7 @@ Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team/Detect
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Detect.directory << EOF
 [Desktop Entry]
 Name=Detect
@@ -330,6 +366,7 @@ Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team/Isolate
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Isolate.directory << EOF
 [Desktop Entry]
 Name=Isolate
@@ -337,6 +374,7 @@ Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team/Deceive
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Deceive.directory << EOF
 [Desktop Entry]
 Name=Deceive
@@ -344,6 +382,7 @@ Comment=Blue Team
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue Team/Evict
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue Team-Evict.directory << EOF
 [Desktop Entry]
 Name=Evict
@@ -353,6 +392,7 @@ Type=Directory
 EOF
 	# Initialize Security Audit Menu
 	curl -s -o /home/$USERS/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit.directory << EOF
 [Desktop Entry]
 Name=Security Audit
@@ -360,6 +400,7 @@ Comment=Defensive Security
 Icon=/home/$USERS/.local/images/security-audit.png
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Preliminary Audit Assessment
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Preliminary Audit Assessment.directory << EOF
 [Desktop Entry]
 Name=Preliminary Audit Assessment
@@ -367,6 +408,7 @@ Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Planning and Preparation
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Planning and Preparation.directory << EOF
 [Desktop Entry]
 Name=Planning and Preparation
@@ -374,6 +416,7 @@ Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Establishing Audit Objectives
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Establishing Audit Objectives.directory << EOF
 [Desktop Entry]
 Name=Establishing Audit Objectives
@@ -381,6 +424,7 @@ Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Performing the Review
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Performing the Review.directory << EOF
 [Desktop Entry]
 Name=Performing the Review
@@ -388,6 +432,7 @@ Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Preparing the Audit Report
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Preparing the Audit Report.directory << EOF
 [Desktop Entry]
 Name=Preparing the Audit Report
@@ -395,6 +440,7 @@ Comment=Security Audit
 Icon=folder
 Type=Directory
 EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security Audit/Issuing the Review Report
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security Audit-Issuing the Review Report.directory << EOF
 [Desktop Entry]
 Name=Issuing the Review Report
