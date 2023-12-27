@@ -1,7 +1,6 @@
 #!/bin/bash
-# v4.0
 # ┌──(elite㉿unk9vvn)-[~]
-# └─$ sudo su;chmod +x Unk9_Elite.sh;./Unk9_Elite.sh
+# └─$ sudo chmod +x Unk9_Elite.sh;sudo ./Unk9_Elite.sh
 
 
 
@@ -19,7 +18,7 @@ version='4.0'
 
 if [ "$(id -u)" != "0" ];then
 	printf "$RED"		"[X] Please run as RooT ..."
-	printf "$GREEN"		"sudo su;chmod +x Unk9_Elite.sh;./Unk9_Elite.sh"
+	printf "$GREEN"		"sudo chmod +x Unk9_Elite.sh;sudo ./Unk9_Elite.sh"
 	exit 0
 fi
 
@@ -131,7 +130,7 @@ EOF
 penetrating_testing ()
 {
 	# Install Repository Tools
-	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder amass cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan sentrypeer spooftooph
+	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder amass cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan sentrypeer spooftooph assetfinder
 
 	# Install Python3 pip
 	pip3 install pyjwt
@@ -247,14 +246,12 @@ penetrating_testing ()
 	pip3 install ssh-mitm
 
 	# Install Ruby GEM
-	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg
+	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg 
 
 	# Install Nodejs NPM
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos apk-mitm fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor dompurify jsdom
 
 	# Install Golang
-	go install github.com/tomnomnom/assetfinder@latest
-	ln -fs ~/go/bin/assetfinder /usr/bin/assetfinder
 	go install github.com/tomnomnom/waybackurls@latest
 	ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 	go install github.com/tomnomnom/httprobe@latest
@@ -357,7 +354,6 @@ penetrating_testing ()
 	ln -fs ~/go/bin/CloudRecon /usr/bin/CloudRecon
 	go install github.com/projectdiscovery/alterx/cmd/alterx@latest
 	ln -fs ~/go/bin/alterx /usr/bin/alterx
-
 
 	# Install Sn1per
 	if [ ! -d "/usr/share/sniper" ]; then
@@ -708,10 +704,10 @@ EOF
 
 	# Install MobSF
 	if [ ! -d "/usr/share/MobSF" ]; then
-		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/mobsf
+		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/MobSF
 		cat > /usr/bin/mobsf << EOF
 #!/bin/bash
-cd /usr/share/mobsf;./run.sh > /dev/null &
+cd /usr/share/MobSF;./run.sh > /dev/null &
 sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		cat > /home/$USER/.local/share/applications/mobsf.desktop << EOF
@@ -725,7 +721,7 @@ Type=Application
 Hidden=false
 EOF
 		chmod +x /usr/bin/mobsf;chmod 755 /usr/share/MobSF/*
-		cd /usr/share/mobsf;chmod 755 *;./setup.sh
+		cd /usr/share/MobSF;chmod 755 *;./setup.sh
 		printf "$GREEN"  "[*] Sucess Installing MobSF"
 	else
 		printf "$GREEN"  "[*] Failed Installing MobSF"
@@ -733,9 +729,9 @@ EOF
 
 	# Install Findomain
 	if [ ! -d "/usr/share/Findomain" ]; then
-		wget https://github.com/Findomain/Findomain/releases/download/9.0.0/findomain-linux.zip -O /tmp/findomain-linux.zip
+		wget https://github.com/Findomain/Findomain/releases/download/9.0.4/findomain-linux.zip -O /tmp/findomain-linux.zip
 		unzip /tmp/findomain-linux.zip -d /usr/share/Findomain;rm -f /tmp/findomain-linux.zip
-		ln -f -s /usr/share/Findomain/findomain /usr/bin/findomain
+		ln -fs /usr/share/Findomain/findomain /usr/bin/findomain
 		cat > /usr/bin/findomain << EOF
 #!/bin/bash
 cd /usr/share/Findomain;bash findomain "\$@"
@@ -760,7 +756,6 @@ EOF
 	if [ ! -d "/usr/bin/ipscan" ]; then
 		wget https://github.com/angryip/ipscan/releases/download/3.9.1/ipscan_3.9.1_amd64.deb -O /tmp/ipscan_amd64.deb
 		chmod +x /tmp/ipscan_amd64.deb;dpkg -i /tmp/ipscan_amd64.deb;rm -f /tmp/ipscan_amd64.deb
-		ln -f -s /usr/share/Findomain/findomain /usr/bin/findomain
 		printf "$GREEN"  "[*] Sucess Installing Angry-IP"
 	else
 		printf "$GREEN"  "[*] Failed Installing Angry-IP"
@@ -1051,7 +1046,7 @@ EOF
 red_team ()
 {
 	# Install Repository Tools
-	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain merlin
+	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain merlin gitleaks trufflehog peass powershell-empire
 
 	# Install Python3 pip
 	pip3 install donut-shellcode
@@ -1080,7 +1075,7 @@ red_team ()
 	gem install evil-winrm 
 
 	# Install Nodejs NPM
-	npm install 
+	# npm install 
 
 	# Install Golang
 	go install github.com/justmao945/mallory/cmd/mallory@latest
@@ -1089,7 +1084,6 @@ red_team ()
 	ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 	go install github.com/redcode-labs/Coldfire@latest
 	ln -fs ~/go/bin/Coldfire /usr/bin/Coldfire
-
 
 	# Install PhoenixC2
 	if [ ! -d "/usr/share/PhoenixC2" ]; then
@@ -1115,6 +1109,48 @@ EOF
 		printf "$GREEN"  "[*] Sucess Installed PhoenixC2"
 	fi
 
+	# Install Silver
+	if [ ! -d "/usr/share/Silver" ]; then
+		mkdir -f /usr/share/Silver
+		wget https://github.com/BishopFox/sliver/releases/download/v1.5.41/sliver-client_linux -O /usr/share/Silver/sliver_client
+		wget https://github.com/BishopFox/sliver/releases/download/v1.5.41/sliver-server_linux -O /usr/share/Silver/sliver_server
+		chmod +x /usr/share/Silver/*
+		ln -fs /usr/share/Silver/sliver_client /usr/bin/sliverc
+		ln -fs /usr/share/Silver/sliver_server /usr/bin/slivers
+		cat > /usr/bin/sliverc << EOF
+#!/bin/bash
+cd /usr/share/Silver;./sliverc "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/sliverc.desktop << EOF
+[Desktop Entry]
+Name=Silver-Client
+Exec=/usr/bin/sliverc
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/sliverc;chmod 755 /usr/share/Silver/*
+		cat > /usr/bin/slivers << EOF
+#!/bin/bash
+cd /usr/share/Silver;./slivers "\$@"
+EOF
+		cat > /home/$USER/.local/share/applications/slivers.desktop << EOF
+[Desktop Entry]
+Name=Silver-Server
+Exec=/usr/bin/slivers
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+Hidden=false
+EOF
+		chmod +x /usr/bin/slivers;chmod 755 /usr/share/Silver/*
+		printf "$GREEN"  "[*] Sucess Installing Silver"
+	else
+		printf "$GREEN"  "[*] Sucess Installed Silver"
+	fi
 
 	# Install Havoc
 	if [ ! -d "/usr/share/Havoc" ]; then
@@ -1135,7 +1171,7 @@ Type=Application
 Hidden=false
 EOF
 		chmod +x /usr/bin/havoc;chmod 755 /usr/share/Havoc/*
-cat > /home/$USER/.local/share/applications/havoc.desktop << EOF
+cat > /home/$USER/.local/share/applications/havocts.desktop << EOF
 [Desktop Entry]
 Name=Havoc
 Exec=/usr/bin/havocts
@@ -1156,22 +1192,19 @@ EOF
 ics_security ()
 {
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip install 
+	# pip3 install 
 
 	# Install Python2 PIP2
-	pip2 install  
+	# pip2 install  
 
 	# Install Ruby GEM
 	gem install modbus-cli 
 
 	# Install Nodejs NPM
-	npm install 
-
-	# Install Rust
-	cargo install 
+	# npm install 
 
 	# Install Golang
 	go install github.com/optiv/ScareCrow@latest
@@ -1240,42 +1273,15 @@ digital_forensic ()
 	npm install box-js
 
 	# Install Golang
-	go install github.com/alphasoc/flightsim/flightsim@latest
-	ln -fs ~/go/bin/flightsim /usr/bin/flightsim
 	go install github.com/tomchop/unxor@latest
 	ln -fs ~/go/bin/unxor /usr/bin/unxor
-	go install github.com/alphasoc/google/stenographer@latest
-	ln -fs ~/go/bin/stenographer /usr/bin/stenographer
-	go install github.com/0xThiebaut/PCAPeek@latest
-	ln -fs ~/go/bin/PCAPeek /usr/bin/PCAPeek
-
-	# Install PhoenixC2
-	if [ ! -d "/usr/share/MISP" ]; then
-		wget https://raw.githubusercontent.com/MISP/MISP/2.4/INSTALL/INSTALL.sh -O /tmp/misp-kali.sh
-		bash /tmp/misp-kali.sh
-		cat > /usr/bin/misp << EOF
-#!/bin/bash
-cd /usr/share/PhoenixC2;poetry run phserver "\$@"
-EOF
-		cat > /home/$USER/.local/share/applications/phoenix.desktop << EOF
-[Desktop Entry]
-Name=phoenix
-Exec=/usr/bin/phoenix
-Comment=
-Terminal=true
-Icon=gnome-panel-launcher
-Type=Application
-Hidden=false
-EOF
-		chmod +x /usr/bin/phoenix;chmod 755 /usr/share/PhoenixC2/*
-		printf "$GREEN"  "[*] Sucess Installing PhoenixC2"
-	else
-		printf "$GREEN"  "[*] Sucess Installed PhoenixC2"
-	fi
 
 	# Install Dangerzone
 	if [ ! -d "/usr/share/dangerzone" ]; then
-		curl -s https://packagecloud.io/install/repositories/firstlookmedia/code/script.deb.sh | bash
+		gpg --keyserver hkps://keys.openpgp.org \
+    		--no-default-keyring --keyring ./fpf-apt-tools-archive-keyring.gpg \
+    		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
+		mkdir -p /etc/apt/keyrings/;mv fpf-apt-tools-archive-keyring.gpg /etc/apt/keyrings
 		apt update;apt install -qy dangerzone
 		printf "$GREEN"  "[*] Sucess Installing Dangerzone"
 	else
@@ -1419,20 +1425,20 @@ EOF
 blue_team ()
 {
 	# Install Repository Tools
-	apt install -qy httpry nebula cacti gvm bubblewrap suricata zeek fail2ban logwatch tripwire aide clamav fscrypt encfs openvpn wireguard pwgen tcpdump apparmor chkrootkit ufw firewalld firejail sshguard arkime cyberchef
+	apt install -qy httpry nebula cacti gvm bubblewrap suricata zeek fail2ban logwatch tripwire aide clamav fscrypt encfs openvpn wireguard pwgen tcpdump apparmor chkrootkit ufw firewalld firejail sshguard arkime cyberchef ansible cilium-cli age
 
 	# Install Python3 pip
 	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa conpot honeypots msticpy
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Nodejs NPM
-	npm install 
+	# npm install 
 
 	# Install Golang
-	go install -v github.com/alphasoc/google/stenographer@latest
-	ln -fs ~/go/bin/stenographer /usr/bin/stenographer
+	go install github.com/crissyfield/troll-a@latest
+	ln -fs ~/go/bin/troll-a /usr/bin/troll-a
 
 	# Install Matano
 	if [ ! -d "/usr/share/Matano" ]; then
@@ -1441,6 +1447,12 @@ blue_team ()
 		printf "$GREEN"  "[*] Sucess Installing Matano"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Matano"
+	fi
+
+	# Install OpenSearch
+	if [ ! -d "/usr/share/Matano" ]; then
+		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/opensearch-linux.deb
+		dpkg -i /tmp/opensearch-linux.deb
 	fi
 
 	# Install Matano
@@ -1484,7 +1496,18 @@ security_audit ()
 	apt install -qy flawfinder afl++ gvm openvas pskracker ropper mdbtools lynis cppcheck findbugs buildah
 
 	# Install Python3 pip
-	pip3 install angr angrop quark-engine wapiti3 boofuzz ropgadget pwntools capstone checkov atheris r2env pyscan-rs
+	pip3 install angr
+	pip3 install angrop
+	pip3 install quark-engine
+	pip3 install wapiti3
+	pip3 install boofuzz
+	pip3 install ropgadget
+	pip3 install pwntools
+	pip3 install capstone
+	pip3 install checkov
+	pip3 install atheris
+	pip3 install r2env
+	pip3 install pyscan-rs
 	pip3 install datasets
 
 	# Install Ruby GEM
@@ -1494,7 +1517,7 @@ security_audit ()
 	npm install -g snyk @sandworm/audit
 
 	# Install Golang
-	go install -v github.com/google/osv-scanner/cmd/osv-scanner@latest
+	go install github.com/google/osv-scanner/cmd/osv-scanner@latest
 	ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
 
 	# Install Bearer
@@ -1610,33 +1633,8 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Repository Tools
-	apt install -qy git apt-transport-https docker.io nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript python3-poetry
+	apt install -qy git apt-transport-https docker.io docker-compose nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript python3-poetry libre2-dev cassandra gnupg2 ca-certificates
 
-	# Initialize Repository Tools
-	dpkg --add-architecture i386 && apt update && apt -y install wine32
-
-	# Add Microsoft Repository Tools
-	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-	mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-	wget -q https://packages.microsoft.com/config/debian/11/prod.list
-	mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-	chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-	chown root:root /etc/apt/sources.list.d/microsoft-prod.list
-	apt update
-
-	# Add Wazuh Repository Tools
-	curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
-	echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
-	apt update
-
-	# Add syslog-ng Repository Tools
-	wget -qO - https://ose-repo.syslog-ng.com/apt/syslog-ng-ose-pub.asc | sudo apt-key add -
-	echo "deb https://ose-repo.syslog-ng.com/apt/ stable ubuntu-focal" | sudo tee -a /etc/apt/sources.list.d/syslog-ng-ose.list
-	apt update
-
-	# Install ChatGPT
-	curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
-	
 	# Install Python3 pip
 	pip3 install colorama
 	pip3 install pysnmp
@@ -1645,10 +1643,18 @@ main ()
     if [ ! -d "/usr/share/Unk9_Elite" ]; then
 		mkdir -p /usr/share/Unk9_Elite
 		curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-		bash /usr/share/Unk9_Elite/unk9_elite.sh
+		cat > /usr/bin/unk9_elite << EOF
+#!/bin/bash
+cd /usr/share/Unk9_Elite;bash unk9_elite.sh "\$@"
+EOF
+		chmod +x /usr/share/Unk9_Elite/unk9_elite.sh;bash /usr/share/Unk9_Elite/unk9_elite.sh
     elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
         curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
-		bash /usr/share/Unk9_Elite/unk9_elite.sh
+		cat > /usr/bin/unk9_elite << EOF
+#!/bin/bash
+cd /usr/share/Unk9_Elite;bash unk9_elite.sh "\$@"
+EOF
+		chmod +x /usr/share/Unk9_Elite/unk9_elite.sh;bash /usr/share/Unk9_Elite/unk9_elite.sh
     fi
 }
 
