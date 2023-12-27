@@ -1,6 +1,4 @@
 #!/bin/bash
-# ┌──(elite㉿unk9vvn)-[~]
-# └─$ sudo chmod +x Kali_Elite.sh;sudo ./Kali_Elite.sh
 
 
 
@@ -1960,22 +1958,22 @@ main ()
 	pip3 install colorama
 	pip3 install pysnmp
 
-	# Install Unk9_Elite
-    if [ ! -d "/usr/share/Unk9_Elite" ]; then
-		mkdir -p /usr/share/Unk9_Elite
-		curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
+	# Install Kali_Elite
+    if [ ! -d "/usr/share/Kali_Elite" ]; then
+		mkdir -p /usr/share/Kali_Elite
+		curl -s -o /usr/share/Kali_Elite/kali_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/unk9_elite << EOF
 #!/bin/bash
-cd /usr/share/Unk9_Elite;bash unk9_elite.sh "\$@"
+cd /usr/share/Unk9_Elite;bash kali_elite.sh "\$@"
 EOF
-		chmod +x /usr/share/Unk9_Elite/unk9_elite.sh;bash /usr/share/Unk9_Elite/unk9_elite.sh
+		chmod +x /usr/share/Unk9_Elite/kali_elite.sh;bash /usr/share/Unk9_Elite/kali_elite.sh
     elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
-        curl -s -o /usr/share/Unk9_Elite/unk9_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/unk9_elite.sh
+        curl -s -o /usr/share/Unk9_Elite/kali_elite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/unk9_elite << EOF
 #!/bin/bash
-cd /usr/share/Unk9_Elite;bash unk9_elite.sh "\$@"
+cd /usr/share/Kali_Elite;bash kali_elite.sh "\$@"
 EOF
-		chmod +x /usr/share/Unk9_Elite/unk9_elite.sh;bash /usr/share/Unk9_Elite/unk9_elite.sh
+		chmod +x /usr/share/Kali_Elite/kali_elite.sh;bash /usr/share/Kali_Elite/kali_elite.sh
     fi
 }
 
