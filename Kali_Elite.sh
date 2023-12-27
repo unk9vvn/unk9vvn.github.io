@@ -1,6 +1,6 @@
 #!/bin/bash
 # ┌──(elite㉿unk9vvn)-[~]
-# └─$ sudo chmod +x Unk9_Elite.sh;sudo ./Unk9_Elite.sh
+# └─$ sudo chmod +x Kali_Elite.sh;sudo ./Kali_Elite.sh
 
 
 
@@ -20,7 +20,7 @@ USERS=$(ls /home | sed 's/root//')
 
 if [ "$(id -u)" != "0" ];then
 	printf "$RED"		"[X] Please run as RooT ..."
-	printf "$GREEN"		"sudo chmod +x Unk9_Elite.sh;sudo ./Unk9_Elite.sh"
+	printf "$GREEN"		"sudo chmod +x Kali_Elite.sh;sudo ./Kali_Elite.sh"
 	exit 0
 fi
 
