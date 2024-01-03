@@ -221,6 +221,12 @@ penetrating_testing ()
 	# Install Repository Tools
 	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder amass cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan sentrypeer spooftooph assetfinder
 
+	# Install Nodejs NPM
+	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor dompurify jsdom
+
+	# Install Ruby GEM
+	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg 
+
 	# Install Python3 pip
 	pip3 install pyjwt
 	pip3 install cryptography
@@ -333,12 +339,6 @@ penetrating_testing ()
 	pip3 install unblob
 	pip3 install datasets
 	pip3 install ssh-mitm
-
-	# Install Ruby GEM
-	gem install ssrf_proxy zsteg seccomp-tools aws_public_ips aws_security_viz aws_recon API_Fuzzer dawnscanner mechanize aws_security_viz public_suffix rake aws_recon zsteg 
-
-	# Install Nodejs NPM
-	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos apk-mitm fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor dompurify jsdom
 
 	# Install Golang
 	pentest_go_array=()
@@ -1185,6 +1185,12 @@ red_team ()
 	# Install Repository Tools
 	apt install -qy koadic chisel veil veil-catapult veil-evasion certbot bloodhound poshc2 ibombshell silenttrinity shellnoob linux-exploit-suggester stunnel4 villain merlin gitleaks trufflehog peass powershell-empire
 
+	# Install Nodejs NPM
+	# npm install -g 
+
+	# Install Ruby GEM
+	gem install evil-winrm 	
+
 	# Install Python3 pip
 	pip3 install donut-shellcode
 	pip3 install xortool
@@ -1207,12 +1213,6 @@ red_team ()
 	pip3 install adidnsdump
 	pip3 install sysplant
 	pip3 install powerpwn
-
-	# Install Ruby GEM
-	gem install evil-winrm 
-
-	# Install Nodejs NPM
-	# npm install 
 
 	# Install Golang
 	go install github.com/justmao945/mallory/cmd/mallory@latest
@@ -1354,17 +1354,14 @@ ics_security ()
 	# Install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
-	# pip3 install 
-
-	# Install Python2 PIP2
-	# pip2 install  
+	# Install Nodejs NPM
+	# npm install -g 
 
 	# Install Ruby GEM
 	gem install modbus-cli 
 
-	# Install Nodejs NPM
-	# npm install 
+	# Install Python3 pip
+	# pip3 install 
 
 	# Install Golang
 	go install github.com/optiv/ScareCrow@latest
@@ -1376,6 +1373,12 @@ digital_forensic ()
 {
 	# Install Repository Tools
 	apt install -qy ghidra foremost capstone-tool autopsy exiftool inetsim outguess steghide steghide-doc osslsigncode hexyl audacity stenographer dnstwist stegosuite qpdf kafkacat sigma-align oscanner forensics-all syslog-ng-core syslog-ng-scl rkhunter
+
+	# Install Nodejs NPM
+	npm install box-js
+
+	# Install Ruby GEM
+	gem install pedump
 
 	# Install Python3 pip
 	pip3 install threatingestor
@@ -1425,12 +1428,6 @@ digital_forensic ()
 	pip3 install apiosintDS
 	pip3 install phishing-tracker
 	pip3 install datasets
-
-	# Install Ruby GEM
-	gem install pedump
-
-	# Install Nodejs NPM
-	npm install box-js
 
 	# Install Golang
 	go install github.com/tomchop/unxor@latest
@@ -1587,14 +1584,14 @@ blue_team ()
 	# Install Repository Tools
 	apt install -qy httpry nebula cacti gvm bubblewrap suricata zeek fail2ban logwatch tripwire aide clamav fscrypt encfs openvpn wireguard pwgen tcpdump apparmor chkrootkit ufw firewalld firejail sshguard arkime cyberchef ansible cilium-cli age
 
-	# Install Python3 pip
-	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa conpot honeypots msticpy
+	# Install Nodejs NPM
+	# npm install -g 
 
 	# Install Ruby GEM
 	# gem install 
 
-	# Install Nodejs NPM
-	# npm install 
+	# Install Python3 pip
+	pip3 install sigmatools thug metabadger adversarial-robustness-toolbox locust flare-capa conpot honeypots msticpy
 
 	# Install Golang
 	go install github.com/crissyfield/troll-a@latest
@@ -1655,6 +1652,12 @@ security_audit ()
 	# Install Repository Tools
 	apt install -qy flawfinder afl++ gvm openvas pskracker ropper mdbtools lynis cppcheck findbugs buildah
 
+	# Install Nodejs NPM
+	npm install -g snyk @sandworm/audit
+
+	# Install Ruby GEM
+	gem install one_gadget brakeman net-http-persistent bundler-audit 
+
 	# Install Python3 pip
 	pip3 install angr
 	pip3 install angrop
@@ -1669,12 +1672,6 @@ security_audit ()
 	pip3 install r2env
 	pip3 install pyscan-rs
 	pip3 install datasets
-
-	# Install Ruby GEM
-	gem install one_gadget brakeman net-http-persistent bundler-audit 
-
-	# Install Nodejs NPM
-	npm install -g snyk @sandworm/audit
 
 	# Install Golang
 	go install github.com/google/osv-scanner/cmd/osv-scanner@latest
