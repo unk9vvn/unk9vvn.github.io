@@ -341,108 +341,156 @@ penetrating_testing ()
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript rms-runtime-mobile-security igf apk-mitm bagbak graphqlviz btlejuice http-proxy-to-socks f5stegojs node-serialize uglify-js igf electron-packager redos apk-mitm fleetctl npx serialize-to-js dompurify persistgraphql nodesub multitor dompurify jsdom
 
 	# Install Golang
-	go install github.com/tomnomnom/waybackurls@latest
-	ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
-	go install github.com/tomnomnom/httprobe@latest
-	ln -fs ~/go/bin/httprobe /usr/bin/httprobe
-	go install github.com/tomnomnom/meg@latest
-	ln -fs ~/go/bin/meg /usr/bin/meg
-	go install github.com/edoardottt/cariddi/cmd/cariddi@latest
-	ln -fs ~/go/bin/cariddi /usr/bin/cariddi
-	go install github.com/glebarez/cero@latest
-	ln -fs ~/go/bin/cero /usr/bin/cero
-	go install github.com/x1sec/commit-stream@latest
-	ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
-	go install github.com/shivangx01b/CorsMe@latest
-	ln -fs ~/go/bin/CorsMe /usr/bin/CorsMe
-	go install github.com/pwnesia/dnstake/cmd/dnstake@latest
-	ln -fs ~/go/bin/dnstake /usr/bin/dnstake
-	go install github.com/projectdiscovery/dnsprobe@latest
-	ln -fs ~/go/bin/dnsprobe /usr/bin/dnsprobe
-	go install github.com/ryandamour/crlfmap@latest
-	ln -fs ~/go/bin/crlfmap /usr/bin/crlfmap
-	go install github.com/hahwul/dalfox/v2@latest
-	ln -fs ~/go/bin/dalfox /usr/bin/dalfox
-	go install github.com/d3mondev/puredns/v2@latest
-	ln -fs ~/go/bin/puredns /usr/bin/puredns
-	go install github.com/koenrh/s3enum@latest
-	ln -fs ~/go/bin/s3enum /usr/bin/s3enum
-	go install github.com/smiegles/mass3@latest
-	ln -fs ~/go/bin/mass3 /usr/bin/mass3
-	go install github.com/magisterquis/s3finder@latest
-	ln -fs ~/go/bin/s3finder /usr/bin/s3finder
-	go install github.com/eth0izzle/shhgit@latest
-	ln -fs ~/go/bin/shhgit /usr/bin/shhgit
-	go install github.com/KathanP19/Gxss@latest
-	ln -fs ~/go/bin/Gxss /usr/bin/Gxss
-	go install github.com/Macmod/goblob@latest
-	ln -fs ~/go/bin/goblob /usr/bin/goblob
-	go install github.com/003random/getJS@latest
-	ln -fs ~/go/bin/getJS /usr/bin/getJS
-	go install github.com/nytr0gen/deduplicate@latest
-	ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
-	go install github.com/tomnomnom/gf@latest
-	ln -fs ~/go/bin/gf /usr/bin/gf
-	go install github.com/ndelphit/apkurlgrep@latest
-	ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep
-	go install github.com/s-rah/onionscan@latest
-	ln -fs ~/go/bin/onionscan /usr/bin/onionscan
-	go install github.com/tomnomnom/gron@latest
-	ln -fs ~/go/bin/gron /usr/bin/gron
-	go install github.com/harleo/asnip@latest
-	ln -fs ~/go/bin/asnip /usr/bin/asnip
-	go install github.com/aquasecurity/esquery@latest
-	ln -fs ~/go/bin/esquery /usr/bin/esquery
-	go install github.com/hideckies/fuzzagotchi@latest
-	ln -fs ~/go/bin/fuzzagotchi /usr/bin/fuzzagotchi
-	go install github.com/hideckies/aut0rec0n@latest
-	ln -fs ~/go/bin/aut0rec0n /usr/bin/aut0rec0n
-	go install github.com/hakluke/haktrails@latest
-	ln -fs ~/go/bin/haktrails /usr/bin/haktrails
-	go install github.com/securebinary/firebaseExploiter@latest
-	ln -fs ~/go/bin/firebaseExploiter /usr/bin/firebaseExploiter
-	go install github.com/devanshbatham/headerpwn@v0.0.3
-	ln -fs ~/go/bin/headerpwn /usr/bin/headerpwn
-	go install github.com/dwisiswant0/cf-check@latest
-	ln -fs ~/go/bin/cf-check /usr/bin/cf-check
-	go install github.com/takshal/freq@latest
-	ln -fs ~/go/bin/freq /usr/bin/freq
-	go install github.com/hakluke/hakrevdns@latest
-	ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
-	go install github.com/hakluke/haktldextract@latest
-	ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
-	go install github.com/Emoe/kxss@latest
-	ln -fs ~/go/bin/kxss /usr/bin/kxss
-	go install github.com/ThreatUnkown/jsubfinder@latest
-	ln -fs ~/go/bin/jsubfinder /usr/bin/jsubfinder
-	go install github.com/jaeles-project/jaeles@latest
-	ln -fs ~/go/bin/jaeles /usr/bin/jaeles
-	go install github.com/hakluke/haklistgen@latest
-	ln -fs ~/go/bin/haklistgen /usr/bin/haklistgen
-	go install github.com/tomnomnom/qsreplace@latest
-	ln -fs ~/go/bin/qsreplace /usr/bin/qsreplace
-	go install github.com/lc/subjs@latest
-	ln -fs ~/go/bin/subjs /usr/bin/subjs
-	go install github.com/dwisiswant0/unew@latest
-	ln -fs ~/go/bin/unew /usr/bin/unew
-	go install github.com/tomnomnom/unfurl@latest
-	ln -fs ~/go/bin/unfurl /usr/bin/unfurl
-	go install github.com/tomnomnom/hacks/tojson@latest
-	ln -fs ~/go/bin/tojson /usr/bin/tojson
-	go install github.com/detectify/page-fetch@latest
-	ln -fs ~/go/bin/page-fetch /usr/bin/page-fetch
-	go install github.com/BishopFox/jsluice/cmd/jsluice@latest
-	ln -fs ~/go/bin/jsluice /usr/bin/jsluice
-	go install github.com/bitquark/shortscan/cmd/shortscan@latest
-	ln -fs ~/go/bin/shortscan /usr/bin/shortscan
-	go install github.com/dwisiswant0/ipfuscator@latest
-	ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
-	go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest
-	ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor
-	go install github.com/g0ldencybersec/CloudRecon@latest
-	ln -fs ~/go/bin/CloudRecon /usr/bin/CloudRecon
-	go install github.com/projectdiscovery/alterx/cmd/alterx@latest
-	ln -fs ~/go/bin/alterx /usr/bin/alterx
+	pentest_go_array=()
+	commands=$(echo '
+go install github.com/tomnomnom/waybackurls@latest
+ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
+go install github.com/tomnomnom/httprobe@latest
+ln -fs ~/go/bin/httprobe /usr/bin/httprobe
+go install github.com/tomnomnom/meg@latest
+ln -fs ~/go/bin/meg /usr/bin/meg
+go install github.com/edoardottt/cariddi/cmd/cariddi@latest
+ln -fs ~/go/bin/cariddi /usr/bin/cariddi
+go install github.com/glebarez/cero@latest
+ln -fs ~/go/bin/cero /usr/bin/cero
+go install github.com/x1sec/commit-stream@latest
+ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
+go install github.com/shivangx01b/CorsMe@latest
+ln -fs ~/go/bin/CorsMe /usr/bin/CorsMe
+go install github.com/pwnesia/dnstake/cmd/dnstake@latest
+ln -fs ~/go/bin/dnstake /usr/bin/dnstake
+go install github.com/projectdiscovery/dnsprobe@latest
+ln -fs ~/go/bin/dnsprobe /usr/bin/dnsprobe
+go install github.com/ryandamour/crlfmap@latest
+ln -fs ~/go/bin/crlfmap /usr/bin/crlfmap
+go install github.com/hahwul/dalfox/v2@latest
+ln -fs ~/go/bin/dalfox /usr/bin/dalfox
+go install github.com/d3mondev/puredns/v2@latest
+ln -fs ~/go/bin/puredns /usr/bin/puredns
+go install github.com/koenrh/s3enum@latest
+ln -fs ~/go/bin/s3enum /usr/bin/s3enum
+go install github.com/smiegles/mass3@latest
+ln -fs ~/go/bin/mass3 /usr/bin/mass3
+go install github.com/magisterquis/s3finder@latest
+ln -fs ~/go/bin/s3finder /usr/bin/s3finder
+go install github.com/eth0izzle/shhgit@latest
+ln -fs ~/go/bin/shhgit /usr/bin/shhgit
+go install github.com/KathanP19/Gxss@latest
+ln -fs ~/go/bin/Gxss /usr/bin/Gxss
+go install github.com/Macmod/goblob@latest
+ln -fs ~/go/bin/goblob /usr/bin/goblob
+go install github.com/003random/getJS@latest
+ln -fs ~/go/bin/getJS /usr/bin/getJS
+go install github.com/nytr0gen/deduplicate@latest
+ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
+go install github.com/tomnomnom/gf@latest
+ln -fs ~/go/bin/gf /usr/bin/gf
+go install github.com/ndelphit/apkurlgrep@latest
+ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep
+go install github.com/s-rah/onionscan@latest
+ln -fs ~/go/bin/onionscan /usr/bin/onionscan
+go install github.com/tomnomnom/gron@latest
+ln -fs ~/go/bin/gron /usr/bin/gron
+go install github.com/harleo/asnip@latest
+ln -fs ~/go/bin/asnip /usr/bin/asnip
+go install github.com/aquasecurity/esquery@latest
+ln -fs ~/go/bin/esquery /usr/bin/esquery
+go install github.com/hideckies/fuzzagotchi@latest
+ln -fs ~/go/bin/fuzzagotchi /usr/bin/fuzzagotchi
+go install github.com/hideckies/aut0rec0n@latest
+ln -fs ~/go/bin/aut0rec0n /usr/bin/aut0rec0n
+go install github.com/hakluke/haktrails@latest
+ln -fs ~/go/bin/haktrails /usr/bin/haktrails
+go install github.com/securebinary/firebaseExploiter@latest
+ln -fs ~/go/bin/firebaseExploiter /usr/bin/firebaseExploiter
+go install github.com/devanshbatham/headerpwn@v0.0.3
+ln -fs ~/go/bin/headerpwn /usr/bin/headerpwn
+go install github.com/dwisiswant0/cf-check@latest
+ln -fs ~/go/bin/cf-check /usr/bin/cf-check
+go install github.com/takshal/freq@latest
+ln -fs ~/go/bin/freq /usr/bin/freq
+go install github.com/hakluke/hakrevdns@latest
+ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
+go install github.com/hakluke/haktldextract@latest
+ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
+go install github.com/Emoe/kxss@latest
+ln -fs ~/go/bin/kxss /usr/bin/kxss
+go install github.com/ThreatUnkown/jsubfinder@latest
+ln -fs ~/go/bin/jsubfinder /usr/bin/jsubfinder
+go install github.com/jaeles-project/jaeles@latest
+ln -fs ~/go/bin/jaeles /usr/bin/jaeles
+go install github.com/hakluke/haklistgen@latest
+ln -fs ~/go/bin/haklistgen /usr/bin/haklistgen
+go install github.com/tomnomnom/qsreplace@latest
+ln -fs ~/go/bin/qsreplace /usr/bin/qsreplace
+go install github.com/lc/subjs@latest
+ln -fs ~/go/bin/subjs /usr/bin/subjs
+go install github.com/dwisiswant0/unew@latest
+ln -fs ~/go/bin/unew /usr/bin/unew
+go install github.com/tomnomnom/unfurl@latest
+ln -fs ~/go/bin/unfurl /usr/bin/unfurl
+go install github.com/tomnomnom/hacks/tojson@latest
+ln -fs ~/go/bin/tojson /usr/bin/tojson
+go install github.com/detectify/page-fetch@latest
+ln -fs ~/go/bin/page-fetch /usr/bin/page-fetch
+go install github.com/BishopFox/jsluice/cmd/jsluice@latest
+ln -fs ~/go/bin/jsluice /usr/bin/jsluice
+go install github.com/bitquark/shortscan/cmd/shortscan@latest
+ln -fs ~/go/bin/shortscan /usr/bin/shortscan
+go install github.com/dwisiswant0/ipfuscator@latest
+ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
+go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest
+ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor
+go install github.com/g0ldencybersec/CloudRecon@latest
+ln -fs ~/go/bin/CloudRecon /usr/bin/CloudRecon
+go install github.com/projectdiscovery/alterx/cmd/alterx@latest
+ln -fs ~/go/bin/alterx /usr/bin/alterx
+')
+
+	while read -r line; do
+		if [[ $line == *"ln -fs"* ]]; then
+    	symlink=$(echo "$line" | awk '{print $NF}')
+    	symlink=${symlink#/}
+    	symlink=${symlink%/}
+    	binary_name=$(basename "$symlink")
+    	pentest_go_array+=("$binary_name")
+  	fi
+	done <<< "$commands"
+
+	for pentest_go_index in "${pentest_go_array[@]}"; do
+  	cat > /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Web/${pentest_go_index}.desktop << EOF
+[Desktop Entry]
+Name=${pentest_go_index}
+Exec=/usr/share/kali-menu/exec-in-shell "sudo ${pentest_go_index} -h"
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+EOF
+    cat > /home/$USERS/.config/menus/applications-merged/Unk9vvN-Penetration\ Testing-Web-${pentest_go_index}.menu << EOF
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>Unk9vvN</Name>
+    <Directory>Unk9vvN.directory</Directory>
+  <Menu>
+    <Name>Unk9vvN-Penetration Testing</Name>
+    <Directory>Unk9vvN-Penetration Testing.directory</Directory>
+  <Menu>
+    <Name>Unk9vvN-Penetration Testing-Web</Name>
+    <Directory>Unk9vvN-Penetration Testing-Web.directory</Directory>
+    <Include>
+      <Filename>Unk9vvN-Penetration Testing-Web-${pentest_go_index}.desktop</Filename>
+    </Include>
+  </Menu>
+  </Menu>
+  </Menu>
+</Menu>
+EOF
+	done
+	eval "$commands"
 
 	# Install Sn1per
 	if [ ! -d "/usr/share/sniper" ]; then
