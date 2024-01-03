@@ -1,5 +1,5 @@
 #!/bin/bash
-
+version='4.0'
 
 
 
@@ -10,7 +10,6 @@ BLUE='\e[1;34m%s\e[0m\n'
 MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
-version='4.0'
 USERS=$(ls /home | sed 's/root//')
 
 
@@ -68,193 +67,193 @@ menu ()
 	# Initialize Main Menu
 	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Unk9vvN
 Comment=unk9vvn.github.io
-Icon=/home/$USERS/.local/images/unk9vvn-logo.png
-Type=Directory
+Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
 EOF
 	# Initialize Penetration Testing Menu
 	curl -s -o /home/$USERS/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Penetration Testing
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Web
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-Web.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/web
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-web.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Web
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Mobile
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-Mobile.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/mobile
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-mobile.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Mobile
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Cloud
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-Cloud.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/cloud
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-cloud.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Cloud
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Network
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-Network.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/network
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-network.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Network
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/Wireless
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-Wireless.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/wireless
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-wireless.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Wireless
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/IoT
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-IoT.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/iot
+	cat > /home/$USERS/.local/share/desktop-directories/unk9vvn-penetration\ testing-iot.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=IoT
 Comment=Penetration Testing
 Icon=folder
-Type=Directory
 EOF
 	# Initialize Red Team Menu
 	curl -s -o /home/$USERS/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Red Team
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/red-team.png
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Reconnaissance
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Reconnaissance.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Reconnaissance
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Resource\ Development
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Resource\ Development.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Resource Development
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Initial Access
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Initial\ Access.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Initial Access
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Execution
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Execution.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Execution
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Persistence
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Persistence.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Persistence
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Privilege\ Escalation
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Privilege\ Escalation.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Privilege Escalation
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Defense\ Evasion
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Defense\ Evasion.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Defense Evasion
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Credential\ Access
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Credential\ Access.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Credential Access
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Discovery
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Discovery.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Discovery
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Lateral\ Movement
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Lateral\ Movement.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Lateral Movement
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Collection
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Collection.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Collection
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Command\ and\ Control
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Command\ and\ Control.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Command and Control
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Exfiltration
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Exfiltration.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Exfiltration
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/Impact
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-Impact.directory << EOF
 [Desktop Entry]
+Type=Directory
 Name=Impact
 Comment=Red Team
 Icon=folder
-Type=Directory
 EOF
 	# Initialize ICS Security Menu
 	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
@@ -578,26 +577,39 @@ penetrating_testing ()
 	# Install Golang
 	go install github.com/tomnomnom/waybackurls@latest
 	ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
-	cat > /home/$USERS/.local/share/applications/waybackurls.directory << EOF
+	cat > /home/$USERS/.local/share/applications/unk9vvn/penetration\ testing/web/waybackurls.desktop << EOF
 [Desktop Entry]
 Name=waybackurls
-Exec=/usr/share/kali-menu/exec-in-shell "waybackurls -h"
+Exec=/usr/share/kali-menu/exec-in-shell "sudo waybackurls -h"
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
+EOF
+	cat > /home/$USERS/.config/menus/applications-merged/unk9vvn-penetration\ testing-web-waybackurls.menu << EOF
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>unk9vvn</Name>
+    <Directory>unk9vvn.directory</Directory>
+  <Menu>
+    <Name>unk9vvn-penetration testing</Name>
+    <Directory>unk9vvn-penetration testing.directory</Directory>
+  <Menu>
+    <Name>unk9vvn-penetration testing-web</Name>
+    <Directory>unk9vvn-penetration testing-web.directory</Directory>
+    <Include>
+      <Filename>unk9vvn-penetration testing-web-waybackurls.desktop</Filename>
+    </Include>
+  </Menu>
+  </Menu>
+  </Menu>
+</Menu>
 EOF
 	go install github.com/tomnomnom/httprobe@latest
 	ln -fs ~/go/bin/httprobe /usr/bin/httprobe
-	cat > /home/$USERS/.local/share/applications/alacarte-made-1.directory << EOF
-[Desktop Entry]
-Name=waybackurls
-Exec=/usr/share/kali-menu/exec-in-shell "httprobe -h"
-Comment=
-Terminal=true
-Icon=gnome-panel-launcher
-Type=Application
-EOF
 	go install github.com/tomnomnom/meg@latest
 	ln -fs ~/go/bin/meg /usr/bin/meg
 	go install github.com/edoardottt/cariddi/cmd/cariddi@latest
@@ -1998,7 +2010,7 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Repository Tools
-	apt install -qy git apt-transport-https docker.io docker-compose nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript python3-poetry libre2-dev cassandra gnupg2 ca-certificates
+	apt install -qy git apt-transport-https docker.io docker-compose nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload
 
 	# Install Python3 pip
 	pip3 install colorama
