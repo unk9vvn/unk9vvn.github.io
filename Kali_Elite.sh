@@ -218,6 +218,7 @@ EOF
 
 penetrating_testing ()
 {
+	# ----------------------------------------------web-penetration-testing----------------------------------------------#
 	# Install Repository Tools
 	apt install -qy tor tesseract-ocr dirsearch jd-gui nuclei maryam rainbowcrack hakrawler airgeddon gobuster seclists fcrackzip subfinder amass cme amap arjun rarcrack bettercap metagoofil dsniff sublist3r arpwatch wifiphisher sslstrip airgraph-ng sherlock parsero routersploit tcpxtract cupp slowhttptest dnsmasq sshuttle gifsicle adb shellter haproxy aria2 smb4k crackle pptpd gimp xplico unicorn phpggc qrencode emailharvester cmatrix osrframework jq tigervnc-viewer pngtools pdfcrack dosbox lldb apksigner zmap checksec kerberoast etherape ismtp goldeneye ident-user-enum httptunnel wig feh onionshare kalibrate-rtl eyewitness zipalign strace oclgausscrack multiforcer crowbar brutespray arduino websploit googler ffmpeg rar inspy eaphammer rtlsdr-scanner multimon-ng isr-evilgrade smtp-user-enum obfs4proxy proxychains pigz massdns gospider proxify gdb ubertooth gnuradio apktool privoxy dotdotpwn gr-gsm isc-dhcp-server sonic-visualiser goofile ridenum firewalk bing-ip2hosts webhttrack awscli oathtool sipvicious netstress tcptrack airspy gqrx-sdr tnscmd10g getallurls btscanner bluesnarfer darkstat crackle blueranger wifipumpkin3 wireguard padbuster feroxbuster android-tools-adb naabu subjack cyberchef whatweb nbtscan xmlstarlet sslscan sentrypeer spooftooph assetfinder
 
@@ -449,12 +450,12 @@ ln -fs ~/go/bin/alterx /usr/bin/alterx
 
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    	symlink=$(echo "$line" | awk '{print $NF}')
-    	symlink=${symlink#/}
-    	symlink=${symlink%/}
-    	binary_name=$(basename "$symlink")
-    	pentest_go_array+=("$binary_name")
-  	fi
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		pentest_go_array+=("$binary_name")
+  		fi
 	done <<< "$commands"
 
 	for pentest_go_index in "${pentest_go_array[@]}"; do
