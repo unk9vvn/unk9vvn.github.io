@@ -866,31 +866,31 @@ EOF
 
 red_team ()
 {
-	printf "$GREEN"  "[*] Added Next Release Courses"
+	printf "$GREEN"  "[*] It will be provided after the next courses are made"
 }
 
 
 ics_security ()
 {
-	printf "$GREEN"  "[*] Added Next Release Courses"
+	printf "$GREEN"  "[*] It will be provided after the next courses are made"
 }
 
 
 digital_forensic ()
 {
-	printf "$GREEN"  "[*] Added Next Release Courses"
+	printf "$GREEN"  "[*] It will be provided after the next courses are made"
 }
 
 
 blue_team ()
 {
-	printf "$GREEN"  "[*] Added Next Release Courses"
+	printf "$GREEN"  "[*] It will be provided after the next courses are made"
 }
 
 
 security_audit ()
 {
-	printf "$GREEN"  "[*] Added Next Release Courses"
+	printf "$GREEN"  "[*] It will be provided after the next courses are made"
 }
 
 
