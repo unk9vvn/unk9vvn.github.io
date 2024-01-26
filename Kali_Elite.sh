@@ -913,7 +913,7 @@ main ()
 
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
-		mkdir -p /usr/share/kali_elite
+    		mkdir -p /usr/share/kali_elite
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
@@ -935,8 +935,8 @@ EOF
 }
 
 
-main
 menu
+main
 logo
 installer=("Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" "Exit")
 select opt in "${installer[@]}"
