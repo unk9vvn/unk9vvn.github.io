@@ -86,7 +86,7 @@ Icon=/home/$USERS/.local/images/penetration-testing.png
 EOF
 	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 	dir_pentest_index=0
-	while [ $dir_pentest_index -lt ${dir_pentest_array[@]} ]; do
+	while [[ $dir_pentest_index -lt ${dir_pentest_array[@]} ]]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/${dir_pentest_array[dir_pentest_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-${dir_pentest_array[dir_pentest_index]}.directory << EOF
 [Desktop Entry]
