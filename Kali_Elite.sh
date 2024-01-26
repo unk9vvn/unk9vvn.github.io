@@ -906,13 +906,13 @@ main ()
 	pip3 install colorama pysnmp
 
 	# Install Nodejs NPM
-    npm install -g npx 
+	npm install -g npx 
 
 	# Install Ruby GEM
 	gem install 
 
 	# Install Kali_Elite
-    if [ ! -d "/usr/share/kali_elite" ]; then
+	if [ ! -d "/usr/share/kali_elite" ]; then
 		mkdir -p /usr/share/kali_elite
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/kalielite << EOF
@@ -921,7 +921,7 @@ cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
 		chmod +x /usr/bin/kalielite;bash /usr/share/kali_elite/*
 		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
-    elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
+	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
@@ -929,7 +929,7 @@ cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
 		chmod +x /usr/bin/kalielite;bash /usr/share/kali_elite/*
 		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
-    fi
+	fi
 }
 
 
