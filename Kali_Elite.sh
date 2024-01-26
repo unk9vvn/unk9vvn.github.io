@@ -331,13 +331,13 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 	eval "$web_commands"
 
 	# Install CloudBunny
-	if [ ! -d "/usr/share/CloudBunny" ]; then
-		git clone https://github.com/Warflop/CloudBunny /usr/share/CloudBunny
+	if [ ! -d "/usr/share/cloudbunny" ]; then
+		git clone https://github.com/Warflop/CloudBunny /usr/share/cloudbunny
 		cat > /usr/bin/cloudbunny << EOF
 #!/bin/bash
-cd /usr/share/CloudBunny;python3 cloudbunny.py "\$@"
+cd /usr/share/cloudbunny;python3 cloudbunny.py "\$@"
 EOF
-		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/CloudBunny/*
+		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/cloudbunny/*
 		pip3 install -r /usr/share/CloudBunny/requirements.txt
 		menu_entry "Penetration\ Testing" "Web" "cloudbunny"
 		printf "$GREEN"  "[*] Sucess Installing CloudBunny"
@@ -909,7 +909,7 @@ main ()
 	npm install -g npx 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
@@ -919,16 +919,18 @@ main ()
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/kalielite;bash /usr/share/kali_elite/*
+		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
 		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
+		bash /usr/share/kali_elite/kalielite.sh
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/kalielite;bash /usr/share/kali_elite/*
+		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
 		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
+		bash /usr/share/kali_elite/kalielite.sh
 	fi
 }
 
