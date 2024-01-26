@@ -488,8 +488,8 @@ EOF
 	# Install HashExtender
 	if [ ! -d "/usr/share/hashextender" ]; then
 		git clone https://github.com/iagox86/hash_extender /usr/share/hashextender
-		cd /usr/share/HashExtender;make
-		ln -fs /usr/share/HashExtender /usr/bin/hashextender
+		cd /usr/share/hashextender;make
+		ln -fs /usr/share/hashextender /usr/bin/hashextender
 		chmod +x /usr/bin/hashextender;chmod 755 /usr/share/hashextender/*
 		menu_entry "Penetration\ Testing" "Web" "hashextender"
 		printf "$GREEN"  "[*] Sucess Installing HashExtender"
