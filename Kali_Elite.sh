@@ -912,7 +912,7 @@ main ()
 	if [ ! -d "/usr/share/kali_elite" ]; then
 		mkdir -p /usr/share/kali_elite
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
-  		chmod 755 /usr/share/kali_elite/*
+		chmod 755 /usr/share/kali_elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
@@ -944,7 +944,7 @@ EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
-  		chmod 755 /usr/share/kali_elite/*
+		chmod 755 /usr/share/kali_elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
