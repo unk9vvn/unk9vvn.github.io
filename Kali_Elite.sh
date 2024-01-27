@@ -921,7 +921,7 @@ main ()
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
 		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
-		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
+		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "kalielite"
 		bash /usr/share/kali_elite/kalielite.sh
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
@@ -930,7 +930,7 @@ EOF
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
 		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
-		menu_entry "Security\ Audit" "Preliminary\ Audit\ Assessment" "kalielite"
+		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "kalielite"
 		bash /usr/share/kali_elite/kalielite.sh
 	fi
 }
