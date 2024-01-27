@@ -124,8 +124,8 @@ EOF
 
 	# Initialize ICS Security Menu
 	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS\ Security
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS\ Security.directory << EOF
+	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security
+	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=ICS-Security
