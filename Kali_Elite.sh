@@ -108,7 +108,7 @@ Name=Red Team
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/red-team.png
 EOF
-	dir_redteam_array=("Reconnaissance" "Resource Development" "Initial Access" "Execution" "Persistence" "Privilege Escalation" "Defense Evasion" "Credential Access" "Discovery" "Lateral Movement" "Collection" "Command and Control" "Exfiltration" "Impact")
+	dir_redteam_array=("Reconnaissance" "Resource\ Development" "Initial\ Access" "Execution" "Persistence" "Privilege\ Escalation" "Defense\ Evasion" "Credential\ Access" "Discovery" "Lateral\ Movement" "Collection" "Command\ and\ Control" "Exfiltration" "Impact")
 	dir_redteam_index=0
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/${dir_redteam_array[dir_redteam_index]}
@@ -132,7 +132,7 @@ Name=ICS Security
 Comment=Offensive Security
 Icon=/home/$USERS/.local/images/ics-security.png
 EOF
-	dir_ics_array=("Penetration Testing" "Red Team" "Digital Forensic" "Blue Team")
+	dir_ics_array=("Penetration\ Testing" "Red\ Team" "Digital\ Forensic" "Blue\ Team")
 	dir_ics_index=0
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS\ Security/${dir_ics_array[dir_ics_index]}
@@ -156,7 +156,7 @@ Name=Digital Forensic
 Comment=Defensive Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
 EOF
-	dir_digital_array=("Reverse Engineering" "Malware Analysis" "Threat Hunting" "Incident Response" "Threat Intelligence")
+	dir_digital_array=("Reverse\ Engineering" "Malware\ Analysis" "Threat\ Hunting" "Incident\ Response" "Threat\ Intelligence")
 	dir_digital_index=0
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital\ Forensic/${dir_digital_array[dir_digital_index]}
@@ -204,7 +204,7 @@ Name=Security Audit
 Comment=Defensive Security
 Icon=/home/$USERS/.local/images/security-audit.png
 EOF
-	dir_audit_array=("Preliminary Audit Assessment" "Planning and Preparation" "Establishing Audit Objectives" "Performing the Review" "Preparing the Audit Report" "Issuing the Review Report")
+	dir_audit_array=("Preliminary\ Audit\ Assessment" "Planning\ and\ Preparation" "Establishing\ Audit\ Objectives" "Performing\ the\ Review" "Preparing\ the\ Audit\ Report" "Issuing\ the\ Review\ Report")
 	dir_audit_index=0
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security\ Audit/${dir_audit_array[dir_audit_index]}
