@@ -19,8 +19,5 @@ Two Windows Server and Kali Linux elite virtual machine are designed to Provide 
 
 ## Installer Kali Linux Elite
 ```
-sudo su
-```
-```
-bash <(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh)
+sudo apt update && sudo apt install -y curl && curl -sSL https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh | sudo bash -s release
 ```
