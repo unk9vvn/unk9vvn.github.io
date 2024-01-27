@@ -907,14 +907,14 @@ main ()
 	pip3 install colorama pysnmp
 
 	# Install Nodejs NPM
-	npm install -g npx 
+	# npm install -g npx 
 
 	# Install Ruby GEM
 	# gem install 
 
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
-    		mkdir -p /usr/share/kali_elite
+		mkdir -p /usr/share/kali_elite
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
