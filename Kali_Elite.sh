@@ -88,7 +88,7 @@ EOF
 	dir_pentest_index=0
 	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration\ Testing/${dir_pentest_array[dir_pentest_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-${dir_pentest_array[dir_pentest_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration\ Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_pentest_array[dir_pentest_index]}
@@ -112,7 +112,7 @@ EOF
 	dir_redteam_index=0
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red\ Team/${dir_redteam_array[dir_redteam_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-${dir_redteam_array[dir_redteam_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red\ Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_redteam_array[dir_redteam_index]}
@@ -136,7 +136,7 @@ EOF
 	dir_ics_index=0
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS\ Security/${dir_ics_array[dir_ics_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS\ Security-${dir_ics_array[dir_ics_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS\ Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_ics_array[dir_ics_index]}
@@ -160,7 +160,7 @@ EOF
 	dir_digital_index=0
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital\ Forensic/${dir_digital_array[dir_digital_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital\ Forensic-${dir_digital_array[dir_digital_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital\ Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_digital_array[dir_digital_index]}
@@ -184,7 +184,7 @@ EOF
 	dir_blueteam_index=0
 	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue\ Team/${dir_blueteam_array[dir_blueteam_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue\ Team-${dir_blueteam_array[dir_blueteam_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue\ Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_blueteam_array[dir_blueteam_index]}
@@ -208,7 +208,7 @@ EOF
 	dir_audit_index=0
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security\ Audit/${dir_audit_array[dir_audit_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security\ Audit-${dir_audit_array[dir_audit_index]}.directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security\ Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
 Name=${dir_audit_array[dir_audit_index]}
