@@ -986,8 +986,8 @@ select opt in "${options[@]}"
 do
     case $opt in
         "Penetrating-Testing")
-			penetrating_testing
-        	;;
+            penetrating_testing
+            ;;
         "Red-Team")
             red_team
             ;;
