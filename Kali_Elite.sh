@@ -927,7 +927,7 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -959,7 +959,7 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
