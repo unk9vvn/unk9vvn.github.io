@@ -55,7 +55,7 @@ logo ()
 	printf "$RED"     "                            --/osssssssssssso/--                       "
 	printf "$BLUE"    "                                  Unk9vvN                              "
 	printf "$YELLOW"  "                            https://unk9vvn.com                        "
-	printf "$CYAN"    "                              Elite Installer                          "
+	printf "$CYAN"    "                                Kali Elite                             "
 	printf "\n\n"
 }
 
