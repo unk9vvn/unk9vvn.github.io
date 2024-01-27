@@ -981,36 +981,31 @@ EOF
 menu
 main
 logo
-while true; do
-    options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
-
-    select opt in "${options[@]}"
-    do
-        case $opt in
-            "Penetrating-Testing")
-                penetrating_testing
-                ;;
-            "Red-Team")
-                red_team
-                ;;
-            "ICS-Security")
-                ics_security
-                ;;
-            "Digital-Forensic")
-                digital_forensic
-                ;;
-            "Blue-Team")
-                blue_team
-                ;;
-            "Security-Audit")
-                security_audit
-                ;;
-            "Quit")
-                exit 0
-                ;;
-            *) 
-                echo "Invalid option $REPLY";;
-        esac
-        break
-    done
+options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Penetrating-Testing")
+			penetrating_testing
+        	;;
+        "Red-Team")
+            red_team
+            ;;
+        "ICS-Security")
+            ics_security
+            ;;
+        "Digital-Forensic")
+            digital_forensic
+            ;;
+        "Blue-Team")
+            blue_team
+            ;;
+        "Security-Audit")
+            security_audit
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo "Invalid option $REPLY";;
+    esac
 done
