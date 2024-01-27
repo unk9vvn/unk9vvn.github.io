@@ -900,11 +900,12 @@ main ()
 	# Update & Upgrade OS
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
-	# Install Repository Tools
-	apt install -qy git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils git gdb net-tools nasm snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar wireguard 
+	# Install Requirement Tools
+	apt install -qy curl git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar  
 
 	# Install Python3 pip
-	pip3 install colorama pysnmp
+	sudo pip3 install --upgrade pip
+	sudo pip3 install colorama pysnmp
 
 	# Install Nodejs NPM
 	# npm install -g npx 
