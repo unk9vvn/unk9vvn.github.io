@@ -867,31 +867,31 @@ go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /
 
 red_team ()
 {
-	printf "$GREEN"  "[*] It will be provided after the next courses are made"
+	echo "[*] It will be provided after the next courses are made"
 }
 
 
 ics_security ()
 {
-	printf "$GREEN"  "[*] It will be provided after the next courses are made"
+	echo "[*] It will be provided after the next courses are made"
 }
 
 
 digital_forensic ()
 {
-	printf "$GREEN"  "[*] It will be provided after the next courses are made"
+	echo "[*] It will be provided after the next courses are made"
 }
 
 
 blue_team ()
 {
-	printf "$GREEN"  "[*] It will be provided after the next courses are made"
+	echo "[*] It will be provided after the next courses are made"
 }
 
 
 security_audit ()
 {
-	printf "$GREEN"  "[*] It will be provided after the next courses are made"
+	echo "[*] It will be provided after the next courses are made"
 }
 
 
@@ -939,39 +939,37 @@ EOF
 menu
 main
 logo
-installer=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Exit")
-select opt in "${installer[@]}"
+options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
+select opt in "${options[@]}"
 do
     case $opt in
         "Penetrating-Testing")
-		penetrating_testing
-		break
-        	;;
+                penetrating_testing
+                break
+                ;;
         "Red-Team")
-		red_team
-		break
-        	;;
+                red_team
+                break
+                ;;
         "ICS-Security")
-		ics_security
-		break
-        	;;
+                ics_security
+                break
+                ;;
         "Digital-Forensic")
-		digital_forensic
-		break
-        	;;
+                digital_forensic
+                break
+                ;;
         "Blue-Team")
-		blue_team
-		break
-        	;;
+                blue_team
+                break
+                ;;
         "Security-Audit")
-		security_audit
-		break
-        	;;
-        "Exit")
-		exit
-           	;;
-        *)
-           	printf "$RED"     "[X] Invalid select item..."
-		;;			
-   	esac
+                security_audit
+                break
+                ;;
+        "Quit")
+                break
+                ;;
+        *) echo "Invalid option $REPLY";;
+    esac
 done
