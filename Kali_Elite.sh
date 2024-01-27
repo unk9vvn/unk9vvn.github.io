@@ -671,7 +671,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/hiddify-linux-x64.zip -O /tmp/hiddify-linux-x64.zip
 		unzip /tmp/hiddify-linux-x64.zip -d /usr/share/hiddify-next;rm -f /tmp/hiddify-linux-x64.zip
 		chmod 755 /usr/share/hiddify-next/*
-    	cat > /usr/bin/hiddify << EOF
+    		cat > /usr/bin/hiddify << EOF
 #!/bin/bash
 cd /usr/share/hiddify-next;sudo ./hiddify-linux-x64.AppImage "\$@"
 EOF
@@ -804,8 +804,8 @@ EOF
 cd /usr/share/gtscan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan
-    	pip3 install -r /usr/share/gtscan/requirements.txt
-    	menu_entry "Penetration-Testing" "Wireless" "gtscan"
+    		pip3 install -r /usr/share/gtscan/requirements.txt
+    		menu_entry "Penetration-Testing" "Wireless" "gtscan"
 		printf "$GREEN"  "[*] Success Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Success Installed GTScan"
