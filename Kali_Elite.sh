@@ -266,7 +266,7 @@ penetrating_testing ()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder uglify-js jsdom dnsgen 
 
 	# Install Python3 pip
-	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT ciphey proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets 
+	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT ciphey proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec 
 
 	# Install Nodejs NPM
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor 
@@ -320,26 +320,26 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 		if [[ $line == *"ln -fs"* ]]; then
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			web_go_array+=("$binary_name")
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		web_go_array+=("$binary_name")
 		fi
 	done <<< "$web_commands"
 	for web_go_index in "${web_go_array[@]}"; do
-		menu_entry "Penetration\ Testing" "Web" "${web_go_index}"
+		menu_entry "Penetration-Testing" "Web" "${web_go_index}"
 	done
 	eval "$web_commands"
 
 	# Install CloudBunny
-	if [ ! -d "/usr/share/cloudbunny" ]; then
-		git clone https://github.com/Warflop/CloudBunny /usr/share/cloudbunny
+	if [ ! -d "/usr/share/CloudBunny" ]; then
+		git clone https://github.com/Warflop/CloudBunny /usr/share/CloudBunny
 		cat > /usr/bin/cloudbunny << EOF
 #!/bin/bash
-cd /usr/share/cloudbunny;python3 cloudbunny.py "\$@"
+cd /usr/share/CloudBunny;python3 cloudbunny.py "\$@"
 EOF
-		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/cloudbunny/*
+		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/CloudBunny/*
 		pip3 install -r /usr/share/CloudBunny/requirements.txt
-		menu_entry "Penetration\ Testing" "Web" "cloudbunny"
+		menu_entry "Penetration-Testing" "Web" "cloudbunny"
 		printf "$GREEN"  "[*] Sucess Installing CloudBunny"
 	else
 		printf "$GREEN"  "[*] Sucess Installed CloudBunny"
@@ -359,7 +359,7 @@ EOF
 		tar -xvf /tmp/phoneinfoga.tar.gz -C /usr/share/phoneinfoga;rm -f /tmp/phoneinfoga.tar.gz
 		ln -fs /usr/share/phoneinfoga/phoneinfoga /usr/bin/phoneinfoga
 		chmod +x /usr/bin/phoneinfoga;chmod 755 /usr/share/phoneinfoga/*
-		menu_entry "Penetration\ Testing" "Web" "phoneinfoga"
+		menu_entry "Penetration-Testing" "Web" "phoneinfoga"
 		printf "$GREEN"  "[*] Sucess Installing PhoneInfoga"
 	else
 		printf "$GREEN"  "[*] Sucess Installed PhoneInfoga"
@@ -371,7 +371,7 @@ EOF
 		unzip /tmp/findomain-linux.zip -d /usr/share/findomain;rm -f /tmp/findomain-linux.zip
 		ln -fs /usr/share/findomain/findomain /usr/bin/findomain
 		chmod +x /usr/bin/findomain;chmod 755 /usr/share/findomain/*
-		menu_entry "Penetration\ Testing" "Web" "findomain"
+		menu_entry "Penetration-Testing" "Web" "findomain"
 		printf "$GREEN"  "[*] Sucess Installing Findomain"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Findomain"
@@ -381,7 +381,7 @@ EOF
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O /tmp/rustscan.deb
 		chmod +x /tmp/rustscan.deb;dpkg -i /tmp/rustscan.deb;rm -f /tmp/rustscan.deb
-		menu_entry "Penetration\ Testing" "Web" "rustscan"
+		menu_entry "Penetration-Testing" "Web" "rustscan"
 		printf "$GREEN"  "[*] Sucess Installing RustScan"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RustScan"
@@ -396,7 +396,7 @@ cd /usr/share/hashpump;bash hashpump "\$@"
 EOF
 		chmod +x /usr/bin/hashpump;chmod 755 /usr/share/hashpump/*
 		cd /usr/share/hashpump/;make install
-		menu_entry "Penetration\ Testing" "Web" "hashpump"
+		menu_entry "Penetration-Testing" "Web" "hashpump"
 		printf "$GREEN"  "[*] Sucess Installing HashPump"
 	else
 		printf "$GREEN"  "[*] Sucess Installed HashPump"
@@ -410,7 +410,7 @@ EOF
 cd /usr/share/rsatool;python3 rsatool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsatool;chmod 755 /usr/share/rsatool/*
-		menu_entry "Penetration\ Testing" "Web" "rsatool"
+		menu_entry "Penetration-Testing" "Web" "rsatool"
 		printf "$GREEN"  "[*] Sucess Installing RSAtool"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RSAtool"
@@ -424,7 +424,7 @@ EOF
 cd /usr/share/RsaCtfTool;python3 RsaCtfTool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsactftool;chmod 755 /usr/share/rsactftool/*
-		menu_entry "Penetration\ Testing" "Web" "rsactftool"
+		menu_entry "Penetration-Testing" "Web" "rsactftool"
 		printf "$GREEN"  "[*] Sucess Installing RsaCtfTool"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RsaCtfTool"
@@ -436,7 +436,7 @@ EOF
 		cd /usr/share/pemcrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
 		ln -fs /usr/share/PEMCrack/pemcrack /usr/bin/pemcrack
 		chmod +x /usr/bin/pemcrack;chmod 755 /usr/share/pemcrack/*
-		menu_entry "Penetration\ Testing" "Web" "pemcrack"
+		menu_entry "Penetration-Testing" "Web" "pemcrack"
 		printf "$GREEN"  "[*] Sucess Installing PEMCrack"
 	else
 		printf "$GREEN"  "[*] Sucess Installed PEMCrack"
@@ -450,7 +450,7 @@ EOF
 cd /usr/share/dymerge;python3 dymerge.py "\$@"
 EOF
 		chmod +x /usr/bin/dymerge;chmod 755 /usr/share/dymerge/*
-		menu_entry "Penetration\ Testing" "Web" "dymerge"
+		menu_entry "Penetration-Testing" "Web" "dymerge"
 		printf "$GREEN"  "[*] Sucess Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Sucess Installed DyMerge"
@@ -465,7 +465,7 @@ cd /usr/share/jwt_tool;python3 jwt_tool.py "\$@"
 EOF
 		chmod +x /usr/bin/jwt_tool;chmod 755 /usr/share/jwt_tool/*
 		pip3 install termcolor cprint pycryptodomex requests
-		menu_entry "Penetration\ Testing" "Web" "jwt_tool"
+		menu_entry "Penetration-Testing" "Web" "jwt_tool"
 		printf "$GREEN"  "[*] Sucess Installing JWT-Tool"
 	else
 		printf "$GREEN"  "[*] Sucess Installed JWT-Tool"
@@ -479,7 +479,7 @@ EOF
 cd /usr/share/poodle;python3 poodle-exploit.py "\$@"
 EOF
 		chmod +x /usr/bin/poodle;chmod 755 /usr/share/poodle/*
-		menu_entry "Penetration\ Testing" "Web" "poodle"
+		menu_entry "Penetration-Testing" "Web" "poodle"
 		printf "$GREEN"  "[*] Sucess Installing Poodle"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Poodle"
@@ -491,7 +491,7 @@ EOF
 		cd /usr/share/hashextender;make
 		ln -fs /usr/share/hashextender /usr/bin/hashextender
 		chmod +x /usr/bin/hashextender;chmod 755 /usr/share/hashextender/*
-		menu_entry "Penetration\ Testing" "Web" "hashextender"
+		menu_entry "Penetration-Testing" "Web" "hashextender"
 		printf "$GREEN"  "[*] Sucess Installing HashExtender"
 	else
 		printf "$GREEN"  "[*] Sucess Installed HashExtender"
@@ -506,7 +506,7 @@ cd /usr/share/spoofcheck;python2 spoofcheck.py "\$@"
 EOF
 		chmod +x /usr/bin/spoofcheck;chmod 755 /usr/share/spoofcheck/*
 		pip2 install -r /usr/share/spoofcheck/requirements.txt
-		menu_entry "Penetration\ Testing" "Web" "spoofcheck"
+		menu_entry "Penetration-Testing" "Web" "spoofcheck"
 		printf "$GREEN"  "[*] Sucess Installing SpoofCheck"
 	else
 		printf "$GREEN"  "[*] Sucess Installed SpoofCheck"
@@ -533,15 +533,15 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    			symlink=$(echo "$line" | awk '{print $NF}')
-    			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			mobile_go_array+=("$binary_name")
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		mobile_go_array+=("$binary_name")
   		fi
 	done <<< "$mobile_commands"
 	for mobile_go_index in "${mobile_go_array[@]}"; do
-		menu_entry "Penetration\ Testing" "Mobile" "${mobile_go_index}"
+		menu_entry "Penetration-Testing" "Mobile" "${mobile_go_index}"
 	done
 	eval "$mobile_commands"
 
@@ -554,22 +554,22 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 cd /usr/share/genymotion;./genymotion.bin -y "\$@"
 EOF
 		chmod +x /usr/bin/genymotion;chmod 755 /usr/share/genymotion/*
-		menu_entry "Penetration\ Testing" "Mobile" "genymotion"
+		menu_entry "Penetration-Testing" "Mobile" "genymotion"
 		printf "$GREEN"  "[*] Sucess Installing Genymotion"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Genymotion"
 	fi
 
 	# Install CloudBunny
-	if [ ! -d "/usr/share/CloudBunny" ]; then
-		git clone https://github.com/Warflop/CloudBunny /usr/share/CloudBunny
+	if [ ! -d "/usr/share/cloudbunny" ]; then
+		git clone https://github.com/Warflop/CloudBunny /usr/share/cloudbunny
 		cat > /usr/bin/cloudbunny << EOF
 #!/bin/bash
-cd /usr/share/CloudBunny;python3 cloudbunny.py "\$@"
+cd /usr/share/cloudbunny;python3 cloudbunny.py "\$@"
 EOF
-		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/CloudBunny/*
-		pip3 install -r /usr/share/CloudBunny/requirements.txt
-		menu_entry "Penetration\ Testing" "Web" "cloudbunny"
+		chmod +x /usr/bin/cloudbunny;chmod 755 /usr/share/cloudbunny/*
+		pip3 install -r /usr/share/cloudbunny/requirements.txt
+		menu_entry "Penetration-Testing" "Web" "cloudbunny"
 		printf "$GREEN"  "[*] Sucess Installing CloudBunny"
 	else
 		printf "$GREEN"  "[*] Sucess Installed CloudBunny"
@@ -585,7 +585,7 @@ sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		chmod +x /usr/bin/mobsf;chmod 755 /usr/share/MobSF/*
 		cd /usr/share/MobSF;./setup.sh
-		menu_entry "Penetration\ Testing" "Mobile" "mobsf"
+		menu_entry "Penetration-Testing" "Mobile" "mobsf"
 		printf "$GREEN"  "[*] Sucess Installing MobSF"
 	else
 		printf "$GREEN"  "[*] Sucess Installed MobSF"
@@ -616,15 +616,15 @@ go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudReco
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    			symlink=$(echo "$line" | awk '{print $NF}')
-    			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			cloud_go_array+=("$binary_name")
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		cloud_go_array+=("$binary_name")
 		fi
 	done <<< "$cloud_commands"
 	for cloud_go_index in "${cloud_go_array[@]}"; do
-		menu_entry "Penetration\ Testing" "Cloud" "${cloud_go_index}"
+		menu_entry "Penetration-Testing" "Cloud" "${cloud_go_index}"
 	done
 	eval "$cloud_commands"
 
@@ -637,7 +637,7 @@ cd /usr/share/CloudFail;python3 cloudfail.py "\$@"
 EOF
 		chmod +x /usr/bin/cloudfail;chmod 755 /usr/share/CloudFail/*
 		pip3 install -r /usr/share/CloudFail/requirements.txt
-		menu_entry "Penetration\ Testing" "Cloud" "cloudfail"
+		menu_entry "Penetration-Testing" "Cloud" "cloudfail"
 		printf "$GREEN"  "[*] Sucess Installing CloudFail"
 	else
 		printf "$GREEN"  "[*] Sucess Installed CloudFail"
@@ -649,7 +649,7 @@ EOF
 	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan 
 
 	# Install Python3 pip
-	pip3 install networkx ropper mitmproxy mitm6 pymultitor scapy angr slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm 
+	pip3 install networkx ropper mitmproxy mitm6 pymultitor scapy angr slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre 
 
 	# Install Nodejs NPM
 	npm install -g http-proxy-to-socks multitor 
@@ -665,15 +665,15 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    			symlink=$(echo "$line" | awk '{print $NF}')
-    			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			network_go_array+=("$binary_name")
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		network_go_array+=("$binary_name")
 		fi
 	done <<< "$network_commands"
 	for network_go_index in "${network_go_array[@]}"; do
-		menu_entry "Penetration\ Testing" "Network" "${network_go_index}"
+		menu_entry "Penetration-Testing" "Network" "${network_go_index}"
 	done
 	eval "$network_commands"
 
@@ -681,11 +681,11 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 	if [ ! -d "/usr/share/Hiddify-Next" ]; then
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/hiddify-linux-x64.zip -O /tmp/hiddify-linux-x64.zip
 		unzip /tmp/hiddify-linux-x64.zip -d /usr/share/Hiddify-Next;rm -f /tmp/hiddify-linux-x64.zip
-    		cat > /usr/bin/hiddify << EOF
+    	cat > /usr/bin/hiddify << EOF
 #!/bin/bash
 cd /usr/share/hiddify;./hiddify-linux-x64.AppImage "\$@"
 EOF
-		menu_entry "Penetration\ Testing" "Network" "hiddify"
+		menu_entry "Penetration-Testing" "Network" "hiddify"
 		printf "$GREEN"  "[*] Sucess Installing Hiddify-Next"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Hiddify-Next"
@@ -699,7 +699,7 @@ EOF
 cd /usr/share/SNMP-Brute;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/snmpbrute;chmod 755 /usr/share/SNMP-Brute/*
-		menu_entry "Penetration\ Testing" "Network" "snmpbrute"
+		menu_entry "Penetration-Testing" "Network" "snmpbrute"
 		printf "$GREEN"  "[*] Sucess Installing SNMP-Brute"
 	else
 		printf "$GREEN"  "[*] Sucess Installed SNMP-Brute"
@@ -715,7 +715,7 @@ EOF
 cd /usr/share/RouterScan;wine RouterScan.exe "\$@"
 EOF
 		chmod +x /usr/bin/routerscan;chmod 755 /usr/share/RouterScan/*
-		menu_entry "Penetration\ Testing" "Network" "routerscan"
+		menu_entry "Penetration-Testing" "Network" "routerscan"
 		printf "$GREEN"  "[*] Sucess Installing RouterScan"
 	else
 		printf "$GREEN"  "[*] Sucess Installed RouterScan"
@@ -730,7 +730,7 @@ cd /usr/share/PRET;python3 pret.py "\$@"
 EOF
 		chmod +x /usr/bin/pret;chmod 755 /usr/share/PRET/*
 		pip3 install colorama pysnmp win_unicode_console
-		menu_entry "Penetration\ Testing" "Network" "pret"
+		menu_entry "Penetration-Testing" "Network" "pret"
 		printf "$GREEN"  "[*] Sucess Installing PRET"
 	else
 		printf "$GREEN"  "[*] Sucess Installed PRET"
@@ -739,7 +739,7 @@ EOF
 	# Install GEF
 	if [ ! -f "~/.gef-6a6e2a05ca8e08ac6845dce655a432fc4e029486.py" ]; then
 		bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-		menu_entry "Penetration\ Testing" "Network" "gef"
+		menu_entry "Penetration-Testing" "Network" "gef"
 		printf "$GREEN"  "[*] Sucess Installing GEF"
 	else
 		printf "$GREEN"  "[*] Sucess Installed GEF"
@@ -763,7 +763,7 @@ cd /usr/share/memcrashed;python3 Memcrashed.py "\$@"
 EOF
 		chmod +x /usr/bin/memcrashed;chmod 755 /usr/share/memcrashed/*
 		pip3 install -r /usr/share/memcrashed/requirements.txt
-		menu_entry "Penetration\ Testing" "Network" "memcrashed"
+		menu_entry "Penetration-Testing" "Network" "memcrashed"
 		printf "$GREEN"  "[*] Sucess Installing Memcrashed"
 	else
 		printf "$GREEN"  "[*] Sucess Installed Memcrashed"
@@ -789,15 +789,15 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    			symlink=$(echo "$line" | awk '{print $NF}')
-    			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			wireless_go_array+=("$binary_name")
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		wireless_go_array+=("$binary_name")
   		fi
 	done <<< "$wireless_commands"
 	for wireless_go_index in "${wireless_go_array[@]}"; do
-  		menu_entry "Penetration\ Testing" "Wireless" "${wireless_go_array}"
+  		menu_entry "Penetration-Testing" "Wireless" "${wireless_go_array}"
 	done
 	eval "$wireless_commands"
 
@@ -809,8 +809,8 @@ EOF
 cd /usr/share/GTScan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan;chmod 755 /usr/share/GTScan/*
-    		pip3 install -r /usr/share/GTScan/requirements.txt
-    		menu_entry "Penetration\ Testing" "Wireless" "gtscan"
+    	pip3 install -r /usr/share/GTScan/requirements.txt
+    	menu_entry "Penetration-Testing" "Wireless" "gtscan"
 		printf "$GREEN"  "[*] Sucess Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Sucess Installed GTScan"
@@ -824,7 +824,7 @@ EOF
 cd /usr/share/HLR-Lookups;python3 hlr-lookups.py "\$@"
 EOF
 		chmod +x /usr/bin/hlrlookups;chmod 755 /usr/share/HLR-Lookups/*
-		menu_entry "Penetration\ Testing" "Wireless" "hlrlookups"
+		menu_entry "Penetration-Testing" "Wireless" "hlrlookups"
 		printf "$GREEN"  "[*] Sucess Installing HLR-Lookups"
 	else
 		printf "$GREEN"  "[*] Sucess Installed HLR-Lookups"
@@ -847,18 +847,19 @@ EOF
 	# Install Golang
 	iot_go_array=()
 	iot_commands=$(echo '
+go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    			symlink=$(echo "$line" | awk '{print $NF}')
-    			symlink=${symlink#/}
-    			symlink=${symlink%/}
-    			binary_name=$(basename "$symlink")
-    			iot_go_array+=("$binary_name")
+    		symlink=$(echo "$line" | awk '{print $NF}')
+    		symlink=${symlink#/}
+    		symlink=${symlink%/}
+    		binary_name=$(basename "$symlink")
+    		iot_go_array+=("$binary_name")
   		fi
 	done <<< "$iot_commands"
 	for iot_go_index in "${iot_go_array[@]}"; do
-  		menu_entry "Penetration\ Testing" "IoT" "${iot_go_index}"
+  		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}"
 	done
 	eval "$iot_commands"
 }
