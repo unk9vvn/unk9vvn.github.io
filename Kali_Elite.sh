@@ -320,9 +320,9 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 		if [[ $line == *"ln -fs"* ]]; then
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		web_go_array+=("$binary_name")
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			web_go_array+=("$binary_name")
 		fi
 	done <<< "$web_commands"
 	for web_go_index in "${web_go_array[@]}"; do
@@ -533,11 +533,11 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		mobile_go_array+=("$binary_name")
+    			symlink=$(echo "$line" | awk '{print $NF}')
+    			symlink=${symlink#/}
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			mobile_go_array+=("$binary_name")
   		fi
 	done <<< "$mobile_commands"
 	for mobile_go_index in "${mobile_go_array[@]}"; do
@@ -616,11 +616,11 @@ go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudReco
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		cloud_go_array+=("$binary_name")
+    			symlink=$(echo "$line" | awk '{print $NF}')
+    			symlink=${symlink#/}
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			cloud_go_array+=("$binary_name")
 		fi
 	done <<< "$cloud_commands"
 	for cloud_go_index in "${cloud_go_array[@]}"; do
@@ -665,11 +665,11 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		network_go_array+=("$binary_name")
+    			symlink=$(echo "$line" | awk '{print $NF}')
+    			symlink=${symlink#/}
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			network_go_array+=("$binary_name")
 		fi
 	done <<< "$network_commands"
 	for network_go_index in "${network_go_array[@]}"; do
@@ -789,11 +789,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		wireless_go_array+=("$binary_name")
+    			symlink=$(echo "$line" | awk '{print $NF}')
+    			symlink=${symlink#/}
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			wireless_go_array+=("$binary_name")
   		fi
 	done <<< "$wireless_commands"
 	for wireless_go_index in "${wireless_go_array[@]}"; do
@@ -851,11 +851,11 @@ go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		iot_go_array+=("$binary_name")
+    			symlink=$(echo "$line" | awk '{print $NF}')
+    			symlink=${symlink#/}
+    			symlink=${symlink%/}
+    			binary_name=$(basename "$symlink")
+    			iot_go_array+=("$binary_name")
   		fi
 	done <<< "$iot_commands"
 	for iot_go_index in "${iot_go_array[@]}"; do
