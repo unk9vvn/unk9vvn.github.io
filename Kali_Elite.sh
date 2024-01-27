@@ -912,21 +912,67 @@ main ()
 	if [ ! -d "/usr/share/kali_elite" ]; then
 		mkdir -p /usr/share/kali_elite
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
+  		chmod 755 /usr/share/kali_elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
-		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "kalielite"
+		chmod +x /usr/bin/kalielite
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
+[Desktop Entry]
+Name=Kali Elite
+Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+EOF
+	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>Unk9vvN</Name>
+    <Directory>Unk9vvN.directory</Directory>
+    <Include>
+      <Filename>Unk9vvN-kalielite.desktop</Filename>
+    </Include>
+  </Menu>
+</Menu>
+EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
+  		chmod 755 /usr/share/kali_elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
 cd /usr/share/kali_elite;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/kalielite;chmod 755 /usr/share/kali_elite/*
-		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "kalielite"
+		chmod +x /usr/bin/kalielite
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
+[Desktop Entry]
+Name=Kali Elite
+Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
+Comment=
+Terminal=true
+Icon=gnome-panel-launcher
+Type=Application
+EOF
+	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-kalielite.menu" << EOF
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>Unk9vvN</Name>
+    <Directory>Unk9vvN.directory</Directory>
+    <Include>
+      <Filename>Unk9vvN-kalielite.desktop</Filename>
+    </Include>
+  </Menu>
+</Menu>
+EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	fi
 }
