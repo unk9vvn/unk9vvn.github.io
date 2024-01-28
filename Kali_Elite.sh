@@ -55,7 +55,7 @@ logo ()
 	printf "$RED"     "                            --/osssssssssssso/--                       "
 	printf "$BLUE"    "                                  Unk9vvN                              "
 	printf "$YELLOW"  "                            https://unk9vvn.com                        "
-	printf "$CYAN"    "                                 Kali Elite                            "
+	printf "$CYAN"    "                              Elite Installer                          "
 	printf "\n\n"
 }
 
@@ -224,17 +224,17 @@ menu_entry ()
 {
 	local category="$1"
 	local sub_category="$2"
-	local tool="$3"
-	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
+	local name="$3"
+	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${name}.desktop" << EOF
 [Desktop Entry]
-Name=${tool}
-Exec=/usr/share/kali-menu/exec-in-shell "${tool}"
+Name=${name}
+Exec=/usr/share/kali-menu/exec-in-shell "sudo ${name} -h"
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${tool}.menu" << EOF
+	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${name}.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -249,7 +249,7 @@ EOF
     <Name>Unk9vvN-${category}-${sub_category}</Name>
     <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
     <Include>
-      <Filename>Unk9vvN-${category}-${sub_category}-${tool}.desktop</Filename>
+      <Filename>Unk9vvN-${category}-${sub_category}-${name}.desktop</Filename>
     </Include>
   </Menu>
   </Menu>
@@ -318,15 +318,15 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
+		symlink=$(echo "$line" | awk '{print $NF}')
+		symlink=${symlink#/}
     		symlink=${symlink%/}
     		binary_name=$(basename "$symlink")
     		web_go_array+=("$binary_name")
 		fi
 	done <<< "$web_commands"
 	for web_go_index in "${web_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Web" "sudo ${web_go_index} -h"
+		menu_entry "Penetration-Testing" "Web" "${web_go_index}"
 	done
 	eval "$web_commands"
 
@@ -348,7 +348,7 @@ cd /usr/share/cloudbunny;python3 cloudbunny.py "\$@"
 EOF
 		chmod +x /usr/bin/cloudbunny
 		pip3 install -r /usr/share/cloudbunny/requirements.txt
-		menu_entry "Penetration-Testing" "Web" "sudo cloudbunny -h"
+		menu_entry "Penetration-Testing" "Web" "cloudbunny"
 		printf "$GREEN"  "[*] Success Installing CloudBunny"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudBunny"
@@ -362,7 +362,7 @@ EOF
 		chmod 755 /usr/share/phoneinfoga/*
 		ln -fs /usr/share/phoneinfoga/phoneinfoga /usr/bin/phoneinfoga
 		chmod +x /usr/bin/phoneinfoga
-		menu_entry "Penetration-Testing" "Web" "phoneinfoga -h"
+		menu_entry "Penetration-Testing" "Web" "phoneinfoga"
 		printf "$GREEN"  "[*] Success Installing PhoneInfoga"
 	else
 		printf "$GREEN"  "[*] Success Installed PhoneInfoga"
@@ -375,7 +375,7 @@ EOF
 		chmod 755 /usr/share/findomain/*
 		ln -fs /usr/share/findomain/findomain /usr/bin/findomain
 		chmod +x /usr/bin/findomain
-		menu_entry "Penetration-Testing" "Web" "findomain -h"
+		menu_entry "Penetration-Testing" "Web" "findomain"
 		printf "$GREEN"  "[*] Success Installing Findomain"
 	else
 		printf "$GREEN"  "[*] Success Installed Findomain"
@@ -385,7 +385,7 @@ EOF
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O /tmp/rustscan.deb
 		chmod +x /tmp/rustscan.deb;dpkg -i /tmp/rustscan.deb;rm -f /tmp/rustscan.deb
-		menu_entry "Penetration-Testing" "Web" "rustscan -h"
+		menu_entry "Penetration-Testing" "Web" "rustscan"
 		printf "$GREEN"  "[*] Success Installing RustScan"
 	else
 		printf "$GREEN"  "[*] Success Installed RustScan"
@@ -397,7 +397,7 @@ EOF
 		chmod 755 /usr/share/hashpump/*
 		cd /usr/share/hashpump;make;make install
 		chmod +x /usr/bin/hashpump
-		menu_entry "Penetration-Testing" "Web" "hashpump -h"
+		menu_entry "Penetration-Testing" "Web" "hashpump"
 		printf "$GREEN"  "[*] Success Installing HashPump"
 	else
 		printf "$GREEN"  "[*] Success Installed HashPump"
@@ -412,7 +412,7 @@ EOF
 cd /usr/share/rsatool;python3 rsatool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsatool
-		menu_entry "Penetration-Testing" "Web" "rsatool -h"
+		menu_entry "Penetration-Testing" "Web" "rsatool"
 		printf "$GREEN"  "[*] Success Installing RSAtool"
 	else
 		printf "$GREEN"  "[*] Success Installed RSAtool"
@@ -426,7 +426,7 @@ EOF
 cd /usr/share/rsactftool;python3 RsaCtfTool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsactftool;chmod 755 /usr/share/rsactftool/*
-		menu_entry "Penetration-Testing" "Web" "rsactftool -h"
+		menu_entry "Penetration-Testing" "Web" "rsactftool"
 		printf "$GREEN"  "[*] Success Installing RsaCtfTool"
 	else
 		printf "$GREEN"  "[*] Success Installed RsaCtfTool"
@@ -454,7 +454,7 @@ EOF
 cd /usr/share/dymerge;python2 dymerge.py "\$@"
 EOF
 		chmod +x /usr/bin/dymerge
-		menu_entry "Penetration-Testing" "Web" "dymerge -h"
+		menu_entry "Penetration-Testing" "Web" "dymerge"
 		printf "$GREEN"  "[*] Success Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Success Installed DyMerge"
@@ -469,7 +469,7 @@ EOF
 cd /usr/share/jwt_tool;python3 jwt_tool.py "\$@"
 EOF
 		chmod +x /usr/bin/jwt_tool
-		menu_entry "Penetration-Testing" "Web" "jwt_tool -h"
+		menu_entry "Penetration-Testing" "Web" "jwt_tool"
 		printf "$GREEN"  "[*] Success Installing JWT-Tool"
 	else
 		printf "$GREEN"  "[*] Success Installed JWT-Tool"
@@ -484,7 +484,7 @@ EOF
 cd /usr/share/poodle;python3 poodle-exploit.py "\$@"
 EOF
 		chmod +x /usr/bin/poodle
-		menu_entry "Penetration-Testing" "Web" "poodle -h"
+		menu_entry "Penetration-Testing" "Web" "poodle"
 		printf "$GREEN"  "[*] Success Installing Poodle"
 	else
 		printf "$GREEN"  "[*] Success Installed Poodle"
@@ -497,7 +497,7 @@ EOF
 		cd /usr/share/hashextender;make
 		ln -fs /usr/share/hashextender /usr/bin/hashextender
 		chmod +x /usr/bin/hashextender
-		menu_entry "Penetration-Testing" "Web" "hashextender -h"
+		menu_entry "Penetration-Testing" "Web" "hashextender"
 		printf "$GREEN"  "[*] Success Installing HashExtender"
 	else
 		printf "$GREEN"  "[*] Success Installed HashExtender"
@@ -513,7 +513,7 @@ cd /usr/share/spoofcheck;python2 spoofcheck.py "\$@"
 EOF
 		chmod +x /usr/bin/spoofcheck
 		pip2 install -r /usr/share/spoofcheck/requirements.txt
-		menu_entry "Penetration-Testing" "Web" "spoofcheck -h"
+		menu_entry "Penetration-Testing" "Web" "spoofcheck"
 		printf "$GREEN"  "[*] Success Installing SpoofCheck"
 	else
 		printf "$GREEN"  "[*] Success Installed SpoofCheck"
@@ -548,16 +548,14 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
   		fi
 	done <<< "$mobile_commands"
 	for mobile_go_index in "${mobile_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Mobile" "sudo ${mobile_go_index} -h"
+		menu_entry "Penetration-Testing" "Mobile" "${mobile_go_index}"
 	done
 	eval "$mobile_commands"
 
 	# Install Genymotion
 	if [ ! -d "/opt/genymobile/genymotion" ]; then
 		wget https://dl.genymotion.com/releases/genymotion-3.6.0/genymotion-3.6.0-linux_x64.bin -O /tmp/genymotion.bin
-		chmod 755 /tmp/genymotion.bin
-		cd /tmp;./genymotion.bin -y
-		rm -f /tmp/genymotion.bin
+		chmod 755 /tmp/genymotion.bin;cd /tmp;./genymotion.bin -y;rm -f /tmp/genymotion.bin
 		printf "$GREEN"  "[*] Success Installing Genymotion"
 	else
 		printf "$GREEN"  "[*] Success Installed Genymotion"
@@ -613,7 +611,7 @@ go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudReco
 		fi
 	done <<< "$cloud_commands"
 	for cloud_go_index in "${cloud_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Cloud" "sudo ${cloud_go_index} -h"
+		menu_entry "Penetration-Testing" "Cloud" "${cloud_go_index}"
 	done
 	eval "$cloud_commands"
 
@@ -627,7 +625,7 @@ cd /usr/share/cloudfail;python3 cloudfail.py "\$@"
 EOF
 		chmod +x /usr/bin/cloudfail
 		pip3 install -r /usr/share/cloudfail/requirements.txt
-		menu_entry "Penetration-Testing" "Cloud" "cloudfail -h"
+		menu_entry "Penetration-Testing" "Cloud" "cloudfail"
 		printf "$GREEN"  "[*] Success Installing CloudFail"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudFail"
@@ -662,7 +660,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		fi
 	done <<< "$network_commands"
 	for network_go_index in "${network_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Network" "sudo ${network_go_index} -h"
+		menu_entry "Penetration-Testing" "Network" "${network_go_index}"
 	done
 	eval "$network_commands"
 
@@ -671,10 +669,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/hiddify-linux-x64.zip -O /tmp/hiddify-linux-x64.zip
 		unzip /tmp/hiddify-linux-x64.zip -d /usr/share/hiddify-next;rm -f /tmp/hiddify-linux-x64.zip
 		chmod 755 /usr/share/hiddify-next/*
-    		cat > /usr/bin/hiddify << EOF
-#!/bin/bash
-cd /usr/share/hiddify-next;sudo ./hiddify-linux-x64.AppImage "\$@"
-EOF
+		ln -fs /usr/share/hiddify-next/hiddify-linux-x64.AppImage /usr/bin/hiddify
 		chmod +x /usr/bin/hiddify
 		menu_entry "Penetration-Testing" "Network" "hiddify"
 		printf "$GREEN"  "[*] Success Installing Hiddify-Next"
@@ -691,7 +686,7 @@ EOF
 cd /usr/share/snmp-brute;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/snmpbrute
-		menu_entry "Penetration-Testing" "Network" "snmpbrute -h"
+		menu_entry "Penetration-Testing" "Network" "snmpbrute"
 		printf "$GREEN"  "[*] Success Installing SNMP-Brute"
 	else
 		printf "$GREEN"  "[*] Success Installed SNMP-Brute"
@@ -723,7 +718,7 @@ EOF
 cd /usr/share/pret;python3 pret.py "\$@"
 EOF
 		chmod +x /usr/bin/pret
-		menu_entry "Penetration-Testing" "Network" "pret -h"
+		menu_entry "Penetration-Testing" "Network" "pret"
 		printf "$GREEN"  "[*] Success Installing PRET"
 	else
 		printf "$GREEN"  "[*] Success Installed PRET"
@@ -757,7 +752,7 @@ cd /usr/share/memcrashed;python3 Memcrashed.py "\$@"
 EOF
 		chmod +x /usr/bin/memcrashed
 		pip3 install -r /usr/share/memcrashed/requirements.txt
-		menu_entry "Penetration-Testing" "Network" "memcrashed -h"
+		menu_entry "Penetration-Testing" "Network" "memcrashed"
 		printf "$GREEN"  "[*] Success Installing Memcrashed"
 	else
 		printf "$GREEN"  "[*] Success Installed Memcrashed"
@@ -791,7 +786,7 @@ EOF
   		fi
 	done <<< "$wireless_commands"
 	for wireless_go_index in "${wireless_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "Wireless" "sudo ${wireless_go_array} -h"
+  		menu_entry "Penetration-Testing" "Wireless" "${wireless_go_array}"
 	done
 	eval "$wireless_commands"
 
@@ -854,7 +849,7 @@ EOF
   		fi
 	done <<< "$iot_commands"
 	for iot_go_index in "${iot_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "IoT" "sudo ${iot_go_index} -h"
+  		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}"
 	done
 	eval "$iot_commands"
 }
@@ -903,7 +898,7 @@ main ()
 	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console
 
 	# Install Nodejs NPM
-	# npm install -g npx 
+	npm install -g npx 
 
 	# Install Ruby GEM
 	# gem install 
@@ -987,7 +982,7 @@ do
     case $opt in
         "Penetrating-Testing")
             penetrating_testing
-            ;;
+        	;;
         "Red-Team")
             red_team
             ;;
