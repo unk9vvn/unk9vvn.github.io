@@ -981,21 +981,27 @@ select opt in "${options[@]}"
 do
     case $opt in
         "Penetrating-Testing")
+            echo "Running Penetrating-Testing..."
             penetrating_testing
             ;;
         "Red-Team")
+            echo "Running Red-Team..."
             red_team
             ;;
         "ICS-Security")
+            echo "Running ICS-Security..."
             ics_security
             ;;
         "Digital-Forensic")
+            echo "Running Digital-Forensic..."
             digital_forensic
             ;;
         "Blue-Team")
+            echo "Running Blue-Team..."
             blue_team
             ;;
         "Security-Audit")
+            echo "Running Security-Audit..."
             security_audit
             ;;
         "Quit")
