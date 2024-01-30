@@ -15,7 +15,7 @@ USERS=$(ls /home | sed 's/root//')
 
 if [ "$(id -u)" != "0" ];then
 	printf "$RED"		"[X] Please run as RooT ..."
-	printf "$GREEN"		"sudo chmod +x Kali_Elite.sh;sudo ./Kali_Elite.sh"
+	printf "$GREEN"		"sudo kalieite"
 	exit 0
 fi
 
