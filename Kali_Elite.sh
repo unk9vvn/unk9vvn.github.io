@@ -1,5 +1,5 @@
 #!/bin/bash
-version='4.0'
+version='5.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -9,13 +9,13 @@ BLUE='\e[1;34m%s\e[0m\n'
 MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
-USERS=$(ls /home | sed 's/root//')
+USERS=$(users | awk '{print $1}')
 
 
 
 if [ "$(id -u)" != "0" ];then
 	printf "$RED"		"[X] Please run as RooT ..."
-	printf "$GREEN"		"sudo kalieite"
+	printf "$GREEN"		"sudo kalielite"
 	exit 0
 fi
 
@@ -266,7 +266,7 @@ penetrating_testing ()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen 
 
 	# Install Python3 pip
-	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT ciphey proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec 
+	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT ciphey proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester 
 
 	# Install Nodejs NPM
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor 
@@ -318,8 +318,8 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-		symlink=$(echo "$line" | awk '{print $NF}')
-		symlink=${symlink#/}
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
     		symlink=${symlink%/}
     		binary_name=$(basename "$symlink")
     		web_go_array+=("$binary_name")
@@ -490,6 +490,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Poodle"
 	fi
 
+	# Install Gopherus
+	if [ ! -d "/usr/share/gopherus" ]; then
+		git clone https://github.com/tarunkant/Gopherus /usr/share/gopherus
+		chmod 755 /usr/share/gopherus/*
+		cat > /usr/bin/gopherus << EOF
+#!/bin/bash
+cd /usr/share/gopherus;python2 gopherus.py "\$@"
+EOF
+		chmod +x /usr/bin/gopherus
+		menu_entry "Penetration-Testing" "Web" "gopherus"
+		printf "$GREEN"  "[*] Success Installing Gopherus"
+	else
+		printf "$GREEN"  "[*] Success Installed Gopherus"
+	fi
+
 	# Install HashExtender
 	if [ ! -d "/usr/share/hashextender" ]; then
 		git clone https://github.com/iagox86/hash_extender /usr/share/hashextender
@@ -517,6 +532,52 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SpoofCheck"
 	else
 		printf "$GREEN"  "[*] Success Installed SpoofCheck"
+	fi
+
+	# Install RED_HAWK
+	if [ ! -d "/usr/share/red_hawk" ]; then
+		git clone https://github.com/Tuhinshubhra/RED_HAWK /usr/share/red_hawk
+		chmod 755 /usr/share/red_hawk/*
+		cat > /usr/bin/red_hawk << EOF
+#!/bin/bash
+cd /usr/share/red_hawk;php rhawk.php "\$@"
+EOF
+		chmod +x /usr/bin/red_hawk
+		menu_entry "Penetration-Testing" "Web" "red_hawk"
+		printf "$GREEN"  "[*] Success Installing RED_HAWK"
+	else
+		printf "$GREEN"  "[*] Success Installed RED_HAWK"
+	fi
+
+	# Install Breacher
+	if [ ! -d "/usr/share/breacher" ]; then
+		git clone https://github.com/s0md3v/Breacher /usr/share/breacher
+		chmod 755 /usr/share/breacher/*
+		cat > /usr/bin/breacher << EOF
+#!/bin/bash
+cd /usr/share/breacher;python3 breacher.py "\$@"
+EOF
+		chmod +x /usr/bin/breacher
+		menu_entry "Penetration-Testing" "Web" "breacher"
+		printf "$GREEN"  "[*] Success Installing Breacher"
+	else
+		printf "$GREEN"  "[*] Success Installed Breacher"
+	fi
+
+	# Install NoSQLMap
+	if [ ! -d "/usr/share/nosqlmap" ]; then
+		git clone https://github.com/codingo/NoSQLMap /usr/share/nosqlmap
+		chmod 755 /usr/share/nosqlmap/*
+		cat > /usr/bin/nosqlmap << EOF
+#!/bin/bash
+cd /usr/share/nosqlmap;python2 nosqlmap.py "\$@"
+EOF
+		chmod +x /usr/bin/nosqlmap
+		python2 nosqlmap.py install
+		menu_entry "Penetration-Testing" "Web" "nosqlmap"
+		printf "$GREEN"  "[*] Success Installing NoSQLMap"
+	else
+		printf "$GREEN"  "[*] Success Installed NoSQLMap"
 	fi
 
 
@@ -634,7 +695,7 @@ EOF
 
 	# -------------------------------------------Network-Penetration-Testing--------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm 
+	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm 
 
 	# Install Python3 pip
 	pip3 install networkx ropper mitmproxy mitm6 pymultitor scapy angr slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre 
@@ -742,6 +803,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Angry-IP"
 	fi
 
+	# Install fetch-some-proxies
+	if [ ! -d "/usr/share/fetch" ]; then
+		git clone https://github.com/stamparm/fetch-some-proxies /usr/share/fetch
+		chmod 755 /usr/share/fetch/*
+		cat > /usr/bin/fetch << EOF
+#!/bin/bash
+cd /usr/share/fetch;python3 fetch.py "\$@"
+EOF
+		printf "$GREEN"  "[*] Success Installing fetch-some-proxies"
+	else
+		printf "$GREEN"  "[*] Success Installed fetch-some-proxies"
+	fi
+
 	# Install Memcrashed
 	if [ ! -d "/usr/share/memcrashed" ]; then
 		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/memcrashed
@@ -799,8 +873,8 @@ EOF
 cd /usr/share/gtscan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan
-    		pip3 install -r /usr/share/gtscan/requirements.txt
-    		menu_entry "Penetration-Testing" "Wireless" "gtscan"
+    	pip3 install -r /usr/share/gtscan/requirements.txt
+    	menu_entry "Penetration-Testing" "Wireless" "gtscan"
 		printf "$GREEN"  "[*] Success Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Success Installed GTScan"
@@ -852,6 +926,7 @@ EOF
   		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}"
 	done
 	eval "$iot_commands"
+	logo
 }
 
 
@@ -887,15 +962,20 @@ security_audit ()
 
 main ()
 {
+	# APT Fixed
+	if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
+		echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+	fi
+
 	# Update & Upgrade OS
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager  
+	apt install -qy curl git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager 
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
-	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console
+	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console 
 
 	# Install Nodejs NPM
 	npm install -g npx 
