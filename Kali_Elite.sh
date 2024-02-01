@@ -678,7 +678,7 @@ sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		chmod +x /usr/bin/mobsf
 		cd /usr/share/MobSF;./setup.sh
-		menu_entry "Penetration-Testing" "Mobile" "mobsf" "/usr/share/kali-menu/exec-in-shell 'mobsf -h'"
+		menu_entry "Penetration-Testing" "Mobile" "mobsf" "/usr/share/kali-menu/exec-in-shell 'mobsf'"
 		printf "$GREEN"  "[*] Success Installing MobSF"
 	else
 		printf "$GREEN"  "[*] Success Installed MobSF"
@@ -824,7 +824,7 @@ EOF
 cd /usr/share/pret;python3 pret.py "\$@"
 EOF
 		chmod +x /usr/bin/pret
-		menu_entry "Penetration-Testing" "Network" "pret"
+		menu_entry "Penetration-Testing" "Network" "pret" "/usr/share/kali-menu/exec-in-shell 'pret -h'"
 		printf "$GREEN"  "[*] Success Installing PRET"
 	else
 		printf "$GREEN"  "[*] Success Installed PRET"
