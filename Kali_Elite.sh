@@ -1,5 +1,5 @@
 #!/bin/bash
-version='5.0'
+version='6.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -55,7 +55,7 @@ logo ()
 	printf "$RED"     "                            --/osssssssssssso/--                       "
 	printf "$BLUE"    "                                  Unk9vvN                              "
 	printf "$YELLOW"  "                            https://unk9vvn.com                        "
-	printf "$CYAN"    "                              Elite Installer                          "
+	printf "$CYAN"    "                                Kali Elite                             "
 	printf "\n\n"
 }
 
@@ -225,10 +225,11 @@ menu_entry ()
 	local category="$1"
 	local sub_category="$2"
 	local name="$3"
+	local command="$4"
 	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${name}.desktop" << EOF
 [Desktop Entry]
 Name=${name}
-Exec=/usr/share/kali-menu/exec-in-shell "sudo ${name} -h"
+Exec=${command}
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
@@ -272,7 +273,7 @@ penetrating_testing ()
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor 
 
 	# Install Ruby GEM
-	gem install ssrf_proxy API_Fuzzer dawnscanner mechanize 
+	gem install ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear
 
 	# Install Golang
 	web_go_array=()
@@ -291,6 +292,7 @@ go install github.com/d3mondev/puredns/v2@latest;ln -fs ~/go/bin/puredns /usr/bi
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
+go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
 go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
 go install github.com/tomnomnom/gron@latest;ln -fs ~/go/bin/gron /usr/bin/gron
@@ -326,7 +328,7 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 		fi
 	done <<< "$web_commands"
 	for web_go_index in "${web_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Web" "${web_go_index}"
+		menu_entry "Penetration-Testing" "Web" "${web_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${web_go_index} -h'"
 	done
 	eval "$web_commands"
 
@@ -348,7 +350,7 @@ cd /usr/share/cloudbunny;python3 cloudbunny.py "\$@"
 EOF
 		chmod +x /usr/bin/cloudbunny
 		pip3 install -r /usr/share/cloudbunny/requirements.txt
-		menu_entry "Penetration-Testing" "Web" "cloudbunny"
+		menu_entry "Penetration-Testing" "Web" "cloudbunny" "/usr/share/kali-menu/exec-in-shell 'cloudbunny -h'"
 		printf "$GREEN"  "[*] Success Installing CloudBunny"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudBunny"
@@ -362,7 +364,7 @@ EOF
 		chmod 755 /usr/share/phoneinfoga/*
 		ln -fs /usr/share/phoneinfoga/phoneinfoga /usr/bin/phoneinfoga
 		chmod +x /usr/bin/phoneinfoga
-		menu_entry "Penetration-Testing" "Web" "phoneinfoga"
+		menu_entry "Penetration-Testing" "Web" "phoneinfoga" "/usr/share/kali-menu/exec-in-shell 'sudo phoneinfoga -h'"
 		printf "$GREEN"  "[*] Success Installing PhoneInfoga"
 	else
 		printf "$GREEN"  "[*] Success Installed PhoneInfoga"
@@ -375,7 +377,7 @@ EOF
 		chmod 755 /usr/share/findomain/*
 		ln -fs /usr/share/findomain/findomain /usr/bin/findomain
 		chmod +x /usr/bin/findomain
-		menu_entry "Penetration-Testing" "Web" "findomain"
+		menu_entry "Penetration-Testing" "Web" "findomain" "/usr/share/kali-menu/exec-in-shell 'sudo findomain -h'"
 		printf "$GREEN"  "[*] Success Installing Findomain"
 	else
 		printf "$GREEN"  "[*] Success Installed Findomain"
@@ -385,7 +387,7 @@ EOF
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O /tmp/rustscan.deb
 		chmod +x /tmp/rustscan.deb;dpkg -i /tmp/rustscan.deb;rm -f /tmp/rustscan.deb
-		menu_entry "Penetration-Testing" "Web" "rustscan"
+		menu_entry "Penetration-Testing" "Web" "rustscan" "/usr/share/kali-menu/exec-in-shell 'sudo rustscan -h'"
 		printf "$GREEN"  "[*] Success Installing RustScan"
 	else
 		printf "$GREEN"  "[*] Success Installed RustScan"
@@ -397,10 +399,21 @@ EOF
 		chmod 755 /usr/share/hashpump/*
 		cd /usr/share/hashpump;make;make install
 		chmod +x /usr/bin/hashpump
-		menu_entry "Penetration-Testing" "Web" "hashpump"
+		menu_entry "Penetration-Testing" "Web" "hashpump" "/usr/share/kali-menu/exec-in-shell 'sudo hashpump -h'"
 		printf "$GREEN"  "[*] Success Installing HashPump"
 	else
 		printf "$GREEN"  "[*] Success Installed HashPump"
+	fi
+
+	# Install pixload
+	if [ ! -d "/usr/share/pixload" ]; then
+		git clone https://github.com/sighook/pixload /usr/share/pixload
+		chmod 755 /usr/share/pixload/*
+		cd /usr/share/pixload;make install
+		menu_entry "Penetration-Testing" "Web" "pixload" "/usr/share/kali-menu/exec-in-shell 'sudo pixload-bmp --help'"
+		printf "$GREEN"  "[*] Success Installing pixload"
+	else
+		printf "$GREEN"  "[*] Success Installed pixload"
 	fi
 
 	# Install RSAtool
@@ -412,7 +425,7 @@ EOF
 cd /usr/share/rsatool;python3 rsatool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsatool
-		menu_entry "Penetration-Testing" "Web" "rsatool"
+		menu_entry "Penetration-Testing" "Web" "rsatool" "/usr/share/kali-menu/exec-in-shell 'rsatool -h'"
 		printf "$GREEN"  "[*] Success Installing RSAtool"
 	else
 		printf "$GREEN"  "[*] Success Installed RSAtool"
@@ -426,7 +439,7 @@ EOF
 cd /usr/share/rsactftool;python3 RsaCtfTool.py "\$@"
 EOF
 		chmod +x /usr/bin/rsactftool;chmod 755 /usr/share/rsactftool/*
-		menu_entry "Penetration-Testing" "Web" "rsactftool"
+		menu_entry "Penetration-Testing" "Web" "rsactftool" "/usr/share/kali-menu/exec-in-shell 'rsactftool -h'"
 		printf "$GREEN"  "[*] Success Installing RsaCtfTool"
 	else
 		printf "$GREEN"  "[*] Success Installed RsaCtfTool"
@@ -439,7 +452,7 @@ EOF
 		cd /usr/share/pemcrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
 		ln -fs /usr/share/pemcrack/pemcrack /usr/bin/pemcrack
 		chmod +x /usr/bin/pemcrack
-		menu_entry "Penetration-Testing" "Web" "pemcrack"
+		menu_entry "Penetration-Testing" "Web" "pemcrack" "/usr/share/kali-menu/exec-in-shell 'sudo pemcrack -h'"
 		printf "$GREEN"  "[*] Success Installing PEMCrack"
 	else
 		printf "$GREEN"  "[*] Success Installed PEMCrack"
@@ -454,10 +467,42 @@ EOF
 cd /usr/share/dymerge;python2 dymerge.py "\$@"
 EOF
 		chmod +x /usr/bin/dymerge
-		menu_entry "Penetration-Testing" "Web" "dymerge"
+		menu_entry "Penetration-Testing" "Web" "dymerge" "/usr/share/kali-menu/exec-in-shell 'dymerge -h'"
 		printf "$GREEN"  "[*] Success Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Success Installed DyMerge"
+	fi
+
+	# Install XSS-LOADER
+	if [ ! -d "/usr/share/xssloader" ]; then
+		git clone https://github.com/capture0x/XSS-LOADER /usr/share/xssloader
+		chmod 755 /usr/share/xssloader/*
+		cat > /usr/bin/xssloader << EOF
+#!/bin/bash
+cd /usr/share/xssloader;python3 payloader.py "\$@"
+EOF
+		chmod +x /usr/bin/xssloader
+		pip3 install -r /usr/share/xssloader/requirements.txt
+		menu_entry "Penetration-Testing" "Web" "xssloader" "/usr/share/kali-menu/exec-in-shell 'xssloader -h'"
+		printf "$GREEN"  "[*] Success Installing XSS-LOADER"
+	else
+		printf "$GREEN"  "[*] Success Installed XSS-LOADER"
+	fi
+
+	# Install XSStrike
+	if [ ! -d "/usr/share/xsstrike" ]; then
+		git clone https://github.com/s0md3v/XSStrike /usr/share/xsstrike
+		chmod 755 /usr/share/xsstrike/*
+		cat > /usr/bin/xsstrike << EOF
+#!/bin/bash
+cd /usr/share/xsstrike;python3 xsstrike.py "\$@"
+EOF
+		chmod +x /usr/bin/xsstrike
+		pip3 install -r /usr/share/xsstrike/requirements.txt
+		menu_entry "Penetration-Testing" "Web" "xsstrike" "/usr/share/kali-menu/exec-in-shell 'xsstrike -h'"
+		printf "$GREEN"  "[*] Success Installing XSStrike"
+	else
+		printf "$GREEN"  "[*] Success Installed XSStrike"
 	fi
 
 	# Install JWT-Tool
@@ -469,7 +514,7 @@ EOF
 cd /usr/share/jwt_tool;python3 jwt_tool.py "\$@"
 EOF
 		chmod +x /usr/bin/jwt_tool
-		menu_entry "Penetration-Testing" "Web" "jwt_tool"
+		menu_entry "Penetration-Testing" "Web" "jwt_tool" "/usr/share/kali-menu/exec-in-shell 'jwt_tool -h'"
 		printf "$GREEN"  "[*] Success Installing JWT-Tool"
 	else
 		printf "$GREEN"  "[*] Success Installed JWT-Tool"
@@ -484,7 +529,7 @@ EOF
 cd /usr/share/poodle;python3 poodle-exploit.py "\$@"
 EOF
 		chmod +x /usr/bin/poodle
-		menu_entry "Penetration-Testing" "Web" "poodle"
+		menu_entry "Penetration-Testing" "Web" "poodle" "/usr/share/kali-menu/exec-in-shell 'poodle -h'"
 		printf "$GREEN"  "[*] Success Installing Poodle"
 	else
 		printf "$GREEN"  "[*] Success Installed Poodle"
@@ -499,7 +544,7 @@ EOF
 cd /usr/share/gopherus;python2 gopherus.py "\$@"
 EOF
 		chmod +x /usr/bin/gopherus
-		menu_entry "Penetration-Testing" "Web" "gopherus"
+		menu_entry "Penetration-Testing" "Web" "gopherus" "/usr/share/kali-menu/exec-in-shell 'gopherus -h'"
 		printf "$GREEN"  "[*] Success Installing Gopherus"
 	else
 		printf "$GREEN"  "[*] Success Installed Gopherus"
@@ -512,7 +557,7 @@ EOF
 		cd /usr/share/hashextender;make
 		ln -fs /usr/share/hashextender /usr/bin/hashextender
 		chmod +x /usr/bin/hashextender
-		menu_entry "Penetration-Testing" "Web" "hashextender"
+		menu_entry "Penetration-Testing" "Web" "hashextender" "/usr/share/kali-menu/exec-in-shell 'sudo hashextender -h'"
 		printf "$GREEN"  "[*] Success Installing HashExtender"
 	else
 		printf "$GREEN"  "[*] Success Installed HashExtender"
@@ -528,7 +573,7 @@ cd /usr/share/spoofcheck;python2 spoofcheck.py "\$@"
 EOF
 		chmod +x /usr/bin/spoofcheck
 		pip2 install -r /usr/share/spoofcheck/requirements.txt
-		menu_entry "Penetration-Testing" "Web" "spoofcheck"
+		menu_entry "Penetration-Testing" "Web" "spoofcheck" "/usr/share/kali-menu/exec-in-shell 'spoofcheck -h'"
 		printf "$GREEN"  "[*] Success Installing SpoofCheck"
 	else
 		printf "$GREEN"  "[*] Success Installed SpoofCheck"
@@ -543,7 +588,7 @@ EOF
 cd /usr/share/red_hawk;php rhawk.php "\$@"
 EOF
 		chmod +x /usr/bin/red_hawk
-		menu_entry "Penetration-Testing" "Web" "red_hawk"
+		menu_entry "Penetration-Testing" "Web" "red_hawk" "/usr/share/kali-menu/exec-in-shell 'red_hawk -h'"
 		printf "$GREEN"  "[*] Success Installing RED_HAWK"
 	else
 		printf "$GREEN"  "[*] Success Installed RED_HAWK"
@@ -558,7 +603,7 @@ EOF
 cd /usr/share/breacher;python3 breacher.py "\$@"
 EOF
 		chmod +x /usr/bin/breacher
-		menu_entry "Penetration-Testing" "Web" "breacher"
+		menu_entry "Penetration-Testing" "Web" "breacher" "/usr/share/kali-menu/exec-in-shell 'breacher -h'"
 		printf "$GREEN"  "[*] Success Installing Breacher"
 	else
 		printf "$GREEN"  "[*] Success Installed Breacher"
@@ -574,7 +619,7 @@ cd /usr/share/nosqlmap;python2 nosqlmap.py "\$@"
 EOF
 		chmod +x /usr/bin/nosqlmap
 		python2 nosqlmap.py install
-		menu_entry "Penetration-Testing" "Web" "nosqlmap"
+		menu_entry "Penetration-Testing" "Web" "nosqlmap" "/usr/share/kali-menu/exec-in-shell 'nosqlmap -h'"
 		printf "$GREEN"  "[*] Success Installing NoSQLMap"
 	else
 		printf "$GREEN"  "[*] Success Installed NoSQLMap"
@@ -583,7 +628,7 @@ EOF
 
 	# --------------------------------------------Mobile-Penetration-Testing--------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy jd-gui adb apksigner apktool android-tools-adb 
+	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
 
 	# Install Python3 pip
 	pip3 install frida-tools objection mitmproxy reflutter androguard apkleaks mobsf mvt kiwi androset 
@@ -609,7 +654,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
   		fi
 	done <<< "$mobile_commands"
 	for mobile_go_index in "${mobile_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Mobile" "${mobile_go_index}"
+		menu_entry "Penetration-Testing" "Mobile" "${mobile_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${mobile_go_index} -h'"
 	done
 	eval "$mobile_commands"
 
@@ -633,7 +678,7 @@ sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		chmod +x /usr/bin/mobsf
 		cd /usr/share/MobSF;./setup.sh
-		menu_entry "Penetration-Testing" "Mobile" "mobsf"
+		menu_entry "Penetration-Testing" "Mobile" "mobsf" "/usr/share/kali-menu/exec-in-shell 'mobsf -h'"
 		printf "$GREEN"  "[*] Success Installing MobSF"
 	else
 		printf "$GREEN"  "[*] Success Installed MobSF"
@@ -672,7 +717,7 @@ go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudReco
 		fi
 	done <<< "$cloud_commands"
 	for cloud_go_index in "${cloud_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Cloud" "${cloud_go_index}"
+		menu_entry "Penetration-Testing" "Cloud" "${cloud_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${cloud_go_index} -h'"
 	done
 	eval "$cloud_commands"
 
@@ -686,7 +731,7 @@ cd /usr/share/cloudfail;python3 cloudfail.py "\$@"
 EOF
 		chmod +x /usr/bin/cloudfail
 		pip3 install -r /usr/share/cloudfail/requirements.txt
-		menu_entry "Penetration-Testing" "Cloud" "cloudfail"
+		menu_entry "Penetration-Testing" "Cloud" "cloudfail" "/usr/share/kali-menu/exec-in-shell 'cloudfail -h'"
 		printf "$GREEN"  "[*] Success Installing CloudFail"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudFail"
@@ -721,7 +766,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		fi
 	done <<< "$network_commands"
 	for network_go_index in "${network_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Network" "${network_go_index}"
+		menu_entry "Penetration-Testing" "Network" "${network_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${network_go_index} -h'"
 	done
 	eval "$network_commands"
 
@@ -732,7 +777,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		chmod 755 /usr/share/hiddify-next/*
 		ln -fs /usr/share/hiddify-next/hiddify-linux-x64.AppImage /usr/bin/hiddify
 		chmod +x /usr/bin/hiddify
-		menu_entry "Penetration-Testing" "Network" "hiddify"
+		menu_entry "Penetration-Testing" "Network" "hiddify" "sudo /usr/bin/hiddify"
 		printf "$GREEN"  "[*] Success Installing Hiddify-Next"
 	else
 		printf "$GREEN"  "[*] Success Installed Hiddify-Next"
@@ -747,7 +792,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 cd /usr/share/snmp-brute;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/snmpbrute
-		menu_entry "Penetration-Testing" "Network" "snmpbrute"
+		menu_entry "Penetration-Testing" "Network" "snmpbrute" "/usr/share/kali-menu/exec-in-shell 'snmpbrute -h'"
 		printf "$GREEN"  "[*] Success Installing SNMP-Brute"
 	else
 		printf "$GREEN"  "[*] Success Installed SNMP-Brute"
@@ -764,7 +809,7 @@ EOF
 cd /usr/share/routerscan;wine RouterScan.exe "\$@"
 EOF
 		chmod +x /usr/bin/routerscan
-		menu_entry "Penetration-Testing" "Network" "routerscan"
+		menu_entry "Penetration-Testing" "Network" "routerscan" "/usr/share/kali-menu/exec-in-shell 'routerscan'"
 		printf "$GREEN"  "[*] Success Installing RouterScan"
 	else
 		printf "$GREEN"  "[*] Success Installed RouterScan"
@@ -788,7 +833,7 @@ EOF
 	# Install GEF
 	if [ ! -f "~/.gef-6a6e2a05ca8e08ac6845dce655a432fc4e029486.py" ]; then
 		bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-		menu_entry "Penetration-Testing" "Network" "gef"
+		menu_entry "Penetration-Testing" "Network" "gef" "/usr/share/kali-menu/exec-in-shell 'gef'"
 		printf "$GREEN"  "[*] Success Installing GEF"
 	else
 		printf "$GREEN"  "[*] Success Installed GEF"
@@ -811,6 +856,8 @@ EOF
 #!/bin/bash
 cd /usr/share/fetch;python3 fetch.py "\$@"
 EOF
+		chmod +x /usr/bin/fetch
+		menu_entry "Penetration-Testing" "Network" "fetch" "/usr/share/kali-menu/exec-in-shell 'fetch -h'"
 		printf "$GREEN"  "[*] Success Installing fetch-some-proxies"
 	else
 		printf "$GREEN"  "[*] Success Installed fetch-some-proxies"
@@ -826,7 +873,7 @@ cd /usr/share/memcrashed;python3 Memcrashed.py "\$@"
 EOF
 		chmod +x /usr/bin/memcrashed
 		pip3 install -r /usr/share/memcrashed/requirements.txt
-		menu_entry "Penetration-Testing" "Network" "memcrashed"
+		menu_entry "Penetration-Testing" "Network" "memcrashed" "/usr/share/kali-menu/exec-in-shell 'memcrashed -h'"
 		printf "$GREEN"  "[*] Success Installing Memcrashed"
 	else
 		printf "$GREEN"  "[*] Success Installed Memcrashed"
@@ -860,7 +907,7 @@ EOF
   		fi
 	done <<< "$wireless_commands"
 	for wireless_go_index in "${wireless_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "Wireless" "${wireless_go_array}"
+  		menu_entry "Penetration-Testing" "Wireless" "${wireless_go_array}" "/usr/share/kali-menu/exec-in-shell 'sudo ${wireless_go_array} -h'"
 	done
 	eval "$wireless_commands"
 
@@ -874,7 +921,7 @@ cd /usr/share/gtscan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan
     	pip3 install -r /usr/share/gtscan/requirements.txt
-    	menu_entry "Penetration-Testing" "Wireless" "gtscan"
+    	menu_entry "Penetration-Testing" "Wireless" "gtscan" "/usr/share/kali-menu/exec-in-shell 'gtscan -h'"
 		printf "$GREEN"  "[*] Success Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Success Installed GTScan"
@@ -889,7 +936,7 @@ EOF
 cd /usr/share/hlr-lookups;python3 hlr-lookups.py "\$@"
 EOF
 		chmod +x /usr/bin/hlrlookups
-		menu_entry "Penetration-Testing" "Wireless" "hlrlookups"
+		menu_entry "Penetration-Testing" "Wireless" "hlrlookups" "/usr/share/kali-menu/exec-in-shell 'hlrlookups -h'"
 		printf "$GREEN"  "[*] Success Installing HLR-Lookups"
 	else
 		printf "$GREEN"  "[*] Success Installed HLR-Lookups"
@@ -923,7 +970,7 @@ EOF
   		fi
 	done <<< "$iot_commands"
 	for iot_go_index in "${iot_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}"
+  		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${iot_go_index} -h'"
 	done
 	eval "$iot_commands"
 	logo
@@ -971,11 +1018,11 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager 
+	apt install -qy curl git apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl 
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
-	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console 
+	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois 
 
 	# Install Nodejs NPM
 	npm install -g npx 
