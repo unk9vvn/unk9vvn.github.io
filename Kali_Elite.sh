@@ -42,7 +42,7 @@ logo ()
 	printf "$WHITE"   "        oy/hsss-N-  oo:oN-   .-o.:ss:--:ss:.o-.   -My-oo  -N-o+++.so   "
 	printf "$WHITE"   "        :m :++y:y+   sNMy+: -+/:.--:////:--.:/+- -+hNNs   +y-o++o-m:   "
 	printf "$WHITE"   "        -d/::+o+.m-  -:/+ho:.       -//-       ./sdo::-  -m-o++++/d-   "
-	printf "$WHITE"   "         :m-qyo++//d- -ommMo//        -:        +oyNhmo- -d//s+++-m:   "
+	printf "$WHITE"   "         :m-qyo++//d- -ommMo//        -:       +oyNhmo-  -d//s+++-m:   "
 	printf "$WHITE"   "          oy /o++//d.  -::/oMss-   -+++s     :yNy+/:   .d//y+---qys    "
 	printf "$WHITE"   "           ys--+o++:d/ -/sdmNysNs+/./-//-//hNyyNmmy+- /d-+y--::sy      "
 	printf "$RED"     "            sy:..ooo-+h/--.-//odm/hNh--qyNh+Ndo//-./:/h+-so+:+/ys      "
@@ -54,7 +54,7 @@ logo ()
 	printf "$RED"     "                        -+sss+/o/ s--qy.s+/:++-+sss+-                  "
 	printf "$RED"     "                            --/osssssssssssso/--                       "
 	printf "$BLUE"    "                                  Unk9vvN                              "
-	printf "$YELLOW"  "                            https://unk9vvn.com                        "
+	printf "$YELLOW"  "                             unk9vvn.github.io                         "
 	printf "$CYAN"    "                                Kali Elite                             "
 	printf "\n\n"
 }
