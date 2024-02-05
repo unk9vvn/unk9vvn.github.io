@@ -320,8 +320,8 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
+		symlink=$(echo "$line" | awk '{print $NF}')
+		symlink=${symlink#/}
     		symlink=${symlink%/}
     		binary_name=$(basename "$symlink")
     		web_go_array+=("$binary_name")
@@ -920,8 +920,8 @@ EOF
 cd /usr/share/gtscan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan
-    	pip3 install -r /usr/share/gtscan/requirements.txt
-    	menu_entry "Penetration-Testing" "Wireless" "gtscan" "/usr/share/kali-menu/exec-in-shell 'gtscan -h'"
+    		pip3 install -r /usr/share/gtscan/requirements.txt
+    		menu_entry "Penetration-Testing" "Wireless" "gtscan" "/usr/share/kali-menu/exec-in-shell 'gtscan -h'"
 		printf "$GREEN"  "[*] Success Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Success Installed GTScan"
