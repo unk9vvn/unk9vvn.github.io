@@ -320,8 +320,8 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-		symlink=$(echo "$line" | awk '{print $NF}')
-		symlink=${symlink#/}
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
     		symlink=${symlink%/}
     		binary_name=$(basename "$symlink")
     		web_go_array+=("$binary_name")
@@ -763,6 +763,7 @@ go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
 go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr/bin/s3finder
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
+go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
@@ -976,8 +977,8 @@ EOF
 cd /usr/share/gtscan;python3 gtscan.py "\$@"
 EOF
 		chmod +x /usr/bin/gtscan
-    		pip3 install -r /usr/share/gtscan/requirements.txt
-    		menu_entry "Penetration-Testing" "Wireless" "GTScan" "/usr/share/kali-menu/exec-in-shell 'gtscan -h'"
+		pip3 install -r /usr/share/gtscan/requirements.txt
+		menu_entry "Penetration-Testing" "Wireless" "GTScan" "/usr/share/kali-menu/exec-in-shell 'gtscan -h'"
 		printf "$GREEN"  "[*] Success Installing GTScan"
 	else
 		printf "$GREEN"  "[*] Success Installed GTScan"
@@ -1349,6 +1350,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SharpShooter"
 	else
 		printf "$GREEN"  "[*] Success Installed SharpShooter"
+	fi
+
+	# Install Donut
+	if [ ! -d "/usr/share/donut" ]; then
+		mkdir -p /usr/share/donut
+		wget https://github.com/TheWover/donut/releases/download/v1.0/donut_v1.0.tar.gz -O /tmp/donut_v1.0.tar.gz
+		tar -xvf /tmp/donut_v1.0.tar.gz -C /usr/share/donut;rm -f /tmp/donut_v1.0.tar.gz
+		chmod 755 /usr/share/donut/*
+		ln -fs /usr/share/donut/donut /usr/bin/donut
+		chmod +x /usr/bin/donut
+		menu_entry "Red-Team" "Execution" "Donut" "/usr/share/kali-menu/exec-in-shell 'donut -h'"
+		printf "$GREEN"  "[*] Success Installing Donut"
+	else
+		printf "$GREEN"  "[*] Success Installed Donut"
 	fi
 
 
@@ -2088,7 +2103,7 @@ ics_security ()
 cd /usr/share/S7Scan;python2 s7scan.py "\$@"
 EOF
 		chmod +x /usr/bin/s7scan
-  		menu_entry "ICS-Security" "Penetration-Testing" "S7Scan" "/usr/share/kali-menu/exec-in-shell 's7scan -h'"
+		menu_entry "ICS-Security" "Penetration-Testing" "S7Scan" "/usr/share/kali-menu/exec-in-shell 's7scan -h'"
 		printf "$GREEN"  "[*] Success Installing S7Scan"
 	else
 		printf "$GREEN"  "[*] Success Installed S7Scan"
@@ -3182,7 +3197,7 @@ main ()
 	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget 
 
 	# Install Python2 pip
-	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;sudo python2.7 /tmp/get-pip.py
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
