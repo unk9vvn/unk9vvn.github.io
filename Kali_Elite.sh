@@ -2540,7 +2540,7 @@ EOF
 cd /usr/share/revoke-obfuscation;pwsh -c "Import-Module ./Revoke-Obfuscation.psd1; Revoke-Obfuscation" "\$@"
 EOF
 		chmod +x /usr/bin/revoke-obfuscation
-		menu_entry "Red-Team" "Defense-Evasion" "Revoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell 'revoke-obfuscation'"
+		menu_entry "Digital-Forensic" "Threat-Hunting" "Revoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell 'revoke-obfuscation'"
 		printf "$GREEN"  "[*] Success Installing Revoke-Obfuscation"
 	else
 		printf "$GREEN"  "[*] Success Installed Revoke-Obfuscation"
