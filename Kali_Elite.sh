@@ -323,8 +323,8 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
 			symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		web_go_array+=("$binary_name")
+			binary_name=$(basename "$symlink")
+			web_go_array+=("$binary_name")
 		fi
 	done <<< "$web_commands"
 	for web_go_index in "${web_go_array[@]}"; do
@@ -703,11 +703,11 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		mobile_go_array+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			mobile_go_array+=("$binary_name")
   		fi
 	done <<< "$mobile_commands"
 	for mobile_go_index in "${mobile_go_array[@]}"; do
@@ -767,11 +767,11 @@ go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		cloud_go_array+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			cloud_go_array+=("$binary_name")
 		fi
 	done <<< "$cloud_commands"
 	for cloud_go_index in "${cloud_go_array[@]}"; do
@@ -816,11 +816,11 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		network_go_array+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			network_go_array+=("$binary_name")
 		fi
 	done <<< "$network_commands"
 	for network_go_index in "${network_go_array[@]}"; do
@@ -956,11 +956,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		wireless_go_array+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			wireless_go_array+=("$binary_name")
   		fi
 	done <<< "$wireless_commands"
 	for wireless_go_index in "${wireless_go_array[@]}"; do
@@ -1019,11 +1019,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		iot_go_array+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			iot_go_array+=("$binary_name")
   		fi
 	done <<< "$iot_commands"
 	for iot_go_index in "${iot_go_array[@]}"; do
@@ -1059,11 +1059,11 @@ go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		reconnaissance_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			reconnaissance_commands+=("$binary_name")
 		fi
 	done <<< "$reconnaissance_commands"
 	for reconnaissance_go_index in "${reconnaissance_go_array[@]}"; do
@@ -1106,11 +1106,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		resource_development_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			resource_development_commands+=("$binary_name")
   		fi
 	done <<< "$resource_development_commands"
 	for resource_development_go_index in "${resource_development_go_array[@]}"; do
@@ -1140,11 +1140,11 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		initial_access_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			initial_access_commands+=("$binary_name")
   		fi
 	done <<< "$initial_access_commands"
 	for initial_access_go_index in "${initial_access_go_array[@]}"; do
@@ -1294,11 +1294,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		execution_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			execution_commands+=("$binary_name")
   		fi
 	done <<< "$execution_commands"
 	for execution_go_index in "${execution_go_array[@]}"; do
@@ -1386,11 +1386,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		persistence_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			persistence_commands+=("$binary_name")
   		fi
 	done <<< "$persistence_commands"
 	for persistence_go_index in "${persistence_go_array[@]}"; do
@@ -1430,11 +1430,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		privilege_escalation_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			privilege_escalation_commands+=("$binary_name")
 		fi
 	done <<< "$privilege_escalation_commands"
 	for privilege_escalation_go_index in "${privilege_escalation_go_array[@]}"; do
@@ -1495,11 +1495,11 @@ go install github.com/EgeBalci/amber@latest;ln -fs ~/go/bin/amber /usr/bin/amber
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		defense_evasion_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			defense_evasion_commands+=("$binary_name")
   		fi
 	done <<< "$defense_evasion_commands"
 	for defense_evasion_go_index in "${defense_evasion_go_array[@]}"; do
@@ -1697,11 +1697,11 @@ go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/k
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		credential_access_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			credential_access_commands+=("$binary_name")
 		fi
 	done <<< "$credential_access_commands"
 	for credential_access_go_index in "${credential_access_go_array[@]}"; do
@@ -1779,11 +1779,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		discovery_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			discovery_commands+=("$binary_name")
 		fi
 	done <<< "$discovery_commands"
 	for discovery_go_index in "${discovery_go_array[@]}"; do
@@ -1828,11 +1828,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		lateral_movement_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			lateral_movement_commands+=("$binary_name")
   		fi
 	done <<< "$lateral_movement_commands"
 	for lateral_movement_go_index in "${lateral_movement_go_array[@]}"; do
@@ -1860,11 +1860,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		collection_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			collection_commands+=("$binary_name")
   		fi
 	done <<< "$collection_commands"
 	for collection_go_index in "${collection_go_array[@]}"; do
@@ -1892,11 +1892,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		cnc_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			cnc_commands+=("$binary_name")
   		fi
 	done <<< "$cnc_commands"
 	for cnc_go_index in "${cnc_go_array[@]}"; do
@@ -1976,11 +1976,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		exfiltration_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			exfiltration_commands+=("$binary_name")
   		fi
 	done <<< "$exfiltration_commands"
 	for exfiltration_go_index in "${exfiltration_go_array[@]}"; do
@@ -2046,11 +2046,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		impact_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			impact_commands+=("$binary_name")
 		fi
 	done <<< "$impact_commands"
 	for impact_go_index in "${impact_go_array[@]}"; do
@@ -2082,11 +2082,11 @@ ics_security ()
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		pentest_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			pentest_commands+=("$binary_name")
 		fi
 	done <<< "$pentest_commands"
 	for pentest_go_index in "${pentest_go_array[@]}"; do
@@ -2161,11 +2161,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		red_team_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			red_team_commands+=("$binary_name")
 		fi
 	done <<< "$red_team_commands"
 	for red_team_go_index in "${red_team_go_array[@]}"; do
@@ -2193,11 +2193,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		digital_forensic_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			digital_forensic_commands+=("$binary_name")
 		fi
 	done <<< "$digital_forensic_commands"
 	for digital_forensic_go_index in "${digital_forensic_go_array[@]}"; do
@@ -2225,11 +2225,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		blue_team_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			blue_team_commands+=("$binary_name")
 		fi
 	done <<< "$blue_team_commands"
 	for blue_team_go_index in "${blue_team_go_array[@]}"; do
@@ -2261,11 +2261,11 @@ digital_forensic ()
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		forensic_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			forensic_commands+=("$binary_name")
 		fi
 	done <<< "$forensic_commands"
 	for forensic_go_index in "${forensic_go_array[@]}"; do
@@ -2294,11 +2294,11 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		malware_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			malware_commands+=("$binary_name")
 		fi
 	done <<< "$malware_commands"
 	for malware_go_index in "${malware_go_array[@]}"; do
@@ -2525,11 +2525,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		threat_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			threat_commands+=("$binary_name")
 		fi
 	done <<< "$threat_commands"
 	for threat_go_index in "${threat_go_array[@]}"; do
@@ -2581,11 +2581,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		response_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			response_commands+=("$binary_name")
 		fi
 	done <<< "$response_commands"
 	for response_go_index in "${response_go_array[@]}"; do
@@ -2624,11 +2624,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		intelligence_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			intelligence_commands+=("$binary_name")
 		fi
 	done <<< "$intelligence_commands"
 	for intelligence_go_index in "${intelligence_go_array[@]}"; do
@@ -2660,11 +2660,11 @@ blue_team ()
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		harden_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			harden_commands+=("$binary_name")
 		fi
 	done <<< "$harden_commands"
 	for harden_go_index in "${harden_go_array[@]}"; do
@@ -2693,11 +2693,11 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		detect_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			detect_commands+=("$binary_name")
 		fi
 	done <<< "$detect_commands"
 	for detect_go_index in "${detect_go_array[@]}"; do
@@ -2753,11 +2753,11 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		isolate_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			isolate_commands+=("$binary_name")
 		fi
 	done <<< "$isolate_commands"
 	for isolate_go_index in "${isolate_go_array[@]}"; do
@@ -2785,11 +2785,11 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		deceive_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			deceive_commands+=("$binary_name")
 		fi
 	done <<< "$deceive_commands"
 	for deceive_go_index in "${deceive_go_array[@]}"; do
@@ -2817,11 +2817,11 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		evict_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			evict_commands+=("$binary_name")
 		fi
 	done <<< "$evict_commands"
 	for evict_go_index in "${evict_go_array[@]}"; do
@@ -2854,11 +2854,11 @@ go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		audit_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			audit_commands+=("$binary_name")
 		fi
 	done <<< "$audit_commands"
 	for audit_go_index in "${audit_go_array[@]}"; do
@@ -2928,11 +2928,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		planning_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			planning_commands+=("$binary_name")
 		fi
 	done <<< "$planning_commands"
 	for planning_go_index in "${planning_go_array[@]}"; do
@@ -2960,11 +2960,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		establishing_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			establishing_commands+=("$binary_name")
 		fi
 	done <<< "$establishing_commands"
 	for establishing_go_index in "${establishing_go_array[@]}"; do
@@ -2992,11 +2992,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		performing_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			performing_commands+=("$binary_name")
 		fi
 	done <<< "$performing_commands"
 	for performing_go_index in "${performing_go_array[@]}"; do
@@ -3136,11 +3136,11 @@ EOF
 ')
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
-    		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		preparing_commands+=("$binary_name")
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			preparing_commands+=("$binary_name")
 		fi
 	done <<< "$preparing_commands"
 	for preparing_go_index in "${preparing_go_array[@]}"; do
@@ -3169,10 +3169,10 @@ EOF
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
     		symlink=$(echo "$line" | awk '{print $NF}')
-    		symlink=${symlink#/}
+			symlink=${symlink#/}
     		symlink=${symlink%/}
-    		binary_name=$(basename "$symlink")
-    		issuing_commands+=("$binary_name")
+			binary_name=$(basename "$symlink")
+			issuing_commands+=("$binary_name")
 		fi
 	done <<< "$issuing_commands"
 	for issuing_go_index in "${issuing_go_array[@]}"; do
