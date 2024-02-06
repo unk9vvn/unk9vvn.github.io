@@ -54,7 +54,7 @@ logo ()
 	printf "$RED"     "                        -+sss+/o/ s--qy.s+/:++-+sss+-                  "
 	printf "$RED"     "                            --/osssssssssssso/--                       "
 	printf "$BLUE"    "                                  Unk9vvN                              "
-	printf "$YELLOW"  "                            https://unk9vvn.com                        "
+	printf "$YELLOW"  "                             unk9vvn.github.io                         "
 	printf "$CYAN"    "                                Kali Elite                             "
 	printf "\n\n"
 }
