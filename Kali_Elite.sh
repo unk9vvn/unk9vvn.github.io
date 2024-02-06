@@ -260,6 +260,28 @@ EOF
 }
 
 
+go_installer ()
+{
+	local category="$1"
+	local sub_category="$2"
+	local commands="$3"
+	go_array=()
+	while read -r line; do
+		if [[ $line == *"ln -fs"* ]]; then
+			symlink=$(echo "$line" | awk '{print $NF}')
+			symlink=${symlink#/}
+			symlink=${symlink%/}
+			binary_name=$(basename "$symlink")
+			go_array+=("$binary_name")
+		fi
+	done <<< "$commands"
+	for go_index in "${go_array[@]}"; do
+		menu_entry "${category}" "${sub_category}" "${go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${go_index} -h'"
+	done
+	eval "$commands"
+}
+
+
 penetrating_testing ()
 {
 	# ----------------------------------------------Web-Penetration-Testing---------------------------------------------- #
@@ -276,7 +298,6 @@ penetrating_testing ()
 	gem install ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear
 
 	# Install Golang
-	web_go_array=()
 	web_commands=$(echo '
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bin/httprobe
@@ -318,19 +339,7 @@ go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/un
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			web_go_array+=("$binary_name")
-		fi
-	done <<< "$web_commands"
-	for web_go_index in "${web_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Web" "${web_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${web_go_index} -h'"
-	done
-	eval "$web_commands"
+	go_installer "Penetration-Testing" "Web" $web_commands
 
 	# Install Sn1per
 	if [ ! -d "/usr/share/sniper" ]; then
@@ -697,23 +706,10 @@ EOF
 	gem install jwt-cracker 
 
 	# Install Golang
-	mobile_go_array=()
 	mobile_commands=$(echo '
 go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			mobile_go_array+=("$binary_name")
-  		fi
-	done <<< "$mobile_commands"
-	for mobile_go_index in "${mobile_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Mobile" "${mobile_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${mobile_go_index} -h'"
-	done
-	eval "$mobile_commands"
+	go_installer "Penetration-Testing" "Mobile" $mobile_commands
 
 	# Install Genymotion
 	if [ ! -d "/opt/genymobile/genymotion" ]; then
@@ -756,7 +752,6 @@ EOF
 	gem install aws_public_ips aws_security_viz aws_recon 
 
 	# Install Golang
-	cloud_go_array=()
 	cloud_commands=$(echo '
 go install github.com/koenrh/s3enum@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enum
 go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
@@ -765,19 +760,7 @@ go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblo
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
 go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			cloud_go_array+=("$binary_name")
-		fi
-	done <<< "$cloud_commands"
-	for cloud_go_index in "${cloud_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Cloud" "${cloud_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${cloud_go_index} -h'"
-	done
-	eval "$cloud_commands"
+	go_installer "Penetration-Testing" "Cloud" $cloud_commands
 
 	# Install CloudFail
 	if [ ! -d "/usr/share/cloudfail" ]; then
@@ -810,23 +793,10 @@ EOF
 	gem install seccomp-tools one_gadget 
 
 	# Install Golang
-	network_go_array=()
 	network_commands=$(echo '
 go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			network_go_array+=("$binary_name")
-		fi
-	done <<< "$network_commands"
-	for network_go_index in "${network_go_array[@]}"; do
-		menu_entry "Penetration-Testing" "Network" "${network_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${network_go_index} -h'"
-	done
-	eval "$network_commands"
+	go_installer "Penetration-Testing" "Network" $network_commands
 
 	# Install Hiddify-Next
 	if [ ! -d "/usr/share/hiddify-next" ]; then
@@ -951,22 +921,9 @@ EOF
 	# gem install 
 
 	# Install Golang
-	wireless_go_array=()
 	wireless_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			wireless_go_array+=("$binary_name")
-  		fi
-	done <<< "$wireless_commands"
-	for wireless_go_index in "${wireless_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "Wireless" "${wireless_go_array}" "/usr/share/kali-menu/exec-in-shell 'sudo ${wireless_go_array} -h'"
-	done
-	eval "$wireless_commands"
+	go_installer "Penetration-Testing" "Wireless" $wireless_commands
 
 	# Install GTScan
 	if [ ! -d "/usr/share/GTScan" ]; then
@@ -1014,22 +971,9 @@ EOF
 	# gem install 
 
 	# Install Golang
-	iot_go_array=()
 	iot_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			iot_go_array+=("$binary_name")
-  		fi
-	done <<< "$iot_commands"
-	for iot_go_index in "${iot_go_array[@]}"; do
-  		menu_entry "Penetration-Testing" "IoT" "${iot_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${iot_go_index} -h'"
-	done
-	eval "$iot_commands"
+	go_installer "Penetration-Testing" "IoT" $iot_commands
 	logo
 }
 
@@ -1050,26 +994,13 @@ red_team ()
 	# gem install
 
 	# Install Golang
-	reconnaissance_go_array=()
 	reconnaissance_commands=$(echo '
 go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			reconnaissance_commands+=("$binary_name")
-		fi
-	done <<< "$reconnaissance_commands"
-	for reconnaissance_go_index in "${reconnaissance_go_array[@]}"; do
-		menu_entry "Red-Team" "Reconnaissance" "${reconnaissance_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${reconnaissance_go_index} -h'"
-	done
-	eval "$reconnaissance_commands"
+	go_installer "Red-Team" "Reconnaissance" $reconnaissance_commands
 
 	# Install Dracnmap
 	if [ ! -d "/usr/share/dracnmap" ]; then
@@ -1101,22 +1032,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	resource_development_go_array=()
 	resource_development_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			resource_development_commands+=("$binary_name")
-  		fi
-	done <<< "$resource_development_commands"
-	for resource_development_go_index in "${resource_development_go_array[@]}"; do
-		menu_entry "Red-Team" "Resource-Development" "${resource_development_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${resource_development_go_index} -h'"
-	done
-	eval "$resource_development_commands"
+	go_installer "Red-Team" "Resource-Development" $resource_development_commands
 
   
 	# ----------------------------------------------Initial-Access-Red-team---------------------------------------------- #
@@ -1133,24 +1051,11 @@ EOF
 	gem install 
 
 	# Install Golang
-	initial_access_go_array=()
 	initial_access_commands=$(echo '
 go install github.com/Tylous/ZipExec@latest;ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			initial_access_commands+=("$binary_name")
-  		fi
-	done <<< "$initial_access_commands"
-	for initial_access_go_index in "${initial_access_go_array[@]}"; do
-		menu_entry "Red-Team" "Initial-Access" "${initial_access_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${initial_access_go_index} -h'"
-	done
-	eval "$initial_access_commands"
+	go_installer "Red-Team" "Initial-Access" $initial_access_commands
 
 	# Install Evilginx
 	if [ ! -d "/usr/share/evilginx" ]; then
@@ -1289,22 +1194,9 @@ EOF
 	# gem install 
 
 	# Install Golang
-	execution_go_array=()
 	execution_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			execution_commands+=("$binary_name")
-  		fi
-	done <<< "$execution_commands"
-	for execution_go_index in "${execution_go_array[@]}"; do
-		menu_entry "Red-Team" "Execution" "${execution_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${execution_go_index} -h'"
-	done
-	eval "$execution_commands"
+	go_installer "Red-Team" "Execution" $execution_commands
 
 	# Install Venom
 	if [ ! -d "/usr/share/venom" ]; then
@@ -1381,22 +1273,9 @@ EOF
 	# gem install 
 
 	# Install Golang
-	persistence_go_array=()
 	persistence_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			persistence_commands+=("$binary_name")
-  		fi
-	done <<< "$persistence_commands"
-	for persistence_go_index in "${persistence_go_array[@]}"; do
-		menu_entry "Red-Team" "Persistence" "${persistence_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${persistence_go_index} -h'"
-	done
-	eval "$persistence_commands"
+	go_installer "Red-Team" "Persistence" $persistence_commands
 
 	# Install Vegile
 	if [ ! -d "/usr/share/vegile" ]; then
@@ -1425,22 +1304,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	privilege_escalation_go_array=()
 	privilege_escalation_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			privilege_escalation_commands+=("$binary_name")
-		fi
-	done <<< "$privilege_escalation_commands"
-	for privilege_escalation_go_index in "${privilege_escalation_go_array[@]}"; do
-		menu_entry "Red-Team" "Privilege-Escalation" "${privilege_escalation_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${privilege_escalation_go_index} -h'"
-	done
-	eval "$privilege_escalation_commands"
+	go_installer "Red-Team" "Privilege-Escalation" $privilege_escalation_commands
 
 	# Install MimiPenguin
 	if [ ! -d "/usr/share/mimipenguin" ]; then
@@ -1488,24 +1354,11 @@ EOF
 	gem install 
 
 	# Install Golang
-	defense_evasion_go_array=()
 	defense_evasion_commands=$(echo '
 go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow
 go install github.com/EgeBalci/amber@latest;ln -fs ~/go/bin/amber /usr/bin/amber
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			defense_evasion_commands+=("$binary_name")
-  		fi
-	done <<< "$defense_evasion_commands"
-	for defense_evasion_go_index in "${defense_evasion_go_array[@]}"; do
-		menu_entry "Red-Team" "Defense-Evasion" "${defense_evasion_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${defense_evasion_go_index} -h'"
-	done
-	eval "$defense_evasion_commands"
+	go_installer "Red-Team" "Defense-Evasion" $defense_evasion_commands
 
 	# Install ASWCrypter
 	if [ ! -d "/usr/share/aswcrypter" ]; then
@@ -1691,23 +1544,10 @@ EOF
 	gem install 
 
 	# Install Golang
-	credential_access_go_array=()
 	credential_access_commands=$(echo '
 go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/kerbrute
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			credential_access_commands+=("$binary_name")
-		fi
-	done <<< "$credential_access_commands"
-	for credential_access_go_index in "${credential_access_go_array[@]}"; do
-		menu_entry "Red-Team" "Credential-Access" "${credential_access_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${credential_access_go_index} -h'"
-	done
-	eval "$credential_access_commands"
+	go_installer "Red-Team" "Credential-Access" $credential_access_commands
 
 	# Install Kerberoast
 	if [ ! -d "/usr/share/kerberoast" ]; then
@@ -1774,22 +1614,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	discovery_go_array=()
 	discovery_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			discovery_commands+=("$binary_name")
-		fi
-	done <<< "$discovery_commands"
-	for discovery_go_index in "${discovery_go_array[@]}"; do
-		menu_entry "Red-Team" "Discovery" "${discovery_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${discovery_go_index} -h'"
-	done
-	eval "$discovery_commands"
+	go_installer "Red-Team" "Discovery" $discovery_commands
 
 	# Install AdExplorer
 	if [ ! -d "/usr/share/adexplorer" ]; then
@@ -1823,22 +1650,9 @@ EOF
 	gem install evil-winrm 
   
 	# Install Golang
-	lateral_movement_go_array=()
 	lateral_movement_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			lateral_movement_commands+=("$binary_name")
-  		fi
-	done <<< "$lateral_movement_commands"
-	for lateral_movement_go_index in "${lateral_movement_go_array[@]}"; do
-		menu_entry "Red-Team" "Lateral-Movement" "${lateral_movement_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${lateral_movement_go_index} -h'"
-	done
-	eval "$lateral_movement_commands"
+	go_installer "Red-Team" "Lateral-Movement" $lateral_movement_commands
 
 
 	# ------------------------------------------------Collection-Red-Team------------------------------------------------ #
@@ -1855,22 +1669,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	collection_go_array=()
 	collection_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			collection_commands+=("$binary_name")
-  		fi
-	done <<< "$collection_commands"
-	for collection_go_index in "${collection_go_array[@]}"; do
-		menu_entry "Red-Team" "Collection" "${collection_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${collection_go_index} -h'"
-	done
-	eval "$collection_commands"
+	go_installer "Red-Team" "Collection" $collection_commands
 
 
 	# --------------------------------------------Command-and-Control-Red-Team------------------------------------------- #
@@ -1887,22 +1688,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	cnc_go_array=()
 	cnc_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			cnc_commands+=("$binary_name")
-  		fi
-	done <<< "$cnc_commands"
-	for cnc_go_index in "${cnc_go_array[@]}"; do
-		menu_entry "Red-Team" "Command-and-Control" "${cnc_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${cnc_go_index} -h'"
-	done
-	eval "$cnc_commands"
+	go_installer "Red-Team" "Command-and-Control" $cnc_commands
 
 	# Install PhoenixC2
 	if [ ! -d "/usr/share/phoenixc2" ]; then
@@ -1971,22 +1759,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	exfiltration_go_array=()
 	exfiltration_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			exfiltration_commands+=("$binary_name")
-  		fi
-	done <<< "$exfiltration_commands"
-	for exfiltration_go_index in "${exfiltration_go_array[@]}"; do
-		menu_entry "Red-Team" "Exfiltration" "${exfiltration_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${exfiltration_go_index} -h'"
-	done
-	eval "$exfiltration_commands"
+	go_installer "Red-Team" "Exfiltration" $exfiltration_commands
 
 	# Install Ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
@@ -2041,22 +1816,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	impact_go_array=()
 	impact_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			impact_commands+=("$binary_name")
-		fi
-	done <<< "$impact_commands"
-	for impact_go_index in "${impact_go_array[@]}"; do
-		menu_entry "Red-Team" "Impact" "${impact_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${impact_go_index} -h'"
-	done
-	eval "$impact_commands"
+	go_installer "Red-Team" "Impact" $impact_commands
 	logo
 }
 
@@ -2077,22 +1839,9 @@ ics_security ()
 	gem install modbus-cli 
 
 	# Install Golang
-	pentest_go_array=()
 	pentest_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			pentest_commands+=("$binary_name")
-		fi
-	done <<< "$pentest_commands"
-	for pentest_go_index in "${pentest_go_array[@]}"; do
-		menu_entry "ICS-Security" "Penetration-Testing" "${pentest_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${pentest_go_index} -h'"
-	done
-	eval "$pentest_commands"
+	go_installer "ICS-Security" "Penetration-Testing" $pentest_commands
 
 	# Install S7Scan
 	if [ ! -d "/usr/share/S7Scan" ]; then
@@ -2156,22 +1905,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	red_team_go_array=()
 	red_team_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			red_team_commands+=("$binary_name")
-		fi
-	done <<< "$red_team_commands"
-	for red_team_go_index in "${red_team_go_array[@]}"; do
-		menu_entry "ICS-Security" "Red-Team" "${red_team_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${red_team_go_index} -h'"
-	done
-	eval "$red_team_commands"
+	go_installer "ICS-Security" "Red-Team" $red_team_commands
 
 
 	# --------------------------------------------ICS-Security-Digital-Forensic------------------------------------------ #
@@ -2188,22 +1924,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	digital_forensic_go_array=()
 	digital_forensic_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			digital_forensic_commands+=("$binary_name")
-		fi
-	done <<< "$digital_forensic_commands"
-	for digital_forensic_go_index in "${digital_forensic_go_array[@]}"; do
-		menu_entry "ICS-Security" "Digital-Forensic" "${digital_forensic_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${digital_forensic_go_index} -h'"
-	done
-	eval "$digital_forensic_commands"
+	go_installer "ICS-Security" "Digital-Forensic" $digital_forensic_commands
 
 
 	# -----------------------------------------------ICS-Security-Blue-Team---------------------------------------------- #
@@ -2220,22 +1943,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	blue_team_go_array=()
 	blue_team_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			blue_team_commands+=("$binary_name")
-		fi
-	done <<< "$blue_team_commands"
-	for blue_team_go_index in "${blue_team_go_array[@]}"; do
-		menu_entry "ICS-Security" "Blue-Team" "${blue_team_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${blue_team_go_index} -h'"
-	done
-	eval "$blue_team_commands"
+	go_installer "ICS-Security" "Blue-Team" $blue_team_commands
 	logo
 }
 
@@ -2256,22 +1966,9 @@ digital_forensic ()
 	gem install 
 
 	# Install Golang
-	forensic_go_array=()
 	forensic_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			forensic_commands+=("$binary_name")
-		fi
-	done <<< "$forensic_commands"
-	for forensic_go_index in "${forensic_go_array[@]}"; do
-		menu_entry "Digital-Forensic" "Reverse-Engineering" "${forensic_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${forensic_go_index} -h'"
-	done
-	eval "$forensic_commands"
+	go_installer "Digital-Forensic" "Reverse-Engineering" $forensic_commands
 
 
 	# ------------------------------------------Digital-Forensic-Malware-Analysis---------------------------------------- #
@@ -2288,23 +1985,10 @@ digital_forensic ()
 	gem install pedump zsteg 
 
 	# Install Golang
-	malware_go_array=()
 	malware_commands=$(echo '
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			malware_commands+=("$binary_name")
-		fi
-	done <<< "$malware_commands"
-	for malware_go_index in "${malware_go_array[@]}"; do
-		menu_entry "Digital-Forensic" "Malware-Analysis" "${malware_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${malware_go_index} -h'"
-	done
-	eval "$malware_commands"
+	go_installer "Digital-Forensic" "Malware-Analysis" $malware_commands
 
 	# Install Dangerzone
 	if [ ! -d "/usr/share/dangerzone" ]; then
@@ -2520,22 +2204,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	threat_go_array=()
 	threat_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			threat_commands+=("$binary_name")
-		fi
-	done <<< "$threat_commands"
-	for threat_go_index in "${threat_go_array[@]}"; do
-		menu_entry "Digital-Forensic" "Threat-Hunting" "${threat_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${threat_go_index} -h'"
-	done
-	eval "$threat_commands"
+	go_installer "Digital-Forensic" "Threat-Hunting" $threat_commands
 
 	# Install Matano
 	if [ ! -d "/usr/share/matano" ]; then
@@ -2576,22 +2247,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	response_go_array=()
 	response_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			response_commands+=("$binary_name")
-		fi
-	done <<< "$response_commands"
-	for response_go_index in "${response_go_array[@]}"; do
-		menu_entry "Digital-Forensic" "Incident-Response" "${response_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${response_go_index} -h'"
-	done
-	eval "$response_commands"
+	go_installer "Digital-Forensic" "Incident-Response" $response_commands
 
 	# Install TheHive not tested
 	if [ ! -f "/etc/apt/sources.list.d/thehive-project.list" ]; then
@@ -2619,22 +2277,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	intelligence_go_array=()
 	intelligence_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			intelligence_commands+=("$binary_name")
-		fi
-	done <<< "$intelligence_commands"
-	for intelligence_go_index in "${intelligence_go_array[@]}"; do
-		menu_entry "Digital-Forensic" "Threat-Intelligence" "${intelligence_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${intelligence_go_index} -h'"
-	done
-	eval "$intelligence_commands"
+	go_installer "Digital-Forensic" "Threat-Intelligence" $intelligence_commands
 	logo
 }
 
@@ -2655,22 +2300,9 @@ blue_team ()
 	gem install 
 
 	# Install Golang
-	harden_go_array=()
 	harden_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			harden_commands+=("$binary_name")
-		fi
-	done <<< "$harden_commands"
-	for harden_go_index in "${harden_go_array[@]}"; do
-		menu_entry "Blue-Team" "Harden" "${harden_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${harden_go_index} -h'"
-	done
-	eval "$harden_commands"
+	go_installer "Blue-Team" "Harden" $harden_commands
 
 
 	# ---------------------------------------------------Blue-Team-Detect------------------------------------------------ #
@@ -2687,23 +2319,10 @@ blue_team ()
 	gem install 
 
 	# Install Golang
-	detect_go_array=()
 	detect_commands=$(echo '
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			detect_commands+=("$binary_name")
-		fi
-	done <<< "$detect_commands"
-	for detect_go_index in "${detect_go_array[@]}"; do
-		menu_entry "Blue-Team" "Detect" "${detect_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${detect_go_index} -h'"
-	done
-	eval "$detect_commands"
+	go_installer "Blue-Team" "Detect" $detect_commands
 
 	# Install Wazuh Agent & Server
 	if [ ! -f "/usr/share/keyrings/wazuh.gpg" ]; then
@@ -2748,22 +2367,9 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	gem install 
 
 	# Install Golang
-	isolate_go_array=()
 	isolate_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			isolate_commands+=("$binary_name")
-		fi
-	done <<< "$isolate_commands"
-	for isolate_go_index in "${isolate_go_array[@]}"; do
-		menu_entry "Blue-Team" "Isolate" "${isolate_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${isolate_go_index} -h'"
-	done
-	eval "$isolate_commands"
+	go_installer "Blue-Team" "Isolate" $isolate_commands
 
 
 	# ---------------------------------------------------Blue-Team-Deceive----------------------------------------------- #
@@ -2780,22 +2386,9 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	gem install 
 
 	# Install Golang
-	deceive_go_array=()
 	deceive_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			deceive_commands+=("$binary_name")
-		fi
-	done <<< "$deceive_commands"
-	for deceive_go_index in "${deceive_go_array[@]}"; do
-		menu_entry "Blue-Team" "Deceive" "${deceive_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${deceive_go_index} -h'"
-	done
-	eval "$deceive_commands"
+	go_installer "Blue-Team" "Deceive" $deceive_commands
 
 
 	# ---------------------------------------------------Blue-Team-Evict------------------------------------------------- #
@@ -2812,22 +2405,9 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	gem install 
 
 	# Install Golang
-	evict_go_array=()
 	evict_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			evict_commands+=("$binary_name")
-		fi
-	done <<< "$evict_commands"
-	for evict_go_index in "${evict_go_array[@]}"; do
-		menu_entry "Blue-Team" "Evict" "${evict_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${evict_go_index} -h'"
-	done
-	eval "$evict_commands"
+	go_installer "Blue-Team" "Evict" $evict_commands
 	logo
 }
 
@@ -2848,23 +2428,10 @@ security_audit ()
 	gem install brakeman bundler-audit 
 
 	# Install Golang
-	audit_go_array=()
 	audit_commands=$(echo '
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			audit_commands+=("$binary_name")
-		fi
-	done <<< "$audit_commands"
-	for audit_go_index in "${audit_go_array[@]}"; do
-		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "${audit_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${audit_go_index} -h'"
-	done
-	eval "$audit_commands"
+	go_installer "Security-Audit" "Preliminary-Audit-Assessment" $audit_commands
 
 	# Install Bearer
 	if [ ! -f "/usr/local/bin/bearer" ]; then
@@ -2923,22 +2490,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	planning_go_array=()
 	planning_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			planning_commands+=("$binary_name")
-		fi
-	done <<< "$planning_commands"
-	for planning_go_index in "${planning_go_array[@]}"; do
-		menu_entry "Security-Audit" "Planning-and-Preparation" "${planning_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${planning_go_index} -h'"
-	done
-	eval "$planning_commands"
+	go_installer "Security-Audit" "Planning-and-Preparation" $planning_commands
 
 
 	# ------------------------------------Security-Audit-Establishing-Audit-Objectives----------------------------------- #
@@ -2955,22 +2509,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	establishing_go_array=()
 	establishing_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			establishing_commands+=("$binary_name")
-		fi
-	done <<< "$establishing_commands"
-	for establishing_go_index in "${establishing_go_array[@]}"; do
-		menu_entry "Security-Audit" "Establishing-Audit-Objectives" "${establishing_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${establishing_go_index} -h'"
-	done
-	eval "$establishing_commands"
+	go_installer "Security-Audit" "Establishing-Audit-Objectives" $establishing_commands
 
 
 	# ---------------------------------------Security-Audit-Performing-the-Review---------------------------------------- #
@@ -2987,22 +2528,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	performing_go_array=()
 	performing_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			performing_commands+=("$binary_name")
-		fi
-	done <<< "$performing_commands"
-	for performing_go_index in "${performing_go_array[@]}"; do
-		menu_entry "Security-Audit" "Performing-the-Review" "${performing_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${performing_go_index} -h'"
-	done
-	eval "$performing_commands"
+	go_installer "Security-Audit" "Performing-the-Review" $performing_commands
 
 	# Install Clion
 	if [ ! -d "/usr/share/clion" ]; then
@@ -3131,22 +2659,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	preparing_go_array=()
 	preparing_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			preparing_commands+=("$binary_name")
-		fi
-	done <<< "$preparing_commands"
-	for preparing_go_index in "${preparing_go_array[@]}"; do
-		menu_entry "Security-Audit" "Preparing-the-Audit-Report" "${preparing_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${preparing_go_index} -h'"
-	done
-	eval "$preparing_commands"
+	go_installer "Security-Audit" "Preparing-the-Audit-Report" $preparing_commands
 
 
 	# --------------------------------------Security-Audit-Issuing-the-Review-Report------------------------------------- #
@@ -3163,22 +2678,9 @@ EOF
 	gem install 
 
 	# Install Golang
-	issuing_go_array=()
 	issuing_commands=$(echo '
 ')
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-    		symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-    		symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
-			issuing_commands+=("$binary_name")
-		fi
-	done <<< "$issuing_commands"
-	for issuing_go_index in "${issuing_go_array[@]}"; do
-		menu_entry "Security-Audit" "Issuing-the-Review-Report" "${issuing_go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${issuing_go_index} -h'"
-	done
-	eval "$issuing_commands"
+	go_installer "Security-Audit" "Issuing-the-Review-Report" $issuing_commands
 	logo
 }
 
