@@ -322,7 +322,7 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 		if [[ $line == *"ln -fs"* ]]; then
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
-    		symlink=${symlink%/}
+			symlink=${symlink%/}
     		binary_name=$(basename "$symlink")
     		web_go_array+=("$binary_name")
 		fi
@@ -3197,7 +3197,7 @@ main ()
 	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget 
 
 	# Install Python2 pip
-	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;sudo python2.7 /tmp/get-pip.py
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
