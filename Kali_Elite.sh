@@ -1,5 +1,5 @@
 #!/bin/bash
-version='10.0'
+version='11.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1003,6 +1003,22 @@ go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin
 ')
 	go_installer "Red-Team" "Reconnaissance" $reconnaissance_commands
 
+	# Install Trape
+	if [ ! -d "/usr/share/trape" ]; then
+		git clone https://github.com/jofpin/trape /usr/share/trape
+		chmod 755 /usr/share/trape/*
+		cat > /usr/bin/trape << EOF
+#!/bin/bash
+cd /usr/share/trape;python3 trape.py "\$@"
+EOF
+		chmod +x /usr/bin/trape
+		pip3 install -r /usr/share/trape/requirements.txt
+		menu_entry "Red-Team" "Reconnaissance" "Trape" "/usr/share/kali-menu/exec-in-shell 'trape -h'"
+		printf "$GREEN"  "[*] Success Installing Trape"
+	else
+		printf "$GREEN"  "[*] Success Installed Trape"
+	fi
+
 	# Install Dracnmap
 	if [ ! -d "/usr/share/dracnmap" ]; then
 		git clone https://github.com/Screetsec/Dracnmap /usr/share/dracnmap
@@ -1591,6 +1607,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SpookFlare"
 	else
 		printf "$GREEN"  "[*] Success Installed SpookFlare"
+	fi
+
+	# Install Pazuzu
+	if [ ! -d "/usr/share/pazuzu" ]; then
+		git clone https://github.com/BorjaMerino/Pazuzu /usr/share/pazuzu
+		chmod 755 /usr/share/pazuzu/*
+		cat > /usr/bin/pazuzu << EOF
+#!/bin/bash
+cd /usr/share/pazuzu;python2 pazuzu.py "\$@"
+EOF
+		chmod +x /usr/bin/pazuzu
+		menu_entry "Red-Team" "Defense-Evasion" "Pazuzu" "/usr/share/kali-menu/exec-in-shell 'pazuzu -h'"
+		printf "$GREEN"  "[*] Success Installing Pazuzu"
+	else
+		printf "$GREEN"  "[*] Success Installed Pazuzu"
 	fi
 
 	# Install Invoke-Obfuscation
