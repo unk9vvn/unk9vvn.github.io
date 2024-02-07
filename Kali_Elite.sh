@@ -1754,6 +1754,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installed PhoenixC2"
 	fi
 
+	# Install GoDoH
+	if [ ! -d "/usr/share/godoh" ]; then
+		mkdir -p /usr/share/godoh
+		wget https://github.com/sensepost/godoh/releases/latest/download/godoh-linux64 -O /usr/share/godoh/godoh
+		chmod 755 /usr/share/godoh/*
+		ln -fs /usr/share/godoh/godoh /usr/bin/godoh
+		chmod +x /usr/bin/godoh
+		menu_entry "Red-Team" "Command-and-Control" "GoDoH" "/usr/share/kali-menu/exec-in-shell 'godoh -h'"
+		printf "$GREEN"  "[*] Success Installing GoDoH"
+	else
+		printf "$GREEN"  "[*] Success Installed GoDoH"
+	fi
+
 	# Install Silver
 	if [ ! -d "/usr/share/sliver" ]; then
 		mkdir -p /usr/share/sliver
