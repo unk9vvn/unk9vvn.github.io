@@ -1103,7 +1103,7 @@ EOF
 		printf "$GREEN"  "[*] Success Installed EmbedInHTML"
 	fi
 
-	# Install Bad-PDF 
+	# Install Bad-PDF
 	if [ ! -d "/usr/share/bad-pdf" ]; then
 		git clone https://github.com/deepzec/Bad-Pdf /usr/share/bad-pdf
 		chmod 755 /usr/share/bad-pdf/*
@@ -1112,10 +1112,42 @@ EOF
 cd /usr/share/bad-pdf;python2 badpdf.py "\$@"
 EOF
 		chmod +x /usr/bin/bad-pdf
-		menu_entry "Red-Team" "Initial-Access" "Bad-PDF " "/usr/share/kali-menu/exec-in-shell 'bad-pdf -h'"
-		printf "$GREEN"  "[*] Success Installing Bad-PDF "
+		menu_entry "Red-Team" "Initial-Access" "Bad-PDF" "/usr/share/kali-menu/exec-in-shell 'bad-pdf -h'"
+		printf "$GREEN"  "[*] Success Installing Bad-PDF"
 	else
-		printf "$GREEN"  "[*] Success Installed Bad-PDF "
+		printf "$GREEN"  "[*] Success Installed Bad-PDF"
+	fi
+
+	# Install BLACKEYE
+	if [ ! -d "/usr/share/blackeye" ]; then
+		git clone https://github.com/EricksonAtHome/blackeye /usr/share/blackeye
+		chmod 755 /usr/share/blackeye/*
+		cat > /usr/bin/blackeye << EOF
+#!/bin/bash
+cd /usr/share/blackeye;./blackeye.sh "\$@"
+EOF
+		chmod +x /usr/bin/blackeye
+		menu_entry "Red-Team" "Initial-Access" "BLACKEYE" "/usr/share/kali-menu/exec-in-shell 'blackeye'"
+		printf "$GREEN"  "[*] Success Installing BLACKEYE"
+	else
+		printf "$GREEN"  "[*] Success Installed BLACKEYE"
+	fi
+
+	# Install CredSniper
+	if [ ! -d "/usr/share/credsniper" ]; then
+		git clone https://github.com/ustayready/CredSniper /usr/share/credsniper
+		chmod 755 /usr/share/credsniper/*
+		cat > /usr/bin/credsniper << EOF
+#!/bin/bash
+cd /usr/share/credsniper;python3 credsniper.py "\$@"
+EOF
+		chmod +x /usr/bin/credsniper
+		cd /usr/share/credsniper;./install.sh
+		pip3 install -r /usr/share/credsniper/requirements.txt
+		menu_entry "Red-Team" "Initial-Access" "CredSniper" "/usr/share/kali-menu/exec-in-shell 'credsniper -h'"
+		printf "$GREEN"  "[*] Success Installing CredSniper"
+	else
+		printf "$GREEN"  "[*] Success Installed CredSniper"
 	fi
 
 	# Install EvilURL
@@ -1193,6 +1225,37 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Dr0p1t"
 	else
 		printf "$GREEN"  "[*] Success Installed Dr0p1t"
+	fi
+
+	# Install EvilPDF
+	if [ ! -d "/usr/share/evilpdf" ]; then
+		git clone https://github.com/superzerosec/evilpdf /usr/share/evilpdf
+		chmod 755 /usr/share/evilpdf/*
+		cat > /usr/bin/evilpdf << EOF
+#!/bin/bash
+cd /usr/share/evilpdf;python2 evilpdf.py "\$@"
+EOF
+		chmod +x /usr/bin/evilpdf
+		menu_entry "Red-Team" "Initial-Access" "EvilPDF" "/usr/share/kali-menu/exec-in-shell 'evilpdf -h'"
+		printf "$GREEN"  "[*] Success Installing EvilPDF"
+	else
+		printf "$GREEN"  "[*] Success Installed EvilPDF"
+	fi
+
+	# Install Gophish
+	if [ ! -d "/usr/share/gophish" ]; then
+		wget https://github.com/gophish/gophish/releases/latest/download/gophish-v0.12.1-linux-64bit.zip -O /tmp/gophish-linux.zip
+		unzip /tmp/gophish-linux.zip -d /usr/share/gophish;rm -f /tmp/gophish-linux.zip
+		chmod 755 /usr/share/gophish/*
+		cat > /usr/bin/gophish << EOF
+#!/bin/bash
+cd /usr/share/gophish;./gophish "\$@"
+EOF
+		chmod +x /usr/bin/gophish
+		menu_entry "Red-Team" "Initial-Access" "Gophish" "/usr/share/kali-menu/exec-in-shell 'gophish'"
+		printf "$GREEN"  "[*] Success Installing Gophish"
+	else
+		printf "$GREEN"  "[*] Success Installed Gophish"
 	fi
 
 
@@ -2821,7 +2884,7 @@ main ()
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
-	pip3 install setuptools env colorama pysnmp termcolor cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone 
+	pip3 install setuptools env colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone 
 
 	# Install Nodejs NPM
 	npm install -g npx 
