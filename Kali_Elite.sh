@@ -22,41 +22,41 @@ fi
 
 logo ()
 {
-	reset;clear
-	printf "$GREEN"   "                            --/osssssssssssso/--                       "
-	printf "$GREEN"   "                        -+sss+-+--os.yo:++/.o-/sss+-                   "
-	printf "$GREEN"   "                     /sy+++-.h.-dd++m+om/s.h.hy/:+oys/                 "
-	printf "$GREEN"   "                  .sy/// h/h-:d-qy:/+-/+-+/-s/sodooh:///ys.            "
-	printf "$GREEN"   "                -qys-ss/:y:so-/osssso++++osssso+.oo+/s-:o.sy-          "
-	printf "$GREEN"   "              -qys:oossyo/+oyo/:-:.-:.:/.:/-.-:/syo/+/s+:oo:sy-        "
-	printf "$GREEN"   "             /d/:-soh/-+ho-.:::--:- .os: -:-.:-/::sy+:+ysso+:d/        "
-	printf "$GREEN"   "            sy-..+oo-+h:--:..hy+y/  :s+.  /y/sh..:/-:h+-oyss:.ys       "
-	printf "$WHITE"   "           ys :+oo/:d/   .m-qyyyo/- - -:   .+oyhy-N.   /d::yosd.sy     "
-	printf "$WHITE"   "          oy.++++//d.  ::oNdyo:     .--.     :oyhN+-:  .d//s//y.ys     "
-	printf "$WHITE"   "         :m-qy+++//d-   dyyy++::-. -.o.-+.- .-::/+hsyd   -d/so+++.m:   "
-	printf "$WHITE"   "        -d/-/+++.m-  /.ohso- ://:///++++///://:  :odo.+  -m.syoo:/d-   "
-	printf "$WHITE"   "        :m-+++y:y+   smyms-   -//+/-ohho-/+//-    omsmo   +y s+oy-m:   "
-	printf "$WHITE"   "        sy:+++y-N-  -.dy+:...-- :: ./hh/. :: --...//hh.:  -N-o+/:-so   "
-	printf "$WHITE"   "        yo-///s-m   odohd.-.--:/o.-+/::/+-.o/:--.--hd:ho   m-s+++-+y   "
-	printf "$WHITE"   "        yo::/+o-m   -qyNy/:  ...:+s.//:://.s+:...  :/yNs   m-h++++oy   "
-	printf "$WHITE"   "        oy/hsss-N-  oo:oN-   .-o.:ss:--:ss:.o-.   -My-oo  -N-o+++.so   "
-	printf "$WHITE"   "        :m :++y:y+   sNMy+: -+/:.--:////:--.:/+- -+hNNs   +y-o++o-m:   "
-	printf "$WHITE"   "        -d/::+o+.m-  -:/+ho:.       -//-       ./sdo::-  -m-o++++/d-   "
-	printf "$WHITE"   "         :m-qyo++//d- -ommMo//        -:        +oyNhmo- -d//s+++-m:   "
-	printf "$WHITE"   "          oy /o++//d.  -::/oMss-   -+++s      :yNy+/:  .d//y+---qys    "
-	printf "$WHITE"   "           ys--+o++:d/ -/sdmNysNs+/./-//-//hNyyNmmy+-  /d-+y--::sy     "
-	printf "$RED"     "            sy:..ooo-+h/--.-//odm/hNh--qyNh+Ndo//-./:/h+-so+:+/ys      "
-	printf "$RED"     "             /d-o.ssy+-+yo:/:/:-:+sho..ohs/-:://::oh+.h//syo-d/-       "
-	printf "$RED"     "              -qys-oosyss:/oyy//::.-.--.--:/.//syo+-qys//o/.sy-        "
-	printf "$RED"     "                -qys.sooh+d-s:+osssysssosssssso:/+/h:/yy/.sy-          "
-	printf "$RED"     "                  .sy/:os.h--d/o+-/+:o:/+.+o:d-qy+h-o+-+ys.            "
-	printf "$RED"     "                     :sy+:+ s//sy-qy.-h-m/om:s-qy.++/+ys/              "
-	printf "$RED"     "                        -+sss+/o/ s--qy.s+/:++-+sss+-                  "
-	printf "$RED"     "                            --/osssssssssssso/--                       "
-	printf "$BLUE"    "                                  Unk9vvN                              "
-	printf "$YELLOW"  "                             unk9vvn.github.io                         "
-	printf "$CYAN"    "                                Kali Elite                             "
-	printf "\n\n"
+    reset;clear
+    printf "$GREEN"   "                            --/osssssssssssso/--                    "
+    printf "$GREEN"   "                        -+sss+-+--os.yo:++/.o-/sss+-                "
+    printf "$GREEN"   "                     /sy+++-.h.-dd++m+om/s.h.hy/:+oys/              "
+    printf "$GREEN"   "                  .sy/// h/h-:d-y:/+-/+-+/-s/sodooh:///ys.          "
+    printf "$GREEN"   "                -ys-ss/:y:so-/osssso++++osssso+.oo+/s-:o.sy-        "
+    printf "$GREEN"   "              -ys:oossyo/+oyo/:-:.-:.:/.:/-.-:/syo/+/s+:oo:sy-      "
+    printf "$GREEN"   "             /d/:-soh/-+ho-.:::--:- .os: -:-.:-/::sy+:+ysso+:d/     "
+    printf "$GREEN"   "            sy-..+oo-+h:--:..hy+y/  :s+.  /y/sh..:/-:h+-oyss:.ys    "
+    printf "$WHITE"   "           ys :+oo/:d/   .m-yyyo/- - -:   .+oyhy-N.   /d::yosd.sy   "
+    printf "$WHITE"   "          oy.++++//d.  ::oNdyo:     .--.     :oyhN+-:  .d//s//y.ys  "
+    printf "$WHITE"   "         :m-y+++//d-   dyyy++::-. -.o.-+.- .-::/+hsyd   -d/so+++.m: "
+    printf "$WHITE"   "        -d/-/+++.m-  /.ohso- ://:///++++///://:  :odo.+  -m.syoo:/d-"
+    printf "$WHITE"   "        :m-+++y:y+   smyms-   -//+/-ohho-/+//-    omsmo   +y s+oy-m:"
+    printf "$WHITE"   "        sy:+++y-N-  -.dy+:...-- :: ./hh/. :: --...//hh.:  -N-o+/:-so"
+    printf "$WHITE"   "        yo-///s-m   odohd.-.--:/o.-+/::/+-.o/:--.--hd:ho   m-s+++-+y"
+    printf "$WHITE"   "        yo::/+o-m   -yNy/:  ...:+s.//:://.s+:...  :/yNs    m-h++++oy"
+    printf "$WHITE"   "        oy/hsss-N-  oo:oN-   .-o.:ss:--:ss:.o-.   -My-oo  -N-o+++.so"
+    printf "$WHITE"   "        :m :++y:y+   sNMy+: -+/:.--:////:--.:/+- -+hNNs   +y-o++o-m:"
+    printf "$WHITE"   "        -d/::+o+.m-  -:/+ho:.       -//-       ./sdo::-  -m-o++++/d-"
+    printf "$WHITE"   "         :m-yo++//d- -ommMo//        -:        +oyNhmo- -d//s+++-m: "
+    printf "$WHITE"   "          oy /o++//d.  -::/oMss-   -+++s     :yNy+/:   .d//y+---ys  "
+    printf "$WHITE"   "           ys--+o++:d/ -/sdmNysNs+/./-//-//hNyyNmmy+- /d-+y--::sy   "
+    printf "$RED"     "            sy:..ooo-+h/--.-//odm/hNh--yNh+Ndo//-./:/h+-so+:+/ys    "
+    printf "$RED"     "             /d-o.ssy+-+yo:/:/:-:+sho..ohs/-:://::oh+.h//syo-d/     "
+    printf "$RED"     "              -ys-oosyss:/oyy//::..-.--.--:/.//syo+-ys//o/.sy-      "
+    printf "$RED"     "                -ys.sooh+d-s:+osssysssosssssso:/+/h:/yy/.sy-        "
+    printf "$RED"     "                  .sy/:os.h--d/o+-/+:o:/+.+o:d-y+h-o+-+ys.          "
+    printf "$RED"     "                     :sy+:+ s//sy-y.-h-m/om:s-y.++/+ys/             "
+    printf "$RED"     "                        -+sss+/o/ s--y.s+/:++-+sss+-                "
+    printf "$RED"     "                            --/osssssssssssso/--                    "
+    printf "$BLUE"    "                                  Unk9vvN                           "
+    printf "$YELLOW"  "                           https://unk9vvn.com                      "
+    printf "$CYAN"    "                                Kali Elite                          "
+    printf "\n\n"
 }
 
 
@@ -999,6 +999,7 @@ go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
+go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph
 ')
 	go_installer "Red-Team" "Reconnaissance" $reconnaissance_commands
 
@@ -1100,6 +1101,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing EmbedInHTML"
 	else
 		printf "$GREEN"  "[*] Success Installed EmbedInHTML"
+	fi
+
+	# Install Bad-PDF 
+	if [ ! -d "/usr/share/bad-pdf" ]; then
+		git clone https://github.com/deepzec/Bad-Pdf /usr/share/bad-pdf
+		chmod 755 /usr/share/bad-pdf/*
+		cat > /usr/bin/bad-pdf << EOF
+#!/bin/bash
+cd /usr/share/bad-pdf;python2 badpdf.py "\$@"
+EOF
+		chmod +x /usr/bin/bad-pdf
+		menu_entry "Red-Team" "Initial-Access" "Bad-PDF " "/usr/share/kali-menu/exec-in-shell 'bad-pdf -h'"
+		printf "$GREEN"  "[*] Success Installing Bad-PDF "
+	else
+		printf "$GREEN"  "[*] Success Installed Bad-PDF "
 	fi
 
 	# Install EvilURL
@@ -1226,6 +1242,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing PowerLessShell"
 	else
 		printf "$GREEN"  "[*] Success Installed PowerLessShell"
+	fi
+
+	# Install auto_SettingContent-ms
+	if [ ! -d "/usr/share/sharpshooter" ]; then
+		git clone https://github.com/trustedsec/auto_SettingContent-ms /usr/share/auto_settingcontent-ms
+		chmod 755 /usr/share/auto_settingcontent-ms/*
+		cat > /usr/bin/settingcontent << EOF
+#!/bin/bash
+cd /usr/share/auto_settingcontent-ms;python2 auto_settingcontent-ms.py "\$@"
+EOF
+		chmod +x /usr/bin/settingcontent
+		menu_entry "Red-Team" "Execution" "auto_SettingContent-ms" "/usr/share/kali-menu/exec-in-shell 'settingcontent -h'"
+		printf "$GREEN"  "[*] Success Installing auto_SettingContent-ms"
+	else
+		printf "$GREEN"  "[*] Success Installed auto_SettingContent-ms"
 	fi
 
 	# Install SharpShooter
@@ -1654,6 +1685,21 @@ EOF
 ')
 	go_installer "Red-Team" "Lateral-Movement" $lateral_movement_commands
 
+	# Install SCShell
+	if [ ! -d "/usr/share/scshell" ]; then
+		wget https://github.com/Mr-Un1k0d3r/SCShell -O /usr/share/scshell
+		chmod 755 /usr/share/scshell/*
+		cat > /usr/bin/scshell << EOF
+#!/bin/bash
+cd /usr/share/scshell;wine SCShell.exe "\$@"
+EOF
+		chmod +x /usr/bin/scshell
+		menu_entry "Red-Team" "Lateral-Movement" "SCShell" "/usr/share/kali-menu/exec-in-shell 'scshell'"
+		printf "$GREEN"  "[*] Success Installing SCShell"
+	else
+		printf "$GREEN"  "[*] Success Installed SCShell"
+	fi
+
 
 	# ------------------------------------------------Collection-Red-Team------------------------------------------------ #
 	# Install Repository Tools
@@ -1799,6 +1845,65 @@ EOF
 		printf "$GREEN"  "[*] Success Installing DNSExfiltrator"
 	else
 		printf "$GREEN"  "[*] Success Installed DNSExfiltrator"
+	fi
+
+	# Install DNSlivery
+	if [ ! -d "/usr/share/dnslivery" ]; then
+		git clone https://github.com/no0be/DNSlivery /usr/share/dnslivery
+		chmod 755 /usr/share/dnslivery/*
+		cat > /usr/bin/dnslivery << EOF
+#!/bin/bash
+cd /usr/share/dnslivery;python3 dnslivery.py "\$@"
+EOF
+		chmod +x /usr/bin/dnslivery
+		pip3 install -r /usr/share/dnslivery/requirements.txt
+		menu_entry "Red-Team" "Exfiltration" "DNSlivery" "/usr/share/kali-menu/exec-in-shell 'dnslivery -h'"
+		printf "$GREEN"  "[*] Success Installing DNSlivery"
+	else
+		printf "$GREEN"  "[*] Success Installed DNSlivery"
+	fi
+
+	# Install WebDavDelivery
+	if [ ! -d "/usr/share/webdavdelivery" ]; then
+		git clone https://github.com/Arno0x/WebDavDelivery /usr/share/webdavdelivery
+		chmod 755 /usr/share/webdavdelivery/*
+		cat > /usr/bin/webdavdelivery << EOF
+#!/bin/bash
+cd /usr/share/webdavdelivery;python3 webDavDelivery.py "\$@"
+EOF
+		chmod +x /usr/bin/webdavdelivery
+		pip3 install -r /usr/share/webdavdelivery/requirements.txt
+		menu_entry "Red-Team" "Exfiltration" "WebDavDelivery" "/usr/share/kali-menu/exec-in-shell 'webdavdelivery -h'"
+		printf "$GREEN"  "[*] Success Installing WebDavDelivery"
+	else
+		printf "$GREEN"  "[*] Success Installed WebDavDelivery"
+	fi
+
+	# Install WSTunnel
+	if [ ! -d "/usr/share/wstunnel" ]; then
+		mkdir -p /usr/share/wstunnel
+		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.2_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
+		tar -xvf /tmp/wstunnel_amd64.tar.gz -C /usr/share/wstunnel;rm -f /tmp/wstunnel_amd64.tar.gz
+		chmod 755 /usr/share/wstunnel/*
+		ln -fs /user/share/wstunnel/wstunnel /usr/bin/wstunnel
+		chmod +x /usr/bin/wstunnel
+		menu_entry "Red-Team" "Exfiltration" "WSTunnel" "/usr/share/kali-menu/exec-in-shell 'wstunnel -h'"
+		printf "$GREEN"  "[*] Success Installing WSTunnel"
+	else
+		printf "$GREEN"  "[*] Success Installed WSTunnel"
+	fi
+
+	# Install IPFS
+	if [ ! -d "/usr/share/kubo" ]; then
+		mkdir -p /usr/share/kubo
+		wget https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
+		tar -xvf /tmp/ipfs_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/ipfs_linux-amd64.tar.gz
+		chmod 755 /usr/share/kubo/*
+		cd /usr/share/kubo;./install.sh
+		menu_entry "Red-Team" "Exfiltration" "IPFS" "/usr/share/kali-menu/exec-in-shell 'ipfs'"
+		printf "$GREEN"  "[*] Success Installing IPFS"
+	else
+		printf "$GREEN"  "[*] Success Installed IPFS"
 	fi
 
 
