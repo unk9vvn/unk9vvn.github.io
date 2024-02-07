@@ -1835,7 +1835,7 @@ EOF
 	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin 
 
 	# Install Python3 pip
-	pip3 install 
+	pip3 install deathstar-empire 
 
 	# Install Nodejs NPM
 	npm install -g 
