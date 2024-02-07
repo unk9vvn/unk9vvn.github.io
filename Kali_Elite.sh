@@ -1824,6 +1824,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed SCShell"
 	fi
 
+	# Install Amnesiac
+	if [ ! -d "/usr/share/amnesiac" ]; then
+		git clone https://github.com/Leo4j/Amnesiac /usr/share/amnesiac
+		chmod 755 /usr/share/amnesiac/*
+		cat > /usr/bin/amnesiac << EOF
+#!/bin/bash
+cd /usr/share/amnesiac;pwsh -c "Import-Module ./Amnesiac.ps1; Amnesiac" "\$@"
+EOF
+		chmod +x /usr/bin/amnesiac
+		menu_entry "Red-Team" "Lateral-Movement" " Amnesiac" "/usr/share/kali-menu/exec-in-shell 'amnesiac'"
+		printf "$GREEN"  "[*] Success Installing  Amnesiac"
+	else
+		printf "$GREEN"  "[*] Success Installed  Amnesiac"
+	fi
+
 
 	# ------------------------------------------------Collection-Red-Team------------------------------------------------ #
 	# Install Repository Tools
@@ -1876,6 +1891,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing PhoenixC2"
 	else
 		printf "$GREEN"  "[*] Success Installed PhoenixC2"
+	fi
+
+	# Install Badrats
+	if [ ! -d "/usr/share/badrats" ]; then
+		git clone https://gitlab.com/KevinJClark/badrats /usr/share/badrats
+		chmod 755 /usr/share/badrats/*
+		cat > /usr/bin/badrats << EOF
+#!/bin/bash
+cd /usr/share/badrats;python3 badrat_server.py "\$@"
+EOF
+		chmod +x /usr/bin/badrats
+		pip3 install -r /usr/share/badrats/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "Badrats" "/usr/share/kali-menu/exec-in-shell 'sudo badrats'"
+		printf "$GREEN"  "[*] Success Installing Badrats"
+	else
+		printf "$GREEN"  "[*] Success Installed Badrats"
 	fi
 
 	# Install GoDoH
@@ -2032,7 +2063,6 @@ EOF
 
 	# Install IPFS
 	if [ ! -d "/usr/share/kubo" ]; then
-		mkdir -p /usr/share/kubo
 		wget https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
 		tar -xvf /tmp/ipfs_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/ipfs_linux-amd64.tar.gz
 		chmod 755 /usr/share/kubo/*
@@ -2041,6 +2071,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installing IPFS"
 	else
 		printf "$GREEN"  "[*] Success Installed IPFS"
+	fi
+
+	# Install FRP
+	if [ ! -d "/usr/share/frp_0.54.0_linux_amd64" ]; then
+		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.54.0_linux_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
+		tar -xvf /tmp/frp_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/frp_linux-amd64.tar.gz
+		chmod 755 /usr/share/frp_0.54.0_linux_amd64/*
+		ln -fs /usr/share/frp_0.54.0_linux_amd64/frps /usr/bin/frps
+		chmod +x /usr/bin/frps
+		menu_entry "Red-Team" "Exfiltration" "FRP" "/usr/share/kali-menu/exec-in-shell 'frp -h'"
+		printf "$GREEN"  "[*] Success Installing FRP"
+	else
+		printf "$GREEN"  "[*] Success Installed FRP"
 	fi
 
 
