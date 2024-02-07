@@ -1062,11 +1062,25 @@ EOF
 cd /usr/share/offensivenim/src;ls "\$@"
 EOF
 		chmod +x /usr/bin/offensivenim
-		pip3 install -r /usr/share/offensivenim/requirements.txt
 		menu_entry "Red-Team" "Resource-Development" "OffensiveNim" "/usr/share/kali-menu/exec-in-shell 'offensivenim'"
 		printf "$GREEN"  "[*] Success Installing OffensiveNim"
 	else
 		printf "$GREEN"  "[*] Success Installed OffensiveNim"
+	fi
+
+	# Install OffensiveDLR
+	if [ ! -d "/usr/share/offensivedlr" ]; then
+		git clone https://github.com/byt3bl33d3r/OffensiveDLR /usr/share/offensivedlr
+		chmod 755 /usr/share/offensivedlr/*
+		cat > /usr/bin/offensivedlr << EOF
+#!/bin/bash
+cd /usr/share/offensivedlr;pwsh -c \"dir\" "\$@"
+EOF
+		chmod +x /usr/bin/offensivedlr
+		menu_entry "Red-Team" "Resource-Development" "OffensiveDLR" "/usr/share/kali-menu/exec-in-shell 'offensivedlr'"
+		printf "$GREEN"  "[*] Success Installing OffensiveDLR"
+	else
+		printf "$GREEN"  "[*] Success Installed OffensiveDLR"
 	fi
 
   
