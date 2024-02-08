@@ -1,5 +1,5 @@
 #!/bin/bash
-version='11.0'
+version='12.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1445,6 +1445,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Vegile"
 	fi
 
+	# Install TripleCross
+	if [ ! -d "/usr/share/triplecross" ]; then
+		git clone https://github.com/h3xduck/TripleCross /usr/share/triplecross
+		chmod 755 /usr/share/triplecross/*
+		ln -fs /TripleCross/src/client/injector /usr/bin/triplecross
+		chmod +x /usr/bin/triplecross
+		wget http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb -O /tmp/libssl1.1_amd64.deb
+		dpkg -i /tmp/libssl1.1_amd64.deb;rm -f /tmp/libssl1.1_amd64.deb
+		menu_entry "Red-Team" "Persistence" "TripleCross" "/usr/share/kali-menu/exec-in-shell 'sudo triplecross -h'"
+		printf "$GREEN"  "[*] Success Installing TripleCross"
+	else
+		printf "$GREEN"  "[*] Success Installed TripleCross"
+	fi
+
 
 	# -------------------------------------------Privilege-Escalation-Red-Team------------------------------------------- #
 	# Install Repository Tools
@@ -1941,6 +1955,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Badrats"
 	fi
 
+	# Install Mythic
+	if [ ! -d "/usr/share/mythic" ]; then
+		git clone https://github.com/its-a-feature/Mythic /usr/share/mythic
+		chmod 755 /usr/share/mythic/*
+		cd /usr/share/mythic;./install_docker_kali.sh
+		cd /usr/share/mythic/Mythic_CLI/src;make
+		cd /usr/share/mythic/mythic-docker/src;make
+		ln -fs /usr/share/mythic/Mythic_CLI/src/mythic-cli /usr/bin/mythic-cli
+		ln -fs /usr/share/mythic/mythic-docker/src/mythic_server /usr/bin/mythic_server
+		chmod +x /usr/bin/mythic-cli;chmod +x /usr/bin/mythic_server
+		menu_entry "Red-Team" "Command-and-Control" "Mythic-CLI" "/usr/share/kali-menu/exec-in-shell 'sudo mythic-cli'"
+		menu_entry "Red-Team" "Command-and-Control" "Mythic-Server" "/usr/share/kali-menu/exec-in-shell 'sudo mythic_server'"
+		printf "$GREEN"  "[*] Success Installing Mythic"
+	else
+		printf "$GREEN"  "[*] Success Installed Mythic"
+	fi
+
 	# Install BlackMamba
 	if [ ! -d "/usr/share/blackmamba" ]; then
 		git clone https://github.com/loseys/BlackMamba /usr/share/blackmamba
@@ -2333,7 +2364,7 @@ digital_forensic ()
 
 	# ------------------------------------------Digital-Forensic-Malware-Analysis---------------------------------------- #
 	# Install Repository Tools
-	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser 
+	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool 
 
 	# Install Python3 pip
 	pip3 install stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan 
