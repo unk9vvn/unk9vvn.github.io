@@ -1925,6 +1925,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Badrats"
 	fi
 
+	# Install CHAOS
+	if [ ! -d "/usr/share/chaos" ]; then
+		git clone https://github.com/tiagorlampert/CHAOS /usr/share/chaos
+		chmod 755 /usr/share/chaos/*
+		cat > /usr/bin/chaos << EOF
+#!/bin/bash
+cd /usr/share/chaos;PORT=8080 SQLITE_DATABASE=chaos go run cmd/chaos/main.go "\$@"
+EOF
+		chmod +x /usr/bin/chaos
+		menu_entry "Red-Team" "Command-and-Control" "CHAOS" "/usr/share/kali-menu/exec-in-shell 'chaos'"
+		printf "$GREEN"  "[*] Success Installing CHAOS"
+	else
+		printf "$GREEN"  "[*] Success Installed CHAOS"
+	fi
+
 	# Install GoDoH
 	if [ ! -d "/usr/share/godoh" ]; then
 		mkdir -p /usr/share/godoh
