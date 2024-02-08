@@ -1,5 +1,5 @@
 #!/bin/bash
-version='12.0'
+version='11.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1951,10 +1951,22 @@ cd /usr/share/blackmamba;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/blackmamba
 		pip3 install -r /usr/share/blackmamba/requirements.txt
-		menu_entry "Red-Team" "Command-and-Control" "BlackMamba" "/usr/share/kali-menu/exec-in-shell 'sudo blackmamba'"
+		menu_entry "Red-Team" "Command-and-Control" "BlackMamba" "/usr/share/kali-menu/exec-in-shell 'blackmamba'"
 		printf "$GREEN"  "[*] Success Installing BlackMamba"
 	else
 		printf "$GREEN"  "[*] Success Installed BlackMamba"
+	fi
+
+	# Install emp3r0r
+	if [ ! -d "/usr/share/emp3r0r-build" ]; then
+		wget https://github.com/jm33-m0/emp3r0r/releases/latest/download/emp3r0r-v1.36.0.tar.xz -O /tmp/emp3r0r.tar.xz
+		tar -xvf /tmp/emp3r0r.tar.xz -C /usr/share;rm -f /tmp/emp3r0r.tar.xz
+		chmod 755 /usr/share/emp3r0r-build/*
+		cd /usr/share/emp3r0r-build;./emp3r0r --install
+		menu_entry "Red-Team" "Command-and-Control" "emp3r0r" "/usr/share/kali-menu/exec-in-shell 'emp3r0r'"
+		printf "$GREEN"  "[*] Success Installing emp3r0r"
+	else
+		printf "$GREEN"  "[*] Success Installed emp3r0r"
 	fi
 
 	# Install CHAOS
