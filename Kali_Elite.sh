@@ -1,5 +1,5 @@
 #!/bin/bash
-version='11.0'
+version='12.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1874,6 +1874,22 @@ EOF
 ')
 	go_installer "Red-Team" "Collection" $collection_commands
 
+	# Install Caldera
+	if [ ! -d "/usr/share/caldera" ]; then
+		git clone https://github.com/mitre/caldera /usr/share/caldera
+		chmod 755 /usr/share/caldera/*
+		cat > /usr/bin/caldera << EOF
+#!/bin/bash
+cd /usr/share/caldera;python3 server.py --insecure "\$@"
+EOF
+		chmod +x /usr/bin/caldera
+		pip3 install -r /usr/share/caldera/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "Caldera" "/usr/share/kali-menu/exec-in-shell 'caldera'"
+		printf "$GREEN"  "[*] Success Installing Caldera"
+	else
+		printf "$GREEN"  "[*] Success Installed Caldera"
+	fi
+
 
 	# --------------------------------------------Command-and-Control-Red-Team------------------------------------------- #
 	# Install Repository Tools
@@ -1923,6 +1939,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Badrats"
 	else
 		printf "$GREEN"  "[*] Success Installed Badrats"
+	fi
+
+	# Install BlackMamba
+	if [ ! -d "/usr/share/blackmamba" ]; then
+		git clone https://github.com/loseys/BlackMamba /usr/share/blackmamba
+		chmod 755 /usr/share/blackmamba/*
+		cat > /usr/bin/blackmamba << EOF
+#!/bin/bash
+cd /usr/share/blackmamba;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/blackmamba
+		pip3 install -r /usr/share/blackmamba/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "BlackMamba" "/usr/share/kali-menu/exec-in-shell 'sudo blackmamba'"
+		printf "$GREEN"  "[*] Success Installing BlackMamba"
+	else
+		printf "$GREEN"  "[*] Success Installed BlackMamba"
 	fi
 
 	# Install CHAOS
@@ -2800,7 +2832,7 @@ EOF
 	pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	npm install -g @mitre/saf
 
 	# Install Ruby GEM
 	gem install 
