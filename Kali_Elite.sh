@@ -530,6 +530,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed XSStrike"
 	fi
 
+	# Install w4af
+	if [ ! -d "/usr/share/w4af" ]; then
+		git clone git clone https://github.com/w4af/w4af /usr/share/w4af
+		chmod 755 /usr/share/w4af/*
+		cat > /usr/bin/w4af << EOF
+#!/bin/bash
+cd /usr/share/w4af;pipenv shell;./w4af_console "\$@"
+EOF
+		chmod +x /usr/bin/w4af
+		cd /usr/share/w4af;pipenv install;npm install
+		menu_entry "Penetration-Testing" "Web" "w4af" "/usr/share/kali-menu/exec-in-shell 'w4af'"
+		printf "$GREEN"  "[*] Success Installing w4af"
+	else
+		printf "$GREEN"  "[*] Success Installed w4af"
+	fi
+
 	# Install JWT-Tool
 	if [ ! -d "/usr/share/jwt_tool" ]; then
 		git clone https://github.com/ticarpi/jwt_tool /usr/share/jwt_tool
@@ -2988,7 +3004,7 @@ main ()
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
-	pip3 install setuptools env colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone 
+	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone 
 
 	# Install Nodejs NPM
 	npm install -g npx 
