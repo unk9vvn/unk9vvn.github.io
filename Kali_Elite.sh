@@ -425,6 +425,39 @@ EOF
 		printf "$GREEN"  "[*] Success Installed pixload"
 	fi
 
+	# Install YsoSerial
+	if [ ! -d "/usr/share/ysoserial" ]; then
+		mkdir -p /usr/share/ysoserial
+		wget https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar -O /usr/share/ysoserial/ysoserial-all.jar 
+		chmod 755 /usr/share/ysoserial/*
+		cat > /usr/bin/ysoserial << EOF
+#!/bin/bash
+cd /usr/share/ysoserial;java -jar ysoserial-all.jar "\$@"
+EOF
+		chmod +x /usr/bin/ysoserial
+		menu_entry "Penetration-Testing" "Web" "YsoSerial" "/usr/share/kali-menu/exec-in-shell 'ysoserial -h'"
+		printf "$GREEN"  "[*] Success Installing YsoSerial"
+	else
+		printf "$GREEN"  "[*] Success Installed YsoSerial"
+	fi
+
+	# Install YsoSerial.net
+	if [ ! -d "/usr/share/ysoserial.net" ]; then
+		mkdir -p /usr/share/ysoserial.net
+		wget https://github.com/pwntester/ysoserial.net/releases/latest/download/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/ysoserial-net.zip
+		unzip /tmp/ysoserial-net.zip -d /tmp;cd /tmp/Release;mv -f * /usr/share/ysoserial.net;rm -f /tmp/Release;rm -f /tmp/ysoserial-net.zip
+		chmod 755 /usr/share/ysoserial.net/*
+		cat > /usr/bin/ysoserial.net << EOF
+#!/bin/bash
+cd /usr/share/ysoserial.net;mono ysoserial.exe "\$@"
+EOF
+		chmod +x /usr/bin/ysoserial.net
+		menu_entry "Penetration-Testing" "Web" "YsoSerial.net" "/usr/share/kali-menu/exec-in-shell 'ysoserial.net -h'"
+		printf "$GREEN"  "[*] Success Installing YsoSerial.net"
+	else
+		printf "$GREEN"  "[*] Success Installed YsoSerial.net"
+	fi
+
 	# Install RSAtool
 	if [ ! -d "/usr/share/rsatool" ]; then
 		git clone https://github.com/ius/rsatool /usr/share/rsatool
@@ -1910,7 +1943,7 @@ EOF
 	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin 
 
 	# Install Python3 pip
-	pip3 install deathstar-empire 
+	pip3 install deathstar-empire praw powerhub 
 
 	# Install Nodejs NPM
 	npm install -g 
@@ -1986,6 +2019,34 @@ EOF
 		printf "$GREEN"  "[*] Success Installing BlackMamba"
 	else
 		printf "$GREEN"  "[*] Success Installed BlackMamba"
+	fi
+
+	# Install RedbloodC2
+	if [ ! -d "/usr/share/redbloodc2" ]; then
+		git clone https://github.com/kira2040k/RedbloodC2 /usr/share/redbloodc2
+		chmod 755 /usr/share/redbloodc2/*
+		cat > /usr/bin/redbloodc2 << EOF
+#!/bin/bash
+cd /usr/share/redbloodc2;node server.js "\$@"
+EOF
+		chmod +x /usr/bin/redbloodc2
+		cd /usr/share/redbloodc2;npm install
+		menu_entry "Red-Team" "Command-and-Control" "RedbloodC2" "/usr/share/kali-menu/exec-in-shell 'redbloodc2'"
+		printf "$GREEN"  "[*] Success Installing RedbloodC2"
+	else
+		printf "$GREEN"  "[*] Success Installed RedbloodC2"
+	fi
+
+	# Install SharpC2
+	if [ ! -d "/usr/share/sharpc2" ]; then
+		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/teamserver-linux.tar.gz
+		tar -xvf /tmp/teamserver-linux.tar.gz -C /usr/share/sharpc2;rm -f /tmp/teamserver-linux.tar.gz
+		ln -fs /usr/share/sharpc2/TeamServer /usr/bin/sharpc2
+		chmod +x /usr/bin/sharpc2
+		menu_entry "Red-Team" "Command-and-Control" "SharpC2" "/usr/share/kali-menu/exec-in-shell 'sharpc2'"
+		printf "$GREEN"  "[*] Success Installing SharpC2"
+	else
+		printf "$GREEN"  "[*] Success Installed SharpC2"
 	fi
 
 	# Install emp3r0r
@@ -3087,7 +3148,7 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim 
+	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustc rustup cargo rust-src 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
