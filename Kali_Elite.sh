@@ -1,5 +1,5 @@
 #!/bin/bash
-version='12.0'
+version='13.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1492,6 +1492,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed TripleCross"
 	fi
 
+	# Install SmmBackdoorNg
+	if [ ! -d "/usr/share/smmbackdoorng" ]; then
+		git clone https://github.com/Cr4sh/SmmBackdoorNg /usr/share/smmbackdoorng
+		chmod 755 /usr/share/smmbackdoorng/*
+		cat > /usr/bin/smmbackdoorng << EOF
+#!/bin/bash
+cd /usr/share/smmbackdoorng;python3 smm_backdoor.py "\$@"
+EOF
+		chmod +x /usr/bin/smmbackdoorng
+		menu_entry "Red-Team" "Persistence" "SmmBackdoorNg" "/usr/share/kali-menu/exec-in-shell 'smmbackdoorng -h'"
+		printf "$GREEN"  "[*] Success Installing SmmBackdoorNg"
+	else
+		printf "$GREEN"  "[*] Success Installed SmmBackdoorNg"
+	fi
+
 
 	# -------------------------------------------Privilege-Escalation-Red-Team------------------------------------------- #
 	# Install Repository Tools
@@ -1940,7 +1955,7 @@ EOF
 
 	# --------------------------------------------Command-and-Control-Red-Team------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin 
+	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
 
 	# Install Python3 pip
 	pip3 install deathstar-empire praw powerhub 
@@ -2019,6 +2034,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installing BlackMamba"
 	else
 		printf "$GREEN"  "[*] Success Installed BlackMamba"
+	fi
+
+	# Install OffensiveNotion
+	if [ ! -d "/usr/share/offensivenotion" ]; then
+		mkdir -p /usr/share/offensivenotion
+		wget https://github.com/mttaggart/OffensiveNotion/releases/latest/download/offensive_notion_linux_amd64.zip -O /tmp/offensive_notion.zip
+		unzip /tmp/offensive_notion.zip -d /usr/share/offensivenotion;rm -f /tmp/offensive_notion.zip
+		chmod 755 /usr/share/offensivenotion/*
+		ln -fs /usr/share/offensivenotion/offensive_notion /usr/bin/offensive_notion
+		chmod +x /usr/bin/offensive_notion
+		menu_entry "Red-Team" "Command-and-Control" "OffensiveNotion" "/usr/share/kali-menu/exec-in-shell 'offensive_notion'"
+		printf "$GREEN"  "[*] Success Installing OffensiveNotion"
+	else
+		printf "$GREEN"  "[*] Success Installed OffensiveNotion"
 	fi
 
 	# Install RedbloodC2
@@ -3148,7 +3177,7 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustc rustup cargo rust-src 
+	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rust-src 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
