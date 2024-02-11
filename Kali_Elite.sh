@@ -1086,16 +1086,16 @@ EOF
 
 	# -------------------------------------------Resource-Development-Red-Team------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	resource_development_commands=$(echo '
@@ -1141,10 +1141,10 @@ EOF
 	pip3 install rarce baboossh dnstwist pasteme-cli 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	initial_access_commands=$(echo '
@@ -1450,7 +1450,7 @@ EOF
 
 	# ------------------------------------------------Persistence-Red-Team----------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
 	pip3 install hiphp 
@@ -1516,10 +1516,10 @@ EOF
 	pip3 install bloodyAD cve-bin-tool 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	privilege_escalation_commands=$(echo '
@@ -1569,7 +1569,7 @@ EOF
 	npm install -g uglify-js javascript-obfuscator serialize-javascript serialize-to-js jsdom 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	defense_evasion_commands=$(echo '
@@ -1771,10 +1771,10 @@ EOF
 	pip3 install adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	credential_access_commands=$(echo '
@@ -1841,10 +1841,10 @@ EOF
 	pip3 install networkx bloodhound acltoolkit-ad 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	discovery_commands=$(echo '
@@ -1877,7 +1877,7 @@ EOF
 	pip3 install coercer krbjack 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
   
 	# Install Ruby GEM
 	gem install evil-winrm 
@@ -1923,13 +1923,13 @@ EOF
 	apt install -qy tigervnc-viewer 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	collection_commands=$(echo '
@@ -1961,10 +1961,10 @@ EOF
 	pip3 install deathstar-empire praw powerhub 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
   
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	cnc_commands=$(echo '
@@ -2298,7 +2298,7 @@ EOF
 	npm install -g http-proxy-to-socks 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	exfiltration_commands=$(echo '
@@ -2417,16 +2417,16 @@ EOF
 
 	# --------------------------------------------------Impact-Red-Team-------------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	impact_commands=$(echo '
@@ -2440,13 +2440,13 @@ ics_security ()
 {
 	# ------------------------------------------ICS-Security-Penetration-Testing----------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
 	gem install modbus-cli 
@@ -2506,16 +2506,16 @@ EOF
 
 	# ------------------------------------------------ICS-Security-Red-Team---------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	red_team_commands=$(echo '
@@ -2525,16 +2525,16 @@ EOF
 
 	# --------------------------------------------ICS-Security-Digital-Forensic------------------------------------------ #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	digital_forensic_commands=$(echo '
@@ -2544,16 +2544,16 @@ EOF
 
 	# -----------------------------------------------ICS-Security-Blue-Team---------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	blue_team_commands=$(echo '
@@ -2573,10 +2573,10 @@ digital_forensic ()
 	pip3 install capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	forensic_commands=$(echo '
@@ -2811,10 +2811,10 @@ EOF
 	pip3 install pastehunter libcsce phishing-tracker 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	threat_commands=$(echo '
@@ -2848,16 +2848,16 @@ EOF
 
 	# ------------------------------------------Digital-Forensic-Incident-Response--------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
 	pip3 install dissect aws_ir intelmq otx-misp threat_intel 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	response_commands=$(echo '
@@ -2878,16 +2878,16 @@ EOF
 
 	# -----------------------------------------Digital-Forensic-Threat-Intelligence-------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
 	pip3 install threatingestor stix stix-validator stix2 stix2-matcher stix2-elevator attackcti iocextract threatbus apiosintDS sigmatools msticpy 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	intelligence_commands=$(echo '
@@ -2904,13 +2904,13 @@ blue_team ()
 	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard ansible cilium-cli buildah 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	harden_commands=$(echo '
@@ -2926,10 +2926,10 @@ blue_team ()
 	pip3 install adversarial-robustness-toolbox metabadger flare-capa 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	detect_commands=$(echo '
@@ -2971,13 +2971,13 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	apt install -qy openvpn wireguard 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	isolate_commands=$(echo '
@@ -2987,16 +2987,16 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 
 	# ---------------------------------------------------Blue-Team-Deceive----------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
 	pip3 install thug conpot honeypots heralding 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	deceive_commands=$(echo '
@@ -3006,16 +3006,16 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 
 	# ---------------------------------------------------Blue-Team-Evict------------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	evict_commands=$(echo '
@@ -3032,7 +3032,7 @@ security_audit ()
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
 	npm install -g snyk @sandworm/audit 
@@ -3091,16 +3091,16 @@ EOF
 
 	# --------------------------------------Security-Audit-Planning-and-Preparation-------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
 	npm install -g @mitre/saf
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	planning_commands=$(echo '
@@ -3110,16 +3110,16 @@ EOF
 
 	# ------------------------------------Security-Audit-Establishing-Audit-Objectives----------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	establishing_commands=$(echo '
@@ -3129,16 +3129,16 @@ EOF
 
 	# ---------------------------------------Security-Audit-Performing-the-Review---------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	performing_commands=$(echo '
@@ -3260,16 +3260,16 @@ EOF
 
 	# -------------------------------------Security-Audit-Preparing-the-Audit-Report------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	preparing_commands=$(echo '
@@ -3279,16 +3279,16 @@ EOF
 
 	# --------------------------------------Security-Audit-Issuing-the-Review-Report------------------------------------- #
 	# Install Repository Tools
-	apt install -qy 
+	# apt install -qy 
 
 	# Install Python3 pip
-	pip3 install 
+	# pip3 install 
 
 	# Install Nodejs NPM
-	npm install -g 
+	# npm install -g 
 
 	# Install Ruby GEM
-	gem install 
+	# gem install 
 
 	# Install Golang
 	issuing_commands=$(echo '
