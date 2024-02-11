@@ -1,5 +1,5 @@
 #!/bin/bash
-version='14.0'
+version='15.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -789,7 +789,7 @@ EOF
 
 	# --------------------------------------------Cloud-Penetration-Testing---------------------------------------------- #
 	# Install Repository Tools
-	apt install -qy awscli 
+	apt install -qy awscli trivy 
 
 	# Install Python3 pip
 	pip3 install sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite 
@@ -825,6 +825,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installing CloudFail"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudFail"
+	fi
+
+	# Install CloudQuery
+	if [ ! -d "/usr/share/cloudquery" ]; then
+		mkdir -p /usr/share/cloudquery
+		wget https://github.com/cloudquery/cloudquery/releases/latest/download/cloudquery_linux_amd64 -O /usr/share/cloudquery/cloudquery
+		chmod 755 /usr/share/cloudquery/*
+		ln -fs /usr/share/cloudquery/cloudquery /usr/bin/cloudquery
+		chmod +x /usr/bin/cloudquery
+		menu_entry "Penetration-Testing" "Cloud" "CloudQuery" "/usr/share/kali-menu/exec-in-shell 'cloudquery -h'"
+		printf "$GREEN"  "[*] Success Installing CloudQuery"
+	else
+		printf "$GREEN"  "[*] Success Installed CloudQuery"
 	fi
 
 
@@ -1952,20 +1965,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Caldera"
 	fi
 
-	# Install Caldera
-	if [ ! -d "/usr/share/caldera" ]; then
-		git clone https://github.com/mitre/caldera /usr/share/caldera
-		chmod 755 /usr/share/caldera/*
-		cat > /usr/bin/caldera << EOF
+	# Install Invoke-AtomicRedTeam
+	if [ ! -d "/usr/share/invoke-atomicredteam" ]; then
+		git clone https://github.com/redcanaryco/invoke-atomicredteam /usr/share/invoke-atomicredteam
+		chmod 755 /usr/share/invoke-atomicredteam/*
+		cat > /usr/bin/atomicredteam << EOF
 #!/bin/bash
-cd /usr/share/caldera;python3 server.py --insecure "\$@"
+pwsh 'powershell -exec bypass Install-Module -Name invoke-atomicredteam,powershell-yaml -Scope CurrentUser'
+cd /usr/share/invoke-atomicredteam;python3 server.py --insecure "\$@"
 EOF
-		chmod +x /usr/bin/caldera
-		pip3 install -r /usr/share/caldera/requirements.txt
-		menu_entry "Red-Team" "Command-and-Control" "Caldera" "/usr/share/kali-menu/exec-in-shell 'caldera'"
-		printf "$GREEN"  "[*] Success Installing Caldera"
+		chmod +x /usr/bin/atomicredteam
+		menu_entry "Red-Team" "Command-and-Control" "Invoke-AtomicRedTeam" "/usr/share/kali-menu/exec-in-shell 'atomicredteam'"
+		printf "$GREEN"  "[*] Success Installing Invoke-AtomicRedTeam"
 	else
-		printf "$GREEN"  "[*] Success Installed Caldera"
+		printf "$GREEN"  "[*] Success Installed Invoke-AtomicRedTeam"
 	fi
 
 
@@ -3114,6 +3127,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Cmder"
 	else
 		printf "$GREEN"  "[*] Success Installed Cmder"
+	fi
+
+	# Install Open Policy Agent
+	if [ ! -d "/usr/share/open-policy-agent" ]; then
+		mkdir -p /usr/share/open-policy-agent
+		wget https://github.com/open-policy-agent/opa/releases/latest/download/opa_linux_amd64 -O /usr/share/open-policy-agent/opa
+		chmod 755 /usr/share/open-policy-agent/*
+		ln -fs /usr/share/open-policy-agent/opa /usr/bin/opa
+		chmod +x /usr/bin/opa
+		menu_entry "Security-Audit" "Preliminary-Audit-Assessment" "Open Policy Agent" "/usr/share/kali-menu/exec-in-shell 'opa -h'"
+		printf "$GREEN"  "[*] Success Installing Open Policy Agent"
+	else
+		printf "$GREEN"  "[*] Success Installed Open Policy Agent"
 	fi
 
 
