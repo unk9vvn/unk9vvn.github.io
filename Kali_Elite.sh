@@ -2018,6 +2018,54 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Mistica"
 	fi
 
+	# Install EvilOSX
+	if [ ! -d "/usr/share/evilosx" ]; then
+		git clone https://github.com/Marten4n6/EvilOSX /usr/share/evilosx
+		chmod 755 /usr/share/evilosx/*
+		cat > /usr/bin/evilosx << EOF
+#!/bin/bash
+cd /usr/share/evilosx;python3 start.py "\$@"
+EOF
+		chmod +x /usr/bin/evilosx
+		pip3 install -r /usr/share/evilosx/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "EvilOSX" "/usr/share/kali-menu/exec-in-shell 'evilosx'"
+		printf "$GREEN"  "[*] Success Installing EvilOSX"
+	else
+		printf "$GREEN"  "[*] Success Installed EvilOSX"
+	fi
+
+	# Install EggShell
+	if [ ! -d "/usr/share/eggshell" ]; then
+		git clone https://github.com/lucasjacks0n/EggShell /usr/share/eggshell
+		chmod 755 /usr/share/eggshell/*
+		cat > /usr/bin/eggshell << EOF
+#!/bin/bash
+cd /usr/share/eggshell;python2 eggshell.py "\$@"
+EOF
+		chmod +x /usr/bin/eggshell
+		pip3 install -r /usr/share/eggshell/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "EggShell" "/usr/share/kali-menu/exec-in-shell 'eggshell -h'"
+		printf "$GREEN"  "[*] Success Installing EggShell"
+	else
+		printf "$GREEN"  "[*] Success Installed EggShell"
+	fi
+
+	# Install GodGenesis
+	if [ ! -d "/usr/share/godgenesis" ]; then
+		git clone https://github.com/SaumyajeetDas/GodGenesis /usr/share/godgenesis
+		chmod 755 /usr/share/godgenesis/*
+		cat > /usr/bin/godgenesis << EOF
+#!/bin/bash
+cd /usr/share/godgenesis;python3 c2c.py "\$@"
+EOF
+		chmod +x /usr/bin/godgenesis
+		pip3 install -r /usr/share/godgenesis/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "GodGenesis" "/usr/share/kali-menu/exec-in-shell 'godgenesis'"
+		printf "$GREEN"  "[*] Success Installing GodGenesis"
+	else
+		printf "$GREEN"  "[*] Success Installed GodGenesis"
+	fi
+
 	# Install MeliziaC2
 	if [ ! -d "/usr/share/melizia" ]; then
 		git clone https://github.com/demon-i386/MeliziaC2 /usr/share/melizia
@@ -2031,6 +2079,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing MeliziaC2"
 	else
 		printf "$GREEN"  "[*] Success Installed MeliziaC2"
+	fi
+
+	# Install Google Calendar RAT
+	if [ ! -d "/usr/share/gcr-google-calendar-rat" ]; then
+		git clone https://github.com/MrSaighnal/GCR-Google-Calendar-RAT /usr/share/gcr-google-calendar-rat
+		chmod 755 /usr/share/gcr-google-calendar-rat/*
+		cat > /usr/bin/gcr << EOF
+#!/bin/bash
+cd /usr/share/gcr-google-calendar-rat;python3 gcr.py "\$@"
+EOF
+		chmod +x /usr/bin/gcr
+		menu_entry "Red-Team" "Command-and-Control" "Google Calendar RAT" "/usr/share/kali-menu/exec-in-shell 'gcr'"
+		printf "$GREEN"  "[*] Success Installing Google Calendar RAT"
+	else
+		printf "$GREEN"  "[*] Success Installed Google Calendar RAT"
 	fi
 
 	# Install MeetC2
