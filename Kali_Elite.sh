@@ -1,5 +1,5 @@
 #!/bin/bash
-version='15.0'
+version='14.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1963,22 +1963,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Caldera"
 	else
 		printf "$GREEN"  "[*] Success Installed Caldera"
-	fi
-
-	# Install Invoke-AtomicRedTeam
-	if [ ! -d "/usr/share/invoke-atomicredteam" ]; then
-		git clone https://github.com/redcanaryco/invoke-atomicredteam /usr/share/invoke-atomicredteam
-		chmod 755 /usr/share/invoke-atomicredteam/*
-		cat > /usr/bin/atomicredteam << EOF
-#!/bin/bash
-pwsh 'powershell -exec bypass Install-Module -Name invoke-atomicredteam,powershell-yaml -Scope CurrentUser'
-cd /usr/share/invoke-atomicredteam;python3 server.py --insecure "\$@"
-EOF
-		chmod +x /usr/bin/atomicredteam
-		menu_entry "Red-Team" "Command-and-Control" "Invoke-AtomicRedTeam" "/usr/share/kali-menu/exec-in-shell 'atomicredteam'"
-		printf "$GREEN"  "[*] Success Installing Invoke-AtomicRedTeam"
-	else
-		printf "$GREEN"  "[*] Success Installed Invoke-AtomicRedTeam"
 	fi
 
 
