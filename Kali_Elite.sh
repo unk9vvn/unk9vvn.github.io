@@ -2033,6 +2033,18 @@ EOF
 		printf "$GREEN"  "[*] Success Installed MeliziaC2"
 	fi
 
+	# Install MeetC2
+	if [ ! -d "/usr/share/meetc2" ]; then
+		git clone https://github.com/iammaguire/MeetC2 /usr/share/meetc2
+		chmod 755 /usr/share/meetc2/*
+		ln -fs /usr/share/meetc2/meetc /usr/bin/meetc
+		chmod +x /usr/bin/meetc
+		menu_entry "Red-Team" "Command-and-Control" "MeetC2" "/usr/share/kali-menu/exec-in-shell 'meetc'"
+		printf "$GREEN"  "[*] Success Installing MeetC2"
+	else
+		printf "$GREEN"  "[*] Success Installed MeetC2"
+	fi
+
 	# Install Badrats
 	if [ ! -d "/usr/share/badrats" ]; then
 		git clone https://gitlab.com/KevinJClark/badrats /usr/share/badrats
