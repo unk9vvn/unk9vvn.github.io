@@ -1952,6 +1952,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Caldera"
 	fi
 
+	# Install Caldera
+	if [ ! -d "/usr/share/caldera" ]; then
+		git clone https://github.com/mitre/caldera /usr/share/caldera
+		chmod 755 /usr/share/caldera/*
+		cat > /usr/bin/caldera << EOF
+#!/bin/bash
+cd /usr/share/caldera;python3 server.py --insecure "\$@"
+EOF
+		chmod +x /usr/bin/caldera
+		pip3 install -r /usr/share/caldera/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "Caldera" "/usr/share/kali-menu/exec-in-shell 'caldera'"
+		printf "$GREEN"  "[*] Success Installing Caldera"
+	else
+		printf "$GREEN"  "[*] Success Installed Caldera"
+	fi
+
 
 	# --------------------------------------------Command-and-Control-Red-Team------------------------------------------- #
 	# Install Repository Tools
@@ -2965,6 +2981,18 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		printf "$GREEN"  "[*] Success Installed OpenSearch"
 	fi
 
+	# Install Cilium
+	if [ ! -d "/usr/share/cilium-cli" ]; then
+		mkdir -p /usr/share/cilium-cli
+		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/cilium-linux-amd64.tar.gz
+		tar -xvf /tmp/cilium-linux-amd64.tar.gz -C /usr/share/cilium-cli;rm -f /tmp/cilium-linux-amd64.tar.gz
+		ln -fs /usr/share/cilium-cli/cilium /usr/bin/cilium
+		menu_entry "Blue-Team" "Detect" "Cilium" "/usr/share/kali-menu/exec-in-shell 'cilium -h'"
+		printf "$GREEN"  "[*] Success Installing Cilium"
+	else
+		printf "$GREEN"  "[*] Success Installed Cilium"
+	fi
+
 
 	# ---------------------------------------------------Blue-Team-Isolate----------------------------------------------- #
 	# Install Repository Tools
@@ -3132,7 +3160,7 @@ EOF
 	# apt install -qy 
 
 	# Install Python3 pip
-	# pip3 install 
+	pip3 install ruff 
 
 	# Install Nodejs NPM
 	# npm install -g 
@@ -3309,7 +3337,7 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustup 
+	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustup musl-tools 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
