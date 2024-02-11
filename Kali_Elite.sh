@@ -1,5 +1,5 @@
 #!/bin/bash
-version='13.0'
+version='12.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -1987,6 +1987,52 @@ EOF
 		printf "$GREEN"  "[*] Success Installed PhoenixC2"
 	fi
 
+	# Install Nebula
+	if [ ! -d "/usr/share/nebula" ]; then
+		git clone https://github.com/gl4ssesbo1/Nebula /usr/share/nebula
+		chmod 755 /usr/share/nebula/*
+		cat > /usr/bin/nebula << EOF
+#!/bin/bash
+cd /usr/share/nebula;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/nebula
+		pip3 install -r /usr/share/nebula/requirements.txt
+		menu_entry "Red-Team" "Command-and-Control" "Nebula" "/usr/share/kali-menu/exec-in-shell 'nebula'"
+		printf "$GREEN"  "[*] Success Installing Nebula"
+	else
+		printf "$GREEN"  "[*] Success Installed Nebula"
+	fi
+
+	# Install Mistica
+	if [ ! -d "/usr/share/mistica" ]; then
+		git clone https://github.com/IncideDigital/Mistica /usr/share/mistica
+		chmod 755 /usr/share/mistica/*
+		cat > /usr/bin/mistica << EOF
+#!/bin/bash
+cd /usr/share/mistica;python3 ms.py "\$@"
+EOF
+		chmod +x /usr/bin/mistica
+		menu_entry "Red-Team" "Command-and-Control" "Mistica" "/usr/share/kali-menu/exec-in-shell 'mistica -h'"
+		printf "$GREEN"  "[*] Success Installing Mistica"
+	else
+		printf "$GREEN"  "[*] Success Installed Mistica"
+	fi
+
+	# Install MeliziaC2
+	if [ ! -d "/usr/share/melizia" ]; then
+		git clone https://github.com/demon-i386/MeliziaC2 /usr/share/melizia
+		chmod 755 /usr/share/melizia/*
+		cat > /usr/bin/melizia << EOF
+#!/bin/bash
+cd /usr/share/melizia;python3 c2.py "\$@"
+EOF
+		chmod +x /usr/bin/melizia
+		menu_entry "Red-Team" "Command-and-Control" "MeliziaC2" "/usr/share/kali-menu/exec-in-shell 'melizia'"
+		printf "$GREEN"  "[*] Success Installing MeliziaC2"
+	else
+		printf "$GREEN"  "[*] Success Installed MeliziaC2"
+	fi
+
 	# Install Badrats
 	if [ ! -d "/usr/share/badrats" ]; then
 		git clone https://gitlab.com/KevinJClark/badrats /usr/share/badrats
@@ -2018,6 +2064,17 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Mythic"
 	else
 		printf "$GREEN"  "[*] Success Installed Mythic"
+	fi
+
+	# Install NorthStarC2
+	if [ ! -d "/usr/share/northstarc2" ]; then
+		git clone https://github.com/EnginDemirbilek/NorthStarC2 /usr/share/northstarc2
+		chmod 755 /usr/share/northstarc2/*
+		ln -fs /usr/share/mythic/Mythic_CLI/src/mythic-cli /usr/bin/mythic-cli
+		menu_entry "Red-Team" "Command-and-Control" "NorthStarC2" "/usr/share/kali-menu/exec-in-shell 'sudo northstarc2'"
+		printf "$GREEN"  "[*] Success Installing NorthStarC2"
+	else
+		printf "$GREEN"  "[*] Success Installed NorthStarC2"
 	fi
 
 	# Install BlackMamba
@@ -3177,20 +3234,23 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rust-src 
+	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustup 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
 
 	# Install Python3 pip
 	pip3 install --upgrade pip
-	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone 
+	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
 
 	# Install Nodejs NPM
 	npm install -g npx 
 
 	# Install Ruby GEM
 	# gem install 
+
+	# Install Rust
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
