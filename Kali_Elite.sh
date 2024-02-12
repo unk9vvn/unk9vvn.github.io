@@ -1,5 +1,5 @@
 #!/bin/bash
-version='15.0'
+version='14.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -2983,6 +2983,23 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		printf "$GREEN"  "[*] Success Installing OpenSearch"
 	else
 		printf "$GREEN"  "[*] Success Installed OpenSearch"
+	fi
+
+	# Install SIEGMA
+	if [ ! -d "/usr/share/siegma" ]; then
+		pip3 install sigma
+		git clone https://github.com/3CORESec/SIEGMA -O /usr/share/siegma
+		chmod 755 /usr/share/siegma/*
+		cat > /usr/bin/siegma << EOF
+#!/bin/bash
+cd /usr/share/siegma;python3 siegma.py "\$@"
+EOF
+		chmod +x /usr/bin/siegma
+		pip3 install -r /usr/share/siegma/requirements.txt
+		menu_entry "Blue-Team" "Detect" "SIEGMA" "/usr/share/kali-menu/exec-in-shell 'siegma -h'"
+		printf "$GREEN"  "[*] Success Installing SIEGMA"
+	else
+		printf "$GREEN"  "[*] Success Installed SIEGMA"
 	fi
 
 	# Install Cilium
