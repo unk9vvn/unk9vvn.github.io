@@ -1,5 +1,5 @@
 #!/bin/bash
-version='14.0'
+version='15.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -2843,21 +2843,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Matano"
 	fi
 
-	# Install Revoke-Obfuscation
-	if [ ! -d "/usr/share/revoke-obfuscation" ]; then
-		git clone https://github.com/danielbohannon/Revoke-Obfuscation /usr/share/revoke-obfuscation
-		chmod 755 /usr/share/revoke-obfuscation/*
-		cat > /usr/bin/revoke-obfuscation << EOF
-#!/bin/bash
-cd /usr/share/revoke-obfuscation;pwsh -c "Import-Module ./Revoke-Obfuscation.psd1; Revoke-Obfuscation" "\$@"
-EOF
-		chmod +x /usr/bin/revoke-obfuscation
-		menu_entry "Digital-Forensic" "Threat-Hunting" "Revoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell 'revoke-obfuscation'"
-		printf "$GREEN"  "[*] Success Installing Revoke-Obfuscation"
-	else
-		printf "$GREEN"  "[*] Success Installed Revoke-Obfuscation"
-	fi
-
 
 	# ------------------------------------------Digital-Forensic-Incident-Response--------------------------------------- #
 	# Install Repository Tools
@@ -2908,20 +2893,27 @@ EOF
 	go_installer "Digital-Forensic" "Threat-Intelligence" $intelligence_commands
 	logo
 
-	# Install Revoke-Obfuscation
+	# Install OpenCTI
 	if [ ! -d "/usr/share/revoke-obfuscation" ]; then
-		git clone https://github.com/danielbohannon/Revoke-Obfuscation /usr/share/revoke-obfuscation
-		chmod 755 /usr/share/revoke-obfuscation/*
-		cat > /usr/bin/revoke-obfuscation << EOF
-#!/bin/bash
-cd /usr/share/revoke-obfuscation;pwsh -c "Import-Module ./Revoke-Obfuscation.psd1; Revoke-Obfuscation" "\$@"
+		wget https://github.com/OpenCTI-Platform/opencti/releases/latest/download/opencti-release-5.12.29.tar.gz -O /tmp/opencti.tar.gz
+		tar -xvf /tmp/opencti.tar.gz -C /usr/share/opencti;rm -f /tmp/opencti.tar.gz
+		chmod 755 /usr/share/opencti/*
+		cp /usr/share/opencti/config/default.json /usr/share/opencti/config/production.json
+		pip3 install -r /usr/share/opencti/src/python/requirements.txt
+		cd /usr/share/opencti;yarn install;yarn build;yarn serv
+		pip3 install -r /usr/share/opencti/worker/requirements.txt
+		cp /usr/share/opencti/worker/config.yml.sample /usr/share/opencti/worker/config.yml
+		cat > /usr/bin/opencti << EOF
+cd /usr/share/opencti/worker;python3 worker.py > /dev/null &
+sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
 EOF
-		chmod +x /usr/bin/revoke-obfuscation
-		menu_entry "Digital-Forensic" "Threat-Hunting" "Revoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell 'revoke-obfuscation'"
-		printf "$GREEN"  "[*] Success Installing Revoke-Obfuscation"
+		chmod +x /usr/bin/opencti
+		menu_entry "Digital-Forensic" "Threat-Intelligence" "OpenCTI" "/usr/share/kali-menu/exec-in-shell 'opencti'"
+		printf "$GREEN"  "[*] Success Installing OpenCTI"
 	else
-		printf "$GREEN"  "[*] Success Installed Revoke-Obfuscation"
+		printf "$GREEN"  "[*] Success Installed OpenCTI"
 	fi
+	logo
 }
 
 
@@ -3392,7 +3384,7 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common python3-poetry libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustup musl-tools 
+	apt install -qy curl git gnupg apt-transport-https tor obfs4proxy docker.io docker-compose python3 nodejs npm cargo golang python2 libreoffice vlc uget remmina openconnect bleachbit powershell filezilla telegram-desktop joplin thunderbird mono-complete mono-devel node-ws p7zip p7zip-full wine winetricks winbind cmake build-essential binutils net-tools snmp-mibs-downloader locate alacarte imagemagick ghostscript software-properties-common libre2-dev cassandra gnupg2 ca-certificates htop nload gimp cmatrix zipalign ffmpeg rar g++ libssl-dev python3-dev python3-pip python3-poetry guymager libgd-perl libimage-exiftool-perl libstring-crc32-perl nuget nim rustup musl-tools 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
