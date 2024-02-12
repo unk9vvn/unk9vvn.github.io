@@ -2933,7 +2933,7 @@ blue_team ()
 
 	# ---------------------------------------------------Blue-Team-Detect------------------------------------------------ #
 	# Install Repository Tools
-	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef 
+	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort 
 
 	# Install Python3 pip
 	pip3 install adversarial-robustness-toolbox metabadger flare-capa 
@@ -3176,7 +3176,7 @@ EOF
 	# npm install -g 
 
 	# Install Ruby GEM
-	# gem install 
+	gem install rubocop 
 
 	# Install Golang
 	performing_commands=$(echo '
