@@ -2907,6 +2907,21 @@ EOF
 ')
 	go_installer "Digital-Forensic" "Threat-Intelligence" $intelligence_commands
 	logo
+
+	# Install Revoke-Obfuscation
+	if [ ! -d "/usr/share/revoke-obfuscation" ]; then
+		git clone https://github.com/danielbohannon/Revoke-Obfuscation /usr/share/revoke-obfuscation
+		chmod 755 /usr/share/revoke-obfuscation/*
+		cat > /usr/bin/revoke-obfuscation << EOF
+#!/bin/bash
+cd /usr/share/revoke-obfuscation;pwsh -c "Import-Module ./Revoke-Obfuscation.psd1; Revoke-Obfuscation" "\$@"
+EOF
+		chmod +x /usr/bin/revoke-obfuscation
+		menu_entry "Digital-Forensic" "Threat-Hunting" "Revoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell 'revoke-obfuscation'"
+		printf "$GREEN"  "[*] Success Installing Revoke-Obfuscation"
+	else
+		printf "$GREEN"  "[*] Success Installed Revoke-Obfuscation"
+	fi
 }
 
 
@@ -2988,6 +3003,36 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		printf "$GREEN"  "[*] Success Installing Cilium"
 	else
 		printf "$GREEN"  "[*] Success Installed Cilium"
+	fi
+
+	# Install ElasticSeaerch & kibana
+	if [ ! -f "/etc/apt/sources.list.d/elastic-8.x.list" ]; then
+		curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/elastic-archive-keyring.gpg
+		echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-8.x.list
+		apt install -y elasticsearch kibana
+		sudo sed -e '/cluster.initial_master_nodes/ s/^#*/#/' -i /etc/elasticsearch/elasticsearch.yml
+		echo "discovery.type: single-node" | sudo tee -a /etc/elasticsearch/elasticsearch.yml
+		sudo /usr/share/kibana/bin/kibana-encryption-keys generate -q
+		echo "server.host: \"unk9vvn.local\"" | sudo tee -a /etc/kibana/kibana.yml
+		sudo systemctl enable elasticsearch kibana --now
+		sudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+		sudo /usr/share/kibana/bin/kibana-verification-code
+		/usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 --dns kali-elite.kali.elite,elastic.kali.elite,kali-elite --out kibana-server.p12
+		sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.crt -clcerts -nokeys
+		sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.key -nocerts -nodes
+		sudo chown root:kibana /etc/kibana/kibana-server.key
+		sudo chown root:kibana /etc/kibana/kibana-server.crt
+		sudo chmod 660 /etc/kibana/kibana-server.key
+		sudo chmod 660 /etc/kibana/kibana-server.crt
+		echo "server.ssl.enabled: true" | sudo tee -a /etc/kibana/kibana.yml
+		echo "server.ssl.certificate: /etc/kibana/kibana-server.crt" | sudo tee -a /etc/kibana/kibana.yml
+		echo "server.ssl.key: /etc/kibana/kibana-server.key" | sudo tee -a /etc/kibana/kibana.yml
+		echo "server.publicBaseUrl: \"https://unk9vvn.local:5601\"" | sudo tee -a /etc/kibana/kibana.yml
+		menu_entry "Blue-Team" "Detect" "ElasticSeaerch" "/usr/share/kali-menu/exec-in-shell 'sudo service elasticsearch start'"
+		menu_entry "Blue-Team" "Detect" "kibana" "/usr/share/kali-menu/exec-in-shell 'sudo service kibana start'"
+		printf "$GREEN"  "[*] Success Installing ElasticSeaerch & kibana"
+	else
+		printf "$GREEN"  "[*] Success Installed ElasticSeaerch & kibana"
 	fi
 
 
