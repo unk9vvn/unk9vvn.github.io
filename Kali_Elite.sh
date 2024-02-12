@@ -1,5 +1,5 @@
 #!/bin/bash
-version='14.0'
+version='15.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
