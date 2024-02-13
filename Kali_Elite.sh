@@ -1,5 +1,5 @@
 #!/bin/bash
-version='16.0'
+version='17.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -264,7 +264,7 @@ go_installer ()
 {
 	local category="$1"
 	local sub_category="$2"
-	local commands="$3"
+	local commands=$(echo '$3')
 	go_array=()
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
@@ -289,7 +289,7 @@ penetrating_testing ()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools 
 
 	# Install Python3 pip
-	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT ciphey proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester witnessme 
+	pip3 install cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester witnessme 
 
 	# Install Nodejs NPM
 	npm install -g jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor 
@@ -298,7 +298,7 @@ penetrating_testing ()
 	gem install ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear
 
 	# Install Golang
-	web_commands=$(echo '
+	web_commands="
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bin/httprobe
 go install github.com/tomnomnom/meg@latest;ln -fs ~/go/bin/meg /usr/bin/meg
@@ -338,16 +338,8 @@ go install github.com/dwisiswant0/unew@latest;ln -fs ~/go/bin/unew /usr/bin/unew
 go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/unfurl
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
-')
+"
 	go_installer "Penetration-Testing" "Web" $web_commands
-
-	# Install Sn1per
-	if [ ! -d "/usr/share/sniper" ]; then
-		git clone https://github.com/1N3/Sn1per /tmp/Sn1per;cd /tmp/Sn1per;sudo ./install.sh;rm -r /tmp/Sn1per
-		printf "$GREEN"  "[*] Success Installing Sn1per"
-	else
-		printf "$GREEN"  "[*] Success Installed Sn1per"
-	fi
 
 	# Install CloudBunny
 	if [ ! -d "/usr/share/cloudbunny" ]; then
