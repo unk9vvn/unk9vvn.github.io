@@ -1,5 +1,5 @@
 #!/bin/bash
-version='15.0'
+version='16.0'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -3415,6 +3415,9 @@ main ()
 
 	# Install Ruby GEM
 	# gem install 
+
+	# Fixed Error Not Found PIP3
+	apt reinstall -y python3-pip
 
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
