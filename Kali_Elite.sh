@@ -3399,10 +3399,11 @@ main ()
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
 
 	# Fixed Error Not Found PIP3
-	apt reinstall -y python3-pip
+	apt reinstall -qy python3-pip
 
 	# Install Python3 pip
-	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
+	pip3 install --upgrade pip
+	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
 
 	# Install Nodejs NPM
 	npm install -g npx 
@@ -3477,12 +3478,12 @@ EOF
 EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	fi
+	logo
 }
 
 
 menu
 main
-logo
 options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
 select opt in "${options[@]}"
 do
