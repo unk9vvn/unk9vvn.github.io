@@ -3478,10 +3478,9 @@ EOF
 EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	fi
-	logo
 }
 
-
+logo
 menu
 main
 options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
