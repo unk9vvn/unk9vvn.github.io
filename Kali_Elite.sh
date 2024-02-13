@@ -2,6 +2,8 @@
 version='17.0'
 
 
+
+
 RED='\e[1;31m%s\e[0m\n'
 GREEN='\e[1;32m%s\e[0m\n'
 YELLOW='\e[1;33m%s\e[0m\n'
@@ -747,9 +749,9 @@ EOF
 	gem install jwt-cracker 
 
 	# Install Golang
-	mobile_commands=$(echo '
+	mobile_commands="
 go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep
-')
+"
 	go_installer "Penetration-Testing" "Mobile" $mobile_commands
 
 	# Install Genymotion
@@ -793,14 +795,14 @@ EOF
 	gem install aws_public_ips aws_security_viz aws_recon 
 
 	# Install Golang
-	cloud_commands=$(echo '
+	cloud_commands="
 go install github.com/koenrh/s3enum@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enum
 go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
 go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr/bin/s3finder
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
 go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox
-')
+"
 	go_installer "Penetration-Testing" "Cloud" $cloud_commands
 
 	# Install CloudFail
@@ -847,9 +849,9 @@ EOF
 	gem install seccomp-tools one_gadget 
 
 	# Install Golang
-	network_commands=$(echo '
+	network_commands="
 go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan
-')
+"
 	go_installer "Penetration-Testing" "Network" $network_commands
 
 	# Install Hiddify-Next
@@ -975,8 +977,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	wireless_commands=$(echo '
-')
+	wireless_commands="
+"
 	go_installer "Penetration-Testing" "Wireless" $wireless_commands
 
 	# Install GTScan
@@ -1025,8 +1027,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	iot_commands=$(echo '
-')
+	iot_commands="
+"
 	go_installer "Penetration-Testing" "IoT" $iot_commands
 	logo
 }
@@ -1048,13 +1050,13 @@ red_team ()
 	# gem install
 
 	# Install Golang
-	reconnaissance_commands=$(echo '
+	reconnaissance_commands="
 go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph
-')
+"
 	go_installer "Red-Team" "Reconnaissance" $reconnaissance_commands
 
 	# Install Trape
@@ -1103,8 +1105,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	resource_development_commands=$(echo '
-')
+	resource_development_commands="
+"
 	go_installer "Red-Team" "Resource-Development" $resource_development_commands
 
 	# Install OffensiveNim
@@ -1152,10 +1154,10 @@ EOF
 	# gem install 
 
 	# Install Golang
-	initial_access_commands=$(echo '
+	initial_access_commands="
 go install github.com/Tylous/ZipExec@latest;ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor
-')
+"
 	go_installer "Red-Team" "Initial-Access" $initial_access_commands
 
 	# Install Evilginx
@@ -1373,8 +1375,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	execution_commands=$(echo '
-')
+	execution_commands="
+"
 	go_installer "Red-Team" "Execution" $execution_commands
 
 	# Install Venom
@@ -1467,8 +1469,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	persistence_commands=$(echo '
-')
+	persistence_commands="
+"
 	go_installer "Red-Team" "Persistence" $persistence_commands
 
 	# Install Vegile
@@ -1527,8 +1529,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	privilege_escalation_commands=$(echo '
-')
+	privilege_escalation_commands="
+"
 	go_installer "Red-Team" "Privilege-Escalation" $privilege_escalation_commands
 
 	# Install MimiPenguin
@@ -1577,10 +1579,10 @@ EOF
 	# gem install 
 
 	# Install Golang
-	defense_evasion_commands=$(echo '
+	defense_evasion_commands="
 go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow
 go install github.com/EgeBalci/amber@latest;ln -fs ~/go/bin/amber /usr/bin/amber
-')
+"
 	go_installer "Red-Team" "Defense-Evasion" $defense_evasion_commands
 
 	# Install ASWCrypter
@@ -1782,9 +1784,9 @@ EOF
 	# gem install 
 
 	# Install Golang
-	credential_access_commands=$(echo '
+	credential_access_commands="
 go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/kerbrute
-')
+"
 	go_installer "Red-Team" "Credential-Access" $credential_access_commands
 
 	# Install Kerberoast
@@ -1852,8 +1854,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	discovery_commands=$(echo '
-')
+	discovery_commands="
+"
 	go_installer "Red-Team" "Discovery" $discovery_commands
 
 	# Install AdExplorer
@@ -1888,8 +1890,8 @@ EOF
 	gem install evil-winrm 
   
 	# Install Golang
-	lateral_movement_commands=$(echo '
-')
+	lateral_movement_commands="
+"
 	go_installer "Red-Team" "Lateral-Movement" $lateral_movement_commands
 
 	# Install SCShell
@@ -1937,8 +1939,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	collection_commands=$(echo '
-')
+	collection_commands="
+"
 	go_installer "Red-Team" "Collection" $collection_commands
 
 	# Install Caldera
@@ -1972,8 +1974,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	cnc_commands=$(echo '
-')
+	cnc_commands="
+"
 	go_installer "Red-Team" "Command-and-Control" $cnc_commands
 
 	# Install PhoenixC2
@@ -2306,8 +2308,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	exfiltration_commands=$(echo '
-')
+	exfiltration_commands="
+"
 	go_installer "Red-Team" "Exfiltration" $exfiltration_commands
 
 	# Install Ngrok
@@ -2434,8 +2436,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	impact_commands=$(echo '
-')
+	impact_commands="
+"
 	go_installer "Red-Team" "Impact" $impact_commands
 	logo
 }
@@ -2457,8 +2459,8 @@ ics_security ()
 	gem install modbus-cli 
 
 	# Install Golang
-	pentest_commands=$(echo '
-')
+	pentest_commands="
+"
 	go_installer "ICS-Security" "Penetration-Testing" $pentest_commands
 
 	# Install S7Scan
@@ -2523,8 +2525,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	red_team_commands=$(echo '
-')
+	red_team_commands="
+"
 	go_installer "ICS-Security" "Red-Team" $red_team_commands
 
 
@@ -2542,8 +2544,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	digital_forensic_commands=$(echo '
-')
+	digital_forensic_commands="
+"
 	go_installer "ICS-Security" "Digital-Forensic" $digital_forensic_commands
 
 
@@ -2561,8 +2563,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	blue_team_commands=$(echo '
-')
+	blue_team_commands="
+"
 	go_installer "ICS-Security" "Blue-Team" $blue_team_commands
 	logo
 }
@@ -2584,8 +2586,8 @@ digital_forensic ()
 	# gem install 
 
 	# Install Golang
-	forensic_commands=$(echo '
-')
+	forensic_commands="
+"
 	go_installer "Digital-Forensic" "Reverse-Engineering" $forensic_commands
 
 
@@ -2603,9 +2605,9 @@ digital_forensic ()
 	gem install pedump zsteg 
 
 	# Install Golang
-	malware_commands=$(echo '
+	malware_commands="
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor
-')
+"
 	go_installer "Digital-Forensic" "Malware-Analysis" $malware_commands
 
 	# Install Dangerzone
@@ -2822,8 +2824,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	threat_commands=$(echo '
-')
+	threat_commands="
+"
 	go_installer "Digital-Forensic" "Threat-Hunting" $threat_commands
 
 	# Install Matano
@@ -2850,8 +2852,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	response_commands=$(echo '
-')
+	response_commands="
+"
 	go_installer "Digital-Forensic" "Incident-Response" $response_commands
 
 	# Install TheHive not tested
@@ -2880,8 +2882,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	intelligence_commands=$(echo '
-')
+	intelligence_commands="
+"
 	go_installer "Digital-Forensic" "Threat-Intelligence" $intelligence_commands
 	logo
 
@@ -2925,8 +2927,8 @@ blue_team ()
 	# gem install 
 
 	# Install Golang
-	harden_commands=$(echo '
-')
+	harden_commands="
+"
 	go_installer "Blue-Team" "Harden" $harden_commands
 
 
@@ -2944,9 +2946,9 @@ blue_team ()
 	# gem install 
 
 	# Install Golang
-	detect_commands=$(echo '
+	detect_commands="
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a
-')
+"
 	go_installer "Blue-Team" "Detect" $detect_commands
 
 	# Install Wazuh Agent & Server
@@ -3051,8 +3053,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	isolate_commands=$(echo '
-')
+	isolate_commands="
+"
 	go_installer "Blue-Team" "Isolate" $isolate_commands
 
 
@@ -3070,8 +3072,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	deceive_commands=$(echo '
-')
+	deceive_commands="
+"
 	go_installer "Blue-Team" "Deceive" $deceive_commands
 
 
@@ -3089,8 +3091,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	evict_commands=$(echo '
-')
+	evict_commands="
+"
 	go_installer "Blue-Team" "Evict" $evict_commands
 	logo
 }
@@ -3112,9 +3114,9 @@ security_audit ()
 	gem install brakeman bundler-audit 
 
 	# Install Golang
-	audit_commands=$(echo '
+	audit_commands="
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
-')
+"
 	go_installer "Security-Audit" "Preliminary-Audit-Assessment" $audit_commands
 
 	# Install Bearer
@@ -3187,8 +3189,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	planning_commands=$(echo '
-')
+	planning_commands="
+"
 	go_installer "Security-Audit" "Planning-and-Preparation" $planning_commands
 
 
@@ -3206,8 +3208,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	establishing_commands=$(echo '
-')
+	establishing_commands="
+"
 	go_installer "Security-Audit" "Establishing-Audit-Objectives" $establishing_commands
 
 
@@ -3225,8 +3227,8 @@ EOF
 	gem install rubocop 
 
 	# Install Golang
-	performing_commands=$(echo '
-')
+	performing_commands="
+"
 	go_installer "Security-Audit" "Performing-the-Review" $performing_commands
 
 	# Install Clion
@@ -3356,8 +3358,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	preparing_commands=$(echo '
-')
+	preparing_commands="
+"
 	go_installer "Security-Audit" "Preparing-the-Audit-Report" $preparing_commands
 
 
@@ -3375,8 +3377,8 @@ EOF
 	# gem install 
 
 	# Install Golang
-	issuing_commands=$(echo '
-')
+	issuing_commands="
+"
 	go_installer "Security-Audit" "Issuing-the-Review-Report" $issuing_commands
 	logo
 }
@@ -3479,6 +3481,7 @@ EOF
 		bash /usr/share/kali_elite/kalielite.sh
 	fi
 }
+
 
 logo
 menu
