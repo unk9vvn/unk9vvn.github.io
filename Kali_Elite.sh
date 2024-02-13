@@ -3416,9 +3416,6 @@ main ()
 	# Install Ruby GEM
 	# gem install 
 
-	# Install Rust
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
 	# Install Kali_Elite
 	if [ ! -d "/usr/share/kali_elite" ]; then
 		mkdir -p /usr/share/kali_elite
