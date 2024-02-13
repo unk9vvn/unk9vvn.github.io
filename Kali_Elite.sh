@@ -264,7 +264,7 @@ go_installer ()
 {
 	local category="$1"
 	local sub_category="$2"
-	local commands=$(echo '$3')
+	local commands=$(echo "$3")
 	go_array=()
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
