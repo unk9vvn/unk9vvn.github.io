@@ -3395,15 +3395,14 @@ main ()
 	# Install Requirement Tools
 	apt install -qy build-essential cmake g++ libssl-dev curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg apt-transport-https tor obfs4proxy docker.io docker-compose tor vlc bleachbit powershell filezilla thunderbird mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload 
 
-	# Fixed Error Not Found PIP3
-	apt reinstall -y python3-pip
-
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py
 
+	# Fixed Error Not Found PIP3
+	apt reinstall -y python3-pip
+
 	# Install Python3 pip
-	pip3 install --upgrade pip
-	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
+	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
 
 	# Install Nodejs NPM
 	npm install -g npx 
