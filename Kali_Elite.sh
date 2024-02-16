@@ -2837,6 +2837,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Matano"
 	fi
 
+	# Install APT-Hunter
+	if [ ! -d "/usr/share/apt-hunter" ]; then
+		git clone https://github.com/ahmedkhlief/APT-Hunter -O /usr/share/apt-hunter
+		chmod 755 /usr/share/apt-hunter/*
+		cat > /usr/bin/apt-hunter << EOF
+#!/bin/bash
+cd /usr/share/apt-hunter;python3 APT-Hunter.py "\$@"
+EOF
+		chmod +x /usr/bin/apt-hunter
+		pip3 install -r /usr/share/apt-hunter/requirements.txt
+		menu_entry "Digital-Forensic" "Threat-Hunting" "APT-Hunter" "/usr/share/kali-menu/exec-in-shell 'apt-hunter -h'"
+		printf "$GREEN"  "[*] Success Installing APT-Hunter"
+	else
+		printf "$GREEN"  "[*] Success Installed APT-Hunter"
+	fi
+
 
 	# ------------------------------------------Digital-Forensic-Incident-Response--------------------------------------- #
 	# Install Repository Tools
