@@ -338,6 +338,7 @@ go install github.com/tomnomnom/qsreplace@latest;ln -fs ~/go/bin/qsreplace /usr/
 go install github.com/lc/subjs@latest;ln -fs ~/go/bin/subjs /usr/bin/subjs
 go install github.com/dwisiswant0/unew@latest;ln -fs ~/go/bin/unew /usr/bin/unew
 go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/unfurl
+go install github.com/edoardottt/pphack/cmd/pphack@latest;ln -fs ~/go/bin/pphack /usr/bin/pphack
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
 "
@@ -450,6 +451,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing YsoSerial.net"
 	else
 		printf "$GREEN"  "[*] Success Installed YsoSerial.net"
+	fi
+
+	# Install Akto
+	if [ ! -d "/usr/share/akto" ]; then
+		git clone https://github.com/akto-api-security/akto /usr/share/akto 
+		chmod 755 /usr/share/akto/*
+		cat > /usr/bin/akto << EOF
+#!/bin/bash
+cd /usr/share/akto;docker-compose up -d "\$@"
+EOF
+		chmod +x /usr/bin/akto
+		menu_entry "Penetration-Testing" "Web" "Akto" "/usr/share/kali-menu/exec-in-shell 'akto'"
+		printf "$GREEN"  "[*] Success Installing Akto"
+	else
+		printf "$GREEN"  "[*] Success Installed Akto"
 	fi
 
 	# Install RSAtool
