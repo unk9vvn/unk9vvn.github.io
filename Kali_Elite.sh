@@ -1,5 +1,5 @@
 #!/bin/bash
-version='17.0'
+version='18.0'
 
 
 
@@ -927,6 +927,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing PRET"
 	else
 		printf "$GREEN"  "[*] Success Installed PRET"
+	fi
+
+	# Install Geneva
+	if [ ! -d "/usr/share/geneva" ]; then
+		git clone https://github.com/Kkevsterrr/geneva /usr/share/geneva
+		chmod 755 /usr/share/geneva/*
+		cat > /usr/bin/geneva << EOF
+#!/bin/bash
+cd /usr/share/geneva;python3 engine.py "\$@"
+EOF
+		chmod +x /usr/bin/geneva
+		pip3 install -r /usr/share/geneva/requirements.txt
+		menu_entry "Penetration-Testing" "Network" "Geneva" "/usr/share/kali-menu/exec-in-shell 'geneva -h'"
+		printf "$GREEN"  "[*] Success Installing Geneva"
+	else
+		printf "$GREEN"  "[*] Success Installed Geneva"
 	fi
 
 	# Install GEF
