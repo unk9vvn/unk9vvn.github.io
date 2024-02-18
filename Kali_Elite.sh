@@ -1985,10 +1985,27 @@ cd /usr/share/caldera;python3 server.py --insecure "\$@"
 EOF
 		chmod +x /usr/bin/caldera
 		pip3 install -r /usr/share/caldera/requirements.txt
-		menu_entry "Red-Team" "Command-and-Control" "Caldera" "/usr/share/kali-menu/exec-in-shell 'caldera'"
+		menu_entry "Red-Team" "Collection" "Caldera" "/usr/share/kali-menu/exec-in-shell 'caldera'"
 		printf "$GREEN"  "[*] Success Installing Caldera"
 	else
 		printf "$GREEN"  "[*] Success Installed Caldera"
+	fi
+
+	# Install Realm
+	if [ ! -d "/usr/share/realm" ]; then
+		git clone https://github.com/spellshift/realm /usr/share/realm
+		chmod 755 /usr/share/realm/*
+		cd /usr/share/realm;go run ./tavern
+		cd /usr/share/realm/implants/imix;cargo run
+		cat > /usr/bin/realm << EOF
+#!/bin/bash
+cd /usr/share/realm;python3 server.py --insecure "\$@"
+EOF
+		chmod +x /usr/bin/realm
+		menu_entry "Red-Team" "Collection" "Realm" "/usr/share/kali-menu/exec-in-shell 'realm'"
+		printf "$GREEN"  "[*] Success Installing Realm"
+	else
+		printf "$GREEN"  "[*] Success Installed Realm"
 	fi
 
 
