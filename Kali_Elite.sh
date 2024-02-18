@@ -1991,19 +1991,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Caldera"
 	fi
 
-	# Install Realm
-	if [ ! -d "/usr/share/realm" ]; then
-		mkdir -p /usr/share/realm
-		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/realm/tavern
-		ln -fs /usr/share/realm/tavern /usr/bin/tavern
-		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/realm/imix-linux
-		ln -fs /usr/share/realm/imix-linux /usr/bin/imix-linux
-		menu_entry "Red-Team" "Collection" "Realm" "/usr/share/kali-menu/exec-in-shell 'realm'"
-		printf "$GREEN"  "[*] Success Installing Realm"
-	else
-		printf "$GREEN"  "[*] Success Installed Realm"
-	fi
-
 
 	# --------------------------------------------Command-and-Control-Red-Team------------------------------------------- #
 	# Install Repository Tools
@@ -2158,6 +2145,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installing MeetC2"
 	else
 		printf "$GREEN"  "[*] Success Installed MeetC2"
+	fi
+
+	# Install Realm
+	if [ ! -d "/usr/share/realm" ]; then
+		mkdir -p /usr/share/realm
+		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/realm/tavern
+		ln -fs /usr/share/realm/tavern /usr/bin/tavern
+		menu_entry "Red-Team" "Command-and-Control" "Tavern" "/usr/share/kali-menu/exec-in-shell 'tavern'"
+		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/realm/imix
+		ln -fs /usr/share/realm/imix /usr/bin/imix
+		menu_entry "Red-Team" "Command-and-Control" "Imix" "/usr/share/kali-menu/exec-in-shell 'imix'"
+		printf "$GREEN"  "[*] Success Installing Realm"
+	else
+		printf "$GREEN"  "[*] Success Installed Realm"
 	fi
 
 	# Install Badrats
