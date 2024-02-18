@@ -1993,15 +1993,11 @@ EOF
 
 	# Install Realm
 	if [ ! -d "/usr/share/realm" ]; then
-		git clone https://github.com/spellshift/realm /usr/share/realm
-		chmod 755 /usr/share/realm/*
-		cd /usr/share/realm;go run ./tavern
-		cd /usr/share/realm/implants/imix;cargo run
-		cat > /usr/bin/realm << EOF
-#!/bin/bash
-cd /usr/share/realm;python3 server.py --insecure "\$@"
-EOF
-		chmod +x /usr/bin/realm
+		mkdir -p /usr/share/realm
+		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/realm/tavern
+		ln -fs /usr/share/realm/tavern /usr/bin/tavern
+		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/realm/imix-linux
+		ln -fs /usr/share/realm/imix-linux /usr/bin/imix-linux
 		menu_entry "Red-Team" "Collection" "Realm" "/usr/share/kali-menu/exec-in-shell 'realm'"
 		printf "$GREEN"  "[*] Success Installing Realm"
 	else
