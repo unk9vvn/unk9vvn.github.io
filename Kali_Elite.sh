@@ -2220,6 +2220,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed MeetC2"
 	fi
 
+	# Install Ligolo-mp
+	if [ ! -d "/usr/share/ligolo-mp" ]; then
+		mkdir -p /usr/share/ligolo-mp
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.1_linux_amd64 -O /usr/share/ligolo-mp/ligolos
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.1_linux_amd64 -O /usr/share/ligolo-mp/ligoloc
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.1_windows_amd64.exe -O /usr/share/ligolo-mp/ligoloc.exe
+		chmod 755 /usr/share/ligolo-mp/*
+		ln -fs /usr/share/ligolo-mp/ligolos /usr/bin/ligolos
+		chmod +x /usr/bin/ligolos
+		menu_entry "Command-and-Control" "Red-Team" "Ligolo-mp" "/usr/share/kali-menu/exec-in-shell 'sudo ligolos -h'"
+		printf "$GREEN"  "[*] Success Installing Ligolo-mp"
+	else
+		printf "$GREEN"  "[*] Success Installed Ligolo-mp"
+	fi
+
 	# Install Realm
 	if [ ! -d "/usr/share/realm" ]; then
 		mkdir -p /usr/share/realm
