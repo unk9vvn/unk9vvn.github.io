@@ -3700,37 +3700,30 @@ EOF
 logo
 menu
 main
-options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
-select opt in "${options[@]}"
-do
+select opt in Penetrating-Testing Red-Team ICS-Security Digital-Forensic Blue-Team Security-Audit Quit; do
     case $opt in
-        "Penetrating-Testing")
-            echo "Running Penetrating-Testing..."
-            penetrating_testing
-            ;;
-        "Red-Team")
-            echo "Running Red-Team..."
-            red_team
-            ;;
-        "ICS-Security")
-            echo "Running ICS-Security..."
-            ics_security
-            ;;
-        "Digital-Forensic")
-            echo "Running Digital-Forensic..."
-            digital_forensic
-            ;;
-        "Blue-Team")
-            echo "Running Blue-Team..."
-            blue_team
-            ;;
+        "Penetrating-Testing") echo "Running Penetrating-Testing..."
+		penetrating_testing
+		;;
+        "Red-Team") echo "Running Red-Team..."
+		red_team
+		;;
+        "ICS-Security") echo "Running ICS-Security..."
+		ics_security
+		;;
+        "Digital-Forensic") echo "Running Digital-Forensic..."
+		digital_forensic
+		;;
+        "Blue-Team") echo "Running Blue-Team..."
+		blue_team
+		;;
         "Security-Audit")
-            echo "Running Security-Audit..."
-            security_audit
-            ;;
+		echo "Running Security-Audit..."
+		security_audit
+		;;
         "Quit")
-            break
-            ;;
+		break
+		;;
         *) echo "Invalid option $REPLY";;
     esac
 done
