@@ -65,6 +65,7 @@ function logo()
 function menu()
 {
 	# Initialize Main Menu
+	mkdir -p /home/$USERS/.config/menus;mkdir -p /home/$USERS/.config/menus/applications-merged
 	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
@@ -3696,14 +3697,10 @@ EOF
 }
 
 
+menu
+main
 logo
 
-menu
-
-main
-
-
-PS3="Please enter your choice: "
 select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Quit
 do
 	case $opt in
