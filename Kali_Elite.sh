@@ -22,7 +22,7 @@ if [ "$(id -u)" != "0" ];then
 fi
 
 
-logo ()
+function logo()
 {
     reset;clear
     printf "$GREEN"   "                            --/osssssssssssso/--                    "
@@ -62,7 +62,7 @@ logo ()
 }
 
 
-menu ()
+function menu()
 {
 	# Initialize Main Menu
 	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories
@@ -222,7 +222,7 @@ EOF
 }
 
 
-menu_entry ()
+function menu_entry()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -262,7 +262,7 @@ EOF
 }
 
 
-pip_installer ()
+function pip_installer()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -274,7 +274,7 @@ pip_installer ()
 }
 
 
-npm_installer ()
+function npm_installer()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -286,7 +286,7 @@ npm_installer ()
 }
 
 
-gem_installer ()
+function gem_installer()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -298,7 +298,7 @@ gem_installer ()
 }
 
 
-go_installer ()
+function go_installer()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -320,7 +320,7 @@ go_installer ()
 }
 
 
-penetrating_testing ()
+function penetrating_testing()
 {
 	# ----------------------------------------------Web-Penetration-Testing---------------------------------------------- #
 	# Install Repository Tools
@@ -1115,7 +1115,7 @@ EOF
 }
 
 
-red_team ()
+function red_team()
 {
 	# ----------------------------------------------Reconnaissance-Red-Team---------------------------------------------- #
 	# Install Repository Tools
@@ -2598,7 +2598,7 @@ EOF
 }
 
 
-ics_security ()
+function ics_security()
 {
 	# ------------------------------------------Penetration-Testing-ICS-Security----------------------------------------- #
 	# Install Repository Tools
@@ -2734,7 +2734,7 @@ EOF
 }
 
 
-digital_forensic ()
+function digital_forensic()
 {
 	# ----------------------------------------Reverse-Engineeting-Digital-Forensic--------------------------------------- #
 	# Install Repository Tools
@@ -3101,7 +3101,7 @@ EOF
 }
 
 
-blue_team ()
+function blue_team()
 {
 	# ---------------------------------------------------Harden-Blue-Team------------------------------------------------ #
 	# Install Repository Tools
@@ -3299,7 +3299,7 @@ EOF
 }
 
 
-security_audit ()
+function security_audit()
 {
 	# ------------------------------------Preliminary-Audit-Assessment-Security-Audit------------------------------------ #
 	# Install Repository Tools
@@ -3598,7 +3598,7 @@ EOF
 }
 
 
-main ()
+function main()
 {
 	# APT Fixed
 	if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
