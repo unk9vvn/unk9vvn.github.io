@@ -3702,25 +3702,25 @@ main
 
 
 PS3="Please enter your choice: "
-select opt in "Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" Quit
+select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Quit
 do
 	case $opt in
-		"Penetrating-Testing")
+		"Penetrating Testing")
 			echo "Running Penetrating-Testing..."
 			penetrating_testing;;
-		"Red-Team")
+		"Red Team")
 			echo "Running Red-Team..."
 			red_team;;
-		"ICS-Security")
+		"ICS Security")
 			echo "Running ICS-Security..."
 			ics_security;;
-		"Digital-Forensic")
+		"Digital Forensic")
 			echo "Running Digital-Forensic..."
 			digital_forensic;;
-		"Blue-Team")
+		"Blue Team")
 			echo "Running Blue-Team..."
 			blue_team;;
-		"Security-Audit")
+		"Security Audit")
 			echo "Running Security-Audit..."
 			security_audit;;
 		"Quit")
