@@ -3702,8 +3702,10 @@ menu
 main
 
 
-options=("Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" "Quit")
-select opt in "${options[@]}"; do
+PS3='Please enter your choice: '
+options=("Penetrating-Testing 1" "Red-Team 2" "ICS-Security 3" "Digital-Forensic 4" "Blue-Team 5" "Security-Audit 6" "Quit")
+select opt in "${options[@]}"
+do
 	case $opt in
 		"Penetrating-Testing")
 			echo "Running Penetrating-Testing..."
@@ -3732,6 +3734,6 @@ select opt in "${options[@]}"; do
 		"Quit")
 			break
 			;;
-		*) echo "Invalid option...";;
+		*) echo "invalid option $REPLY";;
 	esac
 done
