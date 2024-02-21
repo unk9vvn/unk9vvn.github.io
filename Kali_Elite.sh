@@ -24,7 +24,7 @@ fi
 
 logo ()
 {
-    reset;clear
+    clear
     printf "$GREEN"   "                            --/osssssssssssso/--                    "
     printf "$GREEN"   "                        -+sss+-+--os.yo:++/.o-/sss+-                "
     printf "$GREEN"   "                     /sy+++-.h.-dd++m+om/s.h.hy/:+oys/              "
