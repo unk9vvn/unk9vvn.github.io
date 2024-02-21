@@ -3348,6 +3348,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed CheckStyle"
 	fi
 
+	# Install vuls-scanner
+	if [ ! -d "/usr/share/vuls-scanner" ]; then
+		mkdir -p /usr/share/vuls-scanner
+		wget https://github.com/future-architect/vuls/releases/latest/download/vuls-scanner_0.24.9_linux_amd64.tar.gz -O /tmp/vuls-scanner_linux_amd64.tar.gz
+		tar -xvf /tmp/vuls-scanner_linux_amd64.tar.gz -C /usr/share/vuls-scanner;rm -r /tmp/vuls-scanner_linux_amd64.tar.gz
+		chmod 755 /usr/share/vuls-scanner/*
+		ln -fs /usr/share/vuls-scanner/vuls /usr/bin/vuls
+		chmod +x /usr/bin/vuls
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "vuls-scanner" "/usr/share/kali-menu/exec-in-shell 'vuls -h'"
+		printf "$GREEN"  "[*] Success Installing vuls-scanner"
+	else
+		printf "$GREEN"  "[*] Success Installed vuls-scanner"
+	fi
+
 	# Install Cmder
 	if [ ! -d "/usr/share/cmder" ]; then
 		mkdir -p /usr/share/cmder
