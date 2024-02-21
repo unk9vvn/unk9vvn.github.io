@@ -3205,27 +3205,27 @@ EOF
 
 	# Install ElasticSeaerch & kibana
 	if [ ! -f "/etc/apt/sources.list.d/elastic-8.x.list" ]; then
-		curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/elastic-archive-keyring.gpg
-		echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-8.x.list
+		curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /etc/apt/trusted.gpg.d/elastic-archive-keyring.gpg
+		echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.x.list
 		apt install -y elasticsearch kibana
-		sudo sed -e '/cluster.initial_master_nodes/ s/^#*/#/' -i /etc/elasticsearch/elasticsearch.yml
-		echo "discovery.type: single-node" | sudo tee -a /etc/elasticsearch/elasticsearch.yml
-		sudo /usr/share/kibana/bin/kibana-encryption-keys generate -q
-		echo "server.host: \"unk9vvn.local\"" | sudo tee -a /etc/kibana/kibana.yml
-		sudo systemctl enable elasticsearch kibana --now
-		sudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
-		sudo /usr/share/kibana/bin/kibana-verification-code
+		sed -e '/cluster.initial_master_nodes/ s/^#*/#/' -i /etc/elasticsearch/elasticsearch.yml
+		echo "discovery.type: single-node" | tee -a /etc/elasticsearch/elasticsearch.yml
+		/usr/share/kibana/bin/kibana-encryption-keys generate -q
+		echo "server.host: \"unk9vvn.local\"" | tee -a /etc/kibana/kibana.yml
+		systemctl enable elasticsearch kibana --now
+		/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+		/usr/share/kibana/bin/kibana-verification-code
 		/usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 --dns kali-elite.kali.elite,elastic.kali.elite,kali-elite --out kibana-server.p12
-		sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.crt -clcerts -nokeys
-		sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.key -nocerts -nodes
-		sudo chown root:kibana /etc/kibana/kibana-server.key
-		sudo chown root:kibana /etc/kibana/kibana-server.crt
-		sudo chmod 660 /etc/kibana/kibana-server.key
-		sudo chmod 660 /etc/kibana/kibana-server.crt
-		echo "server.ssl.enabled: true" | sudo tee -a /etc/kibana/kibana.yml
-		echo "server.ssl.certificate: /etc/kibana/kibana-server.crt" | sudo tee -a /etc/kibana/kibana.yml
-		echo "server.ssl.key: /etc/kibana/kibana-server.key" | sudo tee -a /etc/kibana/kibana.yml
-		echo "server.publicBaseUrl: \"https://unk9vvn.local:5601\"" | sudo tee -a /etc/kibana/kibana.yml
+		openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.crt -clcerts -nokeys
+		openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.key -nocerts -nodes
+		chown root:kibana /etc/kibana/kibana-server.key
+		chown root:kibana /etc/kibana/kibana-server.crt
+		chmod 660 /etc/kibana/kibana-server.key
+		chmod 660 /etc/kibana/kibana-server.crt
+		echo "server.ssl.enabled: true" | tee -a /etc/kibana/kibana.yml
+		echo "server.ssl.certificate: /etc/kibana/kibana-server.crt" | tee -a /etc/kibana/kibana.yml
+		echo "server.ssl.key: /etc/kibana/kibana-server.key" | tee -a /etc/kibana/kibana.yml
+		echo "server.publicBaseUrl: \"https://unk9vvn.local:5601\"" | tee -a /etc/kibana/kibana.yml
 		menu_entry "Detect" "Blue-Team" "ElasticSeaerch" "/usr/share/kali-menu/exec-in-shell 'sudo service elasticsearch start'"
 		menu_entry "Detect" "Blue-Team" "kibana" "/usr/share/kali-menu/exec-in-shell 'sudo service kibana start'"
 		printf "$GREEN"  "[*] Success Installing ElasticSeaerch & kibana"
