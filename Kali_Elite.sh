@@ -3622,7 +3622,7 @@ main ()
 	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
 
 	# Install Nodejs NPM
-	npm install -g npx 
+	# npm install -g 
 
 	# Install Ruby GEM
 	# gem install 
