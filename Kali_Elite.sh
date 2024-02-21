@@ -3697,8 +3697,11 @@ EOF
 
 
 logo
+
 menu
+
 main
+
 
 PS3="Please enter your choice: "
 select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Quit
