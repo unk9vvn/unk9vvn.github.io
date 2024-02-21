@@ -56,8 +56,8 @@ logo ()
     printf "$RED"     "                        -+sss+/o/ s--y.s+/:++-+sss+-                "
     printf "$RED"     "                            --/osssssssssssso/--                    "
     printf "$BLUE"    "                                  Unk9vvN                           "
-    printf "$YELLOW"  "                           https://unk9vvn.com                      "
-    printf "$CYAN"    "                             Kali Elite "$version"                  "
+    printf "$YELLOW"  "                            https://unk9vvn.com                     "
+    printf "$CYAN"    "                              Kali Elite "$version"                 "
     printf "\n\n"
 }
 
@@ -3702,38 +3702,31 @@ menu
 main
 
 
-PS3='Please enter your choice: '
-options=("Penetrating-Testing 1" "Red-Team 2" "ICS-Security 3" "Digital-Forensic 4" "Blue-Team 5" "Security-Audit 6" "Quit")
-select opt in "${options[@]}"
+PS3="Please enter your choice: "
+select opt in "Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" Quit
 do
 	case $opt in
 		"Penetrating-Testing")
 			echo "Running Penetrating-Testing..."
-			penetrating_testing
-			;;
+			penetrating_testing;;
 		"Red-Team")
 			echo "Running Red-Team..."
-			red_team
-			;;
+			red_team;;
 		"ICS-Security")
 			echo "Running ICS-Security..."
-			ics_security
-			;;
+			ics_security;;
 		"Digital-Forensic")
 			echo "Running Digital-Forensic..."
-			digital_forensic
-			;;
+			digital_forensic;;
 		"Blue-Team")
 			echo "Running Blue-Team..."
-			blue_team
-			;;
+			blue_team;;
 		"Security-Audit")
 			echo "Running Security-Audit..."
-			security_audit
-			;;
+			security_audit;;
 		"Quit")
-			break
-			;;
-		*) echo "invalid option $REPLY";;
+			echo "Exiting..."
+			break;;
+		*) echo "invalid option...";;
 	esac
 done
