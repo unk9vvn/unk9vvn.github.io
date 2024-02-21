@@ -3660,7 +3660,6 @@ EOF
   </Menu>
 </Menu>
 EOF
-		bash /usr/share/kali_elite/kalielite.sh
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
 		curl -s -o /usr/share/kali_elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
 		chmod 755 /usr/share/kali_elite/*
