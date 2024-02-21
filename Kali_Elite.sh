@@ -3693,11 +3693,12 @@ EOF
 EOF
 		bash /usr/share/kali-elite/kalielite.sh
 	fi
+
+	menu
 }
 
 
 logo
-menu
 main
 select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Quit
 do
