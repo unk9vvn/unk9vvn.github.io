@@ -3700,30 +3700,16 @@ EOF
 logo
 menu
 main
+item="Select your specialized branch please: "
 select opt in Penetrating-Testing Red-Team ICS-Security Digital-Forensic Blue-Team Security-Audit Quit; do
     case $opt in
-        "Penetrating-Testing") echo "Running Penetrating-Testing..."
-		penetrating_testing
-		;;
-        "Red-Team") echo "Running Red-Team..."
-		red_team
-		;;
-        "ICS-Security") echo "Running ICS-Security..."
-		ics_security
-		;;
-        "Digital-Forensic") echo "Running Digital-Forensic..."
-		digital_forensic
-		;;
-        "Blue-Team") echo "Running Blue-Team..."
-		blue_team
-		;;
-        "Security-Audit")
-		echo "Running Security-Audit..."
-		security_audit
-		;;
-        "Quit")
-		break
-		;;
-        *) echo "Invalid option $REPLY";;
+        "Penetrating-Testing") penetrating_testing ;;
+        "Red-Team") red_team ;;
+        "ICS-Security") ics_security ;;
+        "Digital-Forensic") digital_forensic ;;
+        "Blue-Team") blue_team ;;
+        "Security-Audit") security_audit ;;
+        "Quit") break ;;
+        *) echo "Invalid option..." ;;
     esac
 done
