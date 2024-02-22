@@ -7,7 +7,7 @@
 </div>
 
 # Elite Virtual Machines Distribution
-Two Windows Server and Kali Linux elite virtual machine are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
+Two Windows Server Elite and Kali Linux Elite virtual machine are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
 
 ## Cheat Sheets & Check Lists
 * Penetration Testing
