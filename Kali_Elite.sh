@@ -267,7 +267,7 @@ function pip_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local pip_array=$("$1")
+	local pip_array=$(echo "$3")
 	for pip_index in "${pip_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${pip_index} -h'"
 		pip3 install "$pip_index"
@@ -279,7 +279,7 @@ function npm_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local npm_array=$("$1")
+	local npm_array=$(echo "$3")
 	for npm_index in "${npm_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${npm_index} -h'"
 		npm install -g "$npm_index"
@@ -291,7 +291,7 @@ function gem_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local gem_array=$("$1")
+	local gem_array=$(echo "$3")
 	for gem_index in "${gem_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${gem_index} -h'"
 		gem install "$gem_index"
@@ -303,7 +303,7 @@ function go_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local commands=$("$3")
+	local commands=$(echo "$3")
 	go_array=()
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
