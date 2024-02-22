@@ -328,7 +328,7 @@ function penetrating_testing()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools
 
 	# Install Python3 pip
-	web_pip="cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester witnessme"
+	web_pip="cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester witnessme"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
@@ -3715,22 +3715,22 @@ select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic"
 do
 	case $opt in
 		"Penetrating Testing")
-			echo "Running Penetrating-Testing..."
+			printf "$GREEN"  "[*] Running Penetrating-Testing..."
 			penetrating_testing;;
 		"Red Team")
-			echo "Running Red-Team..."
+			printf "$GREEN"  "[*] Running Red-Team..."
 			red_team;;
 		"ICS Security")
-			echo "Running ICS-Security..."
+			printf "$GREEN"  "[*] Running ICS-Security..."
 			ics_security;;
 		"Digital Forensic")
-			echo "Running Digital-Forensic..."
+			printf "$GREEN"  "[*] Running Digital-Forensic..."
 			digital_forensic;;
 		"Blue Team")
-			echo "Running Blue-Team..."
+			printf "$GREEN"  "[*] Running Blue-Team..."
 			blue_team;;
 		"Security Audit")
-			echo "Running Security-Audit..."
+			printf "$GREEN"  "[*] Running Security-Audit..."
 			security_audit;;
 		"Quit")
 			echo "Exiting..."
