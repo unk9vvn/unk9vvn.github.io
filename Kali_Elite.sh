@@ -317,7 +317,7 @@ function go_installer()
 			go_array+=("$binary_name")
 		fi
 	done <<< "$commands"
-	for go_index in "${go_array[@]}"; do
+	for go_index in ${go_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${go_index} -h'"
 		printf "$GREEN"  "[*] Success Installing ${go_index}"
 	done
