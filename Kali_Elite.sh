@@ -271,6 +271,7 @@ function pip_installer()
 	for pip_index in ${pip_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${pip_index} -h'"
 		pip3 install "$pip_index"
+		printf "$GREEN"  "[*] Success Installing ${pip_index}"
 	done
 }
 
@@ -283,6 +284,7 @@ function npm_installer()
 	for npm_index in ${npm_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${npm_index} -h'"
 		npm install -g "$npm_index"
+		printf "$GREEN"  "[*] Success Installing ${npm_index}"
 	done
 }
 
@@ -295,6 +297,7 @@ function gem_installer()
 	for gem_index in ${gem_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${gem_index} -h'"
 		gem install "$gem_index"
+		printf "$GREEN"  "[*] Success Installing ${gem_index}"
 	done
 }
 
@@ -316,6 +319,7 @@ function go_installer()
 	done <<< "$commands"
 	for go_index in "${go_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${go_index} -h'"
+		printf "$GREEN"  "[*] Success Installing ${go_index}"
 	done
 	eval "$commands"
 }
