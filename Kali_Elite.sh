@@ -267,7 +267,7 @@ function pip_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local pip_array=$(echo "$3")
+	local pip_array="$3"
 	for pip_index in "${pip_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${pip_index} -h'"
 		pip3 install "$pip_index"
@@ -279,7 +279,7 @@ function npm_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local npm_array=$(echo "$3")
+	local npm_array="$3"
 	for npm_index in "${npm_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${npm_index} -h'"
 		npm install -g "$npm_index"
@@ -291,7 +291,7 @@ function gem_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local gem_array=$(echo "$3")
+	local gem_array="$3"
 	for gem_index in "${gem_array[@]}"; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${gem_index} -h'"
 		gem install "$gem_index"
@@ -303,7 +303,7 @@ function go_installer()
 {
 	local sub_category="$1"
 	local category="$2"
-	local commands=$(echo "$3")
+	local commands="$3"
 	go_array=()
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
@@ -329,15 +329,15 @@ function penetrating_testing()
 
 	# Install Python3 pip
 	web_pip="cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite censys ggshield bbqsql selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy maltego-trx bhedak gitfive modelscan shodan postmaniac APIFuzzer PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm datasets pymetasec theharvester witnessme"
-	pip_installer "Web" "Penetration-Testing" $web_pip
+	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
 	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor"
-	npm_installer "Web" "Penetration-Testing" $web_npm
+	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# Install Ruby GEM
 	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear"
-	gem_installer "Web" "Penetration-Testing" $web_gem
+	gem_installer "Web" "Penetration-Testing" "$web_gem"
 
 	# Install Golang
 	web_golang="
@@ -381,7 +381,7 @@ go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/un
 go install github.com/edoardottt/pphack/cmd/pphack@latest;ln -fs ~/go/bin/pphack /usr/bin/pphack
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator"
-	go_installer "Web" "Penetration-Testing" $web_golang
+	go_installer "Web" "Penetration-Testing" "$web_golang"
 
 	# Install CloudBunny
 	if [ ! -d "/usr/share/cloudbunny" ]; then
@@ -796,20 +796,20 @@ EOF
 
 	# Install Python3 pip
 	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mobsf mvt kiwi androset quark-engine"
-	pip_installer "Mobile" "Penetration-Testing" $mobile_pip
+	pip_installer "Mobile" "Penetration-Testing" "$mobile_pip"
 
 	# Install Nodejs NPM
 	mobile_npm="rms-runtime-mobile-security apk-mitm igf bagbak"
-	npm_installer "Mobile" "Penetration-Testing" $mobile_npm
+	npm_installer "Mobile" "Penetration-Testing" "$mobile_npm"
 
 	# Install Ruby GEM
 	mobile_gem="jwt-cracker"
-	gem_installer "Mobile" "Penetration-Testing" $mobile_gem
+	gem_installer "Mobile" "Penetration-Testing" "$mobile_gem"
 
 	# Install Golang
 	mobile_golang="
 go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep"
-	go_installer "Mobile" "Penetration-Testing" $mobile_golang
+	go_installer "Mobile" "Penetration-Testing" "$mobile_golang"
 
 	# Install Genymotion
 	if [ ! -d "/opt/genymobile/genymotion" ]; then
@@ -844,15 +844,15 @@ EOF
 
 	# Install Python3 pip
 	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite"
-	pip_installer "Cloud" "Penetration-Testing" $cloud_pip
+	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# Install Nodejs NPM
 	cloud_npm="fleetctl"
-	npm_installer "Cloud" "Penetration-Testing" $cloud_npm
+	npm_installer "Cloud" "Penetration-Testing" "$cloud_npm"
 
 	# Install Ruby GEM
 	cloud_gem="aws_public_ips aws_security_viz aws_recon"
-	gem_installer "Cloud" "Penetration-Testing" $cloud_gem
+	gem_installer "Cloud" "Penetration-Testing" "$cloud_gem"
 
 	# Install Golang
 	cloud_golang="
@@ -862,7 +862,7 @@ go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
 go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox"
-	go_installer "Cloud" "Penetration-Testing" $cloud_golang
+	go_installer "Cloud" "Penetration-Testing" "$cloud_golang"
 
 	# Install CloudFail
 	if [ ! -d "/usr/share/cloudfail" ]; then
@@ -900,20 +900,20 @@ EOF
 
 	# Install Python3 pip
 	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris pyscan-rs"
-	pip_installer "Network" "Penetration-Testing" $network_pip
+	pip_installer "Network" "Penetration-Testing" "$network_pip"
 
 	# Install Nodejs NPM
 	network_npm="http-proxy-to-socks multitor"
-	npm_installer "Network" "Penetration-Testing" $network_npm
+	npm_installer "Network" "Penetration-Testing" "$network_npm"
 
 	# Install Ruby GEM
 	network_gem="seccomp-tools one_gadget"
-	npm_installer "Network" "Penetration-Testing" $network_gem
+	npm_installer "Network" "Penetration-Testing" "$network_gem"
 
 	# Install Golang
 	network_golang="
 go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan"
-	go_installer "Network" "Penetration-Testing" $network_golang
+	go_installer "Network" "Penetration-Testing" "$network_golang"
 
 	# Install Hiddify-Next
 	if [ ! -d "/usr/share/hiddify-next" ]; then
@@ -1046,19 +1046,19 @@ EOF
 
 	# Install Python3 pip
 	wireless_pip="btlejack scapy wpspin"
-	pip_installer "Wireless" "Penetration-Testing" $wireless_pip
+	pip_installer "Wireless" "Penetration-Testing" "$wireless_pip"
 
 	# Install Nodejs NPM
 	wireless_npm="btlejuice"
-	npm_installer "Wireless" "Penetration-Testing" $wireless_npm
+	npm_installer "Wireless" "Penetration-Testing" "$wireless_npm"
 
 	# Install Ruby GEM
 	# wireless_gem=""
-	gem_installer "Wireless" "Penetration-Testing" $wireless_gem
+	gem_installer "Wireless" "Penetration-Testing" "$wireless_gem"
 	
 	# Install Golang
 	# wireless_golang=""
-	go_installer "Wireless" "Penetration-Testing" $wireless_golang
+	go_installer "Wireless" "Penetration-Testing" "$wireless_golang"
 
 	# Install GTScan
 	if [ ! -d "/usr/share/GTScan" ]; then
@@ -1098,19 +1098,19 @@ EOF
 
 	# Install Python3 pip
 	iot_pip="scapy uefi_firmware unblob"
-	pip_installer "IoT" "Penetration-Testing" $iot_pip
+	pip_installer "IoT" "Penetration-Testing" "$iot_pip"
 
 	# Install Nodejs NPM
 	# iot_npm=""
-	npm_installer "IoT" "Penetration-Testing" $iot_npm
+	npm_installer "IoT" "Penetration-Testing" "$iot_npm"
 
 	# Install Ruby GEM
 	# iot_gem=""
-	gem_installer "IoT" "Penetration-Testing" $iot_gem
+	gem_installer "IoT" "Penetration-Testing" "$iot_gem"
 
 	# Install Golang
 	# iot_golang=""
-	go_installer "IoT" "Penetration-Testing" $iot_golang
+	go_installer "IoT" "Penetration-Testing" "$iot_golang"
 
 	exit
 }
@@ -1124,15 +1124,15 @@ function red_team()
 
 	# Install Python3 pip
 	reconnaissance_pip="censys ggshield raccoon-scanner mailspoof h8mail twint thorndyke gitfive shodan postmaniac socialscan witnessme"
-	pip_installer "Reconnaissance" "Red-Team" $reconnaissance_pip
+	pip_installer "Reconnaissance" "Red-Team" "$reconnaissance_pip"
 
 	# Install Nodejs NPM
 	reconnaissance_npm="igf nodesub multitor"
-	npm_installer "Reconnaissance" "Red-Team" $reconnaissance_npm
+	npm_installer "Reconnaissance" "Red-Team" "$reconnaissance_npm"
 
 	# Install Ruby GEM
 	# reconnaissance_gem=""
-	gem_installer "Reconnaissance" "Red-Team" $reconnaissance_gem
+	gem_installer "Reconnaissance" "Red-Team" "$reconnaissance_gem"
 
 	# Install Golang
 	reconnaissance_golang="
@@ -1141,7 +1141,7 @@ go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/sh
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph"
-	go_installer "Reconnaissance" "Red-Team" $reconnaissance_golang
+	go_installer "Reconnaissance" "Red-Team" "$reconnaissance_golang"
 
 	# Install Trape
 	if [ ! -d "/usr/share/trape" ]; then
@@ -1181,19 +1181,19 @@ EOF
 
 	# Install Python3 pip
 	# resource_development_pip=""
-	pip_installer "Resource-Development" "Red-Team" $resource_development_pip
+	pip_installer "Resource-Development" "Red-Team" "$resource_development_pip"
 
 	# Install Nodejs NPM
 	# resource_development_npm=""
-	npm_installer "Resource-Development" "Red-Team" $resource_development_npm
+	npm_installer "Resource-Development" "Red-Team" "$resource_development_npm"
 
 	# Install Ruby GEM
 	# resource_development_gem=""
-	gem_installer "Resource-Development" "Red-Team" $resource_development_gem
+	gem_installer "Resource-Development" "Red-Team" "$resource_development_gem"
 
 	# Install Golang
 	# resource_development_golang=""
-	go_installer "Resource-Development" "Red-Team" $resource_development_golang
+	go_installer "Resource-Development" "Red-Team" "$resource_development_golang"
 
 	# Install OffensiveNim
 	if [ ! -d "/usr/share/offensivenim" ]; then
@@ -1232,21 +1232,21 @@ EOF
 
 	# Install Python3 pip
 	initial_access_pip="rarce baboossh dnstwist pasteme-cli"
-	pip_installer "Initial-Access" "Red-Team" $initial_access_pip
+	pip_installer "Initial-Access" "Red-Team" "$initial_access_pip"
 
 	# Install Nodejs NPM
 	# initial_access_npm=""
-	npm_installer "Initial-Access" "Red-Team" $initial_access_npm
+	npm_installer "Initial-Access" "Red-Team" "$initial_access_npm"
 
 	# Install Ruby GEM
 	# initial_access_gem=""
-	gem_installer "Initial-Access" "Red-Team" $initial_access_gem
+	gem_installer "Initial-Access" "Red-Team" "$initial_access_gem"
 
 	# Install Golang
 	initial_access_golang="
 go install github.com/Tylous/ZipExec@latest;ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor"
-	go_installer "Initial-Access" "Red-Team" $initial_access_golang
+	go_installer "Initial-Access" "Red-Team" "$initial_access_golang"
 
 	# Install Evilginx
 	if [ ! -d "/usr/share/evilginx" ]; then
@@ -1455,19 +1455,19 @@ EOF
 
 	# Install Python3 pip
 	execution_pip="donut-shellcode xortool pwncat"
-	pip_installer "Execution" "Red-Team" $execution_pip
+	pip_installer "Execution" "Red-Team" "$execution_pip"
 
 	# Install Nodejs NPM
 	# execution_npm=""
-	npm_installer "Execution" "Red-Team" $execution_npm
+	npm_installer "Execution" "Red-Team" "$execution_npm"
 
 	# Install Ruby GEM
 	# execution_gem=""
-	gem_installer "Execution" "Red-Team" $execution_gem
+	gem_installer "Execution" "Red-Team" "$execution_gem"
 
 	# Install Golang
 	# execution_golang=""
-	go_installer "Execution" "Red-Team" $execution_golang
+	go_installer "Execution" "Red-Team" "$execution_golang"
 
 	# Install Venom
 	if [ ! -d "/usr/share/venom" ]; then
@@ -1551,19 +1551,19 @@ EOF
 
 	# Install Python3 pip
 	persistence_pip="hiphp"
-	pip_installer "Persistence" "Red-Team" $persistence_pip
+	pip_installer "Persistence" "Red-Team" "$persistence_pip"
 
 	# Install Nodejs NPM
 	# persistence_npm=""
-	npm_installer "Persistence" "Red-Team" $persistence_npm
+	npm_installer "Persistence" "Red-Team" "$persistence_npm"
 
 	# Install Ruby GEM
 	# persistence_gem=""
-	gem_installer "Persistence" "Red-Team" $persistence_gem
+	gem_installer "Persistence" "Red-Team" "$persistence_gem"
 
 	# Install Golang
 	# persistence_golang=""
-	go_installer "Persistence" "Red-Team" $persistence_golang
+	go_installer "Persistence" "Red-Team" "$persistence_golang"
 
 	# Install Vegile
 	if [ ! -d "/usr/share/vegile" ]; then
@@ -1613,19 +1613,19 @@ EOF
 
 	# Install Python3 pip
 	privilege_escalation_pip="bloodyAD cve-bin-tool"
-	pip_installer "Privilege-Escalation" "Red-Team" $privilege_escalation_pip
+	pip_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_pip"
 
 	# Install Nodejs NPM
 	# privilege_escalation_npm=""
-	npm_installer "Privilege-Escalation" "Red-Team" $privilege_escalation_npm
+	npm_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_npm"
 
 	# Install Ruby GEM
 	# privilege_escalation_gem=""
-	gem_installer "Privilege-Escalation" "Red-Team" $privilege_escalation_gem
+	gem_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_gem"
 
 	# Install Golang
 	# privilege_escalation_golang=""
-	go_installer "Privilege-Escalation" "Red-Team" $privilege_escalation_golang
+	go_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_golang"
 
 	# Install MimiPenguin
 	if [ ! -d "/usr/share/mimipenguin" ]; then
@@ -1665,21 +1665,21 @@ EOF
 
 	# Install Python3 pip
 	defense_evasion_pip="auto-py-to-exe certipy sysplant pinject"
-	pip_installer "Defense-Evasion" "Red-Team" $defense_evasion_pip
+	pip_installer "Defense-Evasion" "Red-Team" "$defense_evasion_pip"
 
 	# Install Nodejs NPM
 	defense_evasion_npm="uglify-js javascript-obfuscator serialize-javascript serialize-to-js jsdom"
-	npm_installer "Defense-Evasion" "Red-Team" $defense_evasion_npm
+	npm_installer "Defense-Evasion" "Red-Team" "$defense_evasion_npm"
 
 	# Install Ruby GEM
 	# defense_evasion_gem=""
-	gem_installer "Defense-Evasion" "Red-Team" $defense_evasion_gem
+	gem_installer "Defense-Evasion" "Red-Team" "$defense_evasion_gem"
 
 	# Install Golang
 	defense_evasion_golang="
 go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow
 go install github.com/EgeBalci/amber@latest;ln -fs ~/go/bin/amber /usr/bin/amber"
-	go_installer "Defense-Evasion" "Red-Team" $defense_evasion_golang
+	go_installer "Defense-Evasion" "Red-Team" "$defense_evasion_golang"
 
 	# Install ASWCrypter
 	if [ ! -d "/usr/share/aswcrypter" ]; then
@@ -1872,20 +1872,20 @@ EOF
 
 	# Install Python3 pip
 	credential_access_pip="adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm"
-	pip_installer "Credential-Access" "Red-Team" $credential_access_pip
+	pip_installer "Credential-Access" "Red-Team" "$credential_access_pip"
 
 	# Install Nodejs NPM
 	# credential_access_npm=""
-	npm_installer "Credential-Access" "Red-Team" $credential_access_npm
+	npm_installer "Credential-Access" "Red-Team" "$credential_access_npm"
 
 	# Install Ruby GEM
 	# credential_access_gem=""
-	gem_installer "Credential-Access" "Red-Team" $credential_access_gem
+	gem_installer "Credential-Access" "Red-Team" "$credential_access_gem"
 
 	# Install Golang
 	credential_access_golang="
 go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/kerbrute"
-	go_installer "Credential-Access" "Red-Team" $credential_access_golang
+	go_installer "Credential-Access" "Red-Team" "$credential_access_golang"
 
 	# Install Kerberoast
 	if [ ! -d "/usr/share/kerberoast" ]; then
@@ -1944,19 +1944,19 @@ EOF
 
 	# Install Python3 pip
 	discovery_pip="networkx bloodhound acltoolkit-ad"
-	pip_installer "Discovery" "Red-Team" $discovery_pip
+	pip_installer "Discovery" "Red-Team" "$discovery_pip"
 
 	# Install Nodejs NPM
 	# discovery_npm=""
-	npm_installer "Discovery" "Red-Team" $discovery_npm
+	npm_installer "Discovery" "Red-Team" "$discovery_npm"
 
 	# Install Ruby GEM
 	# discovery_gem=""
-	gem_installer "Discovery" "Red-Team" $discovery_gem
+	gem_installer "Discovery" "Red-Team" "$discovery_gem"
 
 	# Install Golang
 	# discovery_golang=""
-	go_installer "Discovery" "Red-Team" $discovery_golang
+	go_installer "Discovery" "Red-Team" "$discovery_golang"
 
 	# Install AdExplorer
 	if [ ! -d "/usr/share/adexplorer" ]; then
@@ -1982,19 +1982,19 @@ EOF
 
 	# Install Python3 pip
 	lateral_movement_pip="coercer krbjack"
-	pip_installer "Lateral-Movement" "Red-Team" $lateral_movement_pip
+	pip_installer "Lateral-Movement" "Red-Team" "$lateral_movement_pip"
 
 	# Install Nodejs NPM
 	# lateral_movement_npm=""
-	npm_installer "Lateral-Movement" "Red-Team" $lateral_movement_npm
+	npm_installer "Lateral-Movement" "Red-Team" "$lateral_movement_npm"
 
 	# Install Ruby GEM
 	lateral_movement_gem="evil-winrm"
-	gem_installer "Lateral-Movement" "Red-Team" $lateral_movement_gem
+	gem_installer "Lateral-Movement" "Red-Team" "$lateral_movement_gem"
 
 	# Install Golang
 	# lateral_movement_golang=""
-	go_installer "Lateral-Movement" "Red-Team" $lateral_movement_golang
+	go_installer "Lateral-Movement" "Red-Team" "$lateral_movement_golang"
 
 	# Install SCShell
 	if [ ! -d "/usr/share/scshell" ]; then
@@ -2033,19 +2033,19 @@ EOF
 
 	# Install Python3 pip
 	# collection_pip=""
-	pip_installer "Collection" "Red-Team" $collection_pip
+	pip_installer "Collection" "Red-Team" "$collection_pip"
 
 	# Install Nodejs NPM
 	# collection_npm=""
-	npm_installer "Collection" "Red-Team" $collection_npm
+	npm_installer "Collection" "Red-Team" "$collection_npm"
 
 	# Install Ruby GEM
 	# collection_gem=""
-	gem_installer "Collection" "Red-Team" $collection_gem
+	gem_installer "Collection" "Red-Team" "$collection_gem"
 
 	# Install Golang
 	# collection_golang=""
-	go_installer "Collection" "Red-Team" $collection_golang
+	go_installer "Collection" "Red-Team" "$collection_golang"
 
 	# Install Caldera
 	if [ ! -d "/usr/share/caldera" ]; then
@@ -2070,19 +2070,19 @@ EOF
 
 	# Install Python3 pip
 	command_and_control_pip="deathstar-empire praw powerhub"
-	pip_installer "Command-and-Control" "Red-Team" $command_and_control_pip
+	pip_installer "Command-and-Control" "Red-Team" "$command_and_control_pip"
 
 	# Install Nodejs NPM
 	# command_and_control_npm=""
-	npm_installer "Command-and-Control" "Red-Team" $command_and_control_npm
+	npm_installer "Command-and-Control" "Red-Team" "$command_and_control_npm"
 
 	# Install Ruby GEM
 	# command_and_control_gem=""
-	gem_installer "Command-and-Control" "Red-Team" $command_and_control_gem
+	gem_installer "Command-and-Control" "Red-Team" "$command_and_control_gem"
 
 	# Install Golang
 	# command_and_control_golang=""
-	go_installer "Command-and-Control" "Red-Team" $command_and_control_golang
+	go_installer "Command-and-Control" "Red-Team" "$command_and_control_golang"
 
 	# Install PhoenixC2
 	if [ ! -d "/usr/share/phoenixc2" ]; then
@@ -2435,19 +2435,19 @@ EOF
 
 	# Install Python3 pip
 	exfiltration_pip="updog pivotnacci"
-	pip_installer "Exfiltration" "Red-Team" $exfiltration_pip
+	pip_installer "Exfiltration" "Red-Team" "$exfiltration_pip"
 
 	# Install Nodejs NPM
 	# exfiltration_npm=""
-	npm_installer "Exfiltration" "Red-Team" $exfiltration_npm
+	npm_installer "Exfiltration" "Red-Team" "$exfiltration_npm"
 
 	# Install Ruby GEM
 	exfiltration_gem="http-proxy-to-socks"
-	gem_installer "Exfiltration" "Red-Team" $exfiltration_gem
+	gem_installer "Exfiltration" "Red-Team" "$exfiltration_gem"
 
 	# Install Golang
 	# exfiltration_golang=""
-	go_installer "Exfiltration" "Red-Team" $exfiltration_golang
+	go_installer "Exfiltration" "Red-Team" "$exfiltration_golang"
 
 	# Install Ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
@@ -2581,19 +2581,19 @@ EOF
 
 	# Install Python3 pip
 	# impact_pip=""
-	pip_installer "Impact" "Red-Team" $impact_pip
+	pip_installer "Impact" "Red-Team" "$impact_pip"
 
 	# Install Nodejs NPM
 	# impact_npm=""
-	npm_installer "Impact" "Red-Team" $impact_npm
+	npm_installer "Impact" "Red-Team" "$impact_npm"
 
 	# Install Ruby GEM
 	# impact_gem=""
-	gem_installer "Impact" "Red-Team" $impact_gem
+	gem_installer "Impact" "Red-Team" "$impact_gem"
 
 	# Install Golang
 	# impact_golang=""
-	go_installer "Impact" "Red-Team" $impact_golang
+	go_installer "Impact" "Red-Team" "$impact_golang"
 
 	exit
 }
@@ -2607,19 +2607,19 @@ function ics_security()
 
 	# Install Python3 pip
 	# penetration_testing_pip=""
-	pip_installer "Penetration-Testing" "ICS-Security" $penetration_testing_pip
+	pip_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_pip"
 
 	# Install Nodejs NPM
 	# penetration_testing_npm=""
-	npm_installer "Penetration-Testing" "ICS-Security" $penetration_testing_npm
+	npm_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_npm"
 
 	# Install Ruby GEM
 	penetration_testing_gem="modbus-cli"
-	gem_installer "Penetration-Testing" "ICS-Security" $penetration_testing_gem
+	gem_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_gem"
 
 	# Install Golang
 	# penetration_testing_golang=""
-	go_installer "Penetration-Testing" "ICS-Security" $penetration_testing_golang
+	go_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_golang"
 
 	# Install S7Scan
 	if [ ! -d "/usr/share/S7Scan" ]; then
@@ -2675,19 +2675,19 @@ EOF
 
 	# Install Python3 pip
 	# red_team_pip=""
-	pip_installer "Red-Team" "ICS-Security" $red_team_pip
+	pip_installer "Red-Team" "ICS-Security" "$red_team_pip"
 
 	# Install Nodejs NPM
 	# red_team_npm=""
-	npm_installer "Red-Team" "ICS-Security" $red_team_npm
+	npm_installer "Red-Team" "ICS-Security" "$red_team_npm"
 
 	# Install Ruby GEM
 	# red_team_gem=""
-	gem_installer "Red-Team" "ICS-Security" $red_team_gem
+	gem_installer "Red-Team" "ICS-Security" "$red_team_gem"
 
 	# Install Golang
 	# red_team_golang=""
-	go_installer "Red-Team" "ICS-Security" $red_team_golang
+	go_installer "Red-Team" "ICS-Security" "$red_team_golang"
 
 
 	# --------------------------------------------Digital-Forensic-ICS-Security------------------------------------------ #
@@ -2696,19 +2696,19 @@ EOF
 
 	# Install Python3 pip
 	# digital_forensic_pip=""
-	pip_installer "Digital-Forensic" "ICS-Security" $digital_forensic_pip
+	pip_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_pip"
 
 	# Install Nodejs NPM
 	# digital_forensic_npm=""
-	npm_installer "Digital-Forensic" "ICS-Security" $digital_forensic_npm
+	npm_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_npm"
 
 	# Install Ruby GEM
 	# digital_forensic_gem=""
-	gem_installer "Digital-Forensic" "ICS-Security" $digital_forensic_gem
+	gem_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_gem"
 
 	# Install Golang
 	# digital_forensic_golang=""
-	go_installer "Digital-Forensic" "ICS-Security" $digital_forensic_golang
+	go_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_golang"
 
 
 	# -----------------------------------------------Blue-Team-ICS-Security---------------------------------------------- #
@@ -2717,19 +2717,19 @@ EOF
 
 	# Install Python3 pip
 	# blue_team_pip=""
-	pip_installer "Blue-Team" "ICS-Security" $blue_team_pip
+	pip_installer "Blue-Team" "ICS-Security" "$blue_team_pip"
 
 	# Install Nodejs NPM
 	# blue_team_npm=""
-	npm_installer "Blue-Team" "ICS-Security" $blue_team_npm
+	npm_installer "Blue-Team" "ICS-Security" "$blue_team_npm"
 
 	# Install Ruby GEM
 	# blue_team_gem=""
-	gem_installer "Blue-Team" "ICS-Security" $blue_team_gem
+	gem_installer "Blue-Team" "ICS-Security" "$blue_team_gem"
 
 	# Install Golang
 	# blue_team_golang=""
-	go_installer "Blue-Team" "ICS-Security" $blue_team_golang
+	go_installer "Blue-Team" "ICS-Security" "$blue_team_golang"
 
 	exit
 }
@@ -2743,19 +2743,19 @@ function digital_forensic()
 
 	# Install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
-	pip_installer "Reverse-Engineering" "Digital-Forensic" $reverse_engineering_pip
+	pip_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_pip"
 
 	# Install Nodejs NPM
 	# reverse_engineering_npm=""
-	npm_installer "Reverse-Engineering" "Digital-Forensic" $reverse_engineering_npm
+	npm_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_npm"
 
 	# Install Ruby GEM
 	# reverse_engineering_gem=""
-	gem_installer "Reverse-Engineering" "Digital-Forensic" $reverse_engineering_gem
+	gem_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_gem"
 
 	# Install Golang
 	# reverse_engineering_golang=""
-	go_installer "Reverse-Engineering" "Digital-Forensic" $reverse_engineering_golang
+	go_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_golang"
 
 
 	# ------------------------------------------Malware-Analysis-Digital-Forensic---------------------------------------- #
@@ -2764,20 +2764,20 @@ function digital_forensic()
 
 	# Install Python3 pip
 	malware_analysis_pip="stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
-	pip_installer "Malware-Analysis" "Digital-Forensic" $malware_analysis_pip
+	pip_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_pip"
 
 	# Install Nodejs NPM
 	malware_analysis_npm="box-js f5stegojs"
-	npm_installer "Malware-Analysis" "Digital-Forensic" $malware_analysis_npm
+	npm_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_npm"
 
 	# Install Ruby GEM
 	malware_analysis_gem="pedump zsteg"
-	gem_installer "Malware-Analysis" "Digital-Forensic" $malware_analysis_gem
+	gem_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_gem"
 
 	# Install Golang
 	malware_analysis_golang="
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
-	go_installer "Malware-Analysis" "Digital-Forensic" $malware_analysis_golang
+	go_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_golang"
 
 	# Install Dangerzone
 	if [ ! -d "/usr/share/dangerzone" ]; then
@@ -2985,19 +2985,19 @@ EOF
 
 	# Install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
-	pip_installer "Threat-Hunting" "Digital-Forensic" $threat_hunting_pip
+	pip_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_pip"
 
 	# Install Nodejs NPM
 	# threat_hunting_npm=""
-	npm_installer "Threat-Hunting" "Digital-Forensic" $threat_hunting_npm
+	npm_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_npm"
 
 	# Install Ruby GEM
 	# threat_hunting_gem=""
-	gem_installer "Threat-Hunting" "Digital-Forensic" $threat_hunting_gem
+	gem_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_gem"
 
 	# Install Golang
 	# threat_hunting_golang=""
-	go_installer "Threat-Hunting" "Digital-Forensic" $threat_hunting_golang
+	go_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_golang"
 
 	# Install Matano
 	if [ ! -d "/usr/share/matano" ]; then
@@ -3031,19 +3031,19 @@ EOF
 
 	# Install Python3 pip
 	incident_response_pip="dissect aws_ir intelmq otx-misp threat_intel"
-	pip_installer "Incident-Response" "Digital-Forensic" $incident_response_pip
+	pip_installer "Incident-Response" "Digital-Forensic" "$incident_response_pip"
 
 	# Install Nodejs NPM
 	# incident_response_npm=""
-	npm_installer "Incident-Response" "Digital-Forensic" $incident_response_npm
+	npm_installer "Incident-Response" "Digital-Forensic" "$incident_response_npm"
 
 	# Install Ruby GEM
 	# incident_response_gem=""
-	gem_installer "Incident-Response" "Digital-Forensic" $incident_response_gem
+	gem_installer "Incident-Response" "Digital-Forensic" "$incident_response_gem"
 
 	# Install Golang
 	# incident_response_golang=""
-	go_installer "Incident-Response" "Digital-Forensic" $incident_response_golang
+	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
 
 	# Install TheHive not tested
 	if [ ! -f "/etc/apt/sources.list.d/thehive-project.list" ]; then
@@ -3063,19 +3063,19 @@ EOF
 
 	# Install Python3 pip
 	threat_intelligence_pip="threatingestor stix stix-validator stix2 stix2-matcher stix2-elevator attackcti iocextract threatbus apiosintDS sigmatools msticpy"
-	pip_installer "Threat-Intelligence" "Digital-Forensic" $threat_intelligence_pip
+	pip_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_pip"
 
 	# Install Nodejs NPM
 	# threat_intelligence_npm=""
-	npm_installer "Threat-Intelligence" "Digital-Forensic" $threat_intelligence_npm
+	npm_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_npm"
 
 	# Install Ruby GEM
 	# threat_intelligence_gem=""
-	gem_installer "Threat-Intelligence" "Digital-Forensic" $threat_intelligence_gem
+	gem_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_gem"
 
 	# Install Golang
 	# threat_intelligence_golang=""
-	go_installer "Threat-Intelligence" "Digital-Forensic" $threat_intelligence_golang
+	go_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_golang"
 
 	# Install OpenCTI
 	if [ ! -d "/usr/share/revoke-obfuscation" ]; then
@@ -3110,19 +3110,19 @@ function blue_team()
 
 	# Install Python3 pip
 	# harden_pip=""
-	pip_installer "Harden" "Blue-Team" $harden_pip
+	pip_installer "Harden" "Blue-Team" "$harden_pip"
 
 	# Install Nodejs NPM
 	# harden_npm=""
-	npm_installer "Harden" "Blue-Team" $harden_npm
+	npm_installer "Harden" "Blue-Team" "$harden_npm"
 
 	# Install Ruby GEM
 	# harden_gem=""
-	gem_installer "Harden" "Blue-Team" $harden_gem
+	gem_installer "Harden" "Blue-Team" "$harden_gem"
 
 	# Install Golang
 	# harden_golang=""
-	go_installer "Harden" "Blue-Team" $harden_golang
+	go_installer "Harden" "Blue-Team" "$harden_golang"
 
 
 	# ---------------------------------------------------Detect-Blue-Team------------------------------------------------ #
@@ -3131,20 +3131,20 @@ function blue_team()
 
 	# Install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa"
-	pip_installer "Detect" "Blue-Team" $detect_pip
+	pip_installer "Detect" "Blue-Team" "$detect_pip"
 
 	# Install Nodejs NPM
 	# detect_npm=""
-	npm_installer "Detect" "Blue-Team" $detect_npm
+	npm_installer "Detect" "Blue-Team" "$detect_npm"
 
 	# Install Ruby GEM
 	# detect_gem=""
-	gem_installer "Detect" "Blue-Team" $detect_gem
+	gem_installer "Detect" "Blue-Team" "$detect_gem"
 
 	# Install Golang
 	detect_golang="
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
-	go_installer "Detect" "Blue-Team" $detect_golang
+	go_installer "Detect" "Blue-Team" "$detect_golang"
 
 	# Install Wazuh Agent & Server
 	if [ ! -f "/usr/share/keyrings/wazuh.gpg" ]; then
@@ -3240,19 +3240,19 @@ EOF
 
 	# Install Python3 pip
 	# isolate_pip=""
-	pip_installer "Isolate" "Blue-Team" $isolate_pip
+	pip_installer "Isolate" "Blue-Team" "$isolate_pip"
 
 	# Install Nodejs NPM
 	# isolate_npm=""
-	npm_installer "Isolate" "Blue-Team" $isolate_npm
+	npm_installer "Isolate" "Blue-Team" "$isolate_npm"
 
 	# Install Ruby GEM
 	# isolate_gem=""
-	gem_installer "Isolate" "Blue-Team" $isolate_gem
+	gem_installer "Isolate" "Blue-Team" "$isolate_gem"
 
 	# Install Golang
 	# isolate_golang=""
-	go_installer "Isolate" "Blue-Team" $isolate_golang
+	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
 
 	# ---------------------------------------------------Deceive-Blue-Team----------------------------------------------- #
@@ -3261,19 +3261,19 @@ EOF
 
 	# Install Python3 pip
 	deceive_pip="thug conpot honeypots heralding"
-	pip_installer "Deceive" "Blue-Team" $deceive_pip
+	pip_installer "Deceive" "Blue-Team" "$deceive_pip"
 
 	# Install Nodejs NPM
 	# deceive_npm=""
-	npm_installer "Deceive" "Blue-Team" $deceive_npm
+	npm_installer "Deceive" "Blue-Team" "$deceive_npm"
 
 	# Install Ruby GEM
 	# deceive_gem=""
-	gem_installer "Deceive" "Blue-Team" $deceive_gem
+	gem_installer "Deceive" "Blue-Team" "$deceive_gem"
 
 	# Install Golang
 	# deceive_golang=""
-	go_installer "Deceive" "Blue-Team" $deceive_golang
+	go_installer "Deceive" "Blue-Team" "$deceive_golang"
 
 
 	# ---------------------------------------------------Evict-Blue-Team------------------------------------------------- #
@@ -3282,19 +3282,19 @@ EOF
 
 	# Install Python3 pip
 	# evict_pip=""
-	pip_installer "Evict" "Blue-Team" $evict_pip
+	pip_installer "Evict" "Blue-Team" "$evict_pip"
 
 	# Install Nodejs NPM
 	# evict_npm=""
-	npm_installer "Evict" "Blue-Team" $evict_npm
+	npm_installer "Evict" "Blue-Team" "$evict_npm"
 
 	# Install Ruby GEM
 	# evict_gem=""
-	gem_installer "Evict" "Blue-Team" $evict_gem
+	gem_installer "Evict" "Blue-Team" "$evict_gem"
 
 	# Install Golang
 	# evict_golang=""
-	go_installer "Evict" "Blue-Team" $evict_golang
+	go_installer "Evict" "Blue-Team" "$evict_golang"
 
 	exit
 }
@@ -3308,20 +3308,20 @@ function security_audit()
 
 	# Install Python3 pip
 	# preliminary_audit_assessment_pip=""
-	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" $preliminary_audit_assessment_pip
+	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_pip"
 
 	# Install Nodejs NPM
 	preliminary_audit_assessment_npm="snyk @sandworm/audit"
-	npm_installer "Preliminary-Audit-Assessment" "Security-Audit" $preliminary_audit_assessment_npm
+	npm_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_npm"
 
 	# Install Ruby GEM
 	preliminary_audit_assessment_gem="brakeman bundler-audit"
-	gem_installer "Preliminary-Audit-Assessment" "Security-Audit" $preliminary_audit_assessment_gem
+	gem_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_gem"
 
 	# Install Golang
 	preliminary_audit_assessment_golang="
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner"
-	go_installer "Preliminary-Audit-Assessment" "Security-Audit" $preliminary_audit_assessment_golang
+	go_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_golang"
 
 	# Install Bearer
 	if [ ! -f "/usr/local/bin/bearer" ]; then
@@ -3399,19 +3399,19 @@ EOF
 
 	# Install Python3 pip
 	# planning_and_preparation_pip=""
-	pip_installer "Planning-and-Preparation" "Security-Audit" $planning_and_preparation_pip
+	pip_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_pip"
 
 	# Install Nodejs NPM
 	# planning_and_preparation_npm=""
-	npm_installer "Planning-and-Preparation" "Security-Audit" $planning_and_preparation_npm
+	npm_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_npm"
 
 	# Install Ruby GEM
 	# planning_and_preparation_gem=""
-	gem_installer "Planning-and-Preparation" "Security-Audit" $planning_and_preparation_gem
+	gem_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_gem"
 
 	# Install Golang
 	# planning_and_preparation_golang=""
-	go_installer "Planning-and-Preparation" "Security-Audit" $planning_and_preparation_golang
+	go_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_golang"
 
 
 	# ------------------------------------Establishing-Audit-Objectives-Security-Audit----------------------------------- #
@@ -3420,19 +3420,19 @@ EOF
 
 	# Install Python3 pip
 	# establishing_audit_objectives_pip=""
-	pip_installer "Establishing-Audit-Objectives" "Security-Audit" $establishing_audit_objectives_pip
+	pip_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_pip"
 
 	# Install Nodejs NPM
 	# establishing_audit_objectives_npm=""
-	npm_installer "Establishing-Audit-Objectives" "Security-Audit" $establishing_audit_objectives_npm
+	npm_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_npm"
 
 	# Install Ruby GEM
 	# establishing_audit_objectives_gem=""
-	gem_installer "Establishing-Audit-Objectives" "Security-Audit" $establishing_audit_objectives_gem
+	gem_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_gem"
 
 	# Install Golang
 	# establishing_audit_objectives_golang=""
-	go_installer "Establishing-Audit-Objectives" "Security-Audit" $establishing_audit_objectives_golang
+	go_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_golang"
 
 
 	# ---------------------------------------Performing-the-Review-Security-Audit---------------------------------------- #
@@ -3441,19 +3441,19 @@ EOF
 
 	# Install Python3 pip
 	performing_the_review_pip="ruff"
-	pip_installer "Performing-the-Review" "Security-Audit" $performing_the_review_pip
+	pip_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_pip"
 
 	# Install Nodejs NPM
 	# performing_the_review_npm=""
-	npm_installer "Performing-the-Review" "Security-Audit" $performing_the_review_npm
+	npm_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_npm"
 
 	# Install Ruby GEM
 	performing_the_review_gem="rubocop"
-	gem_installer "Performing-the-Review" "Security-Audit" $performing_the_review_gem
+	gem_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_gem"
 
 	# Install Golang
 	# performing_the_review_golang=""
-	go_installer "Performing-the-Review" "Security-Audit" $performing_the_review_golang
+	go_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_golang"
 
 	# Install Clion
 	if [ ! -d "/usr/share/clion" ]; then
@@ -3574,19 +3574,19 @@ EOF
 
 	# Install Python3 pip
 	# preparing_the_audit_report_pip=""
-	pip_installer "Preparing-the-Audit-Report" "Security-Audit" $preparing_the_audit_report_pip
+	pip_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_pip"
 
 	# Install Nodejs NPM
 	# preparing_the_audit_report_npm=""
-	npm_installer "Preparing-the-Audit-Report" "Security-Audit" $preparing_the_audit_report_npm
+	npm_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_npm"
 
 	# Install Ruby GEM
 	# preparing_the_audit_report_gem=""
-	gem_installer "Preparing-the-Audit-Report" "Security-Audit" $preparing_the_audit_report_gem
+	gem_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_gem"
 
 	# Install Golang
 	# preparing_the_audit_report_golang=""
-	go_installer "Preparing-the-Audit-Report" "Security-Audit" $preparing_the_audit_report_golang
+	go_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_golang"
 
 
 	# --------------------------------------Issuing-the-Review-Report-Security-Audit------------------------------------- #
@@ -3595,19 +3595,19 @@ EOF
 
 	# Install Python3 pip
 	# issuing_the_review_report_pip=""
-	pip_installer "Issuing-the-Review-Report" "Security-Audit" $issuing_the_review_report_pip
+	pip_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_pip"
 
 	# Install Nodejs NPM
 	# issuing_the_review_report_npm=""
-	npm_installer "Issuing-the-Review-Report" "Security-Audit" $issuing_the_review_report_npm
+	npm_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_npm"
 
 	# Install Ruby GEM
 	# issuing_the_review_report_gem=""
-	gem_installer "Issuing-the-Review-Report" "Security-Audit" $issuing_the_review_report_gem
+	gem_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_gem"
 
 	# Install Golang
 	# issuing_the_review_report_golang=""
-	go_installer "Issuing-the-Review-Report" "Security-Audit" $issuing_the_review_report_golang
+	go_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_golang"
 
 	exit
 }
