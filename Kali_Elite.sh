@@ -734,7 +734,7 @@ EOF
 
 	# Install NoIP
 	if [ ! -d "/usr/share/noip" ]; then
-		wget wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
+		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
 		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
 		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
 		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell 'noip -h'"
