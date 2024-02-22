@@ -20,5 +20,5 @@ Two Windows Server and Kali Linux elite virtual machine are designed to Provide 
 ## Kali Elite Online Installer
 ### Install and Run Script
 ```
-sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh)"
+sudo -s curl -fsSL https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh | sudo bash
 ```
