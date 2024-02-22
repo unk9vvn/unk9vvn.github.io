@@ -614,7 +614,7 @@ EOF
 
 	# Install w4af
 	if [ ! -d "/usr/share/w4af" ]; then
-		git clone git clone https://github.com/w4af/w4af /usr/share/w4af
+		git clone https://github.com/w4af/w4af /usr/share/w4af
 		chmod 755 /usr/share/w4af/*
 		cat > /usr/bin/w4af << EOF
 #!/bin/bash
@@ -1112,7 +1112,7 @@ EOF
 	# iot_golang=""
 	go_installer "IoT" "Penetration-Testing" $iot_golang
 
-	logo
+	exit
 }
 
 
@@ -2595,7 +2595,7 @@ EOF
 	# impact_golang=""
 	go_installer "Impact" "Red-Team" $impact_golang
 
-	logo
+	exit
 }
 
 
@@ -2731,7 +2731,7 @@ EOF
 	# blue_team_golang=""
 	go_installer "Blue-Team" "ICS-Security" $blue_team_golang
 
-	logo
+	exit
 }
 
 
@@ -3098,7 +3098,7 @@ EOF
 		printf "$GREEN"  "[*] Success Installed OpenCTI"
 	fi
 
-	logo
+	exit
 }
 
 
@@ -3296,7 +3296,7 @@ EOF
 	# evict_golang=""
 	go_installer "Evict" "Blue-Team" $evict_golang
 
-	logo
+	exit
 }
 
 
@@ -3609,7 +3609,7 @@ EOF
 	# issuing_the_review_report_golang=""
 	go_installer "Issuing-the-Review-Report" "Security-Audit" $issuing_the_review_report_golang
 
-	logo
+	exit
 }
 
 
