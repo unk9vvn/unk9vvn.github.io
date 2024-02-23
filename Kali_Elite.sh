@@ -327,7 +327,7 @@ function go_installer()
 
 function penetrating_testing()
 {
-	printf "$YELLOW"  "# ------------------------------------------Web-Penetration-Testing------------------------------------------ #"
+	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools
 
@@ -361,8 +361,10 @@ go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
 go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
+go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
 go install github.com/tomnomnom/gron@latest;ln -fs ~/go/bin/gron /usr/bin/gron
+go install github.com/moopinger/smugglefuzz@latest;ln -fs ~/go/bin/smugglefuzz /usr/bin/smugglefuzz
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hideckies/fuzzagotchi@latest;ln -fs ~/go/bin/fuzzagotchi /usr/bin/fuzzagotchi
 go install github.com/projectdiscovery/alterx/cmd/alterx@latest;ln -fs ~/go/bin/alterx /usr/bin/alterx
@@ -794,12 +796,12 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------------Mobile-Penetration-Testing----------------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------------Mobile-Penetration-Testing------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
 
 	# Install Python3 pip
-	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mobsf mvt kiwi androset quark-engine"
+	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mvt kiwi androset quark-engine"
 	pip_installer "Mobile" "Penetration-Testing" "$mobile_pip"
 
 	# Install Nodejs NPM
@@ -844,7 +846,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------------Cloud-Penetration-Testing------------------------------------------ #"
+	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy awscli trivy 
 
@@ -900,7 +902,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------Network-Penetration-Testing----------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper 
 
@@ -1046,7 +1048,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------Wireless-Penetration-Testing---------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------Wireless-Penetration-Testing------------------------------------ #"
 	# Install Repository Tools
 	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph dronesploit pskracker 
 
@@ -1098,7 +1100,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ------------------------------------------IoT-Penetration-Testing------------------------------------------ #"
+	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy arduino gnuradio 
 
@@ -1124,7 +1126,7 @@ EOF
 
 function red_team()
 {
-	printf "$YELLOW"  "# ------------------------------------------Reconnaissance-Red-Team------------------------------------------ #"
+	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb maltego-trx assetfinder aiodnsbrute instaloader harpoon 
 
@@ -1145,6 +1147,7 @@ function red_team()
 go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
+go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph"
 	go_installer "Reconnaissance" "Red-Team" "$reconnaissance_golang"
@@ -1181,7 +1184,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------Resource-Development-Red-Team--------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------Resource-Development-Red-Team----------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -1232,7 +1235,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ------------------------------------------Initial-Access-Red-team------------------------------------------ #"
+	printf "$YELLOW"  "# --------------------------------------Initial-Access-Red-team-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
 
@@ -1455,7 +1458,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------------Execution-Red-Team-------------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------------Execution-Red-Team---------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy shellnoob
 
@@ -1551,7 +1554,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# --------------------------------------------Persistence-Red-Team------------------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------------------Persistence-Red-Team--------------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -1613,7 +1616,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------Privilege-Escalation-Red-Team--------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------Privilege-Escalation-Red-Team----------------------------------- #"
 	# Install Repository Tools
 	apt install -qy linux-exploit-suggester peass oscanner 
 
@@ -1665,7 +1668,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# -----------------------------------------Defense-Evasion-Red-Team------------------------------------------ #"
+	printf "$YELLOW"  "# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode 
 
@@ -1872,7 +1875,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------------Credential-Access-Red-Team----------------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------------Credential-Access-Red-Team------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy pdfcrack fcrackzip rarcrack 
 
@@ -1944,7 +1947,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------------Discovery-Red-Team-------------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------------Discovery-Red-Team---------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy bloodhound 
 
@@ -1982,7 +1985,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# -----------------------------------------Lateral-Movement-Red-Team----------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy pptpd kerberoast isr-evilgrade proxychains
 
@@ -2033,7 +2036,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# --------------------------------------------Collection-Red-Team-------------------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------------------Collection-Red-Team---------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy tigervnc-viewer 
 
@@ -2070,7 +2073,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------------Command-and-Control-Red-Team--------------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------------Command-and-Control-Red-Team----------------------------------- #"
 	# Install Repository Tools
 	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
 
@@ -2435,7 +2438,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# -------------------------------------------Exfiltration-Red-Team------------------------------------------- #"
+	printf "$YELLOW"  "# ---------------------------------------Exfiltration-Red-Team--------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxychains proxify privoxy 
 
@@ -2581,7 +2584,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------------------Impact-Red-Team---------------------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------------------Impact-Red-Team------------------------------------------ #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -2607,7 +2610,7 @@ EOF
 
 function ics_security()
 {
-	printf "$YELLOW"  "# --------------------------------------Penetration-Testing-ICS-Security------------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -2675,7 +2678,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# --------------------------------------------Red-Team-ICS-Security------------------------------------------ #"
+	printf "$YELLOW"  "# ----------------------------------------Red-Team-ICS-Security-------------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -2696,7 +2699,7 @@ EOF
 	go_installer "Red-Team" "ICS-Security" "$red_team_golang"
 
 
-	printf "$YELLOW"  "# ----------------------------------------Digital-Forensic-ICS-Security-------------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------------Digital-Forensic-ICS-Security---------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -2717,7 +2720,7 @@ EOF
 	go_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_golang"
 
 
-	printf "$YELLOW"  "# -------------------------------------------Blue-Team-ICS-Security------------------------------------------ #"
+	printf "$YELLOW"  "# ---------------------------------------Blue-Team-ICS-Security-------------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -2743,7 +2746,7 @@ EOF
 
 function digital_forensic()
 {
-	printf "$YELLOW"  "# ------------------------------------Reverse-Engineeting-Digital-Forensic----------------------------------- #"
+	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
 	apt install -qy forensics-all ghidra foremost qpdf kafkacat gdb 
 
@@ -2764,7 +2767,7 @@ function digital_forensic()
 	go_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_golang"
 
 
-	printf "$YELLOW"  "# --------------------------------------Malware-Analysis-Digital-Forensic------------------------------------ #"
+	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
 	# Install Repository Tools
 	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool 
 
@@ -2985,7 +2988,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------------Threat-Hunting-Digital-Forensic------------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 	# Install Repository Tools
 	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump 
 
@@ -3031,7 +3034,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# --------------------------------------Incident-Response-Digital-Forensic----------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3063,7 +3066,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# -------------------------------------Threat-Intelligence-Digital-Forensic---------------------------------- #"
+	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3110,7 +3113,7 @@ EOF
 
 function blue_team()
 {
-	printf "$YELLOW"  "# -----------------------------------------------Harden-Blue-Team-------------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard ansible cilium-cli buildah 
 
@@ -3131,7 +3134,7 @@ function blue_team()
 	go_installer "Harden" "Blue-Team" "$harden_golang"
 
 
-	printf "$YELLOW"  "# -----------------------------------------------Detect-Blue-Team-------------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort 
 
@@ -3240,7 +3243,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# -----------------------------------------------Isolate-Blue-Team------------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------------Isolate-Blue-Team--------------------------------------- #"
 	# Install Repository Tools
 	apt install -qy openvpn wireguard 
 
@@ -3261,7 +3264,7 @@ EOF
 	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
 
-	printf "$YELLOW"  "# -----------------------------------------------Deceive-Blue-Team------------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------------Deceive-Blue-Team--------------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3282,7 +3285,7 @@ EOF
 	go_installer "Deceive" "Blue-Team" "$deceive_golang"
 
 
-	printf "$YELLOW"  "# -----------------------------------------------Evict-Blue-Team--------------------------------------------- #"
+	printf "$YELLOW"  "# -------------------------------------------Evict-Blue-Team----------------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3308,7 +3311,7 @@ EOF
 
 function security_audit()
 {
-	printf "$YELLOW"  "# --------------------------------Preliminary-Audit-Assessment-Security-Audit-------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# Install Repository Tools
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool 
 
@@ -3326,7 +3329,8 @@ function security_audit()
 
 	# Install Golang
 	preliminary_audit_assessment_golang="
-go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner"
+go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
+go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap"
 	go_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_golang"
 
 	# Install Bearer
@@ -3399,7 +3403,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ----------------------------------Planning-and-Preparation-Security-Audit---------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------Planning-and-Preparation-Security-Audit------------------------------ #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3420,7 +3424,7 @@ EOF
 	go_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_golang"
 
 
-	printf "$YELLOW"  "# --------------------------------Establishing-Audit-Objectives-Security-Audit------------------------------- #"
+	printf "$YELLOW"  "# ----------------------------Establishing-Audit-Objectives-Security-Audit--------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3441,7 +3445,7 @@ EOF
 	go_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_golang"
 
 
-	printf "$YELLOW"  "# -----------------------------------Performing-the-Review-Security-Audit------------------------------------ #"
+	printf "$YELLOW"  "# -------------------------------Performing-the-Review-Security-Audit-------------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3574,7 +3578,7 @@ EOF
 	fi
 
 
-	printf "$YELLOW"  "# ---------------------------------Preparing-the-Audit-Report-Security-Audit--------------------------------- #"
+	printf "$YELLOW"  "# -----------------------------Preparing-the-Audit-Report-Security-Audit----------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
@@ -3595,7 +3599,7 @@ EOF
 	go_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_golang"
 
 
-	printf "$YELLOW"  "# ----------------------------------Issuing-the-Review-Report-Security-Audit--------------------------------- #"
+	printf "$YELLOW"  "# ------------------------------Issuing-the-Review-Report-Security-Audit----------------------------- #"
 	# Install Repository Tools
 	# apt install -qy 
 
