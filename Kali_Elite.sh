@@ -332,7 +332,7 @@ function penetrating_testing()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools
 
 	# Install Python3 pip
-	web_pip="cryptography pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
@@ -578,12 +578,12 @@ EOF
 	fi
 
 	# Install Polyglot
-	if [ ! -d "/usr/share/polyglot" ]; then
+	if [ ! -d "/usr/share/polyglot-database" ]; then
 		git clone https://github.com/Polydet/polyglot-database /usr/share/polyglot-database
-		chmod 755 /usr/share/polyglot/files/*
+		chmod 755 /usr/share/polyglot-database/files/*
 		cat > /usr/bin/polyglot << EOF
 #!/bin/bash
-cd /usr/share/polyglot/files;ls "\$@"
+cd /usr/share/polyglot-database/files;ls "\$@"
 EOF
 		chmod +x /usr/bin/polyglot
 		menu_entry "Web" "Penetration-Testing" "Polyglot" "/usr/share/kali-menu/exec-in-shell 'polyglot -h'"
@@ -785,6 +785,7 @@ EOF
 
 	# Install NoIP
 	if [ ! -d "/usr/share/noip" ]; then
+		mkdir -p /usr/share/noip
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
 		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
 		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
