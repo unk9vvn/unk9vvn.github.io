@@ -419,6 +419,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed PhoneInfoga"
 	fi
 
+	# Install Postman
+	if [ ! -d "/usr/share/Postman" ]; then
+		mkdir -p /usr/share/Postman
+		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/postman_linux_64.tar.gz
+		tar -xvf /tmp/postman_linux_64.tar.gz -C /usr/share;rm -f /tmp/postman_linux_64.tar.gz
+		chmod 755 /usr/share/Postman/*
+		ln -fs /usr/share/Postman/postman /usr/bin/postman
+		chmod +x /usr/bin/Postman
+		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell 'postman'"
+		printf "$GREEN"  "[*] Success Installing Postman"
+	else
+		printf "$GREEN"  "[*] Success Installed Postman"
+	fi
+
 	# Install Findomain
 	if [ ! -d "/usr/share/findomain" ]; then
 		wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-linux.zip -O /tmp/findomain-linux.zip
@@ -923,7 +937,7 @@ EOF
 	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper 
 
 	# Install Python3 pip
-	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris pyscan-rs"
+	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris"
 	pip_installer "Network" "Penetration-Testing" "$network_pip"
 
 	# Install Nodejs NPM
@@ -970,8 +984,8 @@ EOF
 	if [ ! -d "/usr/share/routerscan" ]; then
 		mkdir -p /usr/share/routerscan
 		wget http://msk1.stascorp.com/routerscan/prerelease.7z -O /usr/share/routerscan/prerelease.7z
-		cd /usr/share/routerscan;7z x prerelease.7z;rm -f prerelease.7z
 		chmod 755 /usr/share/routerscan/*
+		cd /usr/share/routerscan;7z x prerelease.7z;rm -f prerelease.7z
 		cat > /usr/bin/routerscan << EOF
 #!/bin/bash
 cd /usr/share/routerscan;wine RouterScan.exe "\$@"
@@ -1106,7 +1120,7 @@ EOF
 		chmod 755 /usr/share/hlr-lookups/*
 		cat > /usr/bin/hlrlookups << EOF
 #!/bin/bash
-cd /usr/share/hlr-lookups;python3 hlr-lookups.py "\$@"
+cd /usr/share/hlr-lookups;python2 hlr-lookups.py "\$@"
 EOF
 		chmod +x /usr/bin/hlrlookups
 		menu_entry "Wireless" "Penetration-Testing" "HLR-Lookups" "/usr/share/kali-menu/exec-in-shell 'hlrlookups -h'"
@@ -3496,6 +3510,20 @@ EOF
 	# Install Golang
 	# performing_the_review_golang=""
 	go_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_golang"
+
+	# Install Postman
+	if [ ! -d "/usr/share/Postman" ]; then
+		mkdir -p /usr/share/Postman
+		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/postman_linux_64.tar.gz
+		tar -xvf /tmp/postman_linux_64.tar.gz -C /usr/share;rm -f /tmp/postman_linux_64.tar.gz
+		chmod 755 /usr/share/Postman/*
+		ln -fs /usr/share/Postman/postman /usr/bin/postman
+		chmod +x /usr/bin/Postman
+		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell 'postman'"
+		printf "$GREEN"  "[*] Success Installing Postman"
+	else
+		printf "$GREEN"  "[*] Success Installed Postman"
+	fi
 
 	# Install Clion
 	if [ ! -d "/usr/share/clion" ]; then
