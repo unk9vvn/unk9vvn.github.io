@@ -974,12 +974,11 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 	go_installer "Network" "Penetration-Testing" "$network_golang"
 
 	# Install Hiddify-Next
-	if [ ! -d "/usr/share/hiddify-next" ]; then
+	if [ ! -d "/usr/share/hiddify" ]; then
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/hiddify-debian-x64.zip -O /tmp/hiddify-debian-x64.zip
 		unzip /tmp/hiddify-debian-x64.zip -d /tmp/hiddify-next;rm -f /tmp/hiddify-linux-x64.zip
-		chmod 755 /tmp/hiddify-next/*
-		dpkg -i /tmp/hiddify-next/hiddify-debian-x64.deb
-		rm -rf /tmp/hiddify-next
+		chmod +x /tmp/hiddify-next/hiddify-debian-x64.deb;dpkg -i /tmp/hiddify-next/hiddify-debian-x64.deb;rm -rf /tmp/hiddify-next
+		chmod 755 /usr/share/hiddify/*
 		printf "$GREEN"  "[*] Success Installing Hiddify-Next"
 	else
 		printf "$GREEN"  "[*] Success Installed Hiddify-Next"
@@ -1058,7 +1057,7 @@ EOF
 	fi
 
 	# Install Angry-IP
-	if [ ! -d "/usr/bin/ipscan" ]; then
+	if [ ! -f "/usr/bin/ipscan" ]; then
 		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/ipscan_amd64.deb
 		chmod +x /tmp/ipscan_amd64.deb;dpkg -i /tmp/ipscan_amd64.deb;rm -f /tmp/ipscan_amd64.deb
 		printf "$GREEN"  "[*] Success Installing Angry-IP"
@@ -1100,7 +1099,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Wireless-Penetration-Testing------------------------------------ #"
 	# Install Repository Tools
-	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph dronesploit pskracker 
+	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph pskracker 
 
 	# Install Python3 pip
 	wireless_pip="btlejack scapy wpspin"
@@ -1119,7 +1118,7 @@ EOF
 	go_installer "Wireless" "Penetration-Testing" "$wireless_golang"
 
 	# Install GTScan
-	if [ ! -d "/usr/share/GTScan" ]; then
+	if [ ! -d "/usr/share/gtscan" ]; then
 		git clone https://github.com/SigPloiter/GTScan /usr/share/gtscan
 		chmod 755 /usr/share/gtscan/*
 		cat > /usr/bin/gtscan << EOF
