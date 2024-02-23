@@ -425,8 +425,11 @@ EOF
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/postman_linux_64.tar.gz
 		tar -xvf /tmp/postman_linux_64.tar.gz -C /usr/share;rm -f /tmp/postman_linux_64.tar.gz
 		chmod 755 /usr/share/Postman/*
-		ln -fs /usr/share/Postman/postman /usr/bin/postman
-		chmod +x /usr/bin/Postman
+		cat > /usr/bin/postman << EOF
+#!/bin/bash
+cd /usr/share/Postman/;./postman "\$@"
+EOF
+		chmod +x /usr/bin/postman
 		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell 'postman'"
 		printf "$GREEN"  "[*] Success Installing Postman"
 	else
@@ -3517,8 +3520,11 @@ EOF
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/postman_linux_64.tar.gz
 		tar -xvf /tmp/postman_linux_64.tar.gz -C /usr/share;rm -f /tmp/postman_linux_64.tar.gz
 		chmod 755 /usr/share/Postman/*
-		ln -fs /usr/share/Postman/postman /usr/bin/postman
-		chmod +x /usr/bin/Postman
+		cat > /usr/bin/postman << EOF
+#!/bin/bash
+cd /usr/share/Postman/;./postman "\$@"
+EOF
+		chmod +x /usr/bin/postman
 		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell 'postman'"
 		printf "$GREEN"  "[*] Success Installing Postman"
 	else
