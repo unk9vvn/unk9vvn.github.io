@@ -492,10 +492,26 @@ cd /usr/share/reconftw;./reconftw.sh "\$@"
 EOF
 		chmod +x /usr/bin/reconftw
 		cd /usr/share/reconftw;./install.sh
-		menu_entry "Reconnaissance" "Red-Team" "ReconFTW" "/usr/share/kali-menu/exec-in-shell 'reconftw -h'"
+		menu_entry "Web" "Penetration-Testing" "ReconFTW" "/usr/share/kali-menu/exec-in-shell 'reconftw -h'"
 		printf "$GREEN"  "[*] Success Installing ReconFTW"
 	else
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
+	fi
+
+	# Install Waymore
+	if [ ! -d "/usr/share/waymore" ]; then
+		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/waymore
+		chmod 755 /usr/share/waymore/*
+		cat > /usr/bin/waymore << EOF
+#!/bin/bash
+cd /usr/share/waymore;python3 waymore.py "\$@"
+EOF
+		chmod +x /usr/bin/waymore
+		pip3 install -r /usr/share/waymore/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "Waymore" "/usr/share/kali-menu/exec-in-shell 'waymore -h'"
+		printf "$GREEN"  "[*] Success Installing Waymore"
+	else
+		printf "$GREEN"  "[*] Success Installed Waymore"
 	fi
 
 	# Install YsoSerial
