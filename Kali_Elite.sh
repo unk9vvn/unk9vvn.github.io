@@ -465,6 +465,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed pixload"
 	fi
 
+	# Install ReconFTW
+	if [ ! -d "/usr/share/reconftw" ]; then
+		git clone https://github.com/six2dez/reconftw /usr/share/reconftw
+		chmod 755 /usr/share/reconftw/*
+		cat > /usr/bin/reconftw << EOF
+#!/bin/bash
+cd /usr/share/reconftw;./reconftw.sh "\$@"
+EOF
+		chmod +x /usr/bin/reconftw
+		cd /usr/share/reconftw;./install.sh
+		menu_entry "Reconnaissance" "Red-Team" "ReconFTW" "/usr/share/kali-menu/exec-in-shell 'reconftw -h'"
+		printf "$GREEN"  "[*] Success Installing ReconFTW"
+	else
+		printf "$GREEN"  "[*] Success Installed ReconFTW"
+	fi
+
 	# Install YsoSerial
 	if [ ! -d "/usr/share/ysoserial" ]; then
 		mkdir -p /usr/share/ysoserial
@@ -1181,6 +1197,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing Dracnmap"
 	else
 		printf "$GREEN"  "[*] Success Installed Dracnmap"
+	fi
+
+	# Install ReconFTW
+	if [ ! -d "/usr/share/reconftw" ]; then
+		git clone https://github.com/six2dez/reconftw /usr/share/reconftw
+		chmod 755 /usr/share/reconftw/*
+		cat > /usr/bin/reconftw << EOF
+#!/bin/bash
+cd /usr/share/reconftw;./reconftw.sh "\$@"
+EOF
+		chmod +x /usr/bin/reconftw
+		cd /usr/share/reconftw;./install.sh
+		menu_entry "Reconnaissance" "Red-Team" "ReconFTW" "/usr/share/kali-menu/exec-in-shell 'reconftw -h'"
+		printf "$GREEN"  "[*] Success Installing ReconFTW"
+	else
+		printf "$GREEN"  "[*] Success Installed ReconFTW"
 	fi
 
 
