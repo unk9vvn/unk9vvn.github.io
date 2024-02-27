@@ -2578,6 +2578,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed BobTheSmuggler"
 	fi
 
+	# Install SSH-Snake
+	if [ ! -d "/usr/share/ssh-snake" ]; then
+		git clone https://github.com/MegaManSec/SSH-Snake /usr/share/ssh-snake
+		chmod 755 /usr/share/ssh-snake/*
+		cat > /usr/bin/snake << EOF
+#!/bin/bash
+cd /usr/share/ssh-snake;bash Snake.sh "\$@"
+EOF
+		chmod +x /usr/bin/snake
+		menu_entry "Exfiltration" "Red-Team" "SSH-Snake" "/usr/share/kali-menu/exec-in-shell 'snake -h'"
+		printf "$GREEN"  "[*] Success Installing SSH-Snake"
+	else
+		printf "$GREEN"  "[*] Success Installed SSH-Snake"
+	fi
+
 	# Install DNSlivery
 	if [ ! -d "/usr/share/dnslivery" ]; then
 		git clone https://github.com/no0be/DNSlivery /usr/share/dnslivery
