@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.0'
+version='3.1'
 
 
 
@@ -1751,8 +1751,7 @@ EOF
 
 	# Install Golang
 	defense_evasion_golang="
-go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow
-go install github.com/EgeBalci/amber@latest;ln -fs ~/go/bin/amber /usr/bin/amber"
+go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow"
 	go_installer "Defense-Evasion" "Red-Team" "$defense_evasion_golang"
 
 	# Install ASWCrypter
@@ -2072,7 +2071,7 @@ EOF
 
 	# Install SCShell
 	if [ ! -d "/usr/share/scshell" ]; then
-		wget https://github.com/Mr-Un1k0d3r/SCShell -O /usr/share/scshell
+		git clone https://github.com/Mr-Un1k0d3r/SCShell /usr/share/scshell
 		chmod 755 /usr/share/scshell/*
 		cat > /usr/bin/scshell << EOF
 #!/bin/bash
