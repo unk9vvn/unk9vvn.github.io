@@ -1326,11 +1326,11 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 	# Install Evilginx
 	if [ ! -d "/usr/share/evilginx" ]; then
 		wget https://github.com/kgretzky/evilginx2/releases/download/2.4.0/evilginx-linux-amd64.tar.gz -O /tmp/evilginx-linux-amd64.tar.gz
-		tar -xvf /tmp/evilginx-linux-amd64.tar.gz -C /usr/share/evilginx;rm -f /tmp/evilginx-linux-amd64.tar.gz
+		tar -xvf /tmp/evilginx-linux-amd64.tar.gz -C /usr/share;rm -f /tmp/evilginx-linux-amd64.tar.gz
 		chmod 755 /usr/share/evilginx/*
 		ln -fs /usr/share/evilginx/evilginx /usr/bin/evilginx
 		chmod +x /usr/bin/evilginx
-		cd /usr/share/evilginx/evilginx;./install.sh
+		cd /usr/share/evilginx;./install.sh
 		menu_entry "Initial-Access" "Red-Team" "Evilginx" "/usr/share/kali-menu/exec-in-shell 'sudo evilginx -h'"
 		printf "$GREEN"  "[*] Success Installing Evilginx"
 	else
@@ -1574,7 +1574,7 @@ EOF
 	fi
 
 	# Install auto_SettingContent-ms
-	if [ ! -d "/usr/share/sharpshooter" ]; then
+	if [ ! -d "/usr/share/auto_settingcontent-ms" ]; then
 		git clone https://github.com/trustedsec/auto_SettingContent-ms /usr/share/auto_settingcontent-ms
 		chmod 755 /usr/share/auto_settingcontent-ms/*
 		cat > /usr/bin/settingcontent << EOF
@@ -1597,7 +1597,7 @@ EOF
 cd /usr/share/sharpshooter;python2 SharpShooter.py "\$@"
 EOF
 		chmod +x /usr/bin/sharpshooter
-		pip3 install -r /usr/share/sharpshooter/requirements.txt
+		pip2 install -r /usr/share/sharpshooter/requirements.txt
 		menu_entry "Execution" "Red-Team" "SharpShooter" "/usr/share/kali-menu/exec-in-shell 'sharpshooter -h'"
 		printf "$GREEN"  "[*] Success Installing SharpShooter"
 	else
@@ -1686,7 +1686,7 @@ EOF
 	apt install -qy linux-exploit-suggester peass oscanner 
 
 	# Install Python3 pip
-	privilege_escalation_pip="bloodyAD cve-bin-tool"
+	privilege_escalation_pip="cve-bin-tool"
 	pip_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_pip"
 
 	# Install Nodejs NPM
