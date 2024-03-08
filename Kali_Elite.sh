@@ -2417,8 +2417,8 @@ EOF
 	# Install SharpC2
 	if [ ! -d "/usr/share/sharpc2" ]; then
 		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/teamserver-linux.tar.gz
-		tar -xvf /tmp/teamserver-linux.tar.gz -C /usr/share/sharpc2;rm -f /tmp/teamserver-linux.tar.gz
-		ln -fs /usr/share/sharpc2/TeamServer /usr/bin/sharpc2
+		tar -xvf /tmp/teamserver-linux.tar.gz -C /usr/share;rm -f /tmp/teamserver-linux.tar.gz
+		ln -fs /usr/share/SharpC2/TeamServer /usr/bin/sharpc2
 		chmod +x /usr/bin/sharpc2
 		menu_entry "Command-and-Control" "Red-Team" "SharpC2" "/usr/share/kali-menu/exec-in-shell 'sharpc2'"
 		printf "$GREEN"  "[*] Success Installing SharpC2"
@@ -2516,7 +2516,7 @@ EOF
 	npm_installer "Exfiltration" "Red-Team" "$exfiltration_npm"
 
 	# Install Ruby GEM
-	exfiltration_gem="http-proxy-to-socks"
+	# exfiltration_gem=""
 	gem_installer "Exfiltration" "Red-Team" "$exfiltration_gem"
 
 	# Install Golang
