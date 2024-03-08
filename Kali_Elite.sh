@@ -1454,7 +1454,6 @@ EOF
 cd /usr/share/brutal;./Brutal.sh "\$@"
 EOF
 		chmod +x /usr/bin/brutal
-		pip3 install -r /usr/share/brutal/requirements.txt
 		menu_entry "Initial-Access" "Red-Team" "Brutal" "/usr/share/kali-menu/exec-in-shell 'sudo brutal -h'"
 		printf "$GREEN"  "[*] Success Installing Brutal"
 	else
