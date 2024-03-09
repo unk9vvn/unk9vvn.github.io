@@ -1651,20 +1651,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Vegile"
 	fi
 
-	# Install TripleCross
-	if [ ! -d "/usr/share/triplecross" ]; then
-		git clone https://github.com/h3xduck/TripleCross /usr/share/triplecross
-		chmod 755 /usr/share/triplecross/*
-		ln -fs /TripleCross/src/client/injector /usr/bin/triplecross
-		chmod +x /usr/bin/triplecross
-		wget http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb -O /tmp/libssl1.1_amd64.deb
-		dpkg -i /tmp/libssl1.1_amd64.deb;rm -f /tmp/libssl1.1_amd64.deb
-		menu_entry "Persistence" "Red-Team" "TripleCross" "/usr/share/kali-menu/exec-in-shell 'sudo triplecross -h'"
-		printf "$GREEN"  "[*] Success Installing TripleCross"
-	else
-		printf "$GREEN"  "[*] Success Installed TripleCross"
-	fi
-
 	# Install SmmBackdoorNg
 	if [ ! -d "/usr/share/smmbackdoorng" ]; then
 		git clone https://github.com/Cr4sh/SmmBackdoorNg /usr/share/smmbackdoorng
