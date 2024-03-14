@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.3'
+version='3.4'
 
 
 
@@ -2867,7 +2867,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		git clone https://github.com/W1LDN16H7/StegoCracker /usr/share/stegocracker
 		chmod 755 /usr/share/stegocracker/*
 		pip3 install -r /usr/share/stegocracker/requirements.txt 
-		cd /usr/share/stegocracker;python3 setup.py install;./install.sh 
+		cd /usr/share/stegocracker;python3 setup.py install;bash install.sh 
 		menu_entry "Malware-Analysis" "Digital-Forensic" "StegoCracker" "/usr/share/kali-menu/exec-in-shell 'stego -h'"
 		printf "$GREEN"  "[*] Success Installing StegoCracker"
 	else
@@ -3149,8 +3149,8 @@ EOF
 	go_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_golang"
 
 	# Install OpenCTI
-	if [ ! -d "/usr/share/revoke-obfuscation" ]; then
-		wget https://github.com/OpenCTI-Platform/opencti/releases/latest/download/opencti-release-5.12.29.tar.gz -O /tmp/opencti.tar.gz
+	if [ ! -d "/usr/share/opencti" ]; then
+		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.0.6/opencti-release-6.0.6.tar.gz -O /tmp/opencti.tar.gz
 		tar -xvf /tmp/opencti.tar.gz -C /usr/share/opencti;rm -f /tmp/opencti.tar.gz
 		chmod 755 /usr/share/opencti/*
 		cp /usr/share/opencti/config/default.json /usr/share/opencti/config/production.json
