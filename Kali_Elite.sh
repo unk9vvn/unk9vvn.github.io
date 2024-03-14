@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.1'
+version='3.3'
 
 
 
@@ -2215,7 +2215,6 @@ EOF
 cd /usr/share/eggshell;python2 eggshell.py "\$@"
 EOF
 		chmod +x /usr/bin/eggshell
-		pip3 install -r /usr/share/eggshell/requirements.txt
 		menu_entry "Command-and-Control" "Red-Team" "EggShell" "/usr/share/kali-menu/exec-in-shell 'eggshell -h'"
 		printf "$GREEN"  "[*] Success Installing EggShell"
 	else
@@ -2283,9 +2282,9 @@ EOF
 	# Install Ligolo-mp
 	if [ ! -d "/usr/share/ligolo-mp" ]; then
 		mkdir -p /usr/share/ligolo-mp
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.1_linux_amd64 -O /usr/share/ligolo-mp/ligolos
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.1_linux_amd64 -O /usr/share/ligolo-mp/ligoloc
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.1_windows_amd64.exe -O /usr/share/ligolo-mp/ligoloc.exe
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.3_linux_amd64 -O /usr/share/ligolo-mp/ligolos
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_linux_amd64 -O /usr/share/ligolo-mp/ligoloc
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_windows_amd64.exe -O /usr/share/ligolo-mp/ligoloc.exe
 		chmod 755 /usr/share/ligolo-mp/*
 		ln -fs /usr/share/ligolo-mp/ligolos /usr/bin/ligolos
 		chmod +x /usr/bin/ligolos
@@ -2472,14 +2471,14 @@ EOF
 	# Install Havoc
 	if [ ! -d "/usr/share/havoc" ]; then
 		git clone https://github.com/HavocFramework/Havoc /usr/share/havoc
-		chmod 755 /usr/share/Havoc/*
+		chmod 755 /usr/share/havoc/*
 		go mod download golang.org/x/sys;go mod download github.com/ugorji/go
-		cd /user/share/Havoc/Client;make
-		ln -fs /user/share/Havoc/Client/Havoc /usr/bin/havoc
+		cd /user/share/havoc/Client;make
+		ln -fs /user/share/havoc/Client/havoc /usr/bin/havoc
 		chmod +x /usr/bin/havoc
 		menu_entry "Command-and-Control" "Red-Team" "Havoc" "/usr/share/kali-menu/exec-in-shell 'sudo havoc -h'"
-		cd /user/share/Havoc/Teamserver;./Install.sh;make
-		ln -fs /user/share/Havoc/Teamserver/teamserver /usr/bin/havocts
+		cd /user/share/havoc/Teamserver;./Install.sh;make
+		ln -fs /user/share/havoc/Teamserver/teamserver /usr/bin/havocts
 		chmod +x /usr/bin/havocts
 		menu_entry "Command-and-Control" "Red-Team" "HavocTS" "/usr/share/kali-menu/exec-in-shell 'sudo havocts -h'"
 		printf "$GREEN"  "[*] Success Installing Havoc"
@@ -2602,7 +2601,6 @@ EOF
 cd /usr/share/webdavdelivery;python3 webDavDelivery.py "\$@"
 EOF
 		chmod +x /usr/bin/webdavdelivery
-		pip3 install -r /usr/share/webdavdelivery/requirements.txt
 		menu_entry "Exfiltration" "Red-Team" "WebDavDelivery" "/usr/share/kali-menu/exec-in-shell 'webdavdelivery -h'"
 		printf "$GREEN"  "[*] Success Installing WebDavDelivery"
 	else
@@ -2612,7 +2610,7 @@ EOF
 	# Install WSTunnel
 	if [ ! -d "/usr/share/wstunnel" ]; then
 		mkdir -p /usr/share/wstunnel
-		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.2_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
+		wget https://github.com/erebe/wstunnel/releases/download/v9.2.3/wstunnel_9.2.3_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
 		tar -xvf /tmp/wstunnel_amd64.tar.gz -C /usr/share/wstunnel;rm -f /tmp/wstunnel_amd64.tar.gz
 		chmod 755 /usr/share/wstunnel/*
 		ln -fs /user/share/wstunnel/wstunnel /usr/bin/wstunnel
@@ -2637,7 +2635,7 @@ EOF
 
 	# Install FRP
 	if [ ! -d "/usr/share/frp_0.54.0_linux_amd64" ]; then
-		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.54.0_linux_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
+		wget https://github.com/fatedier/frp/releases/download/v0.55.1/frp_0.55.1_freebsd_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
 		tar -xvf /tmp/frp_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/frp_linux-amd64.tar.gz
 		chmod 755 /usr/share/frp_0.54.0_linux_amd64/*
 		ln -fs /usr/share/frp_0.54.0_linux_amd64/frps /usr/bin/frps
