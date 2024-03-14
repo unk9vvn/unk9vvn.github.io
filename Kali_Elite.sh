@@ -2399,7 +2399,7 @@ EOF
 	fi
 
 	# Install SharpC2
-	if [ ! -d "/usr/share/sharpc2" ]; then
+	if [ ! -d "/usr/share/SharpC2" ]; then
 		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/teamserver-linux.tar.gz
 		tar -xvf /tmp/teamserver-linux.tar.gz -C /usr/share;rm -f /tmp/teamserver-linux.tar.gz
 		ln -fs /usr/share/SharpC2/TeamServer /usr/bin/sharpc2
@@ -2472,9 +2472,8 @@ EOF
 	if [ ! -d "/usr/share/havoc" ]; then
 		git clone https://github.com/HavocFramework/Havoc /usr/share/havoc
 		chmod 755 /usr/share/havoc/*
-		go mod download golang.org/x/sys;go mod download github.com/ugorji/go
-		cd /user/share/havoc/Client;make
-		ln -fs /user/share/havoc/Client/havoc /usr/bin/havoc
+		cd /user/share/havoc/client;make
+		ln -fs /user/share/havoc/client/havoc /usr/bin/havoc
 		chmod +x /usr/bin/havoc
 		menu_entry "Command-and-Control" "Red-Team" "Havoc" "/usr/share/kali-menu/exec-in-shell 'sudo havoc -h'"
 		cd /user/share/havoc/Teamserver;./Install.sh;make
@@ -2613,7 +2612,7 @@ EOF
 		wget https://github.com/erebe/wstunnel/releases/download/v9.2.3/wstunnel_9.2.3_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
 		tar -xvf /tmp/wstunnel_amd64.tar.gz -C /usr/share/wstunnel;rm -f /tmp/wstunnel_amd64.tar.gz
 		chmod 755 /usr/share/wstunnel/*
-		ln -fs /user/share/wstunnel/wstunnel /usr/bin/wstunnel
+		ln -fs /usr/share/wstunnel/wstunnel /usr/bin/wstunnel
 		chmod +x /usr/bin/wstunnel
 		menu_entry "Exfiltration" "Red-Team" "WSTunnel" "/usr/share/kali-menu/exec-in-shell 'wstunnel -h'"
 		printf "$GREEN"  "[*] Success Installing WSTunnel"
