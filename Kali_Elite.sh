@@ -1170,7 +1170,7 @@ EOF
 	# iot_golang=""
 	go_installer "IoT" "Penetration-Testing" "$iot_golang"
 
-	logo
+	exit
 }
 
 
@@ -2666,7 +2666,7 @@ EOF
 	# impact_golang=""
 	go_installer "Impact" "Red-Team" "$impact_golang"
 
-	logo
+	exit
 }
 
 
@@ -2802,7 +2802,7 @@ EOF
 	# blue_team_golang=""
 	go_installer "Blue-Team" "ICS-Security" "$blue_team_golang"
 
-	logo
+	exit
 }
 
 
@@ -3169,7 +3169,7 @@ EOF
 		printf "$GREEN"  "[*] Success Installed OpenCTI"
 	fi
 
-	logo
+	exit
 }
 
 
@@ -3367,7 +3367,7 @@ EOF
 	# evict_golang=""
 	go_installer "Evict" "Blue-Team" "$evict_golang"
 
-	logo
+	exit
 }
 
 
@@ -3698,7 +3698,7 @@ EOF
 	# issuing_the_review_report_golang=""
 	go_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_golang"
 
-	logo
+	exit
 }
 
 
@@ -3713,7 +3713,7 @@ function main()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy apt-transport-https build-essential cmake g++ libssl-dev curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
+	apt install -qy build-essential apt-utils cmake libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev golang-go qtbase5-dev libqt5websockets5-dev python3-dev libboost-all-dev mingw-w64 nasm apt-transport-https g++ curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
