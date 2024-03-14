@@ -1170,7 +1170,7 @@ EOF
 	# iot_golang=""
 	go_installer "IoT" "Penetration-Testing" "$iot_golang"
 
-	exit
+	logo
 }
 
 
@@ -2666,7 +2666,7 @@ EOF
 	# impact_golang=""
 	go_installer "Impact" "Red-Team" "$impact_golang"
 
-	exit
+	logo
 }
 
 
@@ -2802,7 +2802,7 @@ EOF
 	# blue_team_golang=""
 	go_installer "Blue-Team" "ICS-Security" "$blue_team_golang"
 
-	exit
+	logo
 }
 
 
@@ -3169,7 +3169,7 @@ EOF
 		printf "$GREEN"  "[*] Success Installed OpenCTI"
 	fi
 
-	exit
+	logo
 }
 
 
@@ -3367,7 +3367,7 @@ EOF
 	# evict_golang=""
 	go_installer "Evict" "Blue-Team" "$evict_golang"
 
-	exit
+	logo
 }
 
 
@@ -3698,7 +3698,7 @@ EOF
 	# issuing_the_review_report_golang=""
 	go_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_golang"
 
-	exit
+	logo
 }
 
 
