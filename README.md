@@ -9,7 +9,7 @@
 # Elite Virtual Machines Distribution
 Two Windows Server Elite and Kali Linux Elite virtual machine are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
 
-## Cheat Sheets & Check Lists
+## Cheat Sheets & Check Lists & Tools
 * Penetration Testing
 * Red Team
 * ICS Security
@@ -17,7 +17,7 @@ Two Windows Server Elite and Kali Linux Elite virtual machine are designed to Pr
 * Blue Team
 * Security Audit
 
-## Kali Elite Online Installer
+## Kali Elite Online Tools Installer
 ### Install Script
 ```
 sudo -s curl -fsSL https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh | sudo bash
