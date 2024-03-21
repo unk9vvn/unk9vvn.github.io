@@ -3730,7 +3730,7 @@ function main()
 	# Install Kali-Elite
 	if [ ! -d "/usr/share/kali-elite" ]; then
 		mkdir -p /usr/share/kali-elite
-		curl -s -o /usr/share/kali-elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
+		curl -s -o /usr/share/kali-elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
 		chmod 755 /usr/share/kali-elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
@@ -3761,7 +3761,7 @@ EOF
 </Menu>
 EOF
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $version ]; then
-		curl -s -o /usr/share/kali-elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
+		curl -s -o /usr/share/kali-elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
 		chmod 755 /usr/share/kali-elite/*
 		cat > /usr/bin/kalielite << EOF
 #!/bin/bash
