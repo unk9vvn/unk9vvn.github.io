@@ -329,7 +329,7 @@ function penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil pocsuite3 sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools
+	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools
 
 	# Install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester"
@@ -3375,7 +3375,7 @@ function security_audit()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# Install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool 
+	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs 
 
 	# Install Python3 pip
 	# preliminary_audit_assessment_pip=""
@@ -3716,7 +3716,7 @@ function main()
 	apt install -qy build-essential apt-utils cmake libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev golang-go qtbase5-dev libqt5websockets5-dev python3-dev libboost-all-dev mingw-w64 nasm apt-transport-https g++ curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
 
 	# Install Python2 pip
-	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
 
 	# Install Python3 pip
 	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
@@ -3727,7 +3727,7 @@ function main()
 	# Install Ruby GEM
 	# gem install 
 
-	# Install Kali_Elite
+	# Install Kali-Elite
 	if [ ! -d "/usr/share/kali-elite" ]; then
 		mkdir -p /usr/share/kali-elite
 		curl -s -o /usr/share/kali-elite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/Kali_Elite.sh
@@ -3739,7 +3739,7 @@ EOF
 		chmod +x /usr/bin/kalielite
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
 [Desktop Entry]
-Name=Kali Elite
+Name=Kali-Elite
 Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
 Comment=
 Terminal=true
@@ -3770,7 +3770,7 @@ EOF
 		chmod +x /usr/bin/kalielite
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
 [Desktop Entry]
-Name=Kali Elite
+Name=Kali-Elite
 Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
 Comment=
 Terminal=true
