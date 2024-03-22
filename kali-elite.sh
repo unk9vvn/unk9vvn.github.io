@@ -3274,34 +3274,24 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Cilium"
 	fi
 
-	# Install ElasticSeaerch & kibana
-	if [ ! -f "/etc/apt/sources.list.d/elastic-8.x.list" ]; then
-		curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /etc/apt/trusted.gpg.d/elastic-archive-keyring.gpg
-		echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.x.list
-		apt install -y elasticsearch kibana
-		sed -e '/cluster.initial_master_nodes/ s/^#*/#/' -i /etc/elasticsearch/elasticsearch.yml
-		echo "discovery.type: single-node" | tee -a /etc/elasticsearch/elasticsearch.yml
-		/usr/share/kibana/bin/kibana-encryption-keys generate -q
-		echo "server.host: \"unk9vvn.local\"" | tee -a /etc/kibana/kibana.yml
-		systemctl enable elasticsearch kibana --now
-		/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
-		/usr/share/kibana/bin/kibana-verification-code
-		/usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 --dns kali-elite.kali.elite,elastic.kali.elite,kali-elite --out kibana-server.p12
-		openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.crt -clcerts -nokeys
-		openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.key -nocerts -nodes
-		chown root:kibana /etc/kibana/kibana-server.key
-		chown root:kibana /etc/kibana/kibana-server.crt
-		chmod 660 /etc/kibana/kibana-server.key
-		chmod 660 /etc/kibana/kibana-server.crt
-		echo "server.ssl.enabled: true" | tee -a /etc/kibana/kibana.yml
-		echo "server.ssl.certificate: /etc/kibana/kibana-server.crt" | tee -a /etc/kibana/kibana.yml
-		echo "server.ssl.key: /etc/kibana/kibana-server.key" | tee -a /etc/kibana/kibana.yml
-		echo "server.publicBaseUrl: \"https://unk9vvn.local:5601\"" | tee -a /etc/kibana/kibana.yml
-		menu_entry "Detect" "Blue-Team" "ElasticSeaerch" "/usr/share/kali-menu/exec-in-shell 'sudo service elasticsearch start'"
-		menu_entry "Detect" "Blue-Team" "kibana" "/usr/share/kali-menu/exec-in-shell 'sudo service kibana start'"
-		printf "$GREEN"  "[*] Success Installing ElasticSeaerch & kibana"
+	# Install ElasticSeaerch
+	if [ ! -d "/usr/share/elasticsearch" ]; then
+		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/elasticsearch-amd64.deb
+		chmod +x /tmp/elasticsearch-amd64.deb;dpkg -i /tmp/elasticsearch-amd64.deb;rm -f /tmp/elasticsearch-amd64.deb
+	
+		printf "$GREEN"  "[*] Success Installing ElasticSeaerch"
 	else
-		printf "$GREEN"  "[*] Success Installed ElasticSeaerch & kibana"
+		printf "$GREEN"  "[*] Success Installed ElasticSeaerch"
+	fi
+
+	# Install Kibana
+	if [ ! -d "/usr/share/kibana" ]; then
+		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/kibana-amd64.deb
+		chmod +x /tmp/kibana-amd64.deb;dpkg -i /tmp/kibana-amd64.deb;rm -f /tmp/kibana-amd64.deb
+	
+		printf "$GREEN"  "[*] Success Installing Kibana"
+	else
+		printf "$GREEN"  "[*] Success Installed Kibana"
 	fi
 
 
