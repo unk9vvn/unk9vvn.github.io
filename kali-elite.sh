@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.4'
+version='3.5'
 
 
 
@@ -12,6 +12,7 @@ MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
 USERS=$(users | awk '{print $1}')
+LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 
 
 
@@ -3098,7 +3099,7 @@ EOF
 
 	printf "$YELLOW"  "# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
-	# apt install -qy 
+	apt install -qy thehive 
 
 	# Install Python3 pip
 	incident_response_pip="dissect aws_ir intelmq otx-misp threat_intel"
@@ -3115,17 +3116,6 @@ EOF
 	# Install Golang
 	# incident_response_golang=""
 	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
-
-	# Install TheHive not tested
-	if [ ! -f "/etc/apt/sources.list.d/thehive-project.list" ]; then
-		apt install -y nvidia-openjdk-8-jre
-		curl https://raw.githubusercontent.com/TheHive-Project/TheHive/master/PGP-PUBLIC-KEY | apt-key add -
-		echo 'deb https://deb.thehive-project.org release main' | tee -a /etc/apt/sources.list.d/thehive-project.list
-		apt update;apt install -qy cortex thehive4
-		printf "$GREEN"  "[*] Success Installing TheHive"
-	else
-		printf "$GREEN"  "[*] Success Installed TheHive"
-	fi
 
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
@@ -3169,6 +3159,15 @@ EOF
 		printf "$GREEN"  "[*] Success Installed OpenCTI"
 	fi
 
+	# Install TRAM
+	if [ ! -d "/usr/share/tram" ]; then
+		curl -LO https://github.com/center-for-threat-informed-defense/tram/raw/main/docker/docker-compose.yml
+		docker-compose up
+		printf "$GREEN"  "[*] Success Installing TRAM"
+	else
+		printf "$GREEN"  "[*] Success Installed TRAM"
+	fi
+
 	exit
 }
 
@@ -3177,7 +3176,7 @@ function blue_team()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard ansible cilium-cli buildah 
+	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible-core 
 
 	# Install Python3 pip
 	# harden_pip=""
@@ -3217,23 +3216,28 @@ function blue_team()
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
 	go_installer "Detect" "Blue-Team" "$detect_golang"
 
-	# Install Wazuh Agent & Server
-	if [ ! -f "/usr/share/keyrings/wazuh.gpg" ]; then
+	# Install Wazuh Indexer & Server & Agent
+	if [ ! -f "/etc/apt/sources.list.d/wazuh.list" ]; then
+		# Install Indexer
+		cd /tmp;curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh;curl -sO https://packages.wazuh.com/4.7/config.yml
+		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|<wazuh-manager-ip>|$LAN|g" /tmp/config.yml;sed -i "s|<dashboard-node-ip>|$LAN|g" /tmp/config.yml
+		bash wazuh-install.sh --generate-config-files
+		curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+		bash wazuh-install.sh --wazuh-indexer node-1;bash wazuh-install.sh --start-cluster
+		ADMIN_PASSWORD=$(tar -axf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt -O | grep -P "\'admin\'" -A 1)
+		curl -k -u admin:$ADMIN_PASSWORD https://$LAN:9200
+		curl -k -u admin:$ADMIN_PASSWORD https://$LAN:9200/_cat/nodes?v
+		# Install Server
+		cd /tmp;bash wazuh-install.sh --wazuh-server wazuh-1
+		# Install Dashboard
+		cd /tmp;bash wazuh-install.sh --wazuh-dashboard dashboard
+		# Install Linux Agent
 		curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 		echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
-		apt update;WAZUH_MANAGER="10.0.0.2" apt -y install wazuh-agent wazuh-manager filebeat
-		systemctl daemon-reload;systemctl enable wazuh-agent;systemctl start wazuh-agent
-		systemctl daemon-reload;systemctl enable wazuh-manager;systemctl start wazuh-manager
-		curl -so /etc/filebeat/filebeat.yml https://packages.wazuh.com/4.7/tpl/wazuh/filebeat/filebeat.yml
-		filebeat keystore 
-		echo admin | filebeat keystore add username --stdin --force
-		echo admin | filebeat keystore add password --stdin --force
-		curl -so /etc/filebeat/wazuh-template.json https://raw.githubusercontent.com/wazuh/wazuh/v4.7.2/extensions/elasticsearch/7.x/wazuh-template.json
-		chmod go+r /etc/filebeat/wazuh-template.json
-		curl -s https://packages.wazuh.com/4.x/filebeat/wazuh-filebeat-0.3.tar.gz | tar -xvz -C /usr/share/filebeat/module
-		printf "$GREEN"  "[*] Success Installing Wazuh"
+		apt-get update;apt-get install -y wazuh-agent
+		printf "$GREEN"  "[*] Success Installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	else
-		printf "$GREEN"  "[*] Success Installed Wazuh"
+		printf "$GREEN"  "[*] Success Installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	fi
 
 	# Install OpenSearch
@@ -3278,7 +3282,6 @@ EOF
 	if [ ! -d "/usr/share/elasticsearch" ]; then
 		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/elasticsearch-amd64.deb
 		chmod +x /tmp/elasticsearch-amd64.deb;dpkg -i /tmp/elasticsearch-amd64.deb;rm -f /tmp/elasticsearch-amd64.deb
-	
 		printf "$GREEN"  "[*] Success Installing ElasticSeaerch"
 	else
 		printf "$GREEN"  "[*] Success Installed ElasticSeaerch"
@@ -3288,10 +3291,18 @@ EOF
 	if [ ! -d "/usr/share/kibana" ]; then
 		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/kibana-amd64.deb
 		chmod +x /tmp/kibana-amd64.deb;dpkg -i /tmp/kibana-amd64.deb;rm -f /tmp/kibana-amd64.deb
-	
 		printf "$GREEN"  "[*] Success Installing Kibana"
 	else
 		printf "$GREEN"  "[*] Success Installed Kibana"
+	fi
+
+	# Install Logstash
+	if [ ! -d "/usr/share/logstash" ]; then
+		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/logstash-amd64.deb
+		chmod +x /tmp/logstash-amd64.deb;dpkg -i /tmp/logstash-amd64.deb;rm -f /tmp/logstash-amd64.deb
+		printf "$GREEN"  "[*] Success Installing Logstash"
+	else
+		printf "$GREEN"  "[*] Success Installed Logstash"
 	fi
 
 
@@ -3365,7 +3376,7 @@ function security_audit()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# Install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs 
+	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
 
 	# Install Python3 pip
 	# preliminary_audit_assessment_pip=""
