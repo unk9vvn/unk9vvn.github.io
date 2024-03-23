@@ -365,6 +365,7 @@ go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /u
 go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
 go install github.com/tomnomnom/gron@latest;ln -fs ~/go/bin/gron /usr/bin/gron
+go install github.com/Hackmanit/TInjA@latest;ln -fs ~/go/bin/TInjA /usr/bin/tinja
 go install github.com/moopinger/smugglefuzz@latest;ln -fs ~/go/bin/smugglefuzz /usr/bin/smugglefuzz
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
 go install github.com/hideckies/fuzzagotchi@latest;ln -fs ~/go/bin/fuzzagotchi /usr/bin/fuzzagotchi
@@ -378,6 +379,7 @@ go install github.com/takshal/freq@latest;ln -fs ~/go/bin/freq /usr/bin/freq
 go install github.com/hakluke/hakrevdns@latest;ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
 go install github.com/hakluke/haktldextract@latest;ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
 go install github.com/Emoe/kxss@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
+go install github.com/trap-bytes/gourlex@latest;ln -fs ~/go/bin/gourlex /usr/bin/gourlex
 go install github.com/ThreatUnkown/jsubfinder@latest;ln -fs ~/go/bin/jsubfinder /usr/bin/jsubfinder
 go install github.com/musana/fuzzuli@latest;ln -fs ~/go/bin/fuzzuli /usr/bin/fuzzuli
 go install github.com/jaeles-project/jaeles@latest;ln -fs ~/go/bin/jaeles /usr/bin/jaeles
@@ -698,6 +700,38 @@ EOF
 		printf "$GREEN"  "[*] Success Installing JWT-Tool"
 	else
 		printf "$GREEN"  "[*] Success Installed JWT-Tool"
+	fi
+
+	# Install Tplmap
+	if [ ! -d "/usr/share/tplmap" ]; then
+		git clone https://github.com/epinna/tplmap /usr/share/tplmap
+		chmod 755 /usr/share/tplmap/*
+		cat > /usr/bin/tplmap << EOF
+#!/bin/bash
+cd /usr/share/tplmap;python3 tplmap.py "\$@"
+EOF
+		chmod +x /usr/bin/tplmap
+		pip3 install -r /usr/share/tplmap/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "Tplmap" "/usr/share/kali-menu/exec-in-shell 'tplmap -h'"
+		printf "$GREEN"  "[*] Success Installing Tplmap"
+	else
+		printf "$GREEN"  "[*] Success Installed Tplmap"
+	fi
+
+	# Install SSTImap
+	if [ ! -d "/usr/share/sstimap" ]; then
+		git clone https://github.com/vladko312/SSTImap /usr/share/sstimap
+		chmod 755 /usr/share/sstimap/*
+		cat > /usr/bin/sstimap << EOF
+#!/bin/bash
+cd /usr/share/sstimap;python3 sstimap.py "\$@"
+EOF
+		chmod +x /usr/bin/sstimap
+		pip3 install -r /usr/share/sstimap/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "SSTImap" "/usr/share/kali-menu/exec-in-shell 'sstimap -h'"
+		printf "$GREEN"  "[*] Success Installing SSTImap"
+	else
+		printf "$GREEN"  "[*] Success Installed SSTImap"
 	fi
 
 	# Install Poodle
@@ -3327,6 +3361,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Logstash"
 	fi
 
+	# Install Zabbix
+	if [ ! -d "/usr/share/zabbix" ]; then
+		wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb -O /tmp/zabbix-release.deb
+		chmod +x /tmp/zabbix-release.deb;dpkg -i /tmp/zabbix-release.deb
+		apt update;apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent
+		mysql -uroot -p 
+
+
+		printf "$GREEN"  "[*] Success Installing Zabbix"
+	else
+		printf "$GREEN"  "[*] Success Installed Zabbix"
+	fi
+
 
 	printf "$YELLOW"  "# -------------------------------------------Isolate-Blue-Team--------------------------------------- #"
 	# Install Repository Tools
@@ -3736,7 +3783,7 @@ function main()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Requirement Tools
-	apt install -qy build-essential apt-utils cmake libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev golang-go qtbase5-dev libqt5websockets5-dev python3-dev libboost-all-dev mingw-w64 nasm apt-transport-https g++ curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
+	apt install -qy build-essential apt-utils cmake libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev golang-go libqt5websockets5-dev python3-dev libboost-all-dev mingw-w64 nasm apt-transport-https g++ curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
