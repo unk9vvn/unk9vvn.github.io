@@ -3117,6 +3117,18 @@ EOF
 	# incident_response_golang=""
 	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
 
+	# Install Velociraptor
+	if [ ! -d "/usr/share/velociraptor" ]; then
+		mkdir -p /usr/share/velociraptor
+		wget https://github.com/Velocidex/velociraptor/releases/download/v0.7.1/velociraptor-v0.7.1-linux-amd64 -O /usr/share/velociraptor/velociraptor
+		chmod 755 /usr/share/velociraptor/*
+		ln -fs /usr/share/velociraptor/velociraptor /usr/bin/velociraptor
+		menu_entry "Incident-Response" "Digital-Forensic" "Velociraptor" "/usr/share/kali-menu/exec-in-shell 'velociraptor -h'"
+		printf "$GREEN"  "[*] Success Installing Velociraptor"
+	else
+		printf "$GREEN"  "[*] Success Installed Velociraptor"
+	fi
+
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 	# Install Repository Tools
@@ -3264,6 +3276,16 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SIEGMA"
 	else
 		printf "$GREEN"  "[*] Success Installed SIEGMA"
+	fi
+
+	# Install OSSEC
+	if [ ! -f "/etc/apt/sources.list.d/atomic.list" ]; then
+		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt  | sudo apt-key add -
+		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/atomic.list
+		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
+		printf "$GREEN"  "[*] Success Installing OSSEC"
+	else
+		printf "$GREEN"  "[*] Success Installed OSSEC"
 	fi
 
 	# Install Cilium
