@@ -2822,7 +2822,7 @@ EOF
 	# apt install -qy 
 
 	# Install Python3 pip
-	# blue_team_pip=""
+	blue_team_pip="conpot"
 	pip_installer "Blue-Team" "ICS-Security" "$blue_team_pip"
 
 	# Install Nodejs NPM
@@ -3163,6 +3163,15 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Velociraptor"
 	fi
 
+	# Install GRR
+	if [ ! -d "/usr/share/grr-server" ]; then
+		wget https://github.com/google/grr/releases/download/v3.4.7.1-release/grr-server_3.4.7-1_amd64.deb -O /tmp/grr-server.deb
+		chmod +x /tmp/grr-server.deb;dpkg -i /tmp/grr-server.deb;rm -f /tmp/grr-server.deb
+		printf "$GREEN"  "[*] Success Installing GRR"
+	else
+		printf "$GREEN"  "[*] Success Installed GRR"
+	fi
+
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 	# Install Repository Tools
@@ -3366,12 +3375,15 @@ EOF
 		wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb -O /tmp/zabbix-release.deb
 		chmod +x /tmp/zabbix-release.deb;dpkg -i /tmp/zabbix-release.deb
 		apt update;apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent
-		mysql -uroot -p 
-
-
-		printf "$GREEN"  "[*] Success Installing Zabbix"
+		mysql -u root -p -h localhost -e "create database zabbix character set utf8mb4 collate utf8mb4_bin;create user zabbix@localhost identified by 'password';grant all privileges on zabbix.* to zabbix@localhost;set global log_bin_trust_function_creators = 1;quit;"
+		zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix
+		mysql -u root -p -h localhost -e "set global log_bin_trust_function_creators = 0;quit;"
+		sed -i "s|DBPassword=password|DBPassword=unk12341234|g" /etc/zabbix/zabbix_server.conf
+		systemctl restart zabbix-server zabbix-agent apache2
+		systemctl enable zabbix-server zabbix-agent apache2
+		printf "$GREEN"  "[*] Success Installing Zabbix -> http://$LAN/zabbix "
 	else
-		printf "$GREEN"  "[*] Success Installed Zabbix"
+		printf "$GREEN"  "[*] Success Installed Zabbix -> http://$LAN/zabbix "
 	fi
 
 
@@ -3448,7 +3460,7 @@ function security_audit()
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
 
 	# Install Python3 pip
-	# preliminary_audit_assessment_pip=""
+	preliminary_audit_assessment_pip="google-generativeai"
 	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_pip"
 
 	# Install Nodejs NPM
@@ -3502,6 +3514,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installing vuls-scanner"
 	else
 		printf "$GREEN"  "[*] Success Installed vuls-scanner"
+	fi
+
+	# Install syzkaller
+	if [ ! -d "/usr/share/syzkaller" ]; then
+		git clone https://github.com/google/syzkaller /usr/share/syzkaller
+		chmod 755 /usr/share/syzkaller/*;cd /usr/share/syzkaller;make
+		ln -fs /usr/share/syzkaller/syzkaller/bin/linux_amd64/syz-fuzzer /usr/bin/syz-fuzzer
+		ln -fs /usr/share/syzkaller/syzkaller/bin/linux_amd64/syz-stress /usr/bin/syz-stress
+		ln -fs /usr/share/syzkaller/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
+		chmod +x /usr/bin/syz-fuzzer;chmod +x /usr/bin/syz-stress;chmod +x /usr/bin/syz-executor
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "syz-fuzzer" "/usr/share/kali-menu/exec-in-shell 'syz-fuzzer -h'"
+		printf "$GREEN"  "[*] Success Installing syzkaller"
+	else
+		printf "$GREEN"  "[*] Success Installed syzkaller"
 	fi
 
 	# Install Cmder
@@ -3782,8 +3808,14 @@ function main()
 	# Update & Upgrade OS
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
-	# Install Requirement Tools
-	apt install -qy build-essential apt-utils cmake libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev golang-go libqt5websockets5-dev python3-dev libboost-all-dev mingw-w64 nasm apt-transport-https g++ curl git jq locate alacarte python2 python3 python3-dev python3-pip python3-poetry nodejs npm rustup nim golang gnupg tor obfs4proxy docker.io docker-compose mono-complete mono-devel p7zip p7zip-full zipalign wine winetricks winbind net-tools ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird
+	# Install Init Tools
+	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils cmake gnupg python3 python3-dev python2 g++ nodejs npm rustup nim golang golang-go nasm qtchooser alacarte 
+
+	# Install Requirements
+	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry 
+
+	# Install Utilities Tools
+	p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird jq locate 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
