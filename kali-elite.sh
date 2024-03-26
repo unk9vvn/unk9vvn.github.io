@@ -3259,7 +3259,7 @@ function blue_team()
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd 
+	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus 
 
 	# Install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma"
