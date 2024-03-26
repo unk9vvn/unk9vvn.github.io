@@ -3311,6 +3311,18 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		printf "$GREEN"  "[*] Success Installed OpenSearch"
 	fi
 
+	# Install Falco
+	if [ ! -f "/etc/apt/sources.list.d/falcosecurity.list" ]; then
+		curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+		cat > /etc/apt/sources.list.d/falcosecurity.list  << EOF
+deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
+EOF
+		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y falco
+		printf "$GREEN"  "[*] Success Installing Falco"
+	else
+		printf "$GREEN"  "[*] Success Installed Falco"
+	fi
+
 	# Install SIEGMA
 	if [ ! -d "/usr/share/siegma" ]; then
 		git clone https://github.com/3CORESec/SIEGMA /usr/share/siegma
