@@ -3259,7 +3259,7 @@ function blue_team()
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort 
+	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd 
 
 	# Install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma"
@@ -3325,6 +3325,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SIEGMA"
 	else
 		printf "$GREEN"  "[*] Success Installed SIEGMA"
+	fi
+
+	# Install Cilium
+	if [ ! -d "/usr/local/bin/cilium" ]; then
+		CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+		CLI_ARCH=amd64
+		if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+		curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+		sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+		tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+		rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+		menu_entry "Detect" "Blue-Team" "Cilium" "/usr/share/kali-menu/exec-in-shell 'cilium -h'"
+		printf "$GREEN"  "[*] Success Installing Cilium"
+	else
+		printf "$GREEN"  "[*] Success Installed Cilium"
 	fi
 
 	# Install OSSEC
@@ -3398,7 +3413,7 @@ EOF
 	apt install -qy openvpn wireguard 
 
 	# Install Python3 pip
-	# isolate_pip=""
+	isolate_pip="casbin"
 	pip_installer "Isolate" "Blue-Team" "$isolate_pip"
 
 	# Install Nodejs NPM
@@ -3410,7 +3425,8 @@ EOF
 	gem_installer "Isolate" "Blue-Team" "$isolate_gem"
 
 	# Install Golang
-	# isolate_golang=""
+	isolate_golang="
+go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/casbin"
 	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
 
@@ -3466,7 +3482,7 @@ function security_audit()
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
 
 	# Install Python3 pip
-	preliminary_audit_assessment_pip="google-generativeai"
+	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit"
 	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_pip"
 
 	# Install Nodejs NPM
