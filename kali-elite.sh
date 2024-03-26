@@ -3872,7 +3872,7 @@ function main()
 	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry 
 
 	# Install Utilities Tools
-	p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
+	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
