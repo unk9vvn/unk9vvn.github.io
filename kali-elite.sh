@@ -388,9 +388,16 @@ go install github.com/tomnomnom/qsreplace@latest;ln -fs ~/go/bin/qsreplace /usr/
 go install github.com/lc/subjs@latest;ln -fs ~/go/bin/subjs /usr/bin/subjs
 go install github.com/dwisiswant0/unew@latest;ln -fs ~/go/bin/unew /usr/bin/unew
 go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/unfurl
+go install github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest;ln -fs ~/go/bin/shuffledns /usr/bin/shuffledns
+go install github.com/projectdiscovery/notify/cmd/notify@latest;ln -fs ~/go/bin/notify /usr/bin/notify
 go install github.com/edoardottt/pphack/cmd/pphack@latest;ln -fs ~/go/bin/pphack /usr/bin/pphack
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
-go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator"
+go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
+go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx /usr/bin/tlsx
+go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/ua /usr/bin/ua
+go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
+go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest;ln -fs ~/go/bin/naabu /usr/bin/naabu
+go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
 	# Install CloudBunny
@@ -3530,6 +3537,18 @@ EOF
 		printf "$GREEN"  "[*] Success Installed syzkaller"
 	fi
 
+	# Install Honggfuzz
+	if [ ! -d "/usr/share/honggfuzz" ]; then
+		git clone https://github.com/google/honggfuzz /usr/share/honggfuzz
+		chmod 755 /usr/share/honggfuzz/*;cd /usr/share/honggfuzz;make
+		ln -fs /usr/share/honggfuzz/honggfuzz /usr/bin/honggfuzz
+		chmod +x /usr/bin/honggfuzz
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Honggfuzz" "/usr/share/kali-menu/exec-in-shell 'honggfuzz -h'"
+		printf "$GREEN"  "[*] Success Installing Honggfuzz"
+	else
+		printf "$GREEN"  "[*] Success Installed Honggfuzz"
+	fi
+
 	# Install Cmder
 	if [ ! -d "/usr/share/cmder" ]; then
 		mkdir -p /usr/share/cmder
@@ -3809,13 +3828,13 @@ function main()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Init Tools
-	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils cmake gnupg python3 python3-dev python2 g++ nodejs npm rustup nim golang golang-go nasm qtchooser alacarte 
+	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils cmake gnupg python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate 
 
 	# Install Requirements
-	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry 
+	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry 
 
 	# Install Utilities Tools
-	p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird jq locate 
+	p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
 
 	# Install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
