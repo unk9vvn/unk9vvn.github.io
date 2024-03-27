@@ -2617,6 +2617,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installed SSH-Snake"
 	fi
 
+	# Install transfer.sh
+	if [ ! -d "/usr/share/transfer.sh" ]; then
+		mkdir -p /usr/share/transfer.sh
+		wget https://github.com/dutchcoders/transfer.sh/releases/download/v1.6.1/transfersh-v1.6.1-linux-amd64 -O /usr/share/transfer.sh/transfersh
+		chmod 755 /usr/share/transfer.sh/*
+		ln -fs /usr/share/transfer.sh/transfersh /usr/bin/transfersh
+		chmod +x /usr/bin/transfersh
+		menu_entry "Exfiltration" "Red-Team" "transfer.sh" "/usr/share/kali-menu/exec-in-shell 'transfersh -h'"
+		printf "$GREEN"  "[*] Success Installing transfer.sh"
+	else
+		printf "$GREEN"  "[*] Success Installed transfer.sh"
+	fi
+
 	# Install DNSlivery
 	if [ ! -d "/usr/share/dnslivery" ]; then
 		git clone https://github.com/no0be/DNSlivery /usr/share/dnslivery
