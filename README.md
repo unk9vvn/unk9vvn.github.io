@@ -20,7 +20,7 @@ Two Windows Server Elite and Kali Linux Elite virtual machine are designed to Pr
 ## Kali Elite Online Tools Installer
 ### Install Script
 ```
-sudo bash <(curl https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh)
+curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh | sudo bash
 ```
 ### Run Script
 ```
