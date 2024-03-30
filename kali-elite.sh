@@ -1194,7 +1194,7 @@ EOF
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy arduino gnuradio 
+	apt install -qy arduino gnuradio blue-hydra 
 
 	# Install Python3 pip
 	iot_pip="scapy uefi_firmware unblob"
@@ -1220,7 +1220,7 @@ function red_team()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader 
+	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
 
 	# Install Python3 pip
 	reconnaissance_pip="censys ggshield raccoon-scanner mailspoof h8mail twint thorndyke gitfive shodan postmaniac socialscan chiasmodon"
@@ -1294,7 +1294,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Resource-Development-Red-Team----------------------------------- #"
 	# Install Repository Tools
-	# apt install -qy 
+	apt install -qy sharpshooter 
 
 	# Install Python3 pip
 	# resource_development_pip=""
@@ -2865,7 +2865,7 @@ function digital_forensic()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
-	apt install -qy forensics-all ghidra foremost qpdf kafkacat gdb 
+	apt install -qy forensics-all ghidra foremost qpdf kafkacat gdb pspy 
 
 	# Install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
@@ -2886,7 +2886,7 @@ function digital_forensic()
 
 	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
 	# Install Repository Tools
-	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool 
+	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool pev readpe 
 
 	# Install Python3 pip
 	malware_analysis_pip="stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
@@ -3195,7 +3195,7 @@ EOF
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 	# Install Repository Tools
-	# apt install -qy 
+	apt install -qy opentaxii 
 
 	# Install Python3 pip
 	threat_intelligence_pip="threatingestor stix stix-validator stix2 stix2-matcher stix2-elevator attackcti iocextract threatbus apiosintDS sigmatools msticpy"
@@ -3882,7 +3882,7 @@ function main()
 	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate 
 
 	# Install Requirements
-	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry 
+	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry libpe-dev 
 
 	# Install Utilities Tools
 	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
