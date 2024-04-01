@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.6'
+version='3.7'
 
 
 
@@ -509,6 +509,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
 	fi
 
+	# Install CloakQuest3r
+	if [ ! -d "/usr/share/cloakquest3r" ]; then
+		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/cloakquest3r
+		chmod 755 /usr/share/cloakquest3r/*
+		cat > /usr/bin/cloakquest3r << EOF
+#!/bin/bash
+cd /usr/share/cloakquest3r;python3 cloakquest3r.py "\$@"
+EOF
+		chmod +x /usr/bin/cloakquest3r
+		pip3 install -r /usr/share/cloakquest3r/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "CloakQuest3r" "/usr/share/kali-menu/exec-in-shell 'cloakquest3r -h'"
+		printf "$GREEN"  "[*] Success Installing CloakQuest3r"
+	else
+		printf "$GREEN"  "[*] Success Installed CloakQuest3r"
+	fi
+
 	# Install Waymore
 	if [ ! -d "/usr/share/waymore" ]; then
 		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/waymore
@@ -644,6 +660,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Success Installed DyMerge"
+	fi
+
+	# Install WAF-Bypass-Tool
+	if [ ! -d "/usr/share/waf-bypass" ]; then
+		git clone https://github.com/nemesida-waf/waf-bypass /usr/share/waf-bypass
+		chmod 755 /usr/share/waf-bypass/*
+		cat > /usr/bin/waf-bypass << EOF
+#!/bin/bash
+cd /usr/share/waf-bypass;python2 dymerge.py "\$@"
+EOF
+		chmod +x /usr/bin/waf-bypass
+		pip3 install -r /usr/share/waf-bypass/requirements.txt
+		python3 /usr/share/waf-bypass/setup.py install
+		menu_entry "Web" "Penetration-Testing" "WAF-Bypass-Tool" "/usr/share/kali-menu/exec-in-shell 'waf-bypass -h'"
+		printf "$GREEN"  "[*] Success Installing WAF-Bypass-Tool"
+	else
+		printf "$GREEN"  "[*] Success Installed WAF-Bypass-Tool"
 	fi
 
 	# Install XSS-LOADER
@@ -1018,7 +1051,7 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 
 	# Install Hiddify-Next
 	if [ ! -d "/usr/share/hiddify" ]; then
-		wget https://github.com/hiddify/hiddify-next/releases/latest/download/hiddify-debian-x64.zip -O /tmp/hiddify-debian-x64.zip
+		wget https://github.com/hiddify/hiddify-next/releases/download/v0.14.20/hiddify-debian-x64.zip -O /tmp/hiddify-debian-x64.zip
 		unzip /tmp/hiddify-debian-x64.zip -d /tmp/hiddify-next;rm -f /tmp/hiddify-linux-x64.zip
 		chmod +x /tmp/hiddify-next/hiddify-debian-x64.deb;dpkg -i /tmp/hiddify-next/hiddify-debian-x64.deb;rm -rf /tmp/hiddify-next
 		chmod 755 /usr/share/hiddify/*
@@ -1191,6 +1224,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed HLR-Lookups"
 	fi
 
+	# Install geowifi
+	if [ ! -d "/usr/share/geowifi" ]; then
+		git clone https://github.com/GONZOsint/geowifi /usr/share/geowifi
+		chmod 755 /usr/share/geowifi/*
+		cat > /usr/bin/geowifi << EOF
+#!/bin/bash
+cd /usr/share/geowifi;python3 geowifi.py "\$@"
+EOF
+		chmod +x /usr/bin/geowifi
+		pip3 install -r /usr/share/geowifi/requirements.txt
+		menu_entry "Wireless" "Penetration-Testing" "geowifi" "/usr/share/kali-menu/exec-in-shell 'geowifi -h'"
+		printf "$GREEN"  "[*] Success Installing geowifi"
+	else
+		printf "$GREEN"  "[*] Success Installed geowifi"
+	fi
+
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
@@ -1289,6 +1338,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing ReconFTW"
 	else
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
+	fi
+
+	# Install CloakQuest3r
+	if [ ! -d "/usr/share/cloakquest3r" ]; then
+		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/cloakquest3r
+		chmod 755 /usr/share/cloakquest3r/*
+		cat > /usr/bin/cloakquest3r << EOF
+#!/bin/bash
+cd /usr/share/cloakquest3r;python3 cloakquest3r.py "\$@"
+EOF
+		chmod +x /usr/bin/cloakquest3r
+		pip3 install -r /usr/share/cloakquest3r/requirements.txt
+		menu_entry "Reconnaissance" "Red-Team" "CloakQuest3r" "/usr/share/kali-menu/exec-in-shell 'cloakquest3r -h'"
+		printf "$GREEN"  "[*] Success Installing CloakQuest3r"
+	else
+		printf "$GREEN"  "[*] Success Installed CloakQuest3r"
 	fi
 
 
@@ -1742,6 +1807,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installing MimiPenguin"
 	else
 		printf "$GREEN"  "[*] Success Installed MimiPenguin"
+	fi
+
+	# Install GodPotato
+	if [ ! -d "/usr/share/godpotato" ]; then
+		mkdir -p /usr/share/godpotato
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/GodPotato-NET4.exe
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/ GodPotato-NET35.exe
+		chmod 755 /usr/share/godpotato/*
+		cat > /usr/bin/godpotato << EOF
+#!/bin/bash
+cd /usr/share/godpotato;ls "\$@"
+EOF
+		chmod +x /usr/bin/godpotato
+		menu_entry "Privilege-Escalation" "Red-Team" "GodPotato" "/usr/share/kali-menu/exec-in-shell 'godpotato'"
+		printf "$GREEN"  "[*] Success Installing GodPotato"
+	else
+		printf "$GREEN"  "[*] Success Installed GodPotato"
 	fi
 
 	# Install spectre-meltdown-checker
