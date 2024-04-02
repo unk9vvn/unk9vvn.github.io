@@ -2056,21 +2056,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Pazuzu"
 	fi
 
-	# Install Killer
-	if [ ! -d "/usr/share/pazuzu" ]; then
-		git clone https://github.com/0xHossam/Killer /usr/share/pazuzu
-		chmod 755 /usr/share/pazuzu/*
-		cat > /usr/bin/pazuzu << EOF
-#!/bin/bash
-cd /usr/share/pazuzu;python2 pazuzu.py "\$@"
-EOF
-		chmod +x /usr/bin/pazuzu
-		menu_entry "Defense-Evasion" "Red-Team" "Killer" "/usr/share/kali-menu/exec-in-shell 'pazuzu -h'"
-		printf "$GREEN"  "[*] Success Installing Killer"
-	else
-		printf "$GREEN"  "[*] Success Installed Killer"
-	fi
-
 	# Install Invoke-Obfuscation
 	if [ ! -d "/usr/share/invoke-obfuscation" ]; then
 		git clone https://github.com/danielbohannon/Invoke-Obfuscation /usr/share/invoke-obfuscation
