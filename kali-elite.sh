@@ -13,7 +13,7 @@ CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
 USERS=$(users | awk '{print $1}')
 LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
-
+ 
 
 
 if [ "$(id -u)" != "0" ];then
@@ -333,11 +333,11 @@ function penetrating_testing()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3
 
 	# Install Python3 pip
-	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
-	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor"
+	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# Install Ruby GEM
@@ -346,6 +346,7 @@ function penetrating_testing()
 
 	# Install Golang
 	web_golang="
+go install github.com/Macmod/godap/v2@latest;ln -fs ~/go/bin/godap /usr/bin/godap
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bin/httprobe
 go install github.com/tomnomnom/meg@latest;ln -fs ~/go/bin/meg /usr/bin/meg
@@ -509,6 +510,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
 	fi
 
+	# Install Gel4y
+	if [ ! -d "/usr/share/gel4y" ]; then
+		git clone https://github.com/22XploiterCrew-Team/Gel4y-Mini-Shell-Backdoor /usr/share/gel4y
+		chmod 755 /usr/share/gel4y/*
+		cat > /usr/bin/gel4y << EOF
+#!/bin/bash
+cd /usr/share/gel4y;php gel4y.php "\$@"
+EOF
+		chmod +x /usr/bin/gel4y
+		menu_entry "Web" "Penetration-Testing" "Gel4y" "/usr/share/kali-menu/exec-in-shell 'gel4y -h'"
+		printf "$GREEN"  "[*] Success Installing Gel4y"
+	else
+		printf "$GREEN"  "[*] Success Installed Gel4y"
+	fi
+
 	# Install CloakQuest3r
 	if [ ! -d "/usr/share/cloakquest3r" ]; then
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/cloakquest3r
@@ -646,7 +662,20 @@ EOF
 	else
 		printf "$GREEN"  "[*] Success Installed PEMCrack"
 	fi
- 
+
+	# Install SessionProbe
+	if [ ! -d "/usr/share/sessionprobe" ]; then
+		mkdir -p /usr/share/sessionprobe
+		wget https://github.com/dub-flow/sessionprobe/releases/latest/download/sessionprobe-linux-amd64 -O /usr/share/sessionprobe/sessionprobe
+		chmod 755 /usr/share/sessionprobe/*
+		ln -fs /usr/share/sessionprobe/sessionprobe /usr/bin/sessionprobe
+		chmod +x /usr/bin/sessionprobe
+		menu_entry "Web" "Penetration-Testing" "SessionProbe" "/usr/share/kali-menu/exec-in-shell 'sessionprobe -h'"
+		printf "$GREEN"  "[*] Success Installing SessionProbe"
+	else
+		printf "$GREEN"  "[*] Success Installed SessionProbe"
+	fi
+
 	# Install DyMerge
 	if [ ! -d "/usr/share/dymerge" ]; then
 		git clone https://github.com/k4m4/dymerge /usr/share/dymerge
@@ -1014,6 +1043,15 @@ EOF
 		printf "$GREEN"  "[*] Success Installed CloudFail"
 	fi
 
+	# Install k8sgpt
+	if [ ! -d "/usr/share/k8sgpt" ]; then
+		wget https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_amd64.deb -O /tmp/k8sgpt_amd64.deb
+		chmod +x /tmp/k8sgpt_amd64.deb;dpkg -i /tmp/k8sgpt_amd64.deb;rm -f /tmp/k8sgpt_amd64.deb
+		printf "$GREEN"  "[*] Success Installing k8sgpt"
+	else
+		printf "$GREEN"  "[*] Success Installed k8sgpt"
+	fi
+
 	# Install CloudQuery
 	if [ ! -d "/usr/share/cloudquery" ]; then
 		mkdir -p /usr/share/cloudquery
@@ -1030,10 +1068,10 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper 
+	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above 
 
 	# Install Python3 pip
-	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris"
+	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
 	pip_installer "Network" "Penetration-Testing" "$network_pip"
 
 	# Install Nodejs NPM
@@ -2018,6 +2056,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed Pazuzu"
 	fi
 
+	# Install Killer
+	if [ ! -d "/usr/share/pazuzu" ]; then
+		git clone https://github.com/0xHossam/Killer /usr/share/pazuzu
+		chmod 755 /usr/share/pazuzu/*
+		cat > /usr/bin/pazuzu << EOF
+#!/bin/bash
+cd /usr/share/pazuzu;python2 pazuzu.py "\$@"
+EOF
+		chmod +x /usr/bin/pazuzu
+		menu_entry "Defense-Evasion" "Red-Team" "Killer" "/usr/share/kali-menu/exec-in-shell 'pazuzu -h'"
+		printf "$GREEN"  "[*] Success Installing Killer"
+	else
+		printf "$GREEN"  "[*] Success Installed Killer"
+	fi
+
 	# Install Invoke-Obfuscation
 	if [ ! -d "/usr/share/invoke-obfuscation" ]; then
 		git clone https://github.com/danielbohannon/Invoke-Obfuscation /usr/share/invoke-obfuscation
@@ -2359,6 +2412,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing GodGenesis"
 	else
 		printf "$GREEN"  "[*] Success Installed GodGenesis"
+	fi
+
+	# Install PhoneSploit
+	if [ ! -d "/usr/share/phonesploit" ]; then
+		git clone https://github.com/AzeemIdrisi/PhoneSploit-Pro /usr/share/phonesploit
+		chmod 755 /usr/share/phonesploit/*
+		cat > /usr/bin/phonesploit << EOF
+#!/bin/bash
+cd /usr/share/phonesploit;python3 phonesploitpro.py "\$@"
+EOF
+		chmod +x /usr/bin/phonesploit
+		pip3 install -r /usr/share/phonesploit/requirements.txt
+		menu_entry "Command-and-Control" "Red-Team" "PhoneSploit" "/usr/share/kali-menu/exec-in-shell 'phonesploit'"
+		printf "$GREEN"  "[*] Success Installing PhoneSploit"
+	else
+		printf "$GREEN"  "[*] Success Installed PhoneSploit"
 	fi
 
 	# Install MeliziaC2
@@ -3753,6 +3822,20 @@ EOF
 	# Install Golang
 	# establishing_audit_objectives_golang=""
 	go_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_golang"
+
+	# Install Selefra
+	if [ ! -d "/usr/share/selefra" ]; then
+		mkdir -p /usr/share/selefra
+		wget https://github.com/selefra/selefra/releases/latest/download/selefra_linux_amd64.tar.gz -O /tmp/selefra_linux_amd64.tar.gz
+		tar -xvf /tmp/selefra_linux_amd64.tar.gz -C /usr/share/selefra;rm -f /tmp/selefra_linux_amd64.tar.gz
+		chmod 755 /usr/share/selefra/*
+		ln -fs /usr/share/selefra/selefra /usr/bin/selefra
+		chmod +x /usr/bin/selefra
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Selefra" "/usr/share/kali-menu/exec-in-shell 'selefra -h'"
+		printf "$GREEN"  "[*] Success Installing Selefra"
+	else
+		printf "$GREEN"  "[*] Success Installed Selefra"
+	fi
 
 
 	printf "$YELLOW"  "# -------------------------------Performing-the-Review-Security-Audit-------------------------------- #"
