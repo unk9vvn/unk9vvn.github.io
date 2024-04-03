@@ -1131,7 +1131,7 @@ EOF
 	fi
 
 	# Install PRET
-	if [ ! -d "/usr/share/PRET" ]; then
+	if [ ! -d "/usr/share/pret" ]; then
 		git clone https://github.com/RUB-NDS/PRET /usr/share/pret
 		chmod 755 /usr/share/pret/*
 		cat > /usr/bin/pret << EOF
@@ -2696,10 +2696,10 @@ EOF
 	fi
 
 	# Install NoIP
-	if [ ! -d "/usr/share/noip" ]; then
+	if [ ! -d "/usr/share/noip-*" ]; then
 		wget wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
-		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
-		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
+		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share;rm -f /tmp/noip-duc-linux.tar.gz
+		chmod 755 /usr/share/noip-*/*;cd /usr/share/noip-*;make;make install
 		menu_entry "Exfiltration" "Red-Team" "NoIP" "/usr/share/kali-menu/exec-in-shell 'noip -h'"
 		printf "$GREEN"  "[*] Success Installing NoIP"
 	else
