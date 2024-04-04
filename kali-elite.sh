@@ -3379,6 +3379,15 @@ EOF
 		printf "$GREEN"  "[*] Success Installed TRAM"
 	fi
 
+	# Install RITA
+	if [ ! -d "/var/opt/rita" ]; then
+		wget https://github.com/activecm/rita/releases/latest/download/install.sh -O /tmp/install.sh
+		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
+		printf "$GREEN"  "[*] Success Installing RITA"
+	else
+		printf "$GREEN"  "[*] Success Installed RITA"
+	fi
+
 	exit
 }
 
