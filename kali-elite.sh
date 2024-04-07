@@ -889,11 +889,10 @@ EOF
 	fi
 
 	# Install NoIP
-	if [ ! -d "/usr/share/noip" ]; then
-		mkdir -p /usr/share/noip
+	if [ ! -d "/usr/share/noip-*" ]; then
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
-		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
-		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
+		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share;rm -f /tmp/noip-duc-linux.tar.gz
+		chmod 755 /usr/share/noip-*/*;cd /usr/share/noip-*;make;make install
 		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell 'noip -h'"
 		printf "$GREEN"  "[*] Success Installing NoIP"
 	else
