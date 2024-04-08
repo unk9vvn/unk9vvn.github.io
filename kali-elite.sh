@@ -1,5 +1,5 @@
 #!/bin/bash
-version='3.8'
+ver='3.8'
 
 
 
@@ -58,7 +58,7 @@ function logo()
     printf "$RED"     "                            --/osssssssssssso/--                    "
     printf "$BLUE"    "                                  Unk9vvN                           "
     printf "$YELLOW"  "                            https://unk9vvn.com                     "
-    printf "$CYAN"    "                              Kali Elite "$version"                 "
+    printf "$CYAN"    "                              Kali Elite "$ver"                     "
     printf "\n\n"
 }
 
@@ -889,10 +889,11 @@ EOF
 	fi
 
 	# Install NoIP
-	if [ ! -d "/usr/share/noip-*" ]; then
+	if [ ! -d "/usr/share/noip" ]; then
+		mkdir -p /usr/share/noip
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
-		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share;rm -f /tmp/noip-duc-linux.tar.gz
-		chmod 755 /usr/share/noip-*/*;cd /usr/share/noip-*;make;make install
+		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
+		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
 		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell 'noip -h'"
 		printf "$GREEN"  "[*] Success Installing NoIP"
 	else
@@ -1850,7 +1851,7 @@ EOF
 	if [ ! -d "/usr/share/godpotato" ]; then
 		mkdir -p /usr/share/godpotato
 		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/GodPotato-NET4.exe
-		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET35.exe -O /usr/share/godpotato/ GodPotato-NET35.exe
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/ GodPotato-NET35.exe
 		chmod 755 /usr/share/godpotato/*
 		cat > /usr/bin/godpotato << EOF
 #!/bin/bash
