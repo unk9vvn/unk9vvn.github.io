@@ -23,7 +23,7 @@ if [ "$(id -u)" != "0" ];then
 fi
 
 
-function logo()
+logo ()
 {
     reset;clear
     printf "$GREEN"   "                            --/osssssssssssso/--                    "
@@ -63,7 +63,7 @@ function logo()
 }
 
 
-function menu()
+menu ()
 {
 	# Initialize Main Menu
 	mkdir -p /home/$USERS/.config/menus;mkdir -p /home/$USERS/.config/menus/applications-merged
@@ -224,7 +224,7 @@ EOF
 }
 
 
-function menu_entry()
+menu_entry ()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -264,7 +264,7 @@ EOF
 }
 
 
-function pip_installer()
+pip_installer ()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -277,7 +277,7 @@ function pip_installer()
 }
 
 
-function npm_installer()
+npm_installer ()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -290,7 +290,7 @@ function npm_installer()
 }
 
 
-function gem_installer()
+gem_installer ()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -303,7 +303,7 @@ function gem_installer()
 }
 
 
-function go_installer()
+go_installer ()
 {
 	local sub_category="$1"
 	local category="$2"
@@ -326,7 +326,7 @@ function go_installer()
 }
 
 
-function penetrating_testing()
+penetrating_testing ()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
@@ -1303,7 +1303,7 @@ EOF
 }
 
 
-function red_team()
+red_team ()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
 	# Install Repository Tools
@@ -2861,7 +2861,7 @@ EOF
 }
 
 
-function ics_security()
+ics_security ()
 {
 	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
 	# Install Repository Tools
@@ -2997,7 +2997,7 @@ EOF
 }
 
 
-function digital_forensic()
+digital_forensic ()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
@@ -3392,7 +3392,7 @@ EOF
 }
 
 
-function blue_team()
+blue_team ()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
@@ -3645,7 +3645,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 }
 
 
-function security_audit()
+security_audit ()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# Install Repository Tools
@@ -4027,7 +4027,7 @@ EOF
 }
 
 
-function main()
+main ()
 {
 	# APT Fixed
 	if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
