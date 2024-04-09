@@ -1851,7 +1851,7 @@ EOF
 	if [ ! -d "/usr/share/godpotato" ]; then
 		mkdir -p /usr/share/godpotato
 		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/GodPotato-NET4.exe
-		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/godpotato/ GodPotato-NET35.exe
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET35.exe -O /usr/share/godpotato/GodPotato-NET35.exe
 		chmod 755 /usr/share/godpotato/*
 		cat > /usr/bin/godpotato << EOF
 #!/bin/bash
