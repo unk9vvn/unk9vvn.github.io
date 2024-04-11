@@ -956,7 +956,7 @@ EOF
 	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
 
 	# Install Python3 pip
-	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mvt kiwi androset quark-engine"
+	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mvt kiwi androset quark-engine gplaycli"
 	pip_installer "Mobile" "Penetration-Testing" "$mobile_pip"
 
 	# Install Nodejs NPM
