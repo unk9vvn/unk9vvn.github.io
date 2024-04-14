@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='3.8'
+ver='3.9'
 
 
 
@@ -1883,7 +1883,7 @@ EOF
 
 	printf "$YELLOW"  "# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode 
+	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode upx-ucl 
 
 	# Install Python3 pip
 	defense_evasion_pip="auto-py-to-exe certipy sysplant pinject"
@@ -2753,10 +2753,26 @@ EOF
 		printf "$GREEN"  "[*] Success Installed SSH-Snake"
 	fi
 
+	# Install ReverseSSH
+	if [ ! -d "/usr/share/reverse-ssh" ]; then
+	mkdir -p /usr/share/reverse-ssh
+		wget https://github.com/Fahrj/reverse-ssh/releases/latest/download/reverse-sshx64 -O /usr/share/reverse-ssh/reverse-sshx64
+		chmod 755 /usr/share/reverse-ssh/*
+		cat > /usr/bin/reversessh << EOF
+#!/bin/bash
+cd /usr/share/reverse-ssh;./reverse-sshx64 "\$@"
+EOF
+		chmod +x /usr/bin/reversessh
+		menu_entry "Exfiltration" "Red-Team" "ReverseSSH" "/usr/share/kali-menu/exec-in-shell 'reversessh -h'"
+		printf "$GREEN"  "[*] Success Installing ReverseSSH"
+	else
+		printf "$GREEN"  "[*] Success Installed ReverseSSH"
+	fi
+
 	# Install transfer.sh
 	if [ ! -d "/usr/share/transfer.sh" ]; then
 		mkdir -p /usr/share/transfer.sh
-		wget https://github.com/dutchcoders/transfer.sh/releases/download/v1.6.1/transfersh-v1.6.1-linux-amd64 -O /usr/share/transfer.sh/transfersh
+		wget https://github.com/dutchcoders/transfer.sh/releases/latest/download/transfersh-v1.6.1-linux-amd64 -O /usr/share/transfer.sh/transfersh
 		chmod 755 /usr/share/transfer.sh/*
 		ln -fs /usr/share/transfer.sh/transfersh /usr/bin/transfersh
 		chmod +x /usr/bin/transfersh
@@ -2800,7 +2816,7 @@ EOF
 	# Install WSTunnel
 	if [ ! -d "/usr/share/wstunnel" ]; then
 		mkdir -p /usr/share/wstunnel
-		wget https://github.com/erebe/wstunnel/releases/download/v9.2.3/wstunnel_9.2.3_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
+		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.5_linux_amd64.tar.gz -O /tmp/wstunnel_amd64.tar.gz
 		tar -xvf /tmp/wstunnel_amd64.tar.gz -C /usr/share/wstunnel;rm -f /tmp/wstunnel_amd64.tar.gz
 		chmod 755 /usr/share/wstunnel/*
 		ln -fs /usr/share/wstunnel/wstunnel /usr/bin/wstunnel
@@ -2813,7 +2829,7 @@ EOF
 
 	# Install IPFS
 	if [ ! -d "/usr/share/kubo" ]; then
-		wget https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
+		wget https://dist.ipfs.tech/kubo/v0.28.0-rc1/kubo_v0.28.0-rc1_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
 		tar -xvf /tmp/ipfs_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/ipfs_linux-amd64.tar.gz
 		chmod 755 /usr/share/kubo/*
 		cd /usr/share/kubo;./install.sh
@@ -2825,7 +2841,7 @@ EOF
 
 	# Install FRP
 	if [ ! -d "/usr/share/frp_0.55.1_linux_amd64" ]; then
-		wget https://github.com/fatedier/frp/releases/download/v0.55.1/frp_0.55.1_linux_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
+		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz  -O /tmp/frp_linux-amd64.tar.gz
 		tar -xvf /tmp/frp_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/frp_linux-amd64.tar.gz
 		chmod 755 /usr/share/frp_0.55.1_linux_amd64/*
 		ln -fs /usr/share/frp_0.55.1_linux_amd64/frps /usr/bin/frps
