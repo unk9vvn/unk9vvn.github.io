@@ -2840,11 +2840,11 @@ EOF
 	fi
 
 	# Install FRP
-	if [ ! -d "/usr/share/frp_*_linux_amd64" ]; then
-		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz  -O /tmp/frp_linux-amd64.tar.gz
+	if [ ! -d "/usr/share/frp_*" ]; then
+		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
 		tar -xvf /tmp/frp_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/frp_linux-amd64.tar.gz
-		chmod 755 /usr/share/frp_*_linux_amd64/*
-		ln -fs /usr/share/frp_*_linux_amd64/frps /usr/bin/frps
+		chmod 755 /usr/share/frp_*/*
+		ln -fs /usr/share/frp_*/frps /usr/bin/frps
 		chmod +x /usr/bin/frps
 		menu_entry "Exfiltration" "Red-Team" "FRP" "/usr/share/kali-menu/exec-in-shell 'frp -h'"
 		printf "$GREEN"  "[*] Success Installing FRP"
