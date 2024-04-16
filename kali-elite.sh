@@ -337,7 +337,7 @@ penetrating_testing ()
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
-	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze"
+	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze hardhat"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# Install Ruby GEM
@@ -398,6 +398,7 @@ go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx
 go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/ua /usr/bin/ua
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
 go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest;ln -fs ~/go/bin/naabu /usr/bin/naabu
+go install github.com/sensepost/gowitness@latest;ln -fs ~/go/bin/gowitness /usr/bin/gowitness
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
@@ -2856,11 +2857,11 @@ EOF
 	fi
 
 	# Install FRP
-	if [ ! -d "/usr/share/frp_*" ]; then
+	if [ ! -d "/usr/share/frp" ]; then
 		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz -O /tmp/frp_linux-amd64.tar.gz
-		tar -xvf /tmp/frp_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/frp_linux-amd64.tar.gz
-		chmod 755 /usr/share/frp_*/*
-		ln -fs /usr/share/frp_*/frps /usr/bin/frps
+		tar -xzf /tmp/frp_linux-amd64.tar.gz -C /usr/share/frp;rm -f /tmp/frp_linux-amd64.tar.gz
+		chmod 755 /usr/share/frp/*
+		ln -fs /usr/share/frp/frps /usr/bin/frps
 		chmod +x /usr/bin/frps
 		menu_entry "Exfiltration" "Red-Team" "FRP" "/usr/share/kali-menu/exec-in-shell 'frp -h'"
 		printf "$GREEN"  "[*] Success Installing FRP"
