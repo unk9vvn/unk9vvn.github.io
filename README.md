@@ -6,8 +6,8 @@
 <br>
 </div>
 
-# Elite Virtual Machines Distribution
-Two Windows Server Elite and Kali Linux Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
+# Elite Tools Online Installer
+Two Kali Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
 
 ## Cheat Sheets & Check Lists & Tools
 * Penetration Testing
@@ -17,7 +17,7 @@ Two Windows Server Elite and Kali Linux Elite tools online installer are designe
 * Blue Team
 * Security Audit
 
-## Kali Elite Online Tools Installer
+## Kali Elite
 
 ### Install Script
 ```
@@ -27,3 +27,12 @@ curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-el
 ```
 sudo kalielite
 ```
+## Windows Elite
+
+### Install Script
+```
+...
+```
+### Run Script
+```
+...
