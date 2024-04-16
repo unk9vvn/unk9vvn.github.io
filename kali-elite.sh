@@ -724,6 +724,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed XSS-LOADER"
 	fi
 
+	# Install CMSeek
+	if [ ! -d "/usr/share/cmseek" ]; then
+		git clone https://github.com/Tuhinshubhra/CMSeeK /usr/share/cmseek
+		chmod 755 /usr/share/cmseek/*
+		cat > /usr/bin/cmseek << EOF
+#!/bin/bash
+cd /usr/share/cmseek;python3 cmseek.py "\$@"
+EOF
+		chmod +x /usr/bin/cmseek
+		pip3 install -r /usr/share/cmseek/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "CMSeek" "/usr/share/kali-menu/exec-in-shell 'cmseek -h'"
+		printf "$GREEN"  "[*] Success Installing CMSeek"
+	else
+		printf "$GREEN"  "[*] Success Installed CMSeek"
+	fi
+
 	# Install XSStrike
 	if [ ! -d "/usr/share/xsstrike" ]; then
 		git clone https://github.com/s0md3v/XSStrike /usr/share/xsstrike
