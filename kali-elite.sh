@@ -511,6 +511,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
 	fi
 
+	# Install graphw00f
+	if [ ! -d "/usr/share/graphw00f" ]; then
+		git clone https://github.com/dolevf/graphw00f /usr/share/graphw00f
+		chmod 755 /usr/share/graphw00f/*
+		cat > /usr/bin/graphw00f << EOF
+#!/bin/bash
+cd /usr/share/graphw00f;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/graphw00f
+		menu_entry "Web" "Penetration-Testing" "graphw00f" "/usr/share/kali-menu/exec-in-shell 'graphw00f -h'"
+		printf "$GREEN"  "[*] Success Installing graphw00f"
+	else
+		printf "$GREEN"  "[*] Success Installed graphw00f"
+	fi
+
 	# Install Gel4y
 	if [ ! -d "/usr/share/gel4y" ]; then
 		git clone https://github.com/22XploiterCrew-Team/Gel4y-Mini-Shell-Backdoor /usr/share/gel4y
