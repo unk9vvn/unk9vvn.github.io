@@ -3049,7 +3049,7 @@ digital_forensic ()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
-	apt install -qy forensics-all ghidra foremost qpdf kafkacat gdb pspy 
+	apt install -qy ghidra foremost qpdf kafkacat gdb pspy 
 
 	# Install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
@@ -3465,7 +3465,7 @@ blue_team ()
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy syslog-ng-core syslog-ng-scl bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus 
+	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus 
 
 	# Install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma"
@@ -3488,7 +3488,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	if [ ! -f "/etc/apt/sources.list.d/wazuh.list" ]; then
 		# Install Indexer
 		cd /tmp;curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh;curl -sO https://packages.wazuh.com/4.7/config.yml
-		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|<wazuh-manager-ip>|$LAN|g" /tmp/config.yml;sed -i "s|<dashboard-node-ip>|$LAN|g" /tmp/config.yml
+		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|wazuh-manager-ip|$LAN|g" /tmp/config.yml;sed -i "s|dashboard-node-ip|$LAN|g" /tmp/config.yml
 		bash wazuh-install.sh --generate-config-files
 		curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
 		bash wazuh-install.sh --wazuh-indexer node-1;bash wazuh-install.sh --start-cluster
@@ -3631,7 +3631,7 @@ EOF
 	apt install -qy openvpn wireguard 
 
 	# Install Python3 pip
-	isolate_pip="casbin"
+	# isolate_pip=""
 	pip_installer "Isolate" "Blue-Team" "$isolate_pip"
 
 	# Install Nodejs NPM
@@ -4118,7 +4118,7 @@ EOF
 		chmod +x /usr/bin/kalielite
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
 [Desktop Entry]
-Name=Kali-Elite
+Name=kali-elite
 Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
 Comment=
 Terminal=true
@@ -4149,7 +4149,7 @@ EOF
 		chmod +x /usr/bin/kalielite
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/kalielite.desktop" << EOF
 [Desktop Entry]
-Name=Kali-Elite
+Name=kali-elite
 Exec=/usr/share/kali-menu/exec-in-shell "sudo kalielite"
 Comment=
 Terminal=true
