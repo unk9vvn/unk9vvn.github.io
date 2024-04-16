@@ -906,7 +906,7 @@ EOF
 	fi
 
 	# Install NoIP
-	if [ ! -d "/usr/share/noip" ]; then
+	if [ ! -f "/usr/local/bin/noip2" ]; then
 		mkdir -p /usr/share/noip
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
 		tar -xzf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
