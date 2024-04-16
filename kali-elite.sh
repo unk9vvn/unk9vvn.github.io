@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.0'
+ver='4.1'
 
 
 
@@ -909,7 +909,7 @@ EOF
 	if [ ! -d "/usr/share/noip" ]; then
 		mkdir -p /usr/share/noip
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/noip-duc-linux.tar.gz
-		tar -xvf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
+		tar -xzf /tmp/noip-duc-linux.tar.gz -C /usr/share/noip;rm -f /tmp/noip-duc-linux.tar.gz
 		chmod 755 /usr/share/noip/*;cd /usr/share/noip;make;make install
 		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell 'noip -h'"
 		printf "$GREEN"  "[*] Success Installing NoIP"
