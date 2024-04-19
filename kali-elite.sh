@@ -682,6 +682,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed DTD Finder"
 	fi
 
+	# Install docem
+	if [ ! -d "/usr/share/docem" ]; then
+		git clone https://github.com/whitel1st/docem -O /usr/share/docem
+		chmod 755 /usr/share/docem/*
+		cat > /usr/bin/docem << EOF
+#!/bin/bash
+cd /usr/share/docem;python3 docem.py "\$@"
+EOF
+		chmod +x /usr/bin/docem
+		pip3 install -r /usr/share/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "docem" "/usr/share/kali-menu/exec-in-shell 'docem -h'"
+		printf "$GREEN"  "[*] Success Installing docem"
+	else
+		printf "$GREEN"  "[*] Success Installed docem"
+	fi
+
 	# Install PEMCrack
 	if [ ! -d "/usr/share/pemcrack" ]; then
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/pemcrack
