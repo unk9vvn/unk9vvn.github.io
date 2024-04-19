@@ -666,6 +666,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed RsaCtfTool"
 	fi
 
+	# Install DTD Finder
+	if [ ! -d "/usr/share/dtd-finder" ]; then
+		mkdir -p /usr/share/dtd-finder
+		wget https://github.com/GoSecure/dtd-finder/releases/latest/download/dtd-finder-1.1-all.jar -O /usr/share/dtd-finder/dtd-finder-all.jar
+		chmod 755 /usr/share/dtd-finder/*
+		cat > /usr/bin/dtdfinder << EOF
+#!/bin/bash
+cd /usr/share/dtd-finder;java -jar dtd-finder-all.jar "\$@"
+EOF
+		chmod +x /usr/bin/dtdfinder
+		menu_entry "Web" "Penetration-Testing" "DTD Finder" "/usr/share/kali-menu/exec-in-shell 'dtdfinder -h'"
+		printf "$GREEN"  "[*] Success Installing DTD Finder"
+	else
+		printf "$GREEN"  "[*] Success Installed DTD Finder"
+	fi
+
 	# Install PEMCrack
 	if [ ! -d "/usr/share/pemcrack" ]; then
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/pemcrack
