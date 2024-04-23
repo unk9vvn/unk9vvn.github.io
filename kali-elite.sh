@@ -698,6 +698,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed docem"
 	fi
 
+	# Install Smuggle
+	if [ ! -d "/usr/share/smuggle" ]; then
+		git clone https://github.com/anshumanpattnaik/http-request-smuggling -O /usr/share/http-request-smuggling
+		chmod 755 /usr/share/http-request-smuggling/*
+		cat > /usr/bin/smuggle << EOF
+#!/bin/bash
+cd /usr/share/http-request-smuggling;python3 smuggle.py "\$@"
+EOF
+		chmod +x /usr/bin/smuggle
+		pip3 install -r /usr/share/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "Smuggle" "/usr/share/kali-menu/exec-in-shell 'smuggle -h'"
+		printf "$GREEN"  "[*] Success Installing Smuggle"
+	else
+		printf "$GREEN"  "[*] Success Installed Smuggle"
+	fi
+
 	# Install PEMCrack
 	if [ ! -d "/usr/share/pemcrack" ]; then
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/pemcrack
@@ -3390,7 +3406,7 @@ EOF
 	# Install Velociraptor
 	if [ ! -d "/usr/share/velociraptor" ]; then
 		mkdir -p /usr/share/velociraptor
-		wget https://github.com/Velocidex/velociraptor/releases/download/v0.7.1/velociraptor-v0.7.1-linux-amd64 -O /usr/share/velociraptor/velociraptor
+		wget https://github.com/Velocidex/velociraptor/releases/latest/download/velociraptor-v0.7.1-2-linux-amd64 -O /usr/share/velociraptor/velociraptor
 		chmod 755 /usr/share/velociraptor/*
 		ln -fs /usr/share/velociraptor/velociraptor /usr/bin/velociraptor
 		menu_entry "Incident-Response" "Digital-Forensic" "Velociraptor" "/usr/share/kali-menu/exec-in-shell 'velociraptor -h'"
@@ -3431,7 +3447,7 @@ EOF
 
 	# Install OpenCTI
 	if [ ! -d "/usr/share/opencti" ]; then
-		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.0.6/opencti-release-6.0.6.tar.gz -O /tmp/opencti.tar.gz
+		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.0.10/opencti-release-6.0.10.tar.gz -O /tmp/opencti.tar.gz
 		tar -xvf /tmp/opencti.tar.gz -C /usr/share/opencti;rm -f /tmp/opencti.tar.gz
 		chmod 755 /usr/share/opencti/*
 		cp /usr/share/opencti/config/default.json /usr/share/opencti/config/production.json
