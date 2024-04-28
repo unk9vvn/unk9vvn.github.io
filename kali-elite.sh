@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.1'
+ver='4.2'
 
 
 
@@ -330,7 +330,7 @@ penetrating_testing ()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3
+	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan
 
 	# Install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia"
@@ -1121,6 +1121,38 @@ EOF
 		printf "$GREEN"  "[*] Success Installing CloudFail"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudFail"
+	fi
+
+	# Install CCAT
+	if [ ! -d "/usr/share/ccat" ]; then
+		git clone https://github.com/RhinoSecurityLabs/ccat /usr/share/ccat
+		chmod 755 /usr/share/ccat/*
+		cat > /usr/bin/ccat << EOF
+#!/bin/bash
+cd /usr/share/ccat;python3 ccat.py "\$@"
+EOF
+		chmod +x /usr/bin/ccat
+		cd /usr/share/ccat;python3 setup.py install
+		menu_entry "Cloud" "Penetration-Testing" "CCAT" "/usr/share/kali-menu/exec-in-shell 'ccat -h'"
+		printf "$GREEN"  "[*] Success Installing CCAT"
+	else
+		printf "$GREEN"  "[*] Success Installed CCAT"
+	fi
+
+	# Install CloudHunter
+	if [ ! -d "/usr/share/cloudhunter" ]; then
+		git clone https://github.com/belane/CloudHunter /usr/share/cloudhunter
+		chmod 755 /usr/share/cloudhunter/*
+		cat > /usr/bin/cloudhunter << EOF
+#!/bin/bash
+cd /usr/share/cloudhunter;python3 cloudhunter.py "\$@"
+EOF
+		chmod +x /usr/bin/cloudhunter
+		pip3 install -r /usr/share/cloudhunter/requirements.txt
+		menu_entry "Cloud" "Penetration-Testing" "CloudHunter" "/usr/share/kali-menu/exec-in-shell 'cloudhunter -h'"
+		printf "$GREEN"  "[*] Success Installing CloudHunter"
+	else
+		printf "$GREEN"  "[*] Success Installed CloudHunter"
 	fi
 
 	# Install k8sgpt
