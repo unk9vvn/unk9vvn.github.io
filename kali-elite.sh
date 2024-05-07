@@ -3056,6 +3056,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed rathole"
 	fi
 
+	# Install GOProxy
+	if [ ! -d "/usr/share/goproxy" ]; then
+		mkdir -p /usr/share/goproxy
+		wget https://github.com/snail007/goproxy/releases/latest/download/proxy-linux-amd64.tar.gz -O /tmp/proxy-linux-amd64.tar.gz
+		tar -xvf /tmp/proxy-linux-amd64.tar.gz -C /usr/share/goproxy;rm -f /tmp/proxy-linux-amd64.tar.gz
+		chmod 755 /usr/share/goproxy/*
+		ln -fs /usr/share/goproxy/proxy /usr/bin/goproxy
+		chmod +x /usr/bin/goproxy
+		menu_entry "Exfiltration" "Red-Team" "GOProxy" "/usr/share/kali-menu/exec-in-shell 'goproxy -h'"
+		printf "$GREEN"  "[*] Success Installing GOProxy"
+	else
+		printf "$GREEN"  "[*] Success Installed GOProxy"
+	fi
+
 
 	printf "$YELLOW"  "# ------------------------------------------Impact-Red-Team------------------------------------------ #"
 	# Install Repository Tools
