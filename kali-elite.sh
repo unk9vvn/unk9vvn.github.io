@@ -511,7 +511,7 @@ EOF
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
 	fi
 
-	# Install ReconFTW
+	# Install GoogleRecaptchaBypass
 	if [ ! -d "/usr/share/googlerecaptchabypass" ]; then
 		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/googlerecaptchabypass
 		chmod 755 /usr/share/googlerecaptchabypass/*
