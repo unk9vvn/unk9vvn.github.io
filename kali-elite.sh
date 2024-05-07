@@ -3042,6 +3042,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed FRP"
 	fi
 
+	# Install rathole
+	if [ ! -d "/usr/share/rathole" ]; then
+		mkdir -p /usr/share/rathole
+		wget https://github.com/rapiz1/rathole/releases/latest/download/rathole-x86_64-unknown-linux-gnu.zip -O /tmp/rathole-linux-gnu.zip
+		unzip /tmp/rathole-linux-gnu.zip -d /usr/share/rathole;rm -f /tmp/rathole-linux-gnu.zip
+		chmod 755 /usr/share/rathole/*
+		ln -fs /usr/share/rathole/rathole /usr/bin/rathole
+		chmod +x /usr/bin/rathole
+		menu_entry "Exfiltration" "Red-Team" "rathole" "/usr/share/kali-menu/exec-in-shell 'rathole -h'"
+		printf "$GREEN"  "[*] Success Installing rathole"
+	else
+		printf "$GREEN"  "[*] Success Installed rathole"
+	fi
+
 
 	printf "$YELLOW"  "# ------------------------------------------Impact-Red-Team------------------------------------------ #"
 	# Install Repository Tools
