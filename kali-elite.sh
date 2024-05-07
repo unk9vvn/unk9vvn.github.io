@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.2'
+ver='4.3'
 
 
 
@@ -3019,7 +3019,7 @@ EOF
 
 	# Install IPFS
 	if [ ! -d "/usr/share/kubo" ]; then
-		wget https://dist.ipfs.tech/kubo/v0.28.0-rc1/kubo_v0.28.0-rc1_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
+		wget https://github.com/ipfs/kubo/releases/latest/download/kubo_v0.28.0_linux-amd64.tar.gz -O /tmp/ipfs_linux-amd64.tar.gz
 		tar -xvf /tmp/ipfs_linux-amd64.tar.gz -C /usr/share;rm -f /tmp/ipfs_linux-amd64.tar.gz
 		chmod 755 /usr/share/kubo/*
 		cd /usr/share/kubo;./install.sh
