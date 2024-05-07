@@ -333,7 +333,7 @@ penetrating_testing ()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan
 
 	# Install Python3 pip
-	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# Install Nodejs NPM
@@ -509,6 +509,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing ReconFTW"
 	else
 		printf "$GREEN"  "[*] Success Installed ReconFTW"
+	fi
+
+	# Install ReconFTW
+	if [ ! -d "/usr/share/googlerecaptchabypass" ]; then
+		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/googlerecaptchabypass
+		chmod 755 /usr/share/googlerecaptchabypass/*
+		cat > /usr/bin/grb << EOF
+#!/bin/bash
+cd /usr/share/GoogleRecaptchaBypass;python3 test.py "\$@"
+EOF
+		chmod +x /usr/bin/grb
+		pip3 install -r /usr/share/googlerecaptchabypass/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "GoogleRecaptchaBypass" "/usr/share/kali-menu/exec-in-shell 'grb -h'"
+		printf "$GREEN"  "[*] Success Installing GoogleRecaptchaBypass"
+	else
+		printf "$GREEN"  "[*] Success Installed GoogleRecaptchaBypass"
 	fi
 
 	# Install graphw00f
@@ -753,6 +769,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing DyMerge"
 	else
 		printf "$GREEN"  "[*] Success Installed DyMerge"
+	fi
+
+	# Install SPartan
+	if [ ! -d "/usr/share/spartan" ]; then
+		git clone https://github.com/sensepost/SPartan /usr/share/spartan
+		chmod 755 /usr/share/spartan/*
+		cat > /usr/bin/spartan << EOF
+#!/bin/bash
+cd /usr/share/spartan;python2 SPartan.py "\$@"
+EOF
+		chmod +x /usr/bin/spartan
+		pip2 install -r /usr/share/spartan/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "SPartan" "/usr/share/kali-menu/exec-in-shell 'spartan -h'"
+		printf "$GREEN"  "[*] Success Installing SPartan"
+	else
+		printf "$GREEN"  "[*] Success Installed SPartan"
 	fi
 
 	# Install WAF-Bypass-Tool
@@ -1086,7 +1118,7 @@ EOF
 	apt install -qy awscli trivy 
 
 	# Install Python3 pip
-	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite"
+	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# Install Nodejs NPM
@@ -1153,6 +1185,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installing CloudHunter"
 	else
 		printf "$GREEN"  "[*] Success Installed CloudHunter"
+	fi
+
+	# Install GCPBucketBrute
+	if [ ! -d "/usr/share/gcpbucketbrute" ]; then
+		git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute /usr/share/gcpbucketbrute
+		chmod 755 /usr/share/gcpbucketbrute/*
+		cat > /usr/bin/gcpbucketbrute << EOF
+#!/bin/bash
+cd /usr/share/gcpbucketbrute;python3 cloudhunter.py "\$@"
+EOF
+		chmod +x /usr/bin/gcpbucketbrute
+		pip3 install -r /usr/share/gcpbucketbrute/requirements.txt
+		menu_entry "Cloud" "Penetration-Testing" "GCPBucketBrute" "/usr/share/kali-menu/exec-in-shell 'gcpbucketbrute -h'"
+		printf "$GREEN"  "[*] Success Installing GCPBucketBrute"
+	else
+		printf "$GREEN"  "[*] Success Installed GCPBucketBrute"
 	fi
 
 	# Install k8sgpt
@@ -1223,6 +1271,36 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SNMP-Brute"
 	else
 		printf "$GREEN"  "[*] Success Installed SNMP-Brute"
+	fi
+
+	# Install Sippts
+	if [ ! -d "/usr/share/sippts" ]; then
+		git clone https://github.com/Pepelux/sippts /usr/share/sippts
+		chmod 755 /usr/share/sippts/*
+		pip3 install -r /usr/share/sippts/requirements.txt
+		cd /usr/share/sippts;python3 setup.py install
+		menu_entry "Network" "Penetration-Testing" "rtcpbleed" "/usr/share/kali-menu/exec-in-shell 'rtcpbleed -h'"
+		menu_entry "Network" "Penetration-Testing" "rtpbleed" "/usr/share/kali-menu/exec-in-shell 'rtpbleed -h'"
+		menu_entry "Network" "Penetration-Testing" "rtpbleedflood" "/usr/share/kali-menu/exec-in-shell 'rtpbleedflood -h'"
+		menu_entry "Network" "Penetration-Testing" "rtpbleedinject" "/usr/share/kali-menu/exec-in-shell 'rtpbleedinject -h'"
+		menu_entry "Network" "Penetration-Testing" "sipdigestcrack" "/usr/share/kali-menu/exec-in-shell 'sipdigestcrack -h'"
+		menu_entry "Network" "Penetration-Testing" "sipdigestleak" "/usr/share/kali-menu/exec-in-shell 'sipdigestleak -h'"
+		menu_entry "Network" "Penetration-Testing" "sipenumerate" "/usr/share/kali-menu/exec-in-shell 'sipenumerate -h'"
+		menu_entry "Network" "Penetration-Testing" "sipexten" "/usr/share/kali-menu/exec-in-shell 'sipexten -h'"
+		menu_entry "Network" "Penetration-Testing" "sipflood" "/usr/share/kali-menu/exec-in-shell 'sipflood -h'"
+		menu_entry "Network" "Penetration-Testing" "sipfuzzer" "/usr/share/kali-menu/exec-in-shell 'sipfuzzer -h'"
+		menu_entry "Network" "Penetration-Testing" "sipinvite" "/usr/share/kali-menu/exec-in-shell 'sipinvite -h'"
+		menu_entry "Network" "Penetration-Testing" "sippcapdump" "/usr/share/kali-menu/exec-in-shell 'sippcapdump -h'"
+		menu_entry "Network" "Penetration-Testing" "sipping" "/usr/share/kali-menu/exec-in-shell 'sipping -h'"
+		menu_entry "Network" "Penetration-Testing" "siprcrack" "/usr/share/kali-menu/exec-in-shell 'siprcrack -h'"
+		menu_entry "Network" "Penetration-Testing" "sipscan" "/usr/share/kali-menu/exec-in-shell 'sipscan -h'"
+		menu_entry "Network" "Penetration-Testing" "sipsend" "/usr/share/kali-menu/exec-in-shell 'sipsend -h'"
+		menu_entry "Network" "Penetration-Testing" "sipsniff" "/usr/share/kali-menu/exec-in-shell 'sipsniff -h'"
+		menu_entry "Network" "Penetration-Testing" "siptshark" "/usr/share/kali-menu/exec-in-shell 'siptshark -h'"
+		menu_entry "Network" "Penetration-Testing" "wssend" "/usr/share/kali-menu/exec-in-shell 'wssend -h'"
+		printf "$GREEN"  "[*] Success Installing Sippts"
+	else
+		printf "$GREEN"  "[*] Success Installed Sippts"
 	fi
 
 	# Install RouterScan
@@ -3780,7 +3858,7 @@ security_audit ()
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
 
 	# Install Python3 pip
-	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit"
+	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
 	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_pip"
 
 	# Install Nodejs NPM
@@ -3913,7 +3991,7 @@ EOF
 	pip_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_pip"
 
 	# Install Nodejs NPM
-	# planning_and_preparation_npm=""
+	planning_and_preparation_npm="solidity-code-metrics"
 	npm_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_npm"
 
 	# Install Ruby GEM
@@ -4166,10 +4244,10 @@ main ()
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 	# Install Init Tools
-	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate 
+	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg
 
 	# Install Requirements
-	apt install -qy libfontconfig1 libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry libpe-dev 
+	apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry libpe-dev
 
 	# Install Utilities Tools
 	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
