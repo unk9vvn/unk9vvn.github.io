@@ -714,6 +714,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed docem"
 	fi
 
+	# Install SpiderSuite
+	if [ ! -d "/usr/share/spidersuite" ]; then
+		wget https://github.com/3nock/SpiderSuite/releases/latest/download/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/spidersuite/SpiderSuite_linux.AppImage
+		chmod 755 /usr/share/spidersuite/*
+		cat > /usr/bin/spidersuite << EOF
+#!/bin/bash
+cd /usr/share/spidersuite;./SpiderSuite_linux.AppImage "\$@"
+EOF
+		chmod +x /usr/bin/spidersuite
+		menu_entry "Web" "Penetration-Testing" "SpiderSuite" "/usr/share/kali-menu/exec-in-shell 'spidersuite -h'"
+		printf "$GREEN"  "[*] Success Installing SpiderSuite"
+	else
+		printf "$GREEN"  "[*] Success Installed SpiderSuite"
+	fi
+
 	# Install Smuggle
 	if [ ! -d "/usr/share/smuggle" ]; then
 		git clone https://github.com/anshumanpattnaik/http-request-smuggling -O /usr/share/http-request-smuggling
