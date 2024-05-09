@@ -3535,6 +3535,19 @@ EOF
 		printf "$GREEN"  "[*] Success Installed APT-Hunter"
 	fi
 
+	# Install pspy
+	if [ ! -d "/usr/share/pspy" ]; then
+		mkdir -p /usr/share/pspy
+		wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64 -O /usr/share/pspy/pspy64
+		chmod 755 /usr/share/pspy/*
+		ln -fs /usr/share/pspy/pspy64 /usr/bin/pspy
+		chmod +x /usr/bin/pspy
+		menu_entry "Threat-Hunting" "Digital-Forensic" "pspy" "/usr/share/kali-menu/exec-in-shell 'pspy -h'"
+		printf "$GREEN"  "[*] Success Installing pspy"
+	else
+		printf "$GREEN"  "[*] Success Installed pspy"
+	fi
+
 
 	printf "$YELLOW"  "# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #"
 	# Install Repository Tools
