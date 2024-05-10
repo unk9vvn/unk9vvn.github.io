@@ -1399,6 +1399,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed fetch-some-proxies"
 	fi
 
+	# Install SIETpy3
+	if [ ! -d "/usr/share/sietpy3" ]; then
+		git clone https://github.com/Sab0tag3d/SIETpy3 /usr/share/sietpy3
+		chmod 755 /usr/share/sietpy3/*
+		cat > /usr/bin/sietpy3 << EOF
+#!/bin/bash
+cd /usr/share/sietpy3;python3 siet.py "\$@"
+EOF
+		chmod +x /usr/bin/sietpy3
+		menu_entry "Network" "Penetration-Testing" "SIETpy3" "/usr/share/kali-menu/exec-in-shell 'sietpy3 -h'"
+		printf "$GREEN"  "[*] Success Installing SIETpy3"
+	else
+		printf "$GREEN"  "[*] Success Installed SIETpy3"
+	fi
+
 	# Install Memcrashed
 	if [ ! -d "/usr/share/memcrashed" ]; then
 		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/memcrashed
