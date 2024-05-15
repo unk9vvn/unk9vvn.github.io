@@ -2677,6 +2677,22 @@ EOF
 		printf "$GREEN"  "[*] Success Installed MeetC2"
 	fi
 
+	# Install PingRAT
+	if [ ! -d "/usr/share/pingrat" ]; then
+		mkdir -p /usr/share/pingrat
+		wget https://github.com/umutcamliyurt/PingRAT/releases/download/v1/client -O /usr/share/pingrat/client
+		wget https://github.com/umutcamliyurt/PingRAT/releases/download/v1/server -O /usr/share/pingrat/server
+		chmod 755 /usr/share/pingrat/*
+		ln -fs /usr/share/pingrat/client /usr/bin/pingrat-client
+		ln -fs /usr/share/pingrat/server /usr/bin/pingrat-server
+		chmod +x /usr/bin/pingrat
+		menu_entry "Command-and-Control" "Red-Team" "PingRAT" "/usr/share/kali-menu/exec-in-shell 'pingrat-client -h'"
+		menu_entry "Command-and-Control" "Red-Team" "PingRAT" "/usr/share/kali-menu/exec-in-shell 'pingrat-server -h'"
+		printf "$GREEN"  "[*] Success Installing PingRAT"
+	else
+		printf "$GREEN"  "[*] Success Installed PingRAT"
+	fi
+
 	# Install Ligolo-mp
 	if [ ! -d "/usr/share/ligolo-mp" ]; then
 		mkdir -p /usr/share/ligolo-mp
