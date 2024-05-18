@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.3'
+ver='4.4'
 
 
 
@@ -571,6 +571,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installing CloakQuest3r"
 	else
 		printf "$GREEN"  "[*] Success Installed CloakQuest3r"
+	fi
+
+	# Install Asnlookup
+	if [ ! -d "/usr/share/asnlookup" ]; then
+		local name="asnlookup"
+		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 asnlookup.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "Asnlookup" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success Installing Asnlookup"
+	else
+		printf "$GREEN"  "[*] Success Installed Asnlookup"
 	fi
 
 	# Install Waymore
@@ -1264,10 +1281,8 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 
 	# Install Hiddify-Next
 	if [ ! -d "/usr/share/hiddify" ]; then
-		wget https://github.com/hiddify/hiddify-next/releases/download/v0.14.20/hiddify-debian-x64.zip -O /tmp/hiddify-debian-x64.zip
-		unzip /tmp/hiddify-debian-x64.zip -d /tmp/hiddify-next;rm -f /tmp/hiddify-linux-x64.zip
-		chmod +x /tmp/hiddify-next/hiddify-debian-x64.deb;dpkg -i /tmp/hiddify-next/hiddify-debian-x64.deb;rm -rf /tmp/hiddify-next
-		chmod 755 /usr/share/hiddify/*
+		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/hiddify-debian-x64.deb
+		chmod +x /tmp/hiddify-debian-x64.deb;dpkg -i /tmp/hiddify-debian-x64.deb;rm -f /tmp/hiddify-debian-x64.deb
 		printf "$GREEN"  "[*] Success Installing Hiddify-Next"
 	else
 		printf "$GREEN"  "[*] Success Installed Hiddify-Next"
@@ -1761,6 +1776,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installing BLACKEYE"
 	else
 		printf "$GREEN"  "[*] Success Installed BLACKEYE"
+	fi
+
+	# Install PDF-BUILDER
+	if [ ! -d "/usr/share/pdf-exploit" ]; then
+		mkdir -p /usr/share/pdf-exploit
+		wget https://github.com/K3rnel-Dev/pdf-exploit/releases/download/Compilated/PDF-BUILDER.zip -O /tmp/pdf-exploit.zip
+		unzip /tmp/pdf-exploit.zip -d /usr/share/pdf-exploit;rm -f /tmp/pdf-exploit.zip
+		chmod 755 /usr/share/pdf-exploit/*
+		cat > /usr/bin/pdf-exploit << EOF
+#!/bin/bash
+cd /usr/share/pdf-exploit;mono PDF-BUILDER.exe "\$@"
+EOF
+		chmod +x /usr/bin/pdf-exploit
+		menu_entry "Initial-Access" "Red-Team" "PDF-BUILDER" "/usr/share/kali-menu/exec-in-shell 'pdf-exploit'"
+		printf "$GREEN"  "[*] Success Installing PDF-BUILDER"
+	else
+		printf "$GREEN"  "[*] Success Installed PDF-BUILDER"
 	fi
 
 	# Install CredSniper
