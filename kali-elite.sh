@@ -980,7 +980,7 @@ EOF
 		git clone https://github.com/iagox86/hash_extender /usr/share/$HashExtender
 		chmod 755 /usr/share/$HashExtender/*
 		cd /usr/share/$HashExtender;make
-		ln -fs /usr/share/hashextender /usr/bin/$HashExtender
+		ln -fs /usr/share/$HashExtender/hashextender /usr/bin/$HashExtender
 		chmod +x /usr/bin/$HashExtender
 		menu_entry "Web" "Penetration-Testing" "HashExtender" "/usr/share/kali-menu/exec-in-shell 'sudo $HashExtender -h'"
 		printf "$GREEN"  "[*] Success Installing HashExtender"
