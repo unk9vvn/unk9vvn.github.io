@@ -330,7 +330,7 @@ penetrating_testing ()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# Install Repository Tools
-	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan
+	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
 
 	# Install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer"
@@ -399,6 +399,7 @@ go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/u
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
 go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest;ln -fs ~/go/bin/naabu /usr/bin/naabu
 go install github.com/sensepost/gowitness@latest;ln -fs ~/go/bin/gowitness /usr/bin/gowitness
+go install github.com/lc/gau/v2/cmd/gau@latest;ln -fs ~/go/bin/gau /usr/bin/gau
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
@@ -742,6 +743,23 @@ EOF
 		printf "$GREEN"  "[*] Success Installing SpiderSuite"
 	else
 		printf "$GREEN"  "[*] Success Installed SpiderSuite"
+	fi
+
+	JSA="jsa"
+	if [ ! -d "/usr/share/$JSA" ]; then
+		git clone https://github.com/w9w/JSA /usr/share/$JSA
+		chmod 755 /usr/share/$JSA/*
+		cat > /usr/bin/$JSA << EOF
+#!/bin/bash
+cd /usr/share/$JSA;python3 jsa.py "\$@"
+EOF
+		chmod +x /usr/bin/$JSA
+		cd /usr/share/$JSA;bash install.sh
+		pip3 install -r /usr/share/$JSA/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "JSA" "/usr/share/kali-menu/exec-in-shell '$JSA -h'"
+		printf "$GREEN"  "[*] Success Installing JSA"
+	else
+		printf "$GREEN"  "[*] Success Installed JSA"
 	fi
 
 	Smuggle="smuggle"
