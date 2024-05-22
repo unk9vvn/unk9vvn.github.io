@@ -272,7 +272,7 @@ pip_installer ()
 	for pip_index in ${pip_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${pip_index} -h'"
 		pip3 install "$pip_index"
-		printf "$GREEN"  "[*] Success Installing ${pip_index}"
+		printf "$GREEN"  "[*] Success installing ${pip_index}"
 	done
 }
 
@@ -285,7 +285,7 @@ npm_installer ()
 	for npm_index in ${npm_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${npm_index} -h'"
 		npm install -g "$npm_index"
-		printf "$GREEN"  "[*] Success Installing ${npm_index}"
+		printf "$GREEN"  "[*] Success installing ${npm_index}"
 	done
 }
 
@@ -298,7 +298,7 @@ gem_installer ()
 	for gem_index in ${gem_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${gem_index} -h'"
 		gem install "$gem_index"
-		printf "$GREEN"  "[*] Success Installing ${gem_index}"
+		printf "$GREEN"  "[*] Success installing ${gem_index}"
 	done
 }
 
@@ -320,7 +320,7 @@ go_installer ()
 	done <<< "$commands"
 	for go_index in ${go_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${go_index}" "/usr/share/kali-menu/exec-in-shell 'sudo ${go_index} -h'"
-		printf "$GREEN"  "[*] Success Installing ${go_index}"
+		printf "$GREEN"  "[*] Success installing ${go_index}"
 	done
 	eval "$commands"
 }
@@ -329,22 +329,22 @@ go_installer ()
 penetrating_testing ()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify privoxy dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
 
-	# Install Python3 pip
+	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium PyJWT proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan PyExfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze hardhat"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear"
 	gem_installer "Web" "Penetration-Testing" "$web_gem"
 
-	# Install Golang
+	# install Golang
 	web_golang="
 go install github.com/Macmod/godap/v2@latest;ln -fs ~/go/bin/godap /usr/bin/godap
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
@@ -403,781 +403,734 @@ go install github.com/lc/gau/v2/cmd/gau@latest;ln -fs ~/go/bin/gau /usr/bin/gau
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
-	CloudBunny="cloudbunny"
-	if [ ! -d "/usr/share/$CloudBunny" ]; then
-		git clone https://github.com/Warflop/CloudBunny /usr/share/$CloudBunny
-		chmod 755 /usr/share/$CloudBunny/*
-		cat > /usr/bin/$CloudBunny << EOF
+	# install cloudbunny
+	if [ ! -d "/usr/share/cloudbunny" ]; then
+		local name="cloudbunny"
+		git clone https://github.com/Warflop/CloudBunny /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloudBunny;python3 cloudbunny.py "\$@"
+cd /usr/share/$name;python3 cloudbunny.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloudBunny
-		pip3 install -r /usr/share/$CloudBunny/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "CloudBunny" "/usr/share/kali-menu/exec-in-shell '$CloudBunny -h'"
-		printf "$GREEN"  "[*] Success Installing CloudBunny"
-	else
-		printf "$GREEN"  "[*] Success Installed CloudBunny"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PhoneInfoga="phoneinfoga"
-	if [ ! -d "/usr/share/$PhoneInfoga" ]; then
-		mkdir -p /usr/share/$PhoneInfoga
-		wget https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$PhoneInfoga.tar.gz
-		tar -xvf /tmp/$PhoneInfoga.tar.gz -C /usr/share/$PhoneInfoga;rm -f /tmp/$PhoneInfoga.tar.gz
-		chmod 755 /usr/share/$PhoneInfoga/*
-		ln -fs /usr/share/$PhoneInfoga/phoneinfoga /usr/bin/phoneinfoga
-		chmod +x /usr/bin/phoneinfoga
-		menu_entry "Web" "Penetration-Testing" "PhoneInfoga" "/usr/share/kali-menu/exec-in-shell 'sudo $PhoneInfoga -h'"
-		printf "$GREEN"  "[*] Success Installing PhoneInfoga"
-	else
-		printf "$GREEN"  "[*] Success Installed PhoneInfoga"
+	# install phoneinfoga
+	if [ ! -d "/usr/share/phoneinfoga" ]; then
+		local name="phoneinfoga"
+		mkdir -p /usr/share/$name
+		wget https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/phoneinfoga /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Postman="Postman"
-	if [ ! -d "/usr/share/$Postman" ]; then
-		mkdir -p /usr/share/$Postman
-		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$Postman.tar.gz
-		tar -xvf /tmp/$Postman.tar.gz -C /usr/share;rm -f /tmp/$Postman.tar.gz
-		chmod 755 /usr/share/$Postman/*
-		cat > /usr/bin/$Postman << EOF
+	# install Postman
+	if [ ! -d "/usr/share/postman" ]; then
+		local name="postman"
+		mkdir -p /usr/share/$name
+		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;mv -f /usr/share/Postman /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Postman;./postman "\$@"
+cd /usr/share/$name;./postman "\$@"
 EOF
-		chmod +x /usr/bin/postman
-		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell 'postman'"
-		printf "$GREEN"  "[*] Success Installing Postman"
-	else
-		printf "$GREEN"  "[*] Success Installed Postman"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Findomain="findomain"
-	if [ ! -d "/usr/share/$Findomain" ]; then
-		wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-linux.zip -O /tmp/$Findomain.zip
-		unzip /tmp/$Findomain.zip -d /usr/share/$Findomain;rm -f /tmp/$Findomain.zip
-		chmod 755 /usr/share/$Findomain/*
-		ln -fs /usr/share/$Findomain/findomain /usr/bin/$Findomain
-		chmod +x /usr/bin/$Findomain
-		menu_entry "Web" "Penetration-Testing" "Findomain" "/usr/share/kali-menu/exec-in-shell 'sudo $Findomain -h'"
-		printf "$GREEN"  "[*] Success Installing Findomain"
-	else
-		printf "$GREEN"  "[*] Success Installed Findomain"
+	# install findomain
+	if [ ! -d "/usr/share/findomain" ]; then
+		local name="findomain"
+		wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-linux.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/findomain /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RustScan="rustscan"
-	if [ ! -f "/usr/bin/$RustScan" ]; then
-		wget https://github.com/RustScan/RustScan/releases/download/2.2.3/rustscan_2.2.3_amd64.deb -O /tmp/$RustScan.deb
-		chmod +x /tmp/$RustScan.deb;dpkg -i /tmp/$RustScan.deb;rm -f /tmp/$RustScan.deb
-		menu_entry "Web" "Penetration-Testing" "RustScan" "/usr/share/kali-menu/exec-in-shell 'sudo $RustScan -h'"
-		printf "$GREEN"  "[*] Success Installing RustScan"
-	else
-		printf "$GREEN"  "[*] Success Installed RustScan"
+	# install rustscan
+	if [ ! -f "/usr/bin/rustscan" ]; then
+		local name="rustscan"
+		wget https://github.com/RustScan/RustScan/releases/latest/download/rustscan_2.2.3_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	HashPump="hashpump"
+	# install hashpump
 	if [ ! -d "/usr/share/hashpump" ]; then
-		git clone https://github.com/mheistermann/HashPump-partialhash /usr/share/$HashPump
-		chmod 755 /usr/share/$HashPump/*
-		cd /usr/share/$HashPump;make;make install
-		menu_entry "Web" "Penetration-Testing" "HashPump" "/usr/share/kali-menu/exec-in-shell 'sudo $HashPump -h'"
-		printf "$GREEN"  "[*] Success Installing HashPump"
-	else
-		printf "$GREEN"  "[*] Success Installed HashPump"
+		local name="hashpump"
+		git clone https://github.com/mheistermann/HashPump-partialhash /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make;make install
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PixLoad="pixload"
-	if [ ! -d "/usr/share/$PixLoad" ]; then
-		git clone https://github.com/sighook/pixload /usr/share/$PixLoad
-		chmod 755 /usr/share/$PixLoad/*
-		cd /usr/share/$PixLoad;make install
-		menu_entry "Web" "Penetration-Testing" "PixLoad" "/usr/share/kali-menu/exec-in-shell 'sudo $PixLoad-bmp --help'"
-		printf "$GREEN"  "[*] Success Installing PixLoad"
-	else
-		printf "$GREEN"  "[*] Success Installed PixLoad"
+	# install pixload
+	if [ ! -d "/usr/share/pixload" ]; then
+		local name="pixload"
+		git clone https://github.com/sighook/pixload /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make install
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name-bmp --help'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ReconFTW="reconftw"
-	if [ ! -d "/usr/share/$ReconFTW" ]; then
-		git clone https://github.com/six2dez/reconftw /usr/share/$ReconFTW
-		chmod 755 /usr/share/$ReconFTW/*
-		cat > /usr/bin/$ReconFTW << EOF
+	# install reconftw
+	if [ ! -d "/usr/share/reconftw" ]; then
+		local name="reconftw"
+		git clone https://github.com/six2dez/reconftw /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ReconFTW;./reconftw.sh "\$@"
+cd /usr/share/$name;./reconftw.sh "\$@"
 EOF
-		chmod +x /usr/bin/$ReconFTW
-		cd /usr/share/$ReconFTW;./install.sh
-		menu_entry "Web" "Penetration-Testing" "ReconFTW" "/usr/share/kali-menu/exec-in-shell '$ReconFTW -h'"
-		printf "$GREEN"  "[*] Success Installing ReconFTW"
-	else
-		printf "$GREEN"  "[*] Success Installed ReconFTW"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GoogleRecaptchaBypass="googlerecaptchabypass"
-	if [ ! -d "/usr/share/$GoogleRecaptchaBypass" ]; then
-		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/$GoogleRecaptchaBypass
-		chmod 755 /usr/share/$GoogleRecaptchaBypass/*
-		cat > /usr/bin/grb << EOF
+	# install googlerecaptchabypass
+	if [ ! -d "/usr/share/grb" ]; then
+		local name="grb"
+		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GoogleRecaptchaBypass;python3 test.py "\$@"
+cd /usr/share/$name;python3 test.py "\$@"
 EOF
-		chmod +x /usr/bin/grb
-		pip3 install -r /usr/share/$GoogleRecaptchaBypass/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "GoogleRecaptchaBypass" "/usr/share/kali-menu/exec-in-shell 'grb -h'"
-		printf "$GREEN"  "[*] Success Installing GoogleRecaptchaBypass"
-	else
-		printf "$GREEN"  "[*] Success Installed GoogleRecaptchaBypass"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	graphw00f="graphw00f"
-	if [ ! -d "/usr/share/$graphw00f" ]; then
-		git clone https://github.com/dolevf/graphw00f /usr/share/$graphw00f
-		chmod 755 /usr/share/$graphw00f/*
-		cat > /usr/bin/$graphw00f << EOF
+	# install graphw00f
+	if [ ! -d "/usr/share/graphw00f" ]; then
+		local name="graphw00f"
+		git clone https://github.com/dolevf/graphw00f /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$graphw00f;python3 main.py "\$@"
+cd /usr/share/$name;python3 main.py "\$@"
 EOF
-		chmod +x /usr/bin/$graphw00f
-		menu_entry "Web" "Penetration-Testing" "graphw00f" "/usr/share/kali-menu/exec-in-shell '$graphw00f -h'"
-		printf "$GREEN"  "[*] Success Installing graphw00f"
-	else
-		printf "$GREEN"  "[*] Success Installed graphw00f"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Gel4y="gel4y"
-	if [ ! -d "/usr/share/$Gel4y" ]; then
-		git clone https://github.com/22XploiterCrew-Team/Gel4y-Mini-Shell-Backdoor /usr/share/$Gel4y
-		chmod 755 /usr/share/$Gel4y/*
-		cat > /usr/bin/$Gel4y << EOF
+	# install gel4y
+	if [ ! -d "/usr/share/gel4y" ]; then
+		local name="gel4y"
+		git clone https://github.com/22XploiterCrew-Team/Gel4y-Mini-Shell-Backdoor /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Gel4y;php gel4y.php "\$@"
+cd /usr/share/$name;php gel4y.php "\$@"
 EOF
-		chmod +x /usr/bin/$Gel4y
-		menu_entry "Web" "Penetration-Testing" "Gel4y" "/usr/share/kali-menu/exec-in-shell '$Gel4y -h'"
-		printf "$GREEN"  "[*] Success Installing Gel4y"
-	else
-		printf "$GREEN"  "[*] Success Installed Gel4y"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CloakQuest3r="cloakquest3r"
-	if [ ! -d "/usr/share/$CloakQuest3r" ]; then
-		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$CloakQuest3r
-		chmod 755 /usr/share/$CloakQuest3r/*
-		cat > /usr/bin/$CloakQuest3r << EOF
+	# install cloakquest3r
+	if [ ! -d "/usr/share/cloakquest3r" ]; then
+		local name="cloakquest3r"
+		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloakQuest3r;python3 cloakquest3r.py "\$@"
+cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloakQuest3r
-		pip3 install -r /usr/share/$CloakQuest3r/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "CloakQuest3r" "/usr/share/kali-menu/exec-in-shell '$CloakQuest3r -h'"
-		printf "$GREEN"  "[*] Success Installing CloakQuest3r"
-	else
-		printf "$GREEN"  "[*] Success Installed CloakQuest3r"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Asnlookup="asnlookup"
-	if [ ! -d "/usr/share/$Asnlookup" ]; then
-		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$Asnlookup
-		chmod 755 /usr/share/$Asnlookup/*
-		cat > /usr/bin/$Asnlookup << EOF
+	# install asnlookup
+	if [ ! -d "/usr/share/asnlookup" ]; then
+		local name="asnlookup"
+		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Asnlookup;python3 asnlookup.py "\$@"
+cd /usr/share/$name;python3 asnlookup.py "\$@"
 EOF
-		chmod +x /usr/bin/$Asnlookup
-		pip3 install -r /usr/share/$Asnlookup/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "Asnlookup" "/usr/share/kali-menu/exec-in-shell '$Asnlookup -h'"
-		printf "$GREEN"  "[*] Success Installing Asnlookup"
-	else
-		printf "$GREEN"  "[*] Success Installed Asnlookup"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Waymore="waymore"
-	if [ ! -d "/usr/share/$Waymore" ]; then
-		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/$Waymore
-		chmod 755 /usr/share/$Waymore/*
-		cat > /usr/bin/$Waymore << EOF
+	# install waymore
+	if [ ! -d "/usr/share/waymore" ]; then
+		local name="waymore"
+		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Waymore;python3 waymore.py "\$@"
+cd /usr/share/$name;python3 waymore.py "\$@"
 EOF
-		chmod +x /usr/bin/$Waymore
-		pip3 install -r /usr/share/$Waymore/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "Waymore" "/usr/share/kali-menu/exec-in-shell '$Waymore -h'"
-		printf "$GREEN"  "[*] Success Installing Waymore"
-	else
-		printf "$GREEN"  "[*] Success Installed Waymore"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	YsoSerial="ysoserial"
-	if [ ! -d "/usr/share/$YsoSerial" ]; then
-		mkdir -p /usr/share/$YsoSerial
-		wget https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar -O /usr/share/$YsoSerial/ysoserial-all.jar 
-		chmod 755 /usr/share/$YsoSerial/*
-		cat > /usr/bin/$YsoSerial << EOF
+	# install ysoserial
+	if [ ! -d "/usr/share/ysoserial" ]; then
+		local name="ysoserial"
+		mkdir -p /usr/share/$name
+		wget https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar -O /usr/share/$name/ysoserial-all.jar 
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$YsoSerial;java -jar ysoserial-all.jar "\$@"
+cd /usr/share/$name;java -jar ysoserial-all.jar "\$@"
 EOF
-		chmod +x /usr/bin/$YsoSerial
-		menu_entry "Web" "Penetration-Testing" "YsoSerial" "/usr/share/kali-menu/exec-in-shell '$YsoSerial -h'"
-		printf "$GREEN"  "[*] Success Installing YsoSerial"
-	else
-		printf "$GREEN"  "[*] Success Installed YsoSerial"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	YsoSerialnet="ysoserial.net"
-	if [ ! -d "/usr/share/$YsoSerialnet" ]; then
-		mkdir -p /usr/share/$YsoSerialnet
-		wget https://github.com/pwntester/ysoserial.net/releases/latest/download/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/$YsoSerialnet.zip
-		unzip /tmp/$YsoSerialnet.zip -d /tmp;cd /tmp/Release;mv -f * /usr/share/$YsoSerialnet;rm -f /tmp/Release;rm -f /tmp/$YsoSerialnet.zip
-		chmod 755 /usr/share/$YsoSerialnet/*
-		cat > /usr/bin/$YsoSerialnet << EOF
+	# install ysoserial.net
+	if [ ! -d "/usr/share/ysoserial.net" ]; then
+		name="ysoserial.net"
+		mkdir -p /usr/share/$name
+		wget https://github.com/pwntester/ysoserial.net/releases/latest/download/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share;mv -f /usr/share/Release /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$YsoSerialnet;mono ysoserial.exe "\$@"
+cd /usr/share/$name;mono ysoserial.exe "\$@"
 EOF
-		chmod +x /usr/bin/$YsoSerialnet
-		menu_entry "Web" "Penetration-Testing" "YsoSerial.net" "/usr/share/kali-menu/exec-in-shell '$YsoSerialnet -h'"
-		printf "$GREEN"  "[*] Success Installing YsoSerial.net"
-	else
-		printf "$GREEN"  "[*] Success Installed YsoSerial.net"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Akto="akto"
-	if [ ! -d "/usr/share/$Akto" ]; then
-		git clone https://github.com/akto-api-security/akto /usr/share/$Akto 
-		chmod 755 /usr/share/$Akto/*
-		cat > /usr/bin/$Akto << EOF
+	# install akto
+	if [ ! -d "/usr/share/akto" ]; then
+		local name="akto"
+		git clone https://github.com/akto-api-security/akto /usr/share/$name 
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Akto;docker-compose up -d "\$@"
+cd /usr/share/$name;docker-compose up -d "\$@"
 EOF
-		chmod +x /usr/bin/$Akto
-		menu_entry "Web" "Penetration-Testing" "Akto" "/usr/share/kali-menu/exec-in-shell '$Akto'"
-		printf "$GREEN"  "[*] Success Installing Akto"
-	else
-		printf "$GREEN"  "[*] Success Installed Akto"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RSAtool="rsatool"
+	# install rsatool
 	if [ ! -d "/usr/share/rsatool" ]; then
-		git clone https://github.com/ius/rsatool /usr/share/$RSAtool
-		chmod 755 /usr/share/$RSAtool/*
-		cat > /usr/bin/$RSAtool << EOF
+		local name="rsatool"
+		git clone https://github.com/ius/rsatool /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$RSAtool;python3 rsatool.py "\$@"
+cd /usr/share/$name;python3 rsatool.py "\$@"
 EOF
-		chmod +x /usr/bin/$RSAtool
-		menu_entry "Web" "Penetration-Testing" "RSAtool" "/usr/share/kali-menu/exec-in-shell '$RSAtool -h'"
-		printf "$GREEN"  "[*] Success Installing RSAtool"
-	else
-		printf "$GREEN"  "[*] Success Installed RSAtool"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Polyglot="polyglot"
-	if [ ! -d "/usr/share/$Polyglot" ]; then
-		git clone https://github.com/Polydet/polyglot-database /usr/share/$Polyglot
-		chmod 755 /usr/share/$Polyglot/files/*
-		cat > /usr/bin/$Polyglot << EOF
+	# install polyglot
+	if [ ! -d "/usr/share/polyglot" ]; then
+		local name="polyglot"
+		git clone https://github.com/Polydet/polyglot-database /usr/share/$name
+		chmod 755 /usr/share/$name/files/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Polyglot/files;ls "\$@"
+cd /usr/share/$name/files;ls "\$@"
 EOF
-		chmod +x /usr/bin/$Polyglot
-		menu_entry "Web" "Penetration-Testing" "Polyglot" "/usr/share/kali-menu/exec-in-shell '$Polyglot -h'"
-		printf "$GREEN"  "[*] Success Installing Polyglot"
-	else
-		printf "$GREEN"  "[*] Success Installed Polyglot"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RsaCtfTool="rsactftool"
-	if [ ! -d "/usr/share/$RsaCtfTool" ]; then
-		git clone https://github.com/RsaCtfTool/RsaCtfTool /usr/share/$RsaCtfTool
-		chmod 755 /usr/share/$RsaCtfTool/*
-		cat > /usr/bin/$RsaCtfTool << EOF
+	# install rsactftool
+	if [ ! -d "/usr/share/rsactftool" ]; then
+		local name="rsactftool"
+		git clone https://github.com/RsaCtfTool/RsaCtfTool /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$RsaCtfTool;python3 RsaCtfTool.py "\$@"
+cd /usr/share/$name;python3 RsaCtfTool.py "\$@"
 EOF
-		chmod +x /usr/bin/$RsaCtfTool
-		menu_entry "Web" "Penetration-Testing" "RsaCtfTool" "/usr/share/kali-menu/exec-in-shell '$RsaCtfTool -h'"
-		printf "$GREEN"  "[*] Success Installing RsaCtfTool"
-	else
-		printf "$GREEN"  "[*] Success Installed RsaCtfTool"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	DTDFinder="dtdfinder"
-	if [ ! -d "/usr/share/$DTDFinder" ]; then
-		mkdir -p /usr/share/$DTDFinder
-		wget https://github.com/GoSecure/dtd-finder/releases/latest/download/dtd-finder-1.1-all.jar -O /usr/share/$DTDFinder/dtd-finder-all.jar
-		chmod 755 /usr/share/$DTDFinder/*
-		cat > /usr/bin/$DTDFinder << EOF
+	# install dtdfinder
+	if [ ! -d "/usr/share/dtdfinder" ]; then
+		local name="dtdfinder"
+		mkdir -p /usr/share/$name
+		wget https://github.com/GoSecure/dtd-finder/releases/latest/download/dtd-finder-1.1-all.jar -O /usr/share/$name/dtd-finder-all.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$DTDFinder;java -jar dtd-finder-all.jar "\$@"
+cd /usr/share/$name;java -jar dtd-finder-all.jar "\$@"
 EOF
-		chmod +x /usr/bin/$DTDFinder
-		menu_entry "Web" "Penetration-Testing" "DTD-Finder" "/usr/share/kali-menu/exec-in-shell '$DTDFinder -h'"
-		printf "$GREEN"  "[*] Success Installing DTD-Finder"
-	else
-		printf "$GREEN"  "[*] Success Installed DTD-Finder"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Docem="docem"
-	if [ ! -d "/usr/share/$Docem" ]; then
-		git clone https://github.com/whitel1st/docem -O /usr/share/$Docem
-		chmod 755 /usr/share/$Docem/*
-		cat > /usr/bin/$Docem << EOF
+	# install docem
+	if [ ! -d "/usr/share/docem" ]; then
+		local name="docem"
+		git clone https://github.com/whitel1st/docem -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Docem;python3 docem.py "\$@"
+cd /usr/share/$name;python3 docem.py "\$@"
 EOF
-		chmod +x /usr/bin/$Docem
-		pip3 install -r /usr/share/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "Docem" "/usr/share/kali-menu/exec-in-shell '$Docem -h'"
-		printf "$GREEN"  "[*] Success Installing Docem"
-	else
-		printf "$GREEN"  "[*] Success Installed Docem"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SpiderSuite="spidersuite"
-	if [ ! -d "/usr/share/$SpiderSuite" ]; then
-		wget https://github.com/3nock/SpiderSuite/releases/latest/download/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/$SpiderSuite/SpiderSuite_linux.AppImage
-		chmod 755 /usr/share/$SpiderSuite/*
-		cat > /usr/bin/$SpiderSuite << EOF
+	# install spidersuite
+	if [ ! -d "/usr/share/spidersuite" ]; then
+		local name="spidersuite"
+		wget https://github.com/3nock/SpiderSuite/releases/latest/download/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/$name/SpiderSuite_linux.AppImage
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SpiderSuite;./SpiderSuite_linux.AppImage "\$@"
+cd /usr/share/$name;./SpiderSuite_linux.AppImage "\$@"
 EOF
-		chmod +x /usr/bin/$SpiderSuite
-		menu_entry "Web" "Penetration-Testing" "SpiderSuite" "/usr/share/kali-menu/exec-in-shell '$SpiderSuite -h'"
-		printf "$GREEN"  "[*] Success Installing SpiderSuite"
-	else
-		printf "$GREEN"  "[*] Success Installed SpiderSuite"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	JSA="jsa"
-	if [ ! -d "/usr/share/$JSA" ]; then
-		git clone https://github.com/w9w/JSA /usr/share/$JSA
-		chmod 755 /usr/share/$JSA/*
-		cat > /usr/bin/$JSA << EOF
+	# install jsa
+	if [ ! -d "/usr/share/jsa" ]; then
+		local name="jsa"
+		git clone https://github.com/w9w/JSA /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$JSA;python3 jsa.py "\$@"
+cd /usr/share/$name;python3 jsa.py "\$@"
 EOF
-		chmod +x /usr/bin/$JSA
-		cd /usr/share/$JSA;bash install.sh
-		pip3 install -r /usr/share/$JSA/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "JSA" "/usr/share/kali-menu/exec-in-shell '$JSA -h'"
-		printf "$GREEN"  "[*] Success Installing JSA"
-	else
-		printf "$GREEN"  "[*] Success Installed JSA"
+		chmod +x /usr/bin/$name
+		cd /usr/share/$name;bash install.sh
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Smuggle="smuggle"
-	if [ ! -d "/usr/share/$Smuggle" ]; then
-		git clone https://github.com/anshumanpattnaik/http-request-smuggling -O /usr/share/$Smuggle
-		chmod 755 /usr/share/$Smuggle/*
-		cat > /usr/bin/$Smuggle << EOF
+	# install smuggle
+	if [ ! -d "/usr/share/smuggle" ]; then
+		local name="smuggle"
+		git clone https://github.com/anshumanpattnaik/http-request-smuggling -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Smuggle;python3 smuggle.py "\$@"
+cd /usr/share/$name;python3 smuggle.py "\$@"
 EOF
-		chmod +x /usr/bin/$Smuggle
-		pip3 install -r /usr/share/$Smuggle/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "Smuggle" "/usr/share/kali-menu/exec-in-shell '$Smuggle -h'"
-		printf "$GREEN"  "[*] Success Installing Smuggle"
-	else
-		printf "$GREEN"  "[*] Success Installed Smuggle"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PEMCrack="pemcrack"
-	if [ ! -d "/usr/share/$PEMCrack" ]; then
-		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/$PEMCrack
-		chmod 755 /usr/share/$PEMCrack/*
-		cd /usr/share/$PEMCrack;gcc pemcrack.c -o pemcrack -lssl -lcrypto
-		ln -fs /usr/share/$PEMCrack/pemcrack /usr/bin/$PEMCrack
-		chmod +x /usr/bin/$PEMCrack
-		menu_entry "Web" "Penetration-Testing" "PEMCrack" "/usr/share/kali-menu/exec-in-shell 'sudo $PEMCrack -h'"
-		printf "$GREEN"  "[*] Success Installing PEMCrack"
-	else
-		printf "$GREEN"  "[*] Success Installed PEMCrack"
+	# install pemcrack
+	if [ ! -d "/usr/share/pemcrack" ]; then
+		local name="pemcrack"
+		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;gcc pemcrack.c -o pemcrack -lssl -lcrypto
+		ln -fs /usr/share/$name/pemcrack /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SessionProbe="sessionprobe"
-	if [ ! -d "/usr/share/$SessionProbe" ]; then
-		mkdir -p /usr/share/$SessionProbe
-		wget https://github.com/dub-flow/sessionprobe/releases/latest/download/sessionprobe-linux-amd64 -O /usr/share/$SessionProbe/sessionprobe
-		chmod 755 /usr/share/$SessionProbe/*
-		ln -fs /usr/share/$SessionProbe/sessionprobe /usr/bin/$SessionProbe
-		chmod +x /usr/bin/$SessionProbe
-		menu_entry "Web" "Penetration-Testing" "SessionProbe" "/usr/share/kali-menu/exec-in-shell '$SessionProbe -h'"
-		printf "$GREEN"  "[*] Success Installing SessionProbe"
-	else
-		printf "$GREEN"  "[*] Success Installed SessionProbe"
+	# install sessionprobe
+	if [ ! -d "/usr/share/sessionprobe" ]; then
+		local name="sessionprobe"
+		mkdir -p /usr/share/$name
+		wget https://github.com/dub-flow/sessionprobe/releases/latest/download/sessionprobe-linux-amd64 -O /usr/share/$name/sessionprobe
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/sessionprobe /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	DyMerge="dymerge"
-	if [ ! -d "/usr/share/$DyMerge" ]; then
-		git clone https://github.com/k4m4/dymerge /usr/share/$DyMerge
-		chmod 755 /usr/share/$DyMerge/*
-		cat > /usr/bin/$DyMerge << EOF
+	# install dymerge
+	if [ ! -d "/usr/share/dymerge" ]; then
+		local name="dymerge"
+		git clone https://github.com/k4m4/dymerge /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$DyMerge;python2 dymerge.py "\$@"
+cd /usr/share/$name;python2 dymerge.py "\$@"
 EOF
-		chmod +x /usr/bin/$DyMerge
-		menu_entry "Web" "Penetration-Testing" "DyMerge" "/usr/share/kali-menu/exec-in-shell '$DyMerge -h'"
-		printf "$GREEN"  "[*] Success Installing DyMerge"
-	else
-		printf "$GREEN"  "[*] Success Installed DyMerge"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SPartan="spartan"
-	if [ ! -d "/usr/share/$SPartan" ]; then
-		git clone https://github.com/sensepost/SPartan /usr/share/$SPartan
-		chmod 755 /usr/share/$SPartan/*
-		cat > /usr/bin/$SPartan << EOF
+	# install spartan
+	if [ ! -d "/usr/share/spartan" ]; then
+		local name="spartan"
+		git clone https://github.com/sensepost/SPartan /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SPartan;python2 SPartan.py "\$@"
+cd /usr/share/$name;python2 SPartan.py "\$@"
 EOF
-		chmod +x /usr/bin/$SPartan
-		pip2 install -r /usr/share/$SPartan/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "SPartan" "/usr/share/kali-menu/exec-in-shell '$SPartan -h'"
-		printf "$GREEN"  "[*] Success Installing SPartan"
-	else
-		printf "$GREEN"  "[*] Success Installed SPartan"
+		chmod +x /usr/bin/$name
+		pip2 install -r /usr/share/$name/requirements.txt
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	WAFBypass="waf-bypass"
-	if [ ! -d "/usr/share/$WAFBypass" ]; then
-		git clone https://github.com/nemesida-waf/waf-bypass /usr/share/$WAFBypass
-		chmod 755 /usr/share/$WAFBypass/*
-		cat > /usr/bin/$WAFBypass << EOF
+	# install waf-bypass
+	if [ ! -d "/usr/share/waf-bypass" ]; then
+		local name="waf-bypass"
+		git clone https://github.com/nemesida-waf/waf-bypass /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		python3 /usr/share/$name/setup.py install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$WAFBypass;python2 dymerge.py "\$@"
+cd /usr/share/$name;python3 main.py "\$@"
 EOF
-		chmod +x /usr/bin/$WAFBypass
-		pip3 install -r /usr/share/$WAFBypass/requirements.txt
-		python3 /usr/share/$WAFBypass/setup.py install
-		menu_entry "Web" "Penetration-Testing" "WAFBypass" "/usr/share/kali-menu/exec-in-shell '$WAFBypass -h'"
-		printf "$GREEN"  "[*] Success Installing WAFBypass"
-	else
-		printf "$GREEN"  "[*] Success Installed WAFBypass"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	XSSLOADER="xssloader"
-	if [ ! -d "/usr/share/$XSSLOADER" ]; then
-		git clone https://github.com/capture0x/XSS-LOADER /usr/share/$XSSLOADER
-		chmod 755 /usr/share/$XSSLOADER/*
-		cat > /usr/bin/$XSSLOADER << EOF
+	# install xssloader
+	if [ ! -d "/usr/share/xssloader" ]; then
+		local name="xssloader"
+		git clone https://github.com/capture0x/XSS-LOADER /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$XSSLOADER;python3 payloader.py "\$@"
+cd /usr/share/$name;python3 payloader.py "\$@"
 EOF
-		chmod +x /usr/bin/$XSSLOADER
-		pip3 install -r /usr/share/$XSSLOADER/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "XSS-LOADER" "/usr/share/kali-menu/exec-in-shell '$XSSLOADER -h'"
-		printf "$GREEN"  "[*] Success Installing XSS-LOADER"
-	else
-		printf "$GREEN"  "[*] Success Installed XSS-LOADER"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CMSeek="cmseek"
-	if [ ! -d "/usr/share/$CMSeek" ]; then
-		git clone https://github.com/Tuhinshubhra/CMSeeK /usr/share/$CMSeek
-		chmod 755 /usr/share/$CMSeek/*
-		cat > /usr/bin/$CMSeek << EOF
+	# install cmseek
+	if [ ! -d "/usr/share/cmseek" ]; then
+		local name="cmseek"
+		git clone https://github.com/Tuhinshubhra/CMSeeK /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CMSeek;python3 cmseek.py "\$@"
+cd /usr/share/$name;python3 cmseek.py "\$@"
 EOF
-		chmod +x /usr/bin/$CMSeek
-		pip3 install -r /usr/share/$CMSeek/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "CMSeek" "/usr/share/kali-menu/exec-in-shell '$CMSeek -h'"
-		printf "$GREEN"  "[*] Success Installing CMSeek"
-	else
-		printf "$GREEN"  "[*] Success Installed CMSeek"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	XSStrike="xsstrike"
-	if [ ! -d "/usr/share/$XSStrike" ]; then
-		git clone https://github.com/s0md3v/XSStrike /usr/share/$XSStrike
-		chmod 755 /usr/share/$XSStrike/*
-		cat > /usr/bin/$XSStrike << EOF
+	# install xsstrike
+	if [ ! -d "/usr/share/xsstrike" ]; then
+		local name="xsstrike"
+		git clone https://github.com/s0md3v/XSStrike /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$XSStrike;python3 xsstrike.py "\$@"
+cd /usr/share/$name;python3 xsstrike.py "\$@"
 EOF
-		chmod +x /usr/bin/$XSStrike
-		pip3 install -r /usr/share/$XSStrike/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "XSStrike" "/usr/share/kali-menu/exec-in-shell '$XSStrike -h'"
-		printf "$GREEN"  "[*] Success Installing XSStrike"
-	else
-		printf "$GREEN"  "[*] Success Installed XSStrike"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	w4af="w4af"
-	if [ ! -d "/usr/share/$w4af" ]; then
-		git clone https://github.com/w4af/w4af /usr/share/$w4af
-		chmod 755 /usr/share/$w4af/*
-		cat > /usr/bin/$w4af << EOF
+	# install w4af
+	if [ ! -d "/usr/share/w4af" ]; then
+		local name="w4af"
+		git clone https://github.com/w4af/w4af /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;pipenv install;npm install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$w4af;pipenv shell;./w4af_console "\$@"
+cd /usr/share/$name;pipenv shell;./w4af_console "\$@"
 EOF
-		chmod +x /usr/bin/$w4af
-		cd /usr/share/$w4af;pipenv install;npm install
-		menu_entry "Web" "Penetration-Testing" "w4af" "/usr/share/kali-menu/exec-in-shell '$w4af'"
-		printf "$GREEN"  "[*] Success Installing w4af"
-	else
-		printf "$GREEN"  "[*] Success Installed w4af"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	JWTTool="jwt_tool"
-	if [ ! -d "/usr/share/$JWTTool" ]; then
-		git clone https://github.com/ticarpi/jwt_tool /usr/share/$JWTTool
-		chmod 755 /usr/share/$JWTTool/*
-		cat > /usr/bin/$JWTTool << EOF
+	# install jwt_tool
+	if [ ! -d "/usr/share/jwt_tool" ]; then
+		local name="jwt_tool"
+		git clone https://github.com/ticarpi/jwt_tool /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$JWTTool;python3 jwt_tool.py "\$@"
+cd /usr/share/$name;python3 jwt_tool.py "\$@"
 EOF
-		chmod +x /usr/bin/$JWTTool
-		menu_entry "Web" "Penetration-Testing" "JWTTool" "/usr/share/kali-menu/exec-in-shell '$JWTTool -h'"
-		printf "$GREEN"  "[*] Success Installing JWTTool"
-	else
-		printf "$GREEN"  "[*] Success Installed JWTTool"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Tplmap="tplmap"
-	if [ ! -d "/usr/share/$Tplmap" ]; then
-		git clone https://github.com/epinna/tplmap /usr/share/$Tplmap
-		chmod 755 /usr/share/$Tplmap/*
-		cat > /usr/bin/$Tplmap << EOF
+	# install tplmap
+	if [ ! -d "/usr/share/tplmap" ]; then
+		local name="tplmap"
+		git clone https://github.com/epinna/tplmap /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Tplmap;python3 tplmap.py "\$@"
+cd /usr/share/$name;python3 tplmap.py "\$@"
 EOF
-		chmod +x /usr/bin/$Tplmap
-		pip3 install -r /usr/share/$Tplmap/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "Tplmap" "/usr/share/kali-menu/exec-in-shell '$Tplmap -h'"
-		printf "$GREEN"  "[*] Success Installing Tplmap"
-	else
-		printf "$GREEN"  "[*] Success Installed Tplmap"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SSTImap="sstimap"
-	if [ ! -d "/usr/share/$SSTImap" ]; then
-		git clone https://github.com/vladko312/SSTImap /usr/share/$SSTImap
-		chmod 755 /usr/share/$SSTImap/*
-		cat > /usr/bin/$SSTImap << EOF
+	# install sstimap
+	if [ ! -d "/usr/share/sstimap" ]; then
+		local name="sstimap"
+		git clone https://github.com/vladko312/SSTImap /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SSTImap;python3 sstimap.py "\$@"
+cd /usr/share/$name;python3 sstimap.py "\$@"
 EOF
-		chmod +x /usr/bin/$SSTImap
-		pip3 install -r /usr/share/$SSTImap/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "SSTImap" "/usr/share/kali-menu/exec-in-shell '$SSTImap -h'"
-		printf "$GREEN"  "[*] Success Installing SSTImap"
-	else
-		printf "$GREEN"  "[*] Success Installed SSTImap"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Poodle="poodle"
-	if [ ! -d "/usr/share/$Poodle" ]; then
-		git clone https://github.com/mpgn/poodle-PoC /usr/share/$Poodle
-		chmod 755 /usr/share/$Poodle/*
-		cat > /usr/bin/$Poodle << EOF
+	# install poodle
+	if [ ! -d "/usr/share/poodle" ]; then
+		local name="poodle"
+		git clone https://github.com/mpgn/poodle-PoC /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Poodle;python3 poodle-exploit.py "\$@"
+cd /usr/share/$name;python3 poodle-exploit.py "\$@"
 EOF
-		chmod +x /usr/bin/$Poodle
-		menu_entry "Web" "Penetration-Testing" "Poodle" "/usr/share/kali-menu/exec-in-shell '$Poodle -h'"
-		printf "$GREEN"  "[*] Success Installing Poodle"
-	else
-		printf "$GREEN"  "[*] Success Installed Poodle"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Gopherus="gopherus"
-	if [ ! -d "/usr/share/$Gopherus" ]; then
-		git clone https://github.com/tarunkant/Gopherus /usr/share/$Gopherus
-		chmod 755 /usr/share/$Gopherus/*
-		cat > /usr/bin/$Gopherus << EOF
+	# install gopherus
+	if [ ! -d "/usr/share/gopherus" ]; then
+		local name="gopherus"
+		git clone https://github.com/tarunkant/Gopherus /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Gopherus;python2 gopherus.py "\$@"
+cd /usr/share/$name;python2 gopherus.py "\$@"
 EOF
-		chmod +x /usr/bin/$Gopherus
-		menu_entry "Web" "Penetration-Testing" "Gopherus" "/usr/share/kali-menu/exec-in-shell '$Gopherus -h'"
-		printf "$GREEN"  "[*] Success Installing Gopherus"
-	else
-		printf "$GREEN"  "[*] Success Installed Gopherus"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	HashExtender="hashextender"
-	if [ ! -d "/usr/share/$HashExtender" ]; then
-		git clone https://github.com/iagox86/hash_extender /usr/share/$HashExtender
-		chmod 755 /usr/share/$HashExtender/*
-		cd /usr/share/$HashExtender;make
-		ln -fs /usr/share/$HashExtender/hashextender /usr/bin/$HashExtender
-		chmod +x /usr/bin/$HashExtender
-		menu_entry "Web" "Penetration-Testing" "HashExtender" "/usr/share/kali-menu/exec-in-shell 'sudo $HashExtender -h'"
-		printf "$GREEN"  "[*] Success Installing HashExtender"
-	else
-		printf "$GREEN"  "[*] Success Installed HashExtender"
+	# install hashextender
+	if [ ! -d "/usr/share/hashextender" ]; then
+		local name="hashextender"
+		git clone https://github.com/iagox86/hash_extender /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make
+		ln -fs /usr/share/$name/hashextender /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SpoofCheck="spoofcheck"
-	if [ ! -d "/usr/share/$SpoofCheck" ]; then
-		git clone https://github.com/BishopFox/spoofcheck /usr/share/$SpoofCheck
-		chmod 755 /usr/share/$SpoofCheck/*
-		cat > /usr/bin/$SpoofCheck << EOF
+	# install spoofcheck
+	if [ ! -d "/usr/share/spoofcheck" ]; then
+		local name="spoofcheck"
+		git clone https://github.com/BishopFox/spoofcheck /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SpoofCheck;python2 spoofcheck.py "\$@"
+cd /usr/share/$name;python2 spoofcheck.py "\$@"
 EOF
-		chmod +x /usr/bin/$SpoofCheck
-		pip2 install -r /usr/share/$SpoofCheck/requirements.txt
-		menu_entry "Web" "Penetration-Testing" "SpoofCheck" "/usr/share/kali-menu/exec-in-shell '$SpoofCheck -h'"
-		printf "$GREEN"  "[*] Success Installing SpoofCheck"
-	else
-		printf "$GREEN"  "[*] Success Installed SpoofCheck"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	REDHAWK="redhawk"
-	if [ ! -d "/usr/share/$REDHAWK" ]; then
-		git clone https://github.com/Tuhinshubhra/RED_HAWK /usr/share/$REDHAWK
-		chmod 755 /usr/share/$REDHAWK/*
-		cat > /usr/bin/$REDHAWK << EOF
+	# install redhawk
+	if [ ! -d "/usr/share/redhawk" ]; then
+		local name="redhawk"
+		git clone https://github.com/Tuhinshubhra/RED_HAWK /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$REDHAWK;php rhawk.php "\$@"
+cd /usr/share/$name;php rhawk.php "\$@"
 EOF
-		chmod +x /usr/bin/$REDHAWK
-		menu_entry "Web" "Penetration-Testing" "RED_HAWK" "/usr/share/kali-menu/exec-in-shell '$REDHAWK -h'"
-		printf "$GREEN"  "[*] Success Installing RED_HAWK"
-	else
-		printf "$GREEN"  "[*] Success Installed RED_HAWK"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Ngrok="ngrok"
-	if [ ! -f "/usr/bin/$Ngrok" ]; then
-		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$Ngrok.tgz
-		tar -xvf /tmp/$Ngrok.tgz -C /usr/bin;rm -f /tmp/$Ngrok.tgz
-		chmod +x /usr/bin/$Ngrok
-		menu_entry "Web" "Penetration-Testing" "Ngrok" "/usr/share/kali-menu/exec-in-shell '$Ngrok -h'"
-		printf "$GREEN"  "[*] Success Installing Ngrok"
-	else
-		printf "$GREEN"  "[*] Success Installed Ngrok"
+	# install ngrok
+	if [ ! -f "/usr/bin/ngrok" ]; then
+		local name="ngrok"
+		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
+		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NoIP="noip"
+	# install noip2
 	if [ ! -f "/usr/local/bin/noip2" ]; then
-		mkdir -p /usr/share/$NoIP
-		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$NoIP.tar.gz
-		tar -xzf /tmp/$NoIP.tar.gz -C /usr/share/$NoIP;rm -f /tmp/$NoIP.tar.gz
-		chmod 755 /usr/share/$NoIP/*;cd /usr/share/$NoIP;make;make install
-		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell '$NoIP -h'"
-		printf "$GREEN"  "[*] Success Installing NoIP"
-	else
-		printf "$GREEN"  "[*] Success Installed NoIP"
+		local name="noip"
+		mkdir -p /usr/share/$name
+		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$name.tar.gz
+		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make;make install
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Breacher="breacher"
-	if [ ! -d "/usr/share/$Breacher" ]; then
-		git clone https://github.com/s0md3v/Breacher /usr/share/$Breacher
-		chmod 755 /usr/share/$Breacher/*
-		cat > /usr/bin/$Breacher << EOF
+	# install breacher
+	if [ ! -d "/usr/share/breacher" ]; then
+		local name="breacher"
+		git clone https://github.com/s0md3v/Breacher /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Breacher;python3 breacher.py "\$@"
+cd /usr/share/$name;python3 breacher.py "\$@"
 EOF
-		chmod +x /usr/bin/$Breacher
-		menu_entry "Web" "Penetration-Testing" "Breacher" "/usr/share/kali-menu/exec-in-shell '$Breacher -h'"
-		printf "$GREEN"  "[*] Success Installing Breacher"
-	else
-		printf "$GREEN"  "[*] Success Installed Breacher"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SWFTools="swftools"
-	if [ ! -d "/usr/share/$SWFTools" ]; then
-		git clone https://github.com/matthiaskramm/swftools /usr/share/$SWFTools
-		chmod 755 /usr/share/$SWFTools/*
+	# install swftools
+	if [ ! -d "/usr/share/swftools" ]; then
+		local name="swftools"
+		git clone https://github.com/matthiaskramm/swftools /usr/share/$name
+		chmod 755 /usr/share/$name/*
 		wget https://zlib.net/current/zlib.tar.gz -O /tmp/zlib.tar.gz
-		tar -xvf /tmp/zlib.tar.gz -C /usr/share/$SWFTools;rm -f /tmp/zlib.tar.gz
-		cd /usr/share/$SWFTools/zlib-*;./configure
-		cd /usr/share/$SWFTools;./configure
-		cd /usr/share/$SWFTools/lib;make
-		cd /usr/share/$SWFTools/src;make;make install
-		wget https://snapshot.debian.org/archive/debian/20130611T160143Z/pool/main/m/mtasc/mtasc_1.14-3_amd64.deb -O /tmp/mtasc_amd64.deb;chmod +x /tmp/mtasc_amd64.deb;dpkg -i /tmp/mtasc_amd64.deb;rm -f /tmp/mtasc_amd64.deb
+		tar -xvf /tmp/zlib.tar.gz -C /usr/share/$name;rm -f /tmp/zlib.tar.gz
+		cd /usr/share/$name/zlib-*;./configure
+		cd /usr/share/$name;./configure
+		cd /usr/share/$name/lib;make
+		cd /usr/share/$name/src;make;make install
+		wget https://snapshot.debian.org/archive/debian/20130611T160143Z/pool/main/m/mtasc/mtasc_1.14-3_amd64.deb -O /tmp/mtasc_amd64.deb
+		chmod +x /tmp/mtasc_amd64.deb;dpkg -i /tmp/mtasc_amd64.deb;rm -f /tmp/mtasc_amd64.deb
 		menu_entry "Web" "Penetration-Testing" "mtasc" "/usr/share/kali-menu/exec-in-shell 'mtasc -h'"
 		menu_entry "Web" "Penetration-Testing" "swfdump" "/usr/share/kali-menu/exec-in-shell 'swfdump -h'"
 		menu_entry "Web" "Penetration-Testing" "swfcombine" "/usr/share/kali-menu/exec-in-shell 'swfcombine -h'"
-		printf "$GREEN"  "[*] Success Installing SWFTools"
-	else
-		printf "$GREEN"  "[*] Success Installed SWFTools"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NoSQLMap="nosqlmap"
-	if [ ! -d "/usr/share/$NoSQLMap" ]; then
-		git clone https://github.com/codingo/NoSQLMap /usr/share/$NoSQLMap
-		chmod 755 /usr/share/$NoSQLMap/*
-		cat > /usr/bin/$NoSQLMap << EOF
+	# install nosqlmap
+	if [ ! -d "/usr/share/nosqlmap" ]; then
+		local name="nosqlmap"
+		git clone https://github.com/codingo/NoSQLMap /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;python2 nosqlmap.py install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$NoSQLMap;python2 nosqlmap.py "\$@"
+cd /usr/share/$name;python2 nosqlmap.py "\$@"
 EOF
-		chmod +x /usr/bin/$NoSQLMap
-		cd /usr/share/$NoSQLMap;python2 nosqlmap.py install;pip2 install couchdb
-		menu_entry "Web" "Penetration-Testing" "NoSQLMap" "/usr/share/kali-menu/exec-in-shell '$NoSQLMap -h'"
-		printf "$GREEN"  "[*] Success Installing NoSQLMap"
-	else
-		printf "$GREEN"  "[*] Success Installed NoSQLMap"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------------Mobile-Penetration-Testing------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
 
-	# Install Python3 pip
+	# install Python3 pip
 	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mvt kiwi androset quark-engine gplaycli"
 	pip_installer "Mobile" "Penetration-Testing" "$mobile_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	mobile_npm="rms-runtime-mobile-security apk-mitm igf bagbak"
 	npm_installer "Mobile" "Penetration-Testing" "$mobile_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	mobile_gem="jwt-cracker"
 	gem_installer "Mobile" "Penetration-Testing" "$mobile_gem"
 
-	# Install Golang
+	# install Golang
 	mobile_golang="
 go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr/bin/apkurlgrep"
 	go_installer "Mobile" "Penetration-Testing" "$mobile_golang"
 
-	Genymotion="genymotion"
-	if [ ! -d "/opt/genymobile/$Genymotion" ]; then
-		wget https://dl.genymotion.com/releases/genymotion-3.6.0/genymotion-3.6.0-linux_x64.bin -O /tmp/$Genymotion.bin
-		chmod 755 /tmp/$Genymotion.bin;cd /tmp;./$Genymotion.bin -y;rm -f /tmp/$Genymotion.bin
-		printf "$GREEN"  "[*] Success Installing Genymotion"
-	else
-		printf "$GREEN"  "[*] Success Installed Genymotion"
+	# install genymotion
+	if [ ! -d "/opt/genymobile/genymotion" ]; then
+		local name="genymotion"
+		wget https://dl.genymotion.com/releases/genymotion-3.6.0/genymotion-3.6.0-linux_x64.bin -O /tmp/$name.bin
+		chmod 755 /tmp/$name.bin;cd /tmp;./$name.bin -y;rm -f /tmp/$name.bin
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	MobSF="mobsf"
-	if [ ! -d "/usr/share/$MobSF" ]; then
-		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$MobSF
+	# install mobsf
+	if [ ! -d "/usr/share/mobsf" ]; then
+		local name="mobsf"
+		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$name
 		wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb -O /tmp/wkhtmltox.deb
 		chmod +x /tmp/wkhtmltox.deb;dpkg -i /tmp/wkhtmltox.deb;rm -f /tmp/wkhtmltox.deb
-		chmod 755 /usr/share/$MobSF/*
-		cat > /usr/bin/$MobSF << EOF
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./setup.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$MobSF;./run.sh > /dev/null &
+cd /usr/share/$name;./run.sh > /dev/null &
 sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
-		chmod +x /usr/bin/$MobSF
-		cd /usr/share/$MobSF;./setup.sh
-		menu_entry "Mobile" "Penetration-Testing" "MobSF" "/usr/share/kali-menu/exec-in-shell '$MobSF'"
-		printf "$GREEN"  "[*] Success Installing MobSF"
-	else
-		printf "$GREEN"  "[*] Success Installed MobSF"
+		chmod +x /usr/bin/$name
+		menu_entry "Mobile" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy awscli trivy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	cloud_npm="fleetctl"
 	npm_installer "Cloud" "Penetration-Testing" "$cloud_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	cloud_gem="aws_public_ips aws_security_viz aws_recon"
 	gem_installer "Cloud" "Penetration-Testing" "$cloud_gem"
 
-	# Install Golang
+	# install Golang
 	cloud_golang="
 go install github.com/koenrh/s3enum@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enum
 go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
@@ -1187,144 +1140,137 @@ go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudReco
 go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox"
 	go_installer "Cloud" "Penetration-Testing" "$cloud_golang"
 
-	CloudFail="cloudfail"
-	if [ ! -d "/usr/share/$CloudFail" ]; then
-		git clone https://github.com/m0rtem/CloudFail /usr/share/$CloudFail
-		chmod 755 /usr/share/$CloudFail/*
-		cat > /usr/bin/$CloudFail << EOF
+	# install cloudfail
+	if [ ! -d "/usr/share/cloudfail" ]; then
+		local name="cloudfail"
+		git clone https://github.com/m0rtem/CloudFail /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloudFail;python3 cloudfail.py "\$@"
+cd /usr/share/$name;python3 cloudfail.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloudFail
-		pip3 install -r /usr/share/$CloudFail/requirements.txt
-		menu_entry "Cloud" "Penetration-Testing" "CloudFail" "/usr/share/kali-menu/exec-in-shell '$CloudFail -h'"
-		printf "$GREEN"  "[*] Success Installing CloudFail"
-	else
-		printf "$GREEN"  "[*] Success Installed CloudFail"
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CCAT="ccat"
-	if [ ! -d "/usr/share/$CCAT" ]; then
-		git clone https://github.com/RhinoSecurityLabs/ccat /usr/share/$CCAT
-		chmod 755 /usr/share/$CCAT/*
-		cat > /usr/bin/$CCAT << EOF
+	# install ccat
+	if [ ! -d "/usr/share/ccat" ]; then
+		local name="ccat"
+		git clone https://github.com/RhinoSecurityLabs/ccat /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;python3 setup.py install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CCAT;python3 ccat.py "\$@"
+cd /usr/share/$name;python3 ccat.py "\$@"
 EOF
-		chmod +x /usr/bin/$CCAT
-		cd /usr/share/$CCAT;python3 setup.py install
-		menu_entry "Cloud" "Penetration-Testing" "CCAT" "/usr/share/kali-menu/exec-in-shell '$CCAT -h'"
-		printf "$GREEN"  "[*] Success Installing CCAT"
-	else
-		printf "$GREEN"  "[*] Success Installed CCAT"
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CloudHunter="cloudhunter"
-	if [ ! -d "/usr/share/$CloudHunter" ]; then
-		git clone https://github.com/belane/CloudHunter /usr/share/$CloudHunter
-		chmod 755 /usr/share/$CloudHunter/*
-		cat > /usr/bin/$CloudHunter << EOF
+	# install cloudhunter
+	if [ ! -d "/usr/share/cloudhunter" ]; then
+		local name="cloudhunter"
+		git clone https://github.com/belane/CloudHunter /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloudHunter;python3 cloudhunter.py "\$@"
+cd /usr/share/$name;python3 cloudhunter.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloudHunter
-		pip3 install -r /usr/share/$CloudHunter/requirements.txt
-		menu_entry "Cloud" "Penetration-Testing" "CloudHunter" "/usr/share/kali-menu/exec-in-shell '$CloudHunter -h'"
-		printf "$GREEN"  "[*] Success Installing CloudHunter"
-	else
-		printf "$GREEN"  "[*] Success Installed CloudHunter"
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GCPBucketBrute="gcpbucketbrute"
-	if [ ! -d "/usr/share/$GCPBucketBrute" ]; then
-		git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute /usr/share/$GCPBucketBrute
-		chmod 755 /usr/share/$GCPBucketBrute/*
-		cat > /usr/bin/$GCPBucketBrute << EOF
+	# install gcpbucketbrute
+	if [ ! -d "/usr/share/gcpbucketbrute" ]; then
+		local name="gcpbucketbrute"
+		git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GCPBucketBrute;python3 cloudhunter.py "\$@"
+cd /usr/share/$name;python3 cloudhunter.py "\$@"
 EOF
-		chmod +x /usr/bin/$GCPBucketBrute
-		pip3 install -r /usr/share/$GCPBucketBrute/requirements.txt
-		menu_entry "Cloud" "Penetration-Testing" "GCPBucketBrute" "/usr/share/kali-menu/exec-in-shell '$GCPBucketBrute -h'"
-		printf "$GREEN"  "[*] Success Installing GCPBucketBrute"
-	else
-		printf "$GREEN"  "[*] Success Installed GCPBucketBrute"
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	k8sgpt="k8sgpt"
-	if [ ! -d "/usr/share/$k8sgpt" ]; then
-		wget https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_amd64.deb -O /tmp/$k8sgpt.deb
-		chmod +x /tmp/$k8sgpt.deb;dpkg -i /tmp/$k8sgpt.deb;rm -f /tmp/$k8sgpt.deb
-		printf "$GREEN"  "[*] Success Installing k8sgpt"
-	else
-		printf "$GREEN"  "[*] Success Installed k8sgpt"
+	# install k8sgpt
+	if [ ! -d "/usr/share/k8sgpt" ]; then
+		local name="k8sgpt"
+		wget https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CloudQuery="cloudquery"
-	if [ ! -d "/usr/share/$CloudQuery" ]; then
-		mkdir -p /usr/share/$CloudQuery
-		wget https://github.com/cloudquery/cloudquery/releases/latest/download/cloudquery_linux_amd64 -O /usr/share/$CloudQuery/cloudquery
-		chmod 755 /usr/share/$CloudQuery/*
-		ln -fs /usr/share/$CloudQuery/cloudquery /usr/bin/$CloudQuery
-		chmod +x /usr/bin/$CloudQuery
-		menu_entry "Cloud" "Penetration-Testing" "CloudQuery" "/usr/share/kali-menu/exec-in-shell '$CloudQuery -h'"
-		printf "$GREEN"  "[*] Success Installing CloudQuery"
-	else
-		printf "$GREEN"  "[*] Success Installed CloudQuery"
+	# install cloudquery
+	if [ ! -d "/usr/share/cloudquery" ]; then
+		local name="cloudquery"
+		mkdir -p /usr/share/$name
+		wget https://github.com/cloudquery/cloudquery/releases/latest/download/cloudquery_linux_amd64 -O /usr/share/$name/cloudquery
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/cloudquery /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above 
 
-	# Install Python3 pip
+	# install Python3 pip
 	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
 	pip_installer "Network" "Penetration-Testing" "$network_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	network_npm="http-proxy-to-socks multitor"
 	npm_installer "Network" "Penetration-Testing" "$network_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	network_gem="seccomp-tools one_gadget"
 	npm_installer "Network" "Penetration-Testing" "$network_gem"
 
-	# Install Golang
+	# install Golang
 	network_golang="
 go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan"
 	go_installer "Network" "Penetration-Testing" "$network_golang"
 
-	Hiddify="hiddify"
-	if [ ! -d "/usr/share/$Hiddify" ]; then
-		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$Hiddify.deb
-		chmod +x /tmp/$Hiddify.deb;dpkg -i /tmp/$Hiddify.deb;rm -f /tmp/$Hiddify.deb
-		printf "$GREEN"  "[*] Success Installing Hiddify"
-	else
-		printf "$GREEN"  "[*] Success Installed Hiddify"
+	# install hiddify
+	if [ ! -d "/usr/share/hiddify" ]; then
+		local name="hiddify"
+		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SNMPBrute="snmpbrute"
-	if [ ! -d "/usr/share/$SNMPBrute" ]; then
-		git clone https://github.com/SECFORCE/SNMP-Brute /usr/share/$SNMPBrute
-		chmod 755 /usr/share/$SNMPBrute/*
-		cat > /usr/bin/$SNMPBrute << EOF
+	# install snmpbrute
+	if [ ! -d "/usr/share/snmpbrute" ]; then
+		local name="snmpbrute"
+		git clone https://github.com/SECFORCE/SNMP-Brute /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SNMPBrute;python3 snmpbrute.py "\$@"
+cd /usr/share/$name;python3 snmpbrute.py "\$@"
 EOF
-		chmod +x /usr/bin/$SNMPBrute
-		menu_entry "Network" "Penetration-Testing" "SNMPBrute" "/usr/share/kali-menu/exec-in-shell '$SNMPBrute -h'"
-		printf "$GREEN"  "[*] Success Installing SNMPBrute"
-	else
-		printf "$GREEN"  "[*] Success Installed SNMPBrute"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Sippts="sippts"
-	if [ ! -d "/usr/share/$Sippts" ]; then
-		git clone https://github.com/Pepelux/sippts /usr/share/$Sippts
-		chmod 755 /usr/share/$Sippts/*
-		pip3 install -r /usr/share/$Sippts/requirements.txt
-		cd /usr/share/$Sippts;python3 setup.py install
+	# install sippts
+	if [ ! -d "/usr/share/sippts" ]; then
+		local name="sippts"
+		git clone https://github.com/Pepelux/sippts /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cd /usr/share/$name;python3 setup.py install
 		menu_entry "Network" "Penetration-Testing" "rtcpbleed" "/usr/share/kali-menu/exec-in-shell 'rtcpbleed -h'"
 		menu_entry "Network" "Penetration-Testing" "rtpbleed" "/usr/share/kali-menu/exec-in-shell 'rtpbleed -h'"
 		menu_entry "Network" "Penetration-Testing" "rtpbleedflood" "/usr/share/kali-menu/exec-in-shell 'rtpbleedflood -h'"
@@ -1344,209 +1290,197 @@ EOF
 		menu_entry "Network" "Penetration-Testing" "sipsniff" "/usr/share/kali-menu/exec-in-shell 'sipsniff -h'"
 		menu_entry "Network" "Penetration-Testing" "siptshark" "/usr/share/kali-menu/exec-in-shell 'siptshark -h'"
 		menu_entry "Network" "Penetration-Testing" "wssend" "/usr/share/kali-menu/exec-in-shell 'wssend -h'"
-		printf "$GREEN"  "[*] Success Installing Sippts"
-	else
-		printf "$GREEN"  "[*] Success Installed Sippts"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RouterScan="routerscan"
-	if [ ! -d "/usr/share/$RouterScan" ]; then
-		mkdir -p /usr/share/$RouterScan
-		wget http://msk1.stascorp.com/routerscan/prerelease.7z -O /usr/share/$RouterScan/prerelease.7z
-		chmod 755 /usr/share/$RouterScan/*
-		cd /usr/share/$RouterScan;7z x prerelease.7z;rm -f prerelease.7z
-		cat > /usr/bin/$RouterScan << EOF
+	# install routerscan
+	if [ ! -d "/usr/share/routerscan" ]; then
+		local name="routerscan"
+		mkdir -p /usr/share/$name
+		wget http://msk1.stascorp.com/routerscan/prerelease.7z -O /usr/share/$name/prerelease.7z
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;7z x prerelease.7z;rm -f prerelease.7z
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$RouterScan;wine RouterScan.exe "\$@"
+cd /usr/share/$name;wine RouterScan.exe "\$@"
 EOF
-		chmod +x /usr/bin/$RouterScan
-		menu_entry "Network" "Penetration-Testing" "RouterScan" "/usr/share/kali-menu/exec-in-shell '$RouterScan'"
-		printf "$GREEN"  "[*] Success Installing RouterScan"
-	else
-		printf "$GREEN"  "[*] Success Installed RouterScan"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PRET="pret"
-	if [ ! -d "/usr/share/$PRET" ]; then
-		git clone https://github.com/RUB-NDS/PRET /usr/share/$PRET
-		chmod 755 /usr/share/$PRET/*
-		cat > /usr/bin/$PRET << EOF
+	# install pret
+	if [ ! -d "/usr/share/pret" ]; then
+		local name="pret"
+		git clone https://github.com/RUB-NDS/PRET /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PRET;python3 pret.py "\$@"
+cd /usr/share/$name;python3 pret.py "\$@"
 EOF
-		chmod +x /usr/bin/$PRET
-		menu_entry "Network" "Penetration-Testing" "PRET" "/usr/share/kali-menu/exec-in-shell '$PRET -h'"
-		printf "$GREEN"  "[*] Success Installing PRET"
-	else
-		printf "$GREEN"  "[*] Success Installed PRET"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Geneva="geneva"
-	if [ ! -d "/usr/share/$Geneva" ]; then
-		git clone https://github.com/Kkevsterrr/geneva /usr/share/$Geneva
-		chmod 755 /usr/share/$Geneva/*
-		cat > /usr/bin/$Geneva << EOF
+	# install geneva
+	if [ ! -d "/usr/share/geneva" ]; then
+		local name="geneva"
+		git clone https://github.com/Kkevsterrr/geneva /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Geneva;python3 engine.py "\$@"
+cd /usr/share/$name;python3 engine.py "\$@"
 EOF
-		chmod +x /usr/bin/$Geneva
-		pip3 install -r /usr/share/$Geneva/requirements.txt
-		menu_entry "Network" "Penetration-Testing" "Geneva" "/usr/share/kali-menu/exec-in-shell '$Geneva -h'"
-		printf "$GREEN"  "[*] Success Installing Geneva"
-	else
-		printf "$GREEN"  "[*] Success Installed Geneva"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GEF="gef"
-	if [ ! -f "~/.gef-2024.01.py" ]; then
-		bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-		menu_entry "Network" "Penetration-Testing" "GEF" "/usr/share/kali-menu/exec-in-shell '$GEF'"
-		printf "$GREEN"  "[*] Success Installing GEF"
-	else
-		printf "$GREEN"  "[*] Success Installed GEF"
+	# install pwndbg
+	if [ ! -d "/usr/share/pwndbg" ]; then
+		local name="pwndbg"
+		wget https://github.com/pwndbg/pwndbg/releases/latest/download/pwndbg_2024.02.14_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	IPscan="ipscan"
-	if [ ! -f "/usr/bin/$IPscan" ]; then
-		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$IPscan.deb
-		chmod +x /tmp/$IPscan.deb;dpkg -i /tmp/$IPscan.deb;rm -f /tmp/$IPscan.deb
-		printf "$GREEN"  "[*] Success Installing IPscan"
-	else
-		printf "$GREEN"  "[*] Success Installed IPscan"
+	# install ipscan
+	if [ ! -f "/usr/bin/ipscan" ]; then
+		local name="ipscan"
+		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Fetch="fetch"
-	if [ ! -d "/usr/share/$Fetch" ]; then
-		git clone https://github.com/stamparm/fetch-some-proxies /usr/share/$Fetch
-		chmod 755 /usr/share/$Fetch/*
-		cat > /usr/bin/fetch << EOF
+	# install fetch
+	if [ ! -d "/usr/share/fetch" ]; then
+		local name="fetch"
+		git clone https://github.com/stamparm/fetch-some-proxies /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Fetch;python3 fetch.py "\$@"
+cd /usr/share/$name;python3 fetch.py "\$@"
 EOF
-		chmod +x /usr/bin/$Fetch
-		menu_entry "Network" "Penetration-Testing" "Fetch" "/usr/share/kali-menu/exec-in-shell '$Fetch -h'"
-		printf "$GREEN"  "[*] Success Installing Fetch"
-	else
-		printf "$GREEN"  "[*] Success Installed Fetch"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SIETpy3="sietpy3"
-	if [ ! -d "/usr/share/$SIETpy3" ]; then
-		git clone https://github.com/Sab0tag3d/SIETpy3 /usr/share/$SIETpy3
-		chmod 755 /usr/share/$SIETpy3/*
-		cat > /usr/bin/$SIETpy3 << EOF
+	# install sietpy3
+	if [ ! -d "/usr/share/sietpy3" ]; then
+		local name="sietpy3"
+		git clone https://github.com/Sab0tag3d/SIETpy3 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SIETpy3;python3 siet.py "\$@"
+cd /usr/share/$name;python3 siet.py "\$@"
 EOF
-		chmod +x /usr/bin/$SIETpy3
-		menu_entry "Network" "Penetration-Testing" "SIETpy3" "/usr/share/kali-menu/exec-in-shell '$SIETpy3 -h'"
-		printf "$GREEN"  "[*] Success Installing SIETpy3"
-	else
-		printf "$GREEN"  "[*] Success Installed SIETpy3"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Memcrashed="memcrashed"
-	if [ ! -d "/usr/share/$Memcrashed" ]; then
-		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/$Memcrashed
-		chmod 755 /usr/share/$Memcrashed/*
-		cat > /usr/bin/$Memcrashed << EOF
+	# install memcrashed
+	if [ ! -d "/usr/share/memcrashed" ]; then
+		local name="memcrashed"
+		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Memcrashed;python3 Memcrashed.py "\$@"
+cd /usr/share/$name;python3 Memcrashed.py "\$@"
 EOF
-		chmod +x /usr/bin/$Memcrashed
-		pip3 install -r /usr/share/$Memcrashed/requirements.txt
-		menu_entry "Network" "Penetration-Testing" "Memcrashed" "/usr/share/kali-menu/exec-in-shell '$Memcrashed -h'"
-		printf "$GREEN"  "[*] Success Installing Memcrashed"
-	else
-		printf "$GREEN"  "[*] Success Installed Memcrashed"
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------Wireless-Penetration-Testing------------------------------------ #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph pskracker 
 
-	# Install Python3 pip
+	# install Python3 pip
 	wireless_pip="btlejack scapy wpspin"
 	pip_installer "Wireless" "Penetration-Testing" "$wireless_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	wireless_npm="btlejuice"
 	npm_installer "Wireless" "Penetration-Testing" "$wireless_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# wireless_gem=""
 	gem_installer "Wireless" "Penetration-Testing" "$wireless_gem"
 	
-	# Install Golang
+	# install Golang
 	# wireless_golang=""
 	go_installer "Wireless" "Penetration-Testing" "$wireless_golang"
 
-	GTScan="gtscan"
-	if [ ! -d "/usr/share/$GTScan" ]; then
-		git clone https://github.com/SigPloiter/GTScan /usr/share/$GTScan
-		chmod 755 /usr/share/$GTScan/*
-		cat > /usr/bin/$GTScan << EOF
+	# install gtscan
+	if [ ! -d "/usr/share/gtscan" ]; then
+		local name="gtscan"
+		git clone https://github.com/SigPloiter/GTScan /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GTScan;python3 gtscan.py "\$@"
+cd /usr/share/$name;python3 gtscan.py "\$@"
 EOF
-		chmod +x /usr/bin/$GTScan
-		pip3 install -r /usr/share/$GTScan/requirements.txt
-		menu_entry "Wireless" "Penetration-Testing" "GTScan" "/usr/share/kali-menu/exec-in-shell '$GTScan -h'"
-		printf "$GREEN"  "[*] Success Installing GTScan"
-	else
-		printf "$GREEN"  "[*] Success Installed GTScan"
+		chmod +x /usr/bin/$name
+		menu_entry "Wireless" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	HLRLookups="hlrlookups"
-	if [ ! -d "/usr/share/$HLRLookups" ]; then
-		git clone https://github.com/SigPloiter/HLR-Lookups /usr/share/$HLRLookups
-		chmod 755 /usr/share/$HLRLookups/*
-		cat > /usr/bin/$HLRLookups << EOF
+	# install hlr-lookups
+	if [ ! -d "/usr/share/hlr-lookups" ]; then
+		local name="hlr-lookups"
+		git clone https://github.com/SigPloiter/HLR-Lookups /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$HLRLookups;python2 hlr-lookups.py "\$@"
+cd /usr/share/$name;python2 hlr-lookups.py "\$@"
 EOF
-		chmod +x /usr/bin/$HLRLookups
-		menu_entry "Wireless" "Penetration-Testing" "HLRLookups" "/usr/share/kali-menu/exec-in-shell '$HLRLookups -h'"
-		printf "$GREEN"  "[*] Success Installing HLRLookups"
-	else
-		printf "$GREEN"  "[*] Success Installed HLRLookups"
+		chmod +x /usr/bin/$name
+		menu_entry "Wireless" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	geowifi="geowifi"
-	if [ ! -d "/usr/share/$geowifi" ]; then
-		git clone https://github.com/GONZOsint/geowifi /usr/share/$geowifi
-		chmod 755 /usr/share/$geowifi/*
-		cat > /usr/bin/$geowifi << EOF
+	# install geowifi
+	if [ ! -d "/usr/share/geowifi" ]; then
+		local name="geowifi"
+		git clone https://github.com/GONZOsint/geowifi /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$geowifi;python3 geowifi.py "\$@"
+cd /usr/share/$name;python3 geowifi.py "\$@"
 EOF
-		chmod +x /usr/bin/$geowifi
-		pip3 install -r /usr/share/$geowifi/requirements.txt
-		menu_entry "Wireless" "Penetration-Testing" "geowifi" "/usr/share/kali-menu/exec-in-shell '$geowifi -h'"
-		printf "$GREEN"  "[*] Success Installing geowifi"
-	else
-		printf "$GREEN"  "[*] Success Installed geowifi"
+		chmod +x /usr/bin/$name
+		menu_entry "Wireless" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy arduino gnuradio blue-hydra 
 
-	# Install Python3 pip
+	# install Python3 pip
 	iot_pip="scapy uefi_firmware unblob"
 	pip_installer "IoT" "Penetration-Testing" "$iot_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# iot_npm=""
 	npm_installer "IoT" "Penetration-Testing" "$iot_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# iot_gem=""
 	gem_installer "IoT" "Penetration-Testing" "$iot_gem"
 
-	# Install Golang
+	# install Golang
 	# iot_golang=""
 	go_installer "IoT" "Penetration-Testing" "$iot_golang"
 
@@ -1557,22 +1491,22 @@ EOF
 red_team ()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
 
-	# Install Python3 pip
+	# install Python3 pip
 	reconnaissance_pip="censys ggshield raccoon-scanner mailspoof h8mail twint thorndyke gitfive shodan postmaniac socialscan chiasmodon"
 	pip_installer "Reconnaissance" "Red-Team" "$reconnaissance_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	reconnaissance_npm="igf nodesub multitor"
 	npm_installer "Reconnaissance" "Red-Team" "$reconnaissance_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# reconnaissance_gem=""
 	gem_installer "Reconnaissance" "Red-Team" "$reconnaissance_gem"
 
-	# Install Golang
+	# install Golang
 	reconnaissance_golang="
 go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
@@ -1582,1591 +1516,1496 @@ go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bi
 go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph"
 	go_installer "Reconnaissance" "Red-Team" "$reconnaissance_golang"
 
-	Trape="trape"
-	if [ ! -d "/usr/share/$Trape" ]; then
-		git clone https://github.com/jofpin/trape /usr/share/$Trape
-		chmod 755 /usr/share/$Trape/*
-		cat > /usr/bin/$Trape << EOF
+	# install trape
+	if [ ! -d "/usr/share/trape" ]; then
+		local name="trape"
+		git clone https://github.com/jofpin/trape /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Trape;python3 trape.py "\$@"
+cd /usr/share/$name;python3 trape.py "\$@"
 EOF
-		chmod +x /usr/bin/$Trape
-		pip3 install -r /usr/share/$Trape/requirements.txt
-		menu_entry "Reconnaissance" "Red-Team" "Trape" "/usr/share/kali-menu/exec-in-shell '$Trape -h'"
-		printf "$GREEN"  "[*] Success Installing Trape"
-	else
-		printf "$GREEN"  "[*] Success Installed Trape"
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Dracnmap="dracnmap"
+	# install dracnmap
 	if [ ! -d "/usr/share/dracnmap" ]; then
-		git clone https://github.com/Screetsec/Dracnmap /usr/share/$Dracnmap
-		chmod 755 /usr/share/$Dracnmap/*
-		cat > /usr/bin/$Dracnmap << EOF
+		local name="dracnmap"
+		git clone https://github.com/Screetsec/Dracnmap /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Dracnmap;./Dracnmap.sh "\$@"
+cd /usr/share/$name;./Dracnmap.sh "\$@"
 EOF
-		chmod +x /usr/bin/$Dracnmap
-		menu_entry "Reconnaissance" "Red-Team" "Dracnmap" "/usr/share/kali-menu/exec-in-shell '$Dracnmap -h'"
-		printf "$GREEN"  "[*] Success Installing Dracnmap"
-	else
-		printf "$GREEN"  "[*] Success Installed Dracnmap"
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ReconFTW="reconftw"
-	if [ ! -d "/usr/share/$ReconFTW" ]; then
-		git clone https://github.com/six2dez/reconftw /usr/share/$ReconFTW
-		chmod 755 /usr/share/$ReconFTW/*
-		cat > /usr/bin/$ReconFTW << EOF
+	# install reconftw
+	if [ ! -d "/usr/share/reconftw" ]; then
+		local name="reconftw"
+		git clone https://github.com/six2dez/reconftw /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ReconFTW;./reconftw.sh "\$@"
+cd /usr/share/$name;./reconftw.sh "\$@"
 EOF
-		chmod +x /usr/bin/$ReconFTW
-		cd /usr/share/$ReconFTW;./install.sh
-		menu_entry "Reconnaissance" "Red-Team" "ReconFTW" "/usr/share/kali-menu/exec-in-shell '$ReconFTW -h'"
-		printf "$GREEN"  "[*] Success Installing ReconFTW"
-	else
-		printf "$GREEN"  "[*] Success Installed ReconFTW"
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CloakQuest3r="cloakquest3r"
-	if [ ! -d "/usr/share/$CloakQuest3r" ]; then
-		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$CloakQuest3r
-		chmod 755 /usr/share/$CloakQuest3r/*
-		cat > /usr/bin/$CloakQuest3r << EOF
+	# install cloakquest3r
+	if [ ! -d "/usr/share/cloakquest3r" ]; then
+		local name="cloakquest3r"
+		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloakQuest3r;python3 cloakquest3r.py "\$@"
+cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloakQuest3r
-		pip3 install -r /usr/share/$CloakQuest3r/requirements.txt
-		menu_entry "Reconnaissance" "Red-Team" "CloakQuest3r" "/usr/share/kali-menu/exec-in-shell '$CloakQuest3r -h'"
-		printf "$GREEN"  "[*] Success Installing CloakQuest3r"
-	else
-		printf "$GREEN"  "[*] Success Installed CloakQuest3r"
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------Resource-Development-Red-Team----------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy sharpshooter 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# resource_development_pip=""
 	pip_installer "Resource-Development" "Red-Team" "$resource_development_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# resource_development_npm=""
 	npm_installer "Resource-Development" "Red-Team" "$resource_development_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# resource_development_gem=""
 	gem_installer "Resource-Development" "Red-Team" "$resource_development_gem"
 
-	# Install Golang
+	# install Golang
 	# resource_development_golang=""
 	go_installer "Resource-Development" "Red-Team" "$resource_development_golang"
 
-	OffensiveNim="offensivenim"
-	if [ ! -d "/usr/share/$OffensiveNim" ]; then
-		git clone https://github.com/byt3bl33d3r/OffensiveNim /usr/share/$OffensiveNim
-		chmod 755 /usr/share/$OffensiveNim/*
-		cat > /usr/bin/$OffensiveNim << EOF
+	# install offensivenim
+	if [ ! -d "/usr/share/offensivenim" ]; then
+		local name="offensivenim"
+		git clone https://github.com/byt3bl33d3r/OffensiveNim /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$OffensiveNim/src;ls "\$@"
+cd /usr/share/$name/src;ls "\$@"
 EOF
-		chmod +x /usr/bin/$OffensiveNim
-		menu_entry "Resource-Development" "Red-Team" "OffensiveNim" "/usr/share/kali-menu/exec-in-shell '$OffensiveNim'"
-		printf "$GREEN"  "[*] Success Installing OffensiveNim"
-	else
-		printf "$GREEN"  "[*] Success Installed OffensiveNim"
+		chmod +x /usr/bin/$name
+		menu_entry "Resource-Development" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	OffensiveDLR="offensivedlr"
-	if [ ! -d "/usr/share/$OffensiveDLR" ]; then
-		git clone https://github.com/byt3bl33d3r/OffensiveDLR /usr/share/$OffensiveDLR
-		chmod 755 /usr/share/$OffensiveDLR/*
-		cat > /usr/bin/$OffensiveDLR << EOF
+	# install offensivedlr
+	if [ ! -d "/usr/share/offensivedlr" ]; then
+		local name="offensivedlr"
+		git clone https://github.com/byt3bl33d3r/OffensiveDLR /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$OffensiveDLR;pwsh -c \"dir\" "\$@"
+cd /usr/share/$name;pwsh -c \"dir\" "\$@"
 EOF
-		chmod +x /usr/bin/$OffensiveDLR
-		menu_entry "Resource-Development" "Red-Team" "OffensiveDLR" "/usr/share/kali-menu/exec-in-shell '$OffensiveDLR'"
-		printf "$GREEN"  "[*] Success Installing OffensiveDLR"
-	else
-		printf "$GREEN"  "[*] Success Installed OffensiveDLR"
+		chmod +x /usr/bin/$name
+		menu_entry "Resource-Development" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# --------------------------------------Initial-Access-Red-team-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
 
-	# Install Python3 pip
+	# install Python3 pip
 	initial_access_pip="rarce baboossh dnstwist pasteme-cli"
 	pip_installer "Initial-Access" "Red-Team" "$initial_access_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# initial_access_npm=""
 	npm_installer "Initial-Access" "Red-Team" "$initial_access_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# initial_access_gem=""
 	gem_installer "Initial-Access" "Red-Team" "$initial_access_gem"
 
-	# Install Golang
+	# install Golang
 	initial_access_golang="
 go install github.com/Tylous/ZipExec@latest;ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
 go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor"
 	go_installer "Initial-Access" "Red-Team" "$initial_access_golang"
 
-	Evilginx="evilginx"
-	if [ ! -d "/usr/share/$Evilginx" ]; then
-		wget https://github.com/kgretzky/evilginx2/releases/download/2.4.0/evilginx-linux-amd64.tar.gz -O /tmp/$Evilginx.tar.gz
-		tar -xvf /tmp/$Evilginx.tar.gz -C /usr/share;rm -f /tmp/$Evilginx.tar.gz
-		chmod 755 /usr/share/$Evilginx/*
-		ln -fs /usr/share/$Evilginx/evilginx /usr/bin/$Evilginx
-		chmod +x /usr/bin/$Evilginx
-		cd /usr/share/$Evilginx;./install.sh
-		menu_entry "Initial-Access" "Red-Team" "Evilginx" "/usr/share/kali-menu/exec-in-shell 'sudo $Evilginx -h'"
-		printf "$GREEN"  "[*] Success Installing Evilginx"
-	else
-		printf "$GREEN"  "[*] Success Installed Evilginx"
+	# install evilginx
+	if [ ! -d "/usr/share/evilginx" ]; then
+		local name="evilginx"
+		mkdir /usr/share/$name
+		wget https://github.com/kgretzky/evilginx2/releases/latest/download/evilginx-v3.3.0-linux-64bit.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		ln -fs /usr/share/$name/evilginx /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SocialFish="socialfish"
-	if [ ! -d "/usr/share/$SocialFish" ]; then
-		git clone https://github.com/UndeadSec/SocialFish /usr/share/$SocialFish
-		chmod 755 /usr/share/$SocialFish/*
-		cat > /usr/bin/$SocialFish << EOF
+	# install socialfish
+	if [ ! -d "/usr/share/socialfish" ]; then
+		local name="socialfish"
+		git clone https://github.com/UndeadSec/SocialFish /usr/share/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SocialFish;python3 SocialFish.py "\$@"
+cd /usr/share/$name;python3 SocialFish.py "\$@"
 EOF
-		chmod +x /usr/bin/$SocialFish
-		pip3 install -r /usr/share/$SocialFish/requirements.txt
-		menu_entry "Initial-Access" "Red-Team" "SocialFish" "/usr/share/kali-menu/exec-in-shell '$SocialFish -h'"
-		printf "$GREEN"  "[*] Success Installing SocialFish"
-	else
-		printf "$GREEN"  "[*] Success Installed SocialFish"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	EmbedInHTML="embedinhtml"
-	if [ ! -d "/usr/share/$EmbedInHTML" ]; then
-		git clone https://github.com/Arno0x/EmbedInHTML /usr/share/$EmbedInHTML
-		chmod 755 /usr/share/$EmbedInHTML/*
-		cat > /usr/bin/$EmbedInHTML << EOF
+	# install embedinhtml
+	if [ ! -d "/usr/share/embedinhtml" ]; then
+		local name="embedinhtml"
+		git clone https://github.com/Arno0x/EmbedInHTML /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$EmbedInHTML;python2 embedInHTML.py "\$@"
+cd /usr/share/$name;python2 embedInHTML.py "\$@"
 EOF
-		chmod +x /usr/bin/$EmbedInHTML
-		menu_entry "Initial-Access" "Red-Team" "EmbedInHTML" "/usr/share/kali-menu/exec-in-shell '$EmbedInHTML -h'"
-		printf "$GREEN"  "[*] Success Installing EmbedInHTML"
-	else
-		printf "$GREEN"  "[*] Success Installed EmbedInHTML"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	BadPDF="badpdf"
-	if [ ! -d "/usr/share/$BadPDF" ]; then
-		git clone https://github.com/deepzec/Bad-Pdf /usr/share/$BadPDF
-		chmod 755 /usr/share/$BadPDF/*
-		cat > /usr/bin/$BadPDF << EOF
+	# install badpdf
+	if [ ! -d "/usr/share/badpdf" ]; then
+		local name="badpdf"
+		git clone https://github.com/deepzec/Bad-Pdf /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$BadPDF;python2 badpdf.py "\$@"
+cd /usr/share/$name;python2 badpdf.py "\$@"
 EOF
-		chmod +x /usr/bin/$BadPDF
-		menu_entry "Initial-Access" "Red-Team" "BadPDF" "/usr/share/kali-menu/exec-in-shell '$BadPDF -h'"
-		printf "$GREEN"  "[*] Success Installing BadPDF"
-	else
-		printf "$GREEN"  "[*] Success Installed BadPDF"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	BLACKEYE="blackeye"
-	if [ ! -d "/usr/share/$BLACKEYE" ]; then
-		git clone https://github.com/EricksonAtHome/blackeye /usr/share/$BLACKEYE
-		chmod 755 /usr/share/$BLACKEYE/*
-		cat > /usr/bin/$BLACKEYE << EOF
+	# install blackeye
+	if [ ! -d "/usr/share/blackeye" ]; then
+		local name="blackeye"
+		git clone https://github.com/EricksonAtHome/blackeye /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$BLACKEYE;./blackeye.sh "\$@"
+cd /usr/share/$name;./blackeye.sh "\$@"
 EOF
-		chmod +x /usr/bin/$BLACKEYE
-		menu_entry "Initial-Access" "Red-Team" "BLACKEYE" "/usr/share/kali-menu/exec-in-shell '$BLACKEYE'"
-		printf "$GREEN"  "[*] Success Installing BLACKEYE"
-	else
-		printf "$GREEN"  "[*] Success Installed BLACKEYE"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PDFBUILDER="pdfbuilder"
-	if [ ! -d "/usr/share/$PDFBUILDER" ]; then
-		mkdir -p /usr/share/$PDFBUILDER
-		wget https://github.com/K3rnel-Dev/pdf-exploit/releases/download/Compilated/PDF-BUILDER.zip -O /tmp/$PDFBUILDER.zip
-		unzip /tmp/$PDFBUILDER.zip -d /usr/share/$PDFBUILDER;rm -f /tmp/$PDFBUILDER.zip
-		chmod 755 /usr/share/$PDFBUILDER/*
-		cat > /usr/bin/$PDFBUILDER << EOF
+	# install pdfbuilder
+	if [ ! -d "/usr/share/pdfbuilder" ]; then
+		local name="pdfbuilder"
+		mkdir -p /usr/share/$name
+		wget https://github.com/K3rnel-Dev/pdf-exploit/releases/download/Compilated/PDF-BUILDER.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PDFBUILDER;mono PDF-BUILDER.exe "\$@"
+cd /usr/share/$name;mono PDF-BUILDER.exe "\$@"
 EOF
-		chmod +x /usr/bin/$PDFBUILDER
-		menu_entry "Initial-Access" "Red-Team" "PDFBUILDER" "/usr/share/kali-menu/exec-in-shell '$PDFBUILDER'"
-		printf "$GREEN"  "[*] Success Installing PDFBUILDER"
-	else
-		printf "$GREEN"  "[*] Success Installed PDFBUILDER"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CredSniper="credsniper"
-	if [ ! -d "/usr/share/$CredSniper" ]; then
-		git clone https://github.com/ustayready/CredSniper /usr/share/$CredSniper
-		chmod 755 /usr/share/$CredSniper/*
-		cat > /usr/bin/$CredSniper << EOF
+	# install credsniper
+	if [ ! -d "/usr/share/credsniper" ]; then
+		local name="credsniper"
+		git clone https://github.com/ustayready/CredSniper /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CredSniper;python3 credsniper.py "\$@"
+cd /usr/share/$name;python3 credsniper.py "\$@"
 EOF
-		chmod +x /usr/bin/$CredSniper
-		cd /usr/share/$CredSniper;./install.sh
-		pip3 install -r /usr/share/$CredSniper/requirements.txt
-		menu_entry "Initial-Access" "Red-Team" "CredSniper" "/usr/share/kali-menu/exec-in-shell '$CredSniper -h'"
-		printf "$GREEN"  "[*] Success Installing CredSniper"
-	else
-		printf "$GREEN"  "[*] Success Installed CredSniper"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	EvilURL="evilurl"
-	if [ ! -d "/usr/share/$EvilURL" ]; then
-		git clone https://github.com/UndeadSec/EvilURL /usr/share/$EvilURL
-		chmod 755 /usr/share/$EvilURL/*
-		cat > /usr/bin/$EvilURL << EOF
+	# install evilurl
+	if [ ! -d "/usr/share/evilurl" ]; then
+		local name="evilurl"
+		git clone https://github.com/UndeadSec/EvilURL /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$EvilURL;python3 evilurl.py "\$@"
+cd /usr/share/$name;python3 evilurl.py "\$@"
 EOF
-		chmod +x /usr/bin/$EvilURL
-		menu_entry "Initial-Access" "Red-Team" "EvilURL" "/usr/share/kali-menu/exec-in-shell '$EvilURL -h'"
-		printf "$GREEN"  "[*] Success Installing EvilURL"
-	else
-		printf "$GREEN"  "[*] Success Installed EvilURL"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Debinject="debinject"
-	if [ ! -d "/usr/share/$Debinject" ]; then
-		git clone https://github.com/UndeadSec/Debinject /usr/share/$Debinject
-		chmod 755 /usr/share/$Debinject/*
-		cat > /usr/bin/$Debinject << EOF
+	# install debinject
+	if [ ! -d "/usr/share/debinject" ]; then
+		local name="debinject"
+		git clone https://github.com/UndeadSec/Debinject /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Debinject;python2 debinject.py "\$@"
+cd /usr/share/$name;python2 debinject.py "\$@"
 EOF
-		chmod +x /usr/bin/$Debinject
-		menu_entry "Initial-Access" "Red-Team" "Debinject" "/usr/share/kali-menu/exec-in-shell '$Debinject -h'"
-		printf "$GREEN"  "[*] Success Installing Debinject"
-	else
-		printf "$GREEN"  "[*] Success Installed Debinject"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Brutal="brutal"
-	if [ ! -d "/usr/share/$Brutal" ]; then
-		git clone https://github.com/Screetsec/Brutal /usr/share/$Brutal
-		chmod 755 /usr/share/$Brutal/*
-		cat > /usr/bin/$Brutal << EOF
+	# install brutal
+	if [ ! -d "/usr/share/brutal" ]; then
+		local name="brutal"
+		git clone https://github.com/Screetsec/Brutal /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Brutal;./Brutal.sh "\$@"
+cd /usr/share/$name;./Brutal.sh "\$@"
 EOF
-		chmod +x /usr/bin/$Brutal
-		menu_entry "Initial-Access" "Red-Team" "Brutal" "/usr/share/kali-menu/exec-in-shell 'sudo $Brutal -h'"
-		printf "$GREEN"  "[*] Success Installing Brutal"
-	else
-		printf "$GREEN"  "[*] Success Installed Brutal"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Demiguise="demiguise"
-	if [ ! -d "/usr/share/$Demiguise" ]; then
-		git clone https://github.com/nccgroup/demiguise /usr/share/$Demiguise
-		chmod 755 /usr/share/$Demiguise/*
-		cat > /usr/bin/$Demiguise << EOF
+	# install demiguise
+	if [ ! -d "/usr/share/demiguise" ]; then
+		local name="demiguise"
+		git clone https://github.com/nccgroup/demiguise /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Demiguise;python3 demiguise.py "\$@"
+cd /usr/share/$name;python3 demiguise.py "\$@"
 EOF
-		chmod +x /usr/bin/$Demiguise
-		menu_entry "Initial-Access" "Red-Team" "Demiguise" "/usr/share/kali-menu/exec-in-shell '$Demiguise'"
-		printf "$GREEN"  "[*] Success Installing Demiguise"
-	else
-		printf "$GREEN"  "[*] Success Installed Demiguise"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Dr0p1t="dr0p1t"
-	if [ ! -d "/usr/share/$Dr0p1t" ]; then
-		git clone https://github.com/D4Vinci/Dr0p1t-Framework /usr/share/$Dr0p1t
-		chmod 755 /usr/share/$Dr0p1t/*
-		cd /usr/share/$Dr0p1t;./install.sh
-		cat > /usr/bin/$Dr0p1t << EOF
+	# install dr0p1t
+	if [ ! -d "/usr/share/dr0p1t" ]; then
+		local name="dr0p1t"
+		git clone https://github.com/D4Vinci/Dr0p1t-Framework /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Dr0p1t;python3 Dr0p1t.py "\$@"
+cd /usr/share/$name;python3 Dr0p1t.py "\$@"
 EOF
-		chmod +x /usr/bin/$Dr0p1t
-		menu_entry "Initial-Access" "Red-Team" "Dr0p1t" "/usr/share/kali-menu/exec-in-shell '$Dr0p1t -h'"
-		printf "$GREEN"  "[*] Success Installing Dr0p1t"
-	else
-		printf "$GREEN"  "[*] Success Installed Dr0p1t"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	EvilPDF="evilpdf"
-	if [ ! -d "/usr/share/$EvilPDF" ]; then
-		git clone https://github.com/superzerosec/evilpdf /usr/share/$EvilPDF
-		chmod 755 /usr/share/$EvilPDF/*
-		cat > /usr/bin/$EvilPDF << EOF
+	# install evilpdf
+	if [ ! -d "/usr/share/evilpdf" ]; then
+		local name="evilpdf"
+		git clone https://github.com/superzerosec/evilpdf /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$EvilPDF;python2 evilpdf.py "\$@"
+cd /usr/share/$name;python2 evilpdf.py "\$@"
 EOF
-		chmod +x /usr/bin/$EvilPDF
-		menu_entry "Initial-Access" "Red-Team" "EvilPDF" "/usr/share/kali-menu/exec-in-shell '$EvilPDF -h'"
-		printf "$GREEN"  "[*] Success Installing EvilPDF"
-	else
-		printf "$GREEN"  "[*] Success Installed EvilPDF"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Gophish="gophish"
-	if [ ! -d "/usr/share/$Gophish" ]; then
-		wget https://github.com/gophish/gophish/releases/latest/download/gophish-v0.12.1-linux-64bit.zip -O /tmp/$Gophish.zip
-		unzip /tmp/$Gophish.zip -d /usr/share/$Gophish;rm -f /tmp/$Gophish.zip
-		chmod 755 /usr/share/$Gophish/*
-		cat > /usr/bin/$Gophish << EOF
+	# install gophish
+	if [ ! -d "/usr/share/gophish" ]; then
+		local name="gophish"
+		wget https://github.com/gophish/gophish/releases/latest/download/gophish-v0.12.1-linux-64bit.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Gophish;./gophish "\$@"
+cd /usr/share/$name;./gophish "\$@"
 EOF
-		chmod +x /usr/bin/$Gophish
-		menu_entry "Initial-Access" "Red-Team" "Gophish" "/usr/share/kali-menu/exec-in-shell '$Gophish'"
-		printf "$GREEN"  "[*] Success Installing Gophish"
-	else
-		printf "$GREEN"  "[*] Success Installed Gophish"
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------------Execution-Red-Team---------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy shellnoob
 
-	# Install Python3 pip
+	# install Python3 pip
 	execution_pip="donut-shellcode xortool pwncat"
 	pip_installer "Execution" "Red-Team" "$execution_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# execution_npm=""
 	npm_installer "Execution" "Red-Team" "$execution_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# execution_gem=""
 	gem_installer "Execution" "Red-Team" "$execution_gem"
 
-	# Install Golang
+	# install Golang
 	# execution_golang=""
 	go_installer "Execution" "Red-Team" "$execution_golang"
 
-	Venom="venom"
-	if [ ! -d "/usr/share/$Venom" ]; then
-		git clone https://github.com/r00t-3xp10it/venom /usr/share/$Venom
-		chmod 755 /usr/share/$Venom/*
-		cat > /usr/bin/$Venom << EOF
+	# install venom
+	if [ ! -d "/usr/share/venom" ]; then
+		local name="venom"
+		git clone https://github.com/r00t-3xp10it/venom /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Venom;./venom.sh "\$@"
+cd /usr/share/$name;./venom.sh "\$@"
 EOF
-		chmod +x /usr/bin/$Venom
-		menu_entry "Execution" "Red-Team" "Venom" "/usr/share/kali-menu/exec-in-shell 'sudo $Venom -h'"
-		printf "$GREEN"  "[*] Success Installing Venom"
-	else
-		printf "$GREEN"  "[*] Success Installed Venom"
+		chmod +x /usr/bin/$name
+		menu_entry "Execution" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PowerLessShell="powerlessshell"
-	if [ ! -d "/usr/share/$PowerLessShell" ]; then
-		git clone https://github.com/Mr-Un1k0d3r/PowerLessShell /usr/share/$PowerLessShell
-		chmod 755 /usr/share/$PowerLessShell/*
-		cat > /usr/bin/$PowerLessShell << EOF
+	# install powerlessshell
+	if [ ! -d "/usr/share/powerlessshell" ]; then
+		local name="powerlessshell"
+		git clone https://github.com/Mr-Un1k0d3r/PowerLessShell /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PowerLessShell;python2 PowerLessShell.py "\$@"
+cd /usr/share/$name;python2 PowerLessShell.py "\$@"
 EOF
-		chmod +x /usr/bin/$PowerLessShell
-		menu_entry "Execution" "Red-Team" "PowerLessShell" "/usr/share/kali-menu/exec-in-shell '$PowerLessShell -h'"
-		printf "$GREEN"  "[*] Success Installing PowerLessShell"
-	else
-		printf "$GREEN"  "[*] Success Installed PowerLessShell"
+		chmod +x /usr/bin/$name
+		menu_entry "Execution" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SharpShooter="sharpshooter"
-	if [ ! -d "/usr/share/$SharpShooter" ]; then
-		git clone https://github.com/mdsecactivebreach/SharpShooter /usr/share/$SharpShooter
-		chmod 755 /usr/share/$SharpShooter/*
-		cat > /usr/bin/$SharpShooter << EOF
+	# install sharpshooter
+	if [ ! -d "/usr/share/sharpshooter" ]; then
+		local name="sharpshooter"
+		git clone https://github.com/mdsecactivebreach/SharpShooter /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SharpShooter;python2 SharpShooter.py "\$@"
+cd /usr/share/$name;python2 SharpShooter.py "\$@"
 EOF
-		chmod +x /usr/bin/$SharpShooter
-		pip2 install -r /usr/share/$SharpShooter/requirements.txt
-		menu_entry "Execution" "Red-Team" "SharpShooter" "/usr/share/kali-menu/exec-in-shell '$SharpShooter -h'"
-		printf "$GREEN"  "[*] Success Installing SharpShooter"
-	else
-		printf "$GREEN"  "[*] Success Installed SharpShooter"
+		chmod +x /usr/bin/$name
+		menu_entry "Execution" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Donut="donut"
-	if [ ! -d "/usr/share/$Donut" ]; then
-		mkdir -p /usr/share/$Donut
-		wget https://github.com/TheWover/donut/releases/download/v1.0/donut_v1.0.tar.gz -O /tmp/$Donut.tar.gz
-		tar -xvf /tmp/$Donut.tar.gz -C /usr/share/$Donut;rm -f /tmp/$Donut.tar.gz
-		chmod 755 /usr/share/$Donut/*
-		ln -fs /usr/share/$Donut/donut /usr/bin/$Donut
-		chmod +x /usr/bin/$Donut
-		menu_entry "Execution" "Red-Team" "Donut" "/usr/share/kali-menu/exec-in-shell '$Donut -h'"
-		printf "$GREEN"  "[*] Success Installing Donut"
-	else
-		printf "$GREEN"  "[*] Success Installed Donut"
+	# install donut
+	if [ ! -d "/usr/share/donut" ]; then
+		local name="donut"
+		mkdir -p /usr/share/$name
+		wget https://github.com/TheWover/donut/releases/latest/download/donut_v1.0.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/donut /usr/bin/$Donut
+		chmod +x /usr/bin/$name
+		menu_entry "Execution" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ----------------------------------------Persistence-Red-Team--------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	persistence_pip="hiphp"
 	pip_installer "Persistence" "Red-Team" "$persistence_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# persistence_npm=""
 	npm_installer "Persistence" "Red-Team" "$persistence_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# persistence_gem=""
 	gem_installer "Persistence" "Red-Team" "$persistence_gem"
 
-	# Install Golang
+	# install Golang
 	# persistence_golang=""
 	go_installer "Persistence" "Red-Team" "$persistence_golang"
 
-	Vegile="vegile"
-	if [ ! -d "/usr/share/$Vegile" ]; then
-		git clone https://github.com/Screetsec/Vegile /usr/share/$Vegile
-		chmod 755 /usr/share/$Vegile/*
-		ln -fs /usr/share/$Vegile/$Vegile /usr/bin/$Vegile
-		chmod +x /usr/bin/$Vegile
-		menu_entry "Persistence" "Red-Team" "Vegile" "/usr/share/kali-menu/exec-in-shell 'sudo $Vegile -h'"
-		printf "$GREEN"  "[*] Success Installing Vegile"
-	else
-		printf "$GREEN"  "[*] Success Installed Vegile"
+	# install vegile
+	if [ ! -d "/usr/share/vegile" ]; then
+		local name="vegile"
+		git clone https://github.com/Screetsec/Vegile /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/Vegile /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Persistence" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SmmBackdoorNg="smmbackdoorng"
-	if [ ! -d "/usr/share/$SmmBackdoorNg" ]; then
-		git clone https://github.com/Cr4sh/SmmBackdoorNg /usr/share/$SmmBackdoorNg
-		chmod 755 /usr/share/$SmmBackdoorNg/*
-		cat > /usr/bin/$SmmBackdoorNg << EOF
+	# install smmbackdoorng
+	if [ ! -d "/usr/share/smmbackdoorng" ]; then
+		local name="smmbackdoorng"
+		git clone https://github.com/Cr4sh/SmmBackdoorNg /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SmmBackdoorNg;python3 smm_backdoor.py "\$@"
+cd /usr/share/$name;python3 smm_backdoor.py "\$@"
 EOF
-		chmod +x /usr/bin/$SmmBackdoorNg
-		menu_entry "Persistence" "Red-Team" "SmmBackdoorNg" "/usr/share/kali-menu/exec-in-shell '$SmmBackdoorNg -h'"
-		printf "$GREEN"  "[*] Success Installing SmmBackdoorNg"
-	else
-		printf "$GREEN"  "[*] Success Installed SmmBackdoorNg"
+		chmod +x /usr/bin/$name
+		menu_entry "Persistence" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------Privilege-Escalation-Red-Team----------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy linux-exploit-suggester peass oscanner 
 
-	# Install Python3 pip
+	# install Python3 pip
 	privilege_escalation_pip="cve-bin-tool"
 	pip_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# privilege_escalation_npm=""
 	npm_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# privilege_escalation_gem=""
 	gem_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_gem"
 
-	# Install Golang
+	# install Golang
 	# privilege_escalation_golang=""
 	go_installer "Privilege-Escalation" "Red-Team" "$privilege_escalation_golang"
 
-	MimiPenguin="mimipenguin"
-	if [ ! -d "/usr/share/$MimiPenguin" ]; then
-		git clone https://github.com/huntergregal/mimipenguin /usr/share/$MimiPenguin
-		chmod 755 /usr/share/$MimiPenguin/*
-		cat > /usr/bin/$MimiPenguin << EOF
+	# install mimipenguin
+	if [ ! -d "/usr/share/mimipenguin" ]; then
+		local name="mimipenguin"
+		git clone https://github.com/huntergregal/mimipenguin /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$MimiPenguin;python3 mimipenguin.py "\$@"
+cd /usr/share/$name;python3 mimipenguin.py "\$@"
 EOF
-		chmod +x /usr/bin/$MimiPenguin
-		menu_entry "Privilege-Escalation" "Red-Team" "MimiPenguin" "/usr/share/kali-menu/exec-in-shell '$MimiPenguin -h'"
-		printf "$GREEN"  "[*] Success Installing MimiPenguin"
-	else
-		printf "$GREEN"  "[*] Success Installed MimiPenguin"
+		chmod +x /usr/bin/$name
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GodPotato="godpotato"
-	if [ ! -d "/usr/share/$GodPotato" ]; then
-		mkdir -p /usr/share/$GodPotato
-		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/$GodPotato/GodPotato-NET4.exe
-		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET35.exe -O /usr/share/$GodPotato/GodPotato-NET35.exe
-		chmod 755 /usr/share/$GodPotato/*
-		cat > /usr/bin/$GodPotato << EOF
+	# install godpotato
+	if [ ! -d "/usr/share/godpotato" ]; then
+		local name="godpotato"
+		mkdir -p /usr/share/$name
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/$name/GodPotato-NET4.exe
+		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET35.exe -O /usr/share/$name/GodPotato-NET35.exe
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GodPotato;ls "\$@"
+cd /usr/share/$name;ls "\$@"
 EOF
-		chmod +x /usr/bin/$GodPotato
-		menu_entry "Privilege-Escalation" "Red-Team" "GodPotato" "/usr/share/kali-menu/exec-in-shell '$GodPotato'"
-		printf "$GREEN"  "[*] Success Installing GodPotato"
-	else
-		printf "$GREEN"  "[*] Success Installed GodPotato"
+		chmod +x /usr/bin/$name
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	spectre_meltdown_checker="smc"
-	if [ ! -d "/usr/share/$spectre_meltdown_checker" ]; then
-		mkdir -p /usr/share/spectre-meltdown-checker
-		wget https://meltdown.ovh -O /usr/share/$spectre_meltdown_checker/spectre-meltdown-checker.sh
-		chmod 755 /usr/share/$spectre_meltdown_checker/*
-		cat > /usr/bin/$spectre_meltdown_checker << EOF
+	# install smc
+	if [ ! -d "/usr/share/smc" ]; then
+		local name="smc"
+		mkdir -p /usr/share/$name
+		wget https://meltdown.ovh -O /usr/share/$name/spectre-meltdown-checker.sh
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$spectre_meltdown_checker;bash spectre-meltdown-checker.sh "\$@"
+cd /usr/share/$name;bash spectre-meltdown-checker.sh "\$@"
 EOF
-		chmod +x /usr/bin/$spectre_meltdown_checker
-		menu_entry "Privilege-Escalation" "Red-Team" "spectre-meltdown-checker" "/usr/share/kali-menu/exec-in-shell '$spectre_meltdown_checker -h'"
-		printf "$GREEN"  "[*] Success Installing spectre-meltdown-checker"
-	else
-		printf "$GREEN"  "[*] Success Installed spectre-meltdown-checker"
+		chmod +x /usr/bin/$name
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode upx-ucl 
 
-	# Install Python3 pip
+	# install Python3 pip
 	defense_evasion_pip="auto-py-to-exe certipy sysplant pinject"
 	pip_installer "Defense-Evasion" "Red-Team" "$defense_evasion_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	defense_evasion_npm="uglify-js javascript-obfuscator serialize-javascript serialize-to-js jsdom"
 	npm_installer "Defense-Evasion" "Red-Team" "$defense_evasion_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# defense_evasion_gem=""
 	gem_installer "Defense-Evasion" "Red-Team" "$defense_evasion_gem"
 
-	# Install Golang
+	# install Golang
 	defense_evasion_golang="
 go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow"
 	go_installer "Defense-Evasion" "Red-Team" "$defense_evasion_golang"
 
-	ASWCrypter="aswcrypter"
-	if [ ! -d "/usr/share/$ASWCrypter" ]; then
-		git clone https://github.com/AbedAlqaderSwedan1/ASWCrypter /usr/share/$ASWCrypter
-		chmod 755 /usr/share/$ASWCrypter/*;bash /usr/share/$ASWCrypter/setup.sh
-		cat > /usr/bin/$ASWCrypter << EOF
+	# install aswcrypter
+	if [ ! -d "/usr/share/aswcrypter" ]; then
+		local name="aswcrypter"
+		git clone https://github.com/AbedAlqaderSwedan1/ASWCrypter /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		bash /usr/share/$name/setup.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ASWCrypter;bash ASWCrypter.sh "\$@"
+cd /usr/share/$name;bash ASWCrypter.sh "\$@"
 EOF
-		chmod +x /usr/bin/$ASWCrypter
-		menu_entry "Defense-Evasion" "Red-Team" "ASWCrypter" "/usr/share/kali-menu/exec-in-shell '$ASWCrypter -h'"
-		printf "$GREEN"  "[*] Success Installing ASWCrypter"
-	else
-		printf "$GREEN"  "[*] Success Installed ASWCrypter"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	AVET="avet"
-	if [ ! -d "/usr/share/$AVET" ]; then
-		git clone https://github.com/govolution/avet /usr/share/$AVET
-		chmod 755 /usr/share/$AVET/*
-		bash /usr/share/$AVET/setup.sh
-		cat > /usr/bin/$AVET << EOF
+	# install avet
+	if [ ! -d "/usr/share/avet" ]; then
+		local name="avet"
+		git clone https://github.com/govolution/avet /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		bash /usr/share/$name/setup.sh
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$AVET;python3 avet.py "\$@"
+cd /usr/share/$name;python3 avet.py "\$@"
 EOF
-		chmod +x /usr/bin/$AVET
-		menu_entry "Defense-Evasion" "Red-Team" "AVET" "/usr/share/kali-menu/exec-in-shell '$AVET'"
-		printf "$GREEN"  "[*] Success Installing AVET"
-	else
-		printf "$GREEN"  "[*] Success Installed AVET"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Unicorn="unicorn"
-	if [ ! -d "/usr/share/$Unicorn" ]; then
-		git clone https://github.com/trustedsec/unicorn /usr/share/$Unicorn
-		chmod 755 /usr/share/$Unicorn/*
-		cat > /usr/bin/$Unicorn << EOF
+	# install unicorn
+	if [ ! -d "/usr/share/unicorn" ]; then
+		local name="unicorn"
+		git clone https://github.com/trustedsec/unicorn /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Unicorn;python3 unicorn.py "\$@"
+cd /usr/share/$name;python3 unicorn.py "\$@"
 EOF
-		chmod +x /usr/bin/$Unicorn
-		menu_entry "Defense-Evasion" "Red-Team" "Unicorn" "/usr/share/kali-menu/exec-in-shell '$Unicorn -h'"
-		printf "$GREEN"  "[*] Success Installing Unicorn"
-	else
-		printf "$GREEN"  "[*] Success Installed Unicorn"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SysWhispers3="syswhispers3"
-	if [ ! -d "/usr/share/$SysWhispers3" ]; then
-		git clone https://github.com/klezVirus/SysWhispers3 /usr/share/$SysWhispers3
-		chmod 755 /usr/share/$SysWhispers3/*
-		cat > /usr/bin/$SysWhispers3 << EOF
+	# install syswhispers3
+	if [ ! -d "/usr/share/syswhispers3" ]; then
+		local name="syswhispers3"
+		git clone https://github.com/klezVirus/SysWhispers3 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SysWhispers3;python3 syswhispers.py "\$@"
+cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
-		chmod +x /usr/bin/$SysWhispers3
-		menu_entry "Defense-Evasion" "Red-Team" "SysWhispers3" "/usr/share/kali-menu/exec-in-shell '$SysWhispers3 -h'"
-		printf "$GREEN"  "[*] Success Installing SysWhispers3"
-	else
-		printf "$GREEN"  "[*] Success Installed SysWhispers3"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SysWhispers="syswhispers"
-	if [ ! -d "/usr/share/$SysWhispers" ]; then
-		git clone https://github.com/jthuraisamy/SysWhispers /usr/share/$SysWhispers
-		chmod 755 /usr/share/$SysWhispers/*
-		cat > /usr/bin/$SysWhispers << EOF
+	# install syswhispers
+	if [ ! -d "/usr/share/syswhispers" ]; then
+		local name="syswhispers"
+		git clone https://github.com/jthuraisamy/SysWhispers /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SysWhispers;python3 syswhispers.py "\$@"
+cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
-		chmod +x /usr/bin/$SysWhispers
-		pip3 install -r /usr/share/$SysWhispers/requirements.txt
-		menu_entry "Defense-Evasion" "Red-Team" "SysWhispers" "/usr/share/kali-menu/exec-in-shell '$SysWhispers -h'"
-		printf "$GREEN"  "[*] Success Installing SysWhispers"
-	else
-		printf "$GREEN"  "[*] Success Installed SysWhispers"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	InvokeDOSfuscation="invoke-dosfuscation"
-	if [ ! -d "/usr/share/$InvokeDOSfuscation" ]; then
-		git clone https://github.com/danielbohannon/Invoke-DOSfuscation /usr/share/$InvokeDOSfuscation
-		chmod 755 /usr/share/$InvokeDOSfuscation/*
-		cat > /usr/bin/$InvokeDOSfuscation << EOF
+	# install invoke-dosfuscation
+	if [ ! -d "/usr/share/invoke-dosfuscation" ]; then
+		local name="invoke-dosfuscation"
+		git clone https://github.com/danielbohannon/Invoke-DOSfuscation /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$InvokeDOSfuscation;pwsh -c "Import-Module ./Invoke-DOSfuscation.psd1; Invoke-DOSfuscation" "\$@"
+cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-DOSfuscation.psd1; Invoke-DOSfuscation" "\$@"
 EOF
-		chmod +x /usr/bin/$InvokeDOSfuscation
-		menu_entry "Defense-Evasion" "Red-Team" "Invoke-DOSfuscation" "/usr/share/kali-menu/exec-in-shell '$InvokeDOSfuscation'"
-		printf "$GREEN"  "[*] Success Installing Invoke-DOSfuscation"
-	else
-		printf "$GREEN"  "[*] Success Installed Invoke-DOSfuscation"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ObfuscateCactusTorch="obfuscatecactustorch"
-	if [ ! -d "/usr/share/$ObfuscateCactusTorch" ]; then
-		git clone https://github.com/Arno0x/ObfuscateCactusTorch /usr/share/$ObfuscateCactusTorch
-		chmod 755 /usr/share/$ObfuscateCactusTorch/*
-		cat > /usr/bin/$ObfuscateCactusTorch << EOF
+	# install obfuscatecactustorch
+	if [ ! -d "/usr/share/obfuscatecactustorch" ]; then
+		local name="obfuscatecactustorch"
+		git clone https://github.com/Arno0x/ObfuscateCactusTorch /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ObfuscateCactusTorch;python2 obfuscateCactusTorch.py "\$@"
+cd /usr/share/$name;python2 obfuscateCactusTorch.py "\$@"
 EOF
-		chmod +x /usr/bin/$ObfuscateCactusTorch
-		menu_entry "Defense-Evasion" "Red-Team" "ObfuscateCactusTorch" "/usr/share/kali-menu/exec-in-shell '$ObfuscateCactusTorch'"
-		printf "$GREEN"  "[*] Success Installing ObfuscateCactusTorch"
-	else
-		printf "$GREEN"  "[*] Success Installed ObfuscateCactusTorch"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PhantomEvasion="phantom"
-	if [ ! -d "/usr/share/$PhantomEvasion" ]; then
-		git clone https://github.com/oddcod3/Phantom-Evasion /usr/share/$PhantomEvasion
-		chmod 755 /usr/share/$PhantomEvasion/*
-		cat > /usr/bin/$PhantomEvasion << EOF
+	# install phantom-evasion
+	if [ ! -d "/usr/share/phantom-evasion" ]; then
+		local name="phantom-evasion"
+		git clone https://github.com/oddcod3/Phantom-Evasion /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PhantomEvasion;python3 phantom-evasion.py "\$@"
+cd /usr/share/$name;python3 phantom-evasion.py "\$@"
 EOF
-		chmod +x /usr/bin/$PhantomEvasion
-		menu_entry "Defense-Evasion" "Red-Team" "Phantom-Evasion" "/usr/share/kali-menu/exec-in-shell '$PhantomEvasion -h'"
-		printf "$GREEN"  "[*] Success Installing Phantom-Evasion"
-	else
-		printf "$GREEN"  "[*] Success Installed Phantom-Evasion"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SpookFlare="spookflare"
-	if [ ! -d "/usr/share/$SpookFlare" ]; then
-		git clone https://github.com/hlldz/SpookFlare /usr/share/$SpookFlare
-		chmod 755 /usr/share/$SpookFlare/*
-		cat > /usr/bin/$SpookFlare << EOF
+	# install spookflare
+	if [ ! -d "/usr/share/spookflare" ]; then
+		local name="spookflare"
+		git clone https://github.com/hlldz/SpookFlare /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SpookFlare;python2 spookflare.py "\$@"
+cd /usr/share/$name;python2 spookflare.py "\$@"
 EOF
-		chmod +x /usr/bin/$SpookFlare
-		pip2 install -r /usr/share/$SpookFlare/requirements.txt
-		menu_entry "Defense-Evasion" "Red-Team" "SpookFlare" "/usr/share/kali-menu/exec-in-shell '$SpookFlare -h'"
-		printf "$GREEN"  "[*] Success Installing SpookFlare"
-	else
-		printf "$GREEN"  "[*] Success Installed SpookFlare"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Pazuzu="pazuzu"
-	if [ ! -d "/usr/share/$Pazuzu" ]; then
-		git clone https://github.com/BorjaMerino/Pazuzu /usr/share/$Pazuzu
-		chmod 755 /usr/share/$Pazuzu/*
-		cat > /usr/bin/$Pazuzu << EOF
+	# install pazuzu
+	if [ ! -d "/usr/share/pazuzu" ]; then
+		local name="pazuzu"
+		git clone https://github.com/BorjaMerino/Pazuzu /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Pazuzu;python2 pazuzu.py "\$@"
+cd /usr/share/$name;python2 pazuzu.py "\$@"
 EOF
-		chmod +x /usr/bin/$Pazuzu
-		menu_entry "Defense-Evasion" "Red-Team" "Pazuzu" "/usr/share/kali-menu/exec-in-shell '$Pazuzu -h'"
-		printf "$GREEN"  "[*] Success Installing Pazuzu"
-	else
-		printf "$GREEN"  "[*] Success Installed Pazuzu"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	InvokeObfuscation="invoke-obfuscation"
-	if [ ! -d "/usr/share/$InvokeObfuscation" ]; then
-		git clone https://github.com/danielbohannon/Invoke-Obfuscation /usr/share/$InvokeObfuscation
-		chmod 755 /usr/share/$InvokeObfuscation/*
-		cat > /usr/bin/$InvokeObfuscation << EOF
+	# install invoke-obfuscation
+	if [ ! -d "/usr/share/invoke-obfuscation" ]; then
+		local name="invoke-obfuscation"
+		git clone https://github.com/danielbohannon/Invoke-Obfuscation /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$InvokeObfuscation;pwsh -c "Import-Module ./Invoke-Obfuscation.psd1; Invoke-Obfuscation" "\$@"
+cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-Obfuscation.psd1; Invoke-Obfuscation" "\$@"
 EOF
-		chmod +x /usr/bin/$InvokeObfuscation
-		menu_entry "Defense-Evasion" "Red-Team" "Invoke-Obfuscation" "/usr/share/kali-menu/exec-in-shell '$InvokeObfuscation'"
-		printf "$GREEN"  "[*] Success Installing Invoke-Obfuscation"
-	else
-		printf "$GREEN"  "[*] Success Installed Invoke-Obfuscation"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	InvokeCradleCrafter="invoke-cradlecrafter"
-	if [ ! -d "/usr/share/$InvokeCradleCrafter" ]; then
-		git clone https://github.com/danielbohannon/Invoke-CradleCrafter /usr/share/$InvokeCradleCrafter
-		chmod 755 /usr/share/$InvokeCradleCrafter/*
-		cat > /usr/bin/$InvokeCradleCrafter << EOF
+	# install invoke-cradlecrafter
+	if [ ! -d "/usr/share/invoke-cradlecrafter" ]; then
+		local name="invoke-cradlecrafter"
+		git clone https://github.com/danielbohannon/Invoke-CradleCrafter /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$InvokeCradleCrafter;pwsh -c "Import-Module ./Invoke-CradleCrafter.psd1; Invoke-CradleCrafter" "\$@"
+cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-CradleCrafter.psd1; Invoke-CradleCrafter" "\$@"
 EOF
-		chmod +x /usr/bin/$InvokeCradleCrafter
-		menu_entry "Defense-Evasion" "Red-Team" "Invoke-CradleCrafter" "/usr/share/kali-menu/exec-in-shell '$InvokeCradleCrafter'"
-		printf "$GREEN"  "[*] Success Installing Invoke-CradleCrafter"
-	else
-		printf "$GREEN"  "[*] Success Installed Invoke-CradleCrafter"
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------------Credential-Access-Red-Team------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy pdfcrack fcrackzip rarcrack 
 
-	# Install Python3 pip
+	# install Python3 pip
 	credential_access_pip="adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm"
 	pip_installer "Credential-Access" "Red-Team" "$credential_access_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# credential_access_npm=""
 	npm_installer "Credential-Access" "Red-Team" "$credential_access_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# credential_access_gem=""
 	gem_installer "Credential-Access" "Red-Team" "$credential_access_gem"
 
-	# Install Golang
+	# install Golang
 	credential_access_golang="
 go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/kerbrute"
 	go_installer "Credential-Access" "Red-Team" "$credential_access_golang"
 
-	Kerberoast="kerberoast"
-	if [ ! -d "/usr/share/$Kerberoast" ]; then
-		git clone https://github.com/nidem/kerberoast /usr/share/$Kerberoast
-		chmod 755 /usr/share/$Kerberoast/*
-		cat > /usr/bin/$Kerberoast << EOF
+	# install kerberoast
+	if [ ! -d "/usr/share/kerberoast" ]; then
+		local name="kerberoast"
+		git clone https://github.com/nidem/kerberoast /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Kerberoast;python3 kerberoast.py "\$@"
+cd /usr/share/$name;python3 kerberoast.py "\$@"
 EOF
-		chmod +x /usr/bin/$Kerberoast
-		menu_entry "Credential-Access" "Red-Team" "Kerberoast" "/usr/share/kali-menu/exec-in-shell '$Kerberoast -h'"
-		printf "$GREEN"  "[*] Success Installing Kerberoast"
-	else
-		printf "$GREEN"  "[*] Success Installed Kerberoast"
+		chmod +x /usr/bin/$name
+		menu_entry "Credential-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NtlmRelayToEWS="ntlmRelaytoews"
-	if [ ! -d "/usr/share/$NtlmRelayToEWS" ]; then
-		git clone https://github.com/Arno0x/NtlmRelayToEWS /usr/share/$NtlmRelayToEWS
-		chmod 755 /usr/share/$NtlmRelayToEWS/*
-		cat > /usr/bin/$NtlmRelayToEWS << EOF
+	# install ntlmRelaytoews
+	if [ ! -d "/usr/share/ntlmRelaytoews" ]; then
+		local name="ntlmRelaytoews"
+		git clone https://github.com/Arno0x/NtlmRelayToEWS /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$NtlmRelayToEWS;python2 ntlmRelayToEWS.py "\$@"
+cd /usr/share/$name;python2 ntlmRelayToEWS.py "\$@"
 EOF
-		chmod +x /usr/bin/$NtlmRelayToEWS
-		menu_entry "Credential-Access" "Red-Team" "NtlmRelayToEWS" "/usr/share/kali-menu/exec-in-shell '$NtlmRelayToEWS -h'"
-		printf "$GREEN"  "[*] Success Installing NtlmRelayToEWS"
-	else
-		printf "$GREEN"  "[*] Success Installed NtlmRelayToEWS"
+		chmod +x /usr/bin/$name
+		menu_entry "Credential-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NetRipper="netripper"
-	if [ ! -d "/usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper" ]; then
-		mkdir -p /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper
-		wget https://github.com/NytroRST/NetRipper/blob/master/Metasploit/netripper.rb -O /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/netripper.rb
-		wget https://github.com/NytroRST/NetRipper/blob/master/x64/DLL.x64.dll -O /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/DLL.x64.dll
-		wget https://github.com/NytroRST/NetRipper/blob/master/x86/DLL.x86.dll -O /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/DLL.x86.dll
-		wget https://github.com/NytroRST/NetRipper/blob/master/x64/NetRipper.x64.exe -O /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/NetRipper.x64.exe
-		wget https://github.com/NytroRST/NetRipper/blob/master/x86/NetRipper.x86.exe -O /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/NetRipper.x86.exe
-		chmod 755 /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper/*
-		cat > /usr/bin/$NetRipper << EOF
+	# install netripper
+	if [ ! -d "/usr/share/metasploit-framework/modules/post/windows/gather/netripper" ]; then
+		local name="netripper"
+		mkdir -p /usr/share/metasploit-framework/modules/post/windows/gather/$name
+		wget https://github.com/NytroRST/NetRipper/blob/master/Metasploit/netripper.rb -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/netripper.rb
+		wget https://github.com/NytroRST/NetRipper/blob/master/x64/DLL.x64.dll -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/DLL.x64.dll
+		wget https://github.com/NytroRST/NetRipper/blob/master/x86/DLL.x86.dll -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/DLL.x86.dll
+		wget https://github.com/NytroRST/NetRipper/blob/master/x64/NetRipper.x64.exe -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/NetRipper.x64.exe
+		wget https://github.com/NytroRST/NetRipper/blob/master/x86/NetRipper.x86.exe -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/NetRipper.x86.exe
+		chmod 755 /usr/share/metasploit-framework/modules/post/windows/gather/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/metasploit-framework/modules/post/windows/gather/$NetRipper;wine NetRipper.x64.exe "\$@"
+cd /usr/share/metasploit-framework/modules/post/windows/gather/$name;wine NetRipper.x64.exe "\$@"
 EOF
-		chmod +x /usr/bin/$NetRipper
-		menu_entry "Credential-Access" "Red-Team" "NetRipper" "/usr/share/kali-menu/exec-in-shell '$NetRipper'"
-		printf "$GREEN"  "[*] Success Installing NetRipper"
-	else
-		printf "$GREEN"  "[*] Success Installed NetRipper"
+		chmod +x /usr/bin/$name
+		menu_entry "Credential-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------------Discovery-Red-Team---------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy bloodhound 
 
-	# Install Python3 pip
+	# install Python3 pip
 	discovery_pip="networkx bloodhound acltoolkit-ad"
 	pip_installer "Discovery" "Red-Team" "$discovery_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# discovery_npm=""
 	npm_installer "Discovery" "Red-Team" "$discovery_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# discovery_gem=""
 	gem_installer "Discovery" "Red-Team" "$discovery_gem"
 
-	# Install Golang
+	# install Golang
 	# discovery_golang=""
 	go_installer "Discovery" "Red-Team" "$discovery_golang"
 
-	AdExplorer="adexplorer"
-	if [ ! -d "/usr/share/$AdExplorer" ]; then
+	# install adexplorer
+	if [ ! -d "/usr/share/adexplorer" ]; then
+		local name="adexplorer"
 		mkdir -p /usr/share/adexplorer
-		wget https://download.sysinternals.com/files/AdExplorer.zip -O /tmp/$AdExplorer.zip
-		unzip /tmp/$AdExplorer.zip -d /usr/share/$AdExplorer;rm -f /tmp/$AdExplorer.zip
-		chmod 755 /usr/share/$AdExplorer/*
-		cat > /usr/bin/$AdExplorer << EOF
+		wget https://download.sysinternals.com/files/AdExplorer.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$AdExplorer;wine ADExplorer.exe "\$@"
+cd /usr/share/$name;wine ADExplorer.exe "\$@"
 EOF
-		chmod +x /usr/bin/$AdExplorer
-		menu_entry "Discovery" "Red-Team" "AdExplorer" "/usr/share/kali-menu/exec-in-shell '$AdExplorer'"
-		printf "$GREEN"  "[*] Success Installing AdExplorer"
-	else
-		printf "$GREEN"  "[*] Success Installed AdExplorer"
+		chmod +x /usr/bin/$name
+		menu_entry "Discovery" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy pptpd kerberoast isr-evilgrade proxychains
 
-	# Install Python3 pip
+	# install Python3 pip
 	lateral_movement_pip="coercer krbjack"
 	pip_installer "Lateral-Movement" "Red-Team" "$lateral_movement_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# lateral_movement_npm=""
 	npm_installer "Lateral-Movement" "Red-Team" "$lateral_movement_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	lateral_movement_gem="evil-winrm"
 	gem_installer "Lateral-Movement" "Red-Team" "$lateral_movement_gem"
 
-	# Install Golang
+	# install Golang
 	# lateral_movement_golang=""
 	go_installer "Lateral-Movement" "Red-Team" "$lateral_movement_golang"
 
-	SCShell="scshell"
-	if [ ! -d "/usr/share/$SCShell" ]; then
-		git clone https://github.com/Mr-Un1k0d3r/SCShell /usr/share/$SCShell
-		chmod 755 /usr/share/$SCShell/*
-		cat > /usr/bin/$SCShell << EOF
+	# install scshell
+	if [ ! -d "/usr/share/scshell" ]; then
+		local name="scshell"
+		git clone https://github.com/Mr-Un1k0d3r/SCShell /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SCShell;wine SCShell.exe "\$@"
+cd /usr/share/$name;wine SCShell.exe "\$@"
 EOF
-		chmod +x /usr/bin/$SCShell
-		menu_entry "Lateral-Movement" "Red-Team" "SCShell" "/usr/share/kali-menu/exec-in-shell '$SCShell'"
-		printf "$GREEN"  "[*] Success Installing SCShell"
-	else
-		printf "$GREEN"  "[*] Success Installed SCShell"
+		chmod +x /usr/bin/$name
+		menu_entry "Lateral-Movement" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Amnesiac="amnesiac"
-	if [ ! -d "/usr/share/$Amnesiac" ]; then
-		git clone https://github.com/Leo4j/Amnesiac /usr/share/$Amnesiac
-		chmod 755 /usr/share/$Amnesiac/*
-		cat > /usr/bin/$Amnesiac << EOF
+	# install amnesiac
+	if [ ! -d "/usr/share/amnesiac" ]; then
+		local name="amnesiac"
+		git clone https://github.com/Leo4j/Amnesiac /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Amnesiac;pwsh -c "Import-Module ./Amnesiac.ps1; Amnesiac" "\$@"
+cd /usr/share/$name;pwsh -c "Import-Module ./Amnesiac.ps1; Amnesiac" "\$@"
 EOF
-		chmod +x /usr/bin/$Amnesiac
-		menu_entry "Lateral-Movement" "Red-Team" "Amnesiac" "/usr/share/kali-menu/exec-in-shell '$Amnesiac'"
-		printf "$GREEN"  "[*] Success Installing  Amnesiac"
-	else
-		printf "$GREEN"  "[*] Success Installed  Amnesiac"
+		chmod +x /usr/bin/$name
+		menu_entry "Lateral-Movement" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing  $name"
 	fi
 
 
 	printf "$YELLOW"  "# ----------------------------------------Collection-Red-Team---------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy tigervnc-viewer 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# collection_pip=""
 	pip_installer "Collection" "Red-Team" "$collection_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# collection_npm=""
 	npm_installer "Collection" "Red-Team" "$collection_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# collection_gem=""
 	gem_installer "Collection" "Red-Team" "$collection_gem"
 
-	# Install Golang
+	# install Golang
 	# collection_golang=""
 	go_installer "Collection" "Red-Team" "$collection_golang"
 
-	Caldera="caldera"
-	if [ ! -d "/usr/share/$Caldera" ]; then
-		git clone https://github.com/mitre/caldera /usr/share/$Caldera
-		chmod 755 /usr/share/$Caldera/*
-		cat > /usr/bin/$Caldera << EOF
+	# install caldera
+	if [ ! -d "/usr/share/caldera" ]; then
+		local name="caldera"
+		git clone https://github.com/mitre/caldera /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Caldera;python3 server.py --insecure "\$@"
+cd /usr/share/$name;python3 server.py --insecure "\$@"
 EOF
-		chmod +x /usr/bin/$Caldera
-		pip3 install -r /usr/share/$Caldera/requirements.txt
-		menu_entry "Collection" "Red-Team" "Caldera" "/usr/share/kali-menu/exec-in-shell '$Caldera'"
-		printf "$GREEN"  "[*] Success Installing Caldera"
-	else
-		printf "$GREEN"  "[*] Success Installed Caldera"
+		chmod +x /usr/bin/$name
+		menu_entry "Collection" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------------Command-and-Control-Red-Team----------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
 
-	# Install Python3 pip
+	# install Python3 pip
 	command_and_control_pip="deathstar-empire praw powerhub"
 	pip_installer "Command-and-Control" "Red-Team" "$command_and_control_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# command_and_control_npm=""
 	npm_installer "Command-and-Control" "Red-Team" "$command_and_control_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# command_and_control_gem=""
 	gem_installer "Command-and-Control" "Red-Team" "$command_and_control_gem"
 
-	# Install Golang
+	# install Golang
 	# command_and_control_golang=""
 	go_installer "Command-and-Control" "Red-Team" "$command_and_control_golang"
 
-	PhoenixC2="phoenixc2"
-	if [ ! -d "/usr/share/$PhoenixC2" ]; then
-		git clone https://github.com/screamz2k/PhoenixC2 /usr/share/$PhoenixC2
-		chmod 755 /usr/share/$PhoenixC2/*
-		cat > /usr/bin/$PhoenixC2 << EOF
+	# install phoenixc2
+	if [ ! -d "/usr/share/phoenixc2" ]; then
+		local name="phoenixc2"
+		git clone https://github.com/screamz2k/PhoenixC2 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;poetry install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PhoenixC2;poetry run phserver "\$@"
+cd /usr/share/$name;poetry run phserver "\$@"
 EOF
-		chmod +x /usr/bin/$PhoenixC2
-		cd /usr/share/$PhoenixC2;pip3 install poetry;poetry install
-		menu_entry "Command-and-Control" "Red-Team" "PhoenixC2" "/usr/share/kali-menu/exec-in-shell '$PhoenixC2 -h'"
-		printf "$GREEN"  "[*] Success Installing PhoenixC2"
-	else
-		printf "$GREEN"  "[*] Success Installed PhoenixC2"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Nebula="nebula"
-	if [ ! -d "/usr/share/$Nebula" ]; then
-		git clone https://github.com/gl4ssesbo1/Nebula /usr/share/$Nebula
-		chmod 755 /usr/share/$Nebula/*
-		cat > /usr/bin/$Nebula << EOF
+	# install nebula
+	if [ ! -d "/usr/share/nebula" ]; then
+		local name="nebula"
+		git clone https://github.com/gl4ssesbo1/Nebula /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Nebula;python3 main.py "\$@"
+cd /usr/share/$name;python3 main.py "\$@"
 EOF
-		chmod +x /usr/bin/$Nebula
-		pip3 install -r /usr/share/$Nebula/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "Nebula" "/usr/share/kali-menu/exec-in-shell '$Nebula'"
-		printf "$GREEN"  "[*] Success Installing Nebula"
-	else
-		printf "$GREEN"  "[*] Success Installed Nebula"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Mistica="mistica"
-	if [ ! -d "/usr/share/$Mistica" ]; then
-		git clone https://github.com/IncideDigital/Mistica /usr/share/$Mistica
-		chmod 755 /usr/share/$Mistica/*
-		cat > /usr/bin/$Mistica << EOF
+	# install mistica
+	if [ ! -d "/usr/share/mistica" ]; then
+		local name="mistica"
+		git clone https://github.com/IncideDigital/Mistica /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Mistica;python3 ms.py "\$@"
+cd /usr/share/$name;python3 ms.py "\$@"
 EOF
-		chmod +x /usr/bin/$Mistica
-		menu_entry "Command-and-Control" "Red-Team" "Mistica" "/usr/share/kali-menu/exec-in-shell '$Mistica -h'"
-		printf "$GREEN"  "[*] Success Installing Mistica"
-	else
-		printf "$GREEN"  "[*] Success Installed Mistica"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	EvilOSX="evilosx"
-	if [ ! -d "/usr/share/$EvilOSX" ]; then
-		git clone https://github.com/Marten4n6/EvilOSX /usr/share/$EvilOSX
-		chmod 755 /usr/share/$EvilOSX/*
-		cat > /usr/bin/$EvilOSX << EOF
+	# install evilosx
+	if [ ! -d "/usr/share/evilosx" ]; then
+		local name="evilosx"
+		git clone https://github.com/Marten4n6/EvilOSX /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$EvilOSX;python3 start.py "\$@"
+cd /usr/share/$name;python3 start.py "\$@"
 EOF
-		chmod +x /usr/bin/$EvilOSX
-		pip3 install -r /usr/share/$EvilOSX/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "EvilOSX" "/usr/share/kali-menu/exec-in-shell '$EvilOSX'"
-		printf "$GREEN"  "[*] Success Installing EvilOSX"
-	else
-		printf "$GREEN"  "[*] Success Installed EvilOSX"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	EggShell="eggshell"
-	if [ ! -d "/usr/share/$EggShell" ]; then
-		git clone https://github.com/lucasjacks0n/EggShell /usr/share/$EggShell
-		chmod 755 /usr/share/$EggShell/*
-		cat > /usr/bin/$EggShell << EOF
+	# install eggshell
+	if [ ! -d "/usr/share/eggshell" ]; then
+		local name="eggshell"
+		git clone https://github.com/lucasjacks0n/EggShell /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$EggShell;python2 eggshell.py "\$@"
+cd /usr/share/$name;python2 eggshell.py "\$@"
 EOF
-		chmod +x /usr/bin/$EggShell
-		menu_entry "Command-and-Control" "Red-Team" "EggShell" "/usr/share/kali-menu/exec-in-shell '$EggShell -h'"
-		printf "$GREEN"  "[*] Success Installing EggShell"
-	else
-		printf "$GREEN"  "[*] Success Installed EggShell"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GodGenesis="godgenesis"
-	if [ ! -d "/usr/share/$GodGenesis" ]; then
-		git clone https://github.com/SaumyajeetDas/GodGenesis /usr/share/$GodGenesis
-		chmod 755 /usr/share/$GodGenesis/*
-		cat > /usr/bin/$GodGenesis << EOF
+	# install godgenesis
+	if [ ! -d "/usr/share/godgenesis" ]; then
+		local name="godgenesis"
+		git clone https://github.com/SaumyajeetDas/GodGenesis /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GodGenesis;python3 c2c.py "\$@"
+cd /usr/share/$name;python3 c2c.py "\$@"
 EOF
-		chmod +x /usr/bin/$GodGenesis
-		pip3 install -r /usr/share/$GodGenesis/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "GodGenesis" "/usr/share/kali-menu/exec-in-shell '$GodGenesis'"
-		printf "$GREEN"  "[*] Success Installing GodGenesis"
-	else
-		printf "$GREEN"  "[*] Success Installed GodGenesis"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PhoneSploit="phonesploit"
-	if [ ! -d "/usr/share/$PhoneSploit" ]; then
-		git clone https://github.com/AzeemIdrisi/PhoneSploit-Pro /usr/share/$PhoneSploit
-		chmod 755 /usr/share/$PhoneSploit/*
-		cat > /usr/bin/$PhoneSploit << EOF
+	# install phonesploit
+	if [ ! -d "/usr/share/phonesploit" ]; then
+		local name="phonesploit"
+		git clone https://github.com/AzeemIdrisi/PhoneSploit-Pro /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PhoneSploit;python3 phonesploitpro.py "\$@"
+cd /usr/share/$name;python3 phonesploitpro.py "\$@"
 EOF
-		chmod +x /usr/bin/$PhoneSploit
-		pip3 install -r /usr/share/$PhoneSploit/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "PhoneSploit" "/usr/share/kali-menu/exec-in-shell '$PhoneSploit'"
-		printf "$GREEN"  "[*] Success Installing PhoneSploit"
-	else
-		printf "$GREEN"  "[*] Success Installed PhoneSploit"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	MeliziaC2="meliziac2"
-	if [ ! -d "/usr/share/$MeliziaC2" ]; then
-		git clone https://github.com/demon-i386/MeliziaC2 /usr/share/$MeliziaC2
-		chmod 755 /usr/share/$MeliziaC2/*
-		cat > /usr/bin/$MeliziaC2 << EOF
+	# install meliziac2
+	if [ ! -d "/usr/share/meliziac2" ]; then
+		local name="meliziac2"
+		git clone https://github.com/demon-i386/MeliziaC2 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$MeliziaC2;python3 c2.py "\$@"
+cd /usr/share/$name;python3 c2.py "\$@"
 EOF
-		chmod +x /usr/bin/$MeliziaC2
-		menu_entry "Command-and-Control" "Red-Team" "MeliziaC2" "/usr/share/kali-menu/exec-in-shell '$MeliziaC2'"
-		printf "$GREEN"  "[*] Success Installing MeliziaC2"
-	else
-		printf "$GREEN"  "[*] Success Installed MeliziaC2"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GCR="gcr"
-	if [ ! -d "/usr/share/$GCR" ]; then
-		git clone https://github.com/MrSaighnal/GCR-Google-Calendar-RAT /usr/share/$GCR
-		chmod 755 /usr/share/$GCR/*
-		cat > /usr/bin/$GCR << EOF
+	# install gcr
+	if [ ! -d "/usr/share/gcr" ]; then
+		local name="gcr"
+		git clone https://github.com/MrSaighnal/GCR-Google-Calendar-RAT /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GCR;python3 gcr.py "\$@"
+cd /usr/share/$name;python3 gcr.py "\$@"
 EOF
-		chmod +x /usr/bin/$GCR
-		menu_entry "Command-and-Control" "Red-Team" "Google Calendar RAT" "/usr/share/kali-menu/exec-in-shell '$GCR'"
-		printf "$GREEN"  "[*] Success Installing Google Calendar RAT"
-	else
-		printf "$GREEN"  "[*] Success Installed Google Calendar RAT"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	MeetC2="meetc2"
-	if [ ! -d "/usr/share/$MeetC2" ]; then
-		git clone https://github.com/iammaguire/MeetC2 /usr/share/$MeetC2
-		chmod 755 /usr/share/$MeetC2/*
-		ln -fs /usr/share/$MeetC2/meetc /usr/bin/$MeetC2
-		chmod +x /usr/bin/$MeetC2
-		menu_entry "Command-and-Control" "Red-Team" "MeetC2" "/usr/share/kali-menu/exec-in-shell '$MeetC2'"
-		printf "$GREEN"  "[*] Success Installing MeetC2"
-	else
-		printf "$GREEN"  "[*] Success Installed MeetC2"
+	# isntall meetc2
+	if [ ! -d "/usr/share/meetc2" ]; then
+		local name="meetc2"
+		git clone https://github.com/iammaguire/MeetC2 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/meetc /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PingRAT="pingrat"
-	if [ ! -d "/usr/share/$PingRAT" ]; then
-		mkdir -p /usr/share/$PingRAT
-		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/client -O /usr/share/$PingRAT/client
-		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/server -O /usr/share/$PingRAT/server
-		chmod 755 /usr/share/$PingRAT/*
-		ln -fs /usr/share/$PingRAT/client /usr/bin/$PingRAT-client
-		ln -fs /usr/share/$PingRAT/server /usr/bin/$PingRAT-server
-		chmod +x /usr/bin/$PingRAT
-		menu_entry "Command-and-Control" "Red-Team" "PingRAT" "/usr/share/kali-menu/exec-in-shell '$PingRAT-client -h'"
-		menu_entry "Command-and-Control" "Red-Team" "PingRAT" "/usr/share/kali-menu/exec-in-shell '$PingRAT-server -h'"
-		printf "$GREEN"  "[*] Success Installing PingRAT"
-	else
-		printf "$GREEN"  "[*] Success Installed PingRAT"
+	# install pingrat
+	if [ ! -d "/usr/share/pingrat" ]; then
+		local name="pingrat"
+		mkdir -p /usr/share/$name
+		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/client -O /usr/share/$name/client
+		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/server -O /usr/share/$name/server
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/client /usr/bin/$name-client;ln -fs /usr/share/$name/server /usr/bin/$name-server
+		chmod +x /usr/bin/$name-client;chmod +x /usr/bin/$name-server
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name-client -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name-server -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Ligolomp="ligolo-mp"
-	if [ ! -d "/usr/share/$Ligolomp" ]; then
-		mkdir -p /usr/share/$Ligolomp
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.3_linux_amd64 -O /usr/share/$Ligolomp/ligolos
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_linux_amd64 -O /usr/share/$Ligolomp/ligoloc
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_windows_amd64.exe -O /usr/share/$Ligolomp/ligoloc.exe
-		chmod 755 /usr/share/$Ligolomp/*
-		ln -fs /usr/share/$Ligolomp/ligolos /usr/bin/$Ligolomp
-		chmod +x /usr/bin/$Ligolomp
-		menu_entry "Command-and-Control" "Red-Team" "Ligolo-mp" "/usr/share/kali-menu/exec-in-shell 'sudo $Ligolomp -h'"
-		printf "$GREEN"  "[*] Success Installing Ligolo-mp"
-	else
-		printf "$GREEN"  "[*] Success Installed Ligolo-mp"
+	# install ligolo-mp
+	if [ ! -d "/usr/share/ligolo-mp" ]; then
+		local name="ligolo-mp"
+		mkdir -p /usr/share/$name
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.3_linux_amd64 -O /usr/share/$name/ligolos
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_linux_amd64 -O /usr/share/$name/ligoloc
+		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_windows_amd64.exe -O /usr/share/$name/ligoloc.exe
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/ligolos /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Realm="realm"
-	if [ ! -d "/usr/share/$Realm" ]; then
-		mkdir -p /usr/share/$Realm
-		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/$Realm/tavern
-		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/$Realm/imix
-		ln -fs /usr/share/$Realm/imix /usr/bin/imix
-		ln -fs /usr/share/$Realm/tavern /usr/bin/tavern
+	# install realm
+	if [ ! -d "/usr/share/realm" ]; then
+		local name="realm"
+		mkdir -p /usr/share/$name
+		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/$name/tavern
+		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/$name/imix
+		ln -fs /usr/share/$name/imix /usr/bin/imix;ln -fs /usr/share/$name/tavern /usr/bin/tavern
+		chmod +x /usr/bin/imix;chmod +x /usr/bin/tavern
 		menu_entry "Command-and-Control" "Red-Team" "Imix" "/usr/share/kali-menu/exec-in-shell 'imix'"
-		menu_entry "Red-Team" "Command-and-Control" "Tavern" "/usr/share/kali-menu/exec-in-shell 'tavern'"
-		printf "$GREEN"  "[*] Success Installing Realm"
-	else
-		printf "$GREEN"  "[*] Success Installed Realm"
+		menu_entry "Command-and-Control" "Red-Team" "tavern" "/usr/share/kali-menu/exec-in-shell 'tavern'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Badrats="badrats"
-	if [ ! -d "/usr/share/$Badrats" ]; then
-		git clone https://gitlab.com/KevinJClark/badrats /usr/share/$Badrats
-		chmod 755 /usr/share/$Badrats/*
-		cat > /usr/bin/$Badrats << EOF
+	# install badrats
+	if [ ! -d "/usr/share/badrats" ]; then
+		local name="badrats"
+		git clone https://gitlab.com/KevinJClark/badrats /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Badrats;python3 badrat_server.py "\$@"
+cd /usr/share/$name;python3 badrat_server.py "\$@"
 EOF
-		chmod +x /usr/bin/$Badrats
-		pip3 install -r /usr/share/$Badrats/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "Badrats" "/usr/share/kali-menu/exec-in-shell 'sudo $Badrats'"
-		printf "$GREEN"  "[*] Success Installing Badrats"
-	else
-		printf "$GREEN"  "[*] Success Installed Badrats"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Mythic="mythic"
-	if [ ! -d "/usr/share/$Mythic" ]; then
-		git clone https://github.com/its-a-feature/Mythic /usr/share/$Mythic
-		chmod 755 /usr/share/$Mythic/*
-		cd /usr/share/$Mythic;./install_docker_kali.sh
-		cd /usr/share/$Mythic/Mythic_CLI/src;make
-		cd /usr/share/$Mythic/mythic-docker/src;make
-		ln -fs /usr/share/$Mythic/Mythic_CLI/src/mythic-cli /usr/bin/$Mythic-cli
-		ln -fs /usr/share/$Mythic/mythic-docker/src/mythic_server /usr/bin/$Mythic-server
-		chmod +x /usr/bin/$Mythic-cli;chmod +x /usr/bin/$Mythic-server
-		menu_entry "Command-and-Control" "Red-Team" "Mythic-CLI" "/usr/share/kali-menu/exec-in-shell 'sudo $Mythic-cli'"
-		menu_entry "Command-and-Control" "Red-Team" "Mythic-Server" "/usr/share/kali-menu/exec-in-shell 'sudo $Mythic-server'"
-		printf "$GREEN"  "[*] Success Installing Mythic"
-	else
-		printf "$GREEN"  "[*] Success Installed Mythic"
+	# install mythic
+	if [ ! -d "/usr/share/mythic" ]; then
+		local name="mythic"
+		git clone https://github.com/its-a-feature/Mythic /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install_docker_kali.sh
+		cd /usr/share/$name/Mythic_CLI/src;make;cd /usr/share/$name/mythic-docker/src;make
+		ln -fs /usr/share/$name/Mythic_CLI/src/mythic-cli /usr/bin/$name-cli;ln -fs /usr/share/$name/mythic-docker/src/mythic_server /usr/bin/$name-server
+		chmod +x /usr/bin/$name-cli;chmod +x /usr/bin/$name-server
+		menu_entry "Command-and-Control" "Red-Team" "$name-cli" "/usr/share/kali-menu/exec-in-shell 'sudo $name-cli'"
+		menu_entry "Command-and-Control" "Red-Team" "$name-server" "/usr/share/kali-menu/exec-in-shell 'sudo $name-server'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NorthStarC2="northstarc2"
-	if [ ! -d "/usr/share/$NorthStarC2" ]; then
-		git clone https://github.com/EnginDemirbilek/NorthStarC2 /usr/share/$NorthStarC2
-		chmod 755 /usr/share/$NorthStarC2/*
-		cd /usr/share/$NorthStarC2;./install.sh
-		menu_entry "Command-and-Control" "Red-Team" "NorthStarC2" "/usr/share/kali-menu/exec-in-shell 'sudo $NorthStarC2'"
-		printf "$GREEN"  "[*] Success Installing NorthStarC2"
-	else
-		printf "$GREEN"  "[*] Success Installed NorthStarC2"
+	# install northstarc2
+	if [ ! -d "/usr/share/northstarc2" ]; then
+		local name="northstarc2"
+		git clone https://github.com/EnginDemirbilek/NorthStarC2 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	BlackMamba="blackmamba"
-	if [ ! -d "/usr/share/$BlackMamba" ]; then
-		git clone https://github.com/loseys/BlackMamba /usr/share/$BlackMamba
-		chmod 755 /usr/share/$BlackMamba/*
-		cat > /usr/bin/$BlackMamba << EOF
+	# install blackmamba
+	if [ ! -d "/usr/share/blackmamba" ]; then
+		local name="blackmamba"
+		git clone https://github.com/loseys/BlackMamba /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$BlackMamba;python3 main.py "\$@"
+cd /usr/share/$name;python3 main.py "\$@"
 EOF
-		chmod +x /usr/bin/$BlackMamba
-		pip3 install -r /usr/share/$BlackMamba/requirements.txt
-		menu_entry "Command-and-Control" "Red-Team" "BlackMamba" "/usr/share/kali-menu/exec-in-shell '$BlackMamba'"
-		printf "$GREEN"  "[*] Success Installing BlackMamba"
-	else
-		printf "$GREEN"  "[*] Success Installed BlackMamba"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	OffensiveNotion="offensivenotion"
-	if [ ! -d "/usr/share/$OffensiveNotion" ]; then
-		mkdir -p /usr/share/$OffensiveNotion
-		wget https://github.com/mttaggart/OffensiveNotion/releases/latest/download/offensive_notion_linux_amd64.zip -O /tmp/$OffensiveNotion.zip
-		unzip /tmp/$OffensiveNotion.zip -d /usr/share/$OffensiveNotion;rm -f /tmp/$OffensiveNotion.zip
-		chmod 755 /usr/share/$OffensiveNotion/*
-		ln -fs /usr/share/$OffensiveNotion/offensive_notion /usr/bin/$OffensiveNotion
-		chmod +x /usr/bin/$OffensiveNotion
-		menu_entry "Command-and-Control" "Red-Team" "OffensiveNotion" "/usr/share/kali-menu/exec-in-shell '$OffensiveNotion'"
-		printf "$GREEN"  "[*] Success Installing OffensiveNotion"
-	else
-		printf "$GREEN"  "[*] Success Installed OffensiveNotion"
+	# install offensivenotion
+	if [ ! -d "/usr/share/offensivenotion" ]; then
+		local name="offensivenotion"
+		mkdir -p /usr/share/$name
+		wget https://github.com/mttaggart/OffensiveNotion/releases/latest/download/offensive_notion_linux_amd64.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/offensive_notion /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RedbloodC2="redbloodc2"
-	if [ ! -d "/usr/share/$RedbloodC2" ]; then
-		git clone https://github.com/kira2040k/RedbloodC2 /usr/share/$RedbloodC2
-		chmod 755 /usr/share/$RedbloodC2/*
-		cat > /usr/bin/$RedbloodC2 << EOF
+	# install redbloodc2
+	if [ ! -d "/usr/share/redbloodc2" ]; then
+		local name="redbloodc2"
+		git clone https://github.com/kira2040k/RedbloodC2 /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;npm install
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$RedbloodC2;node server.js "\$@"
+cd /usr/share/$name;node server.js "\$@"
 EOF
-		chmod +x /usr/bin/$RedbloodC2
-		cd /usr/share/$RedbloodC2;npm install
-		menu_entry "Command-and-Control" "Red-Team" "RedbloodC2" "/usr/share/kali-menu/exec-in-shell '$RedbloodC2'"
-		printf "$GREEN"  "[*] Success Installing RedbloodC2"
-	else
-		printf "$GREEN"  "[*] Success Installed RedbloodC2"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SharpC2="sharpc2"
-	if [ ! -d "/usr/share/SharpC2" ]; then
-		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/teamserver-linux.tar.gz
-		tar -xvf /tmp/teamserver-linux.tar.gz -C /usr/share;rm -f /tmp/teamserver-linux.tar.gz
-		ln -fs /usr/share/SharpC2/TeamServer /usr/bin/$SharpC2
-		chmod +x /usr/bin/$SharpC2
-		menu_entry "Command-and-Control" "Red-Team" "SharpC2" "/usr/share/kali-menu/exec-in-shell '$SharpC2'"
-		printf "$GREEN"  "[*] Success Installing SharpC2"
-	else
-		printf "$GREEN"  "[*] Success Installed SharpC2"
+	# install sharpc2
+	if [ ! -d "/usr/share/sharpc2" ]; then
+		local name="sharpc2"
+		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;mv -f /usr/share/SharpC2 /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/TeamServer /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	emp3r0r="emp3r0r"
-	if [ ! -d "/usr/share/$emp3r0r-build" ]; then
-		wget https://github.com/jm33-m0/emp3r0r/releases/latest/download/emp3r0r-v1.36.0.tar.xz -O /tmp/$emp3r0r.tar.xz
-		tar -xvf /tmp/$emp3r0r.tar.xz -C /usr/share;rm -f /tmp/$emp3r0r.tar.xz
-		chmod 755 /usr/share/$emp3r0r-build/*
-		cd /usr/share/$emp3r0r-build;./emp3r0r --install
-		menu_entry "Command-and-Control" "Red-Team" "emp3r0r" "/usr/share/kali-menu/exec-in-shell '$emp3r0r'"
-		printf "$GREEN"  "[*] Success Installing emp3r0r"
-	else
-		printf "$GREEN"  "[*] Success Installed emp3r0r"
+	# install emp3r0r
+	if [ ! -d "/usr/share/emp3r0r" ]; then
+		local name="emp3r0r"
+		wget https://github.com/jm33-m0/emp3r0r/releases/latest/download/emp3r0r-v1.36.0.tar.xz -O /tmp/$name.tar.xz
+		tar -xvf /tmp/$name.tar.xz -C /usr/share;mv -f /usr/share/emp3r0r-build /usr/share/$name;rm -f /tmp/$name.tar.xz
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./emp3r0r --install
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CHAOS="chaos"
-	if [ ! -d "/usr/share/$CHAOS" ]; then
-		git clone https://github.com/tiagorlampert/CHAOS /usr/share/$CHAOS
-		chmod 755 /usr/share/$CHAOS/*
-		cat > /usr/bin/$CHAOS << EOF
+	# install chaos
+	if [ ! -d "/usr/share/chaos" ]; then
+		local name="chaos"
+		git clone https://github.com/tiagorlampert/CHAOS /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CHAOS;PORT=8080 SQLITE_DATABASE=chaos go run cmd/chaos/main.go "\$@"
+cd /usr/share/$name;PORT=8080 SQLITE_DATABASE=chaos go run cmd/chaos/main.go "\$@"
 EOF
-		chmod +x /usr/bin/$CHAOS
-		menu_entry "Command-and-Control" "Red-Team" "CHAOS" "/usr/share/kali-menu/exec-in-shell '$CHAOS'"
-		printf "$GREEN"  "[*] Success Installing CHAOS"
-	else
-		printf "$GREEN"  "[*] Success Installed CHAOS"
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GoDoH="godoh"
-	if [ ! -d "/usr/share/$GoDoH" ]; then
-		mkdir -p /usr/share/$GoDoH
-		wget https://github.com/sensepost/godoh/releases/latest/download/godoh-linux64 -O /usr/share/$GoDoH/godoh
-		chmod 755 /usr/share/$GoDoH/*
-		ln -fs /usr/share/$GoDoH/godoh /usr/bin/$GoDoH
-		chmod +x /usr/bin/$GoDoH
-		menu_entry "Command-and-Control" "Red-Team" "GoDoH" "/usr/share/kali-menu/exec-in-shell '$GoDoH -h'"
-		printf "$GREEN"  "[*] Success Installing GoDoH"
-	else
-		printf "$GREEN"  "[*] Success Installed GoDoH"
+	# install godoh
+	if [ ! -d "/usr/share/godoh" ]; then
+		local name="godoh"
+		mkdir -p /usr/share/$name
+		wget https://github.com/sensepost/godoh/releases/latest/download/godoh-linux64 -O /usr/share/$name/godoh
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/godoh /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Silver="sliver"
-	if [ ! -d "/usr/share/$Silver" ]; then
-		mkdir -p /usr/share/$Silver
-		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-client_linux -O /usr/share/$Silver/sliver_client
-		chmod 755 /usr/share/$Silver/*
-		ln -fs /usr/share/$Silver/sliver_client /usr/bin/"$Silver"c
-		chmod +x /usr/bin/"$Silver"c
-		menu_entry "Command-and-Control" "Red-Team" "SilverC" "/usr/share/kali-menu/exec-in-shell 'sudo "$Silver"c -h'"
-		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-server_linux -O /usr/share/$Silver/sliver_server
-		chmod 755 /usr/share/$Silver/*
-		ln -fs /usr/share/$Silver/sliver_server /usr/bin/"$Silver"s
-		chmod +x /usr/bin/"$Silver"s
-		menu_entry "Command-and-Control" "Red-Team" "SilverS" "/usr/share/kali-menu/exec-in-shell 'sudo "$Silver"s -h'"
-		printf "$GREEN"  "[*] Success Installing Silver"
-	else
-		printf "$GREEN"  "[*] Success Installed Silver"
+	# install sliver
+	if [ ! -d "/usr/share/sliver" ]; then
+		local name="sliver"
+		mkdir -p /usr/share/$name
+		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-server_linux -O /usr/share/$name/sliver_server
+		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-client_linux -O /usr/share/$name/sliver_client
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/sliver_server /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Havoc="havoc"
-	if [ ! -d "/usr/share/$Havoc" ]; then
-		git clone https://github.com/HavocFramework/Havoc /usr/share/$Havoc
-		chmod 755 /usr/share/$Havoc/*
-		cd /user/share/$Havoc/client;make
-		ln -fs /user/share/$Havoc/client/havoc /usr/bin/$Havoc
-		chmod +x /usr/bin/$Havoc
-		menu_entry "Command-and-Control" "Red-Team" "Havoc" "/usr/share/kali-menu/exec-in-shell 'sudo $Havoc -h'"
-		cd /user/share/$Havoc/Teamserver;./Install.sh;make
-		ln -fs /user/share/$Havoc/Teamserver/teamserver /usr/bin/"$Havoc"ts
-		chmod +x /usr/bin/"$Havoc"ts
-		menu_entry "Command-and-Control" "Red-Team" "HavocTS" "/usr/share/kali-menu/exec-in-shell 'sudo "$Havoc"ts -h'"
-		printf "$GREEN"  "[*] Success Installing Havoc"
-	else
-		printf "$GREEN"  "[*] Success Installed Havoc"
+	# install havoc
+	if [ ! -d "/usr/share/havoc" ]; then
+		local name="havoc"
+		git clone https://github.com/HavocFramework/Havoc /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /user/share/$name/client;make
+		cd /user/share/$name/Teamserver;./install.sh;make
+		ln -fs /user/share/$name/Teamserver/teamserver /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $Havoc -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ---------------------------------------Exfiltration-Red-Team--------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxychains proxify privoxy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	exfiltration_pip="updog pivotnacci"
 	pip_installer "Exfiltration" "Red-Team" "$exfiltration_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# exfiltration_npm=""
 	npm_installer "Exfiltration" "Red-Team" "$exfiltration_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# exfiltration_gem=""
 	gem_installer "Exfiltration" "Red-Team" "$exfiltration_gem"
 
-	# Install Golang
+	# install Golang
 	# exfiltration_golang=""
 	go_installer "Exfiltration" "Red-Team" "$exfiltration_golang"
 
-	Ngrok="ngrok"
-	if [ ! -f "/usr/bin/$Ngrok" ]; then
-		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$Ngrok.tgz
-		tar -xvf /tmp/$Ngrok.tgz -C /usr/bin;rm -f /tmp/$Ngrok.tgz
-		chmod +x /usr/bin/$Ngrok
-		menu_entry "Web" "Penetration-Testing" "Ngrok" "/usr/share/kali-menu/exec-in-shell '$Ngrok -h'"
-		printf "$GREEN"  "[*] Success Installing Ngrok"
-	else
-		printf "$GREEN"  "[*] Success Installed Ngrok"
+	# install ngrok
+	if [ ! -f "/usr/bin/ngrok" ]; then
+		local name="ngrok"
+		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
+		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	NoIP="noip"
+	# install noip2
 	if [ ! -f "/usr/local/bin/noip2" ]; then
-		mkdir -p /usr/share/$NoIP
-		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$NoIP.tar.gz
-		tar -xzf /tmp/$NoIP.tar.gz -C /usr/share/$NoIP;rm -f /tmp/$NoIP.tar.gz
-		chmod 755 /usr/share/$NoIP/*;cd /usr/share/$NoIP;make;make install
-		menu_entry "Web" "Penetration-Testing" "NoIP" "/usr/share/kali-menu/exec-in-shell '$NoIP -h'"
-		printf "$GREEN"  "[*] Success Installing NoIP"
-	else
-		printf "$GREEN"  "[*] Success Installed NoIP"
+		local name="noip"
+		mkdir -p /usr/share/$name
+		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$name.tar.gz
+		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make;make install
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	DNSExfiltrator="dnsexfiltrator"
-	if [ ! -d "/usr/share/$DNSExfiltrator" ]; then
-		git clone https://github.com/Arno0x/DNSExfiltrator /usr/share/$DNSExfiltrator
-		chmod 755 /usr/share/$DNSExfiltrator/*
-		cat > /usr/bin/$DNSExfiltrator << EOF
+	# install dnsexfiltrator
+	if [ ! -d "/usr/share/dnsexfiltrator" ]; then
+		local name="dnsexfiltrator"
+		git clone https://github.com/Arno0x/DNSExfiltrator /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$DNSExfiltrator;python2 dnsexfiltrator.py "\$@"
+cd /usr/share/$name;python2 dnsexfiltrator.py "\$@"
 EOF
-		chmod +x /usr/bin/$DNSExfiltrator
-		pip3 install -r /usr/share/$DNSExfiltrator/requirements.txt
-		menu_entry "Exfiltration" "Red-Team" "DNSExfiltrator" "/usr/share/kali-menu/exec-in-shell '$DNSExfiltrator -h'"
-		printf "$GREEN"  "[*] Success Installing DNSExfiltrator"
-	else
-		printf "$GREEN"  "[*] Success Installed DNSExfiltrator"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	BobTheSmuggler="bobthesmuggler"
-	if [ ! -d "/usr/share/$BobTheSmuggler" ]; then
-		git clone https://github.com/TheCyb3rAlpha/BobTheSmuggler /usr/share/$BobTheSmuggle
-		chmod 755 /usr/share/$BobTheSmuggle/*
-		cat > /usr/bin/$BobTheSmuggle << EOF
+	# install bobthesmuggler
+	if [ ! -d "/usr/share/bobthesmuggler" ]; then
+		local name="bobthesmuggler"
+		git clone https://github.com/TheCyb3rAlpha/BobTheSmuggler /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$BobTheSmuggle;python3 BobTheSmuggler.py "\$@"
+cd /usr/share/$name;python3 BobTheSmuggler.py "\$@"
 EOF
-		chmod +x /usr/bin/$BobTheSmuggle
-		pip3 install python-magic py7zr pyminizip
-		menu_entry "Exfiltration" "Red-Team" "BobTheSmuggler" "/usr/share/kali-menu/exec-in-shell '$BobTheSmuggle -h'"
-		printf "$GREEN"  "[*] Success Installing BobTheSmuggler"
-	else
-		printf "$GREEN"  "[*] Success Installed BobTheSmuggler"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SSHSnake="SSHSnake"
-	if [ ! -d "/usr/share/$SSHSnake" ]; then
-		git clone https://github.com/MegaManSec/SSH-Snake /usr/share/$SSHSnake
-		chmod 755 /usr/share/$SSHSnake/*
-		cat > /usr/bin/$SSHSnake << EOF
+	# install sshsnake
+	if [ ! -d "/usr/share/sshsnake" ]; then
+		local name="sshsnake"
+		git clone https://github.com/MegaManSec/SSH-Snake /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SSHSnake;bash Snake.sh "\$@"
+cd /usr/share/$name;bash Snake.sh "\$@"
 EOF
-		chmod +x /usr/bin/$SSHSnake
-		menu_entry "Exfiltration" "Red-Team" "SSH-Snake" "/usr/share/kali-menu/exec-in-shell '$SSHSnake -h'"
-		printf "$GREEN"  "[*] Success Installing SSH-Snake"
-	else
-		printf "$GREEN"  "[*] Success Installed SSH-Snake"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ReverseSSH="reversessh"
-	if [ ! -d "/usr/share/$ReverseSSH" ]; then
-		mkdir -p /usr/share/$ReverseSSH
-		wget https://github.com/Fahrj/reverse-ssh/releases/latest/download/reverse-sshx64 -O /usr/share/$ReverseSSH/reversessh
-		chmod 755 /usr/share/$ReverseSSH/*
-		cat > /usr/bin/$ReverseSSH << EOF
+	# install reversessh
+	if [ ! -d "/usr/share/reversessh" ]; then
+		local name="reversessh"
+		mkdir -p /usr/share/$name
+		wget https://github.com/Fahrj/reverse-ssh/releases/latest/download/reverse-sshx64 -O /usr/share/$name/reversessh
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ReverseSSH;./reversessh "\$@"
+cd /usr/share/$name;./reversessh "\$@"
 EOF
-		chmod +x /usr/bin/$ReverseSSH
-		menu_entry "Exfiltration" "Red-Team" "ReverseSSH" "/usr/share/kali-menu/exec-in-shell '$ReverseSSH -h'"
-		printf "$GREEN"  "[*] Success Installing ReverseSSH"
-	else
-		printf "$GREEN"  "[*] Success Installed ReverseSSH"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	transfersh="transfersh"
-	if [ ! -d "/usr/share/$transfersh" ]; then
-		mkdir -p /usr/share/$transfersh
-		wget https://github.com/dutchcoders/transfer.sh/releases/latest/download/transfersh-v1.6.1-linux-amd64 -O /usr/share/$transfersh/transfersh
-		chmod 755 /usr/share/$transfersh/*
-		ln -fs /usr/share/$transfersh/transfersh /usr/bin/transfersh
-		chmod +x /usr/bin/$transfersh
-		menu_entry "Exfiltration" "Red-Team" "transfer.sh" "/usr/share/kali-menu/exec-in-shell '$transfersh -h'"
-		printf "$GREEN"  "[*] Success Installing transfer.sh"
-	else
-		printf "$GREEN"  "[*] Success Installed transfer.sh"
+	# install transfer.sh
+	if [ ! -d "/usr/share/transfer.sh" ]; then
+		local name="transfer.sh"
+		mkdir -p /usr/share/$name
+		wget https://github.com/dutchcoders/transfer.sh/releases/latest/download/transfersh-v1.6.1-linux-amd64 -O /usr/share/$name/transfer.sh
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/transfersh /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	DNSlivery="dnslivery"
-	if [ ! -d "/usr/share/$DNSlivery" ]; then
-		git clone https://github.com/no0be/DNSlivery /usr/share/$DNSlivery
-		chmod 755 /usr/share/$DNSlivery/*
-		cat > /usr/bin/$DNSlivery << EOF
+	# install dnslivery
+	if [ ! -d "/usr/share/dnslivery" ]; then
+		local name="dnslivery"
+		git clone https://github.com/no0be/DNSlivery /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$DNSlivery;python3 dnslivery.py "\$@"
+cd /usr/share/$name;python3 dnslivery.py "\$@"
 EOF
-		chmod +x /usr/bin/$DNSlivery
-		pip3 install -r /usr/share/$DNSlivery/requirements.txt
-		menu_entry "Exfiltration" "Red-Team" "DNSlivery" "/usr/share/kali-menu/exec-in-shell '$DNSlivery -h'"
-		printf "$GREEN"  "[*] Success Installing DNSlivery"
-	else
-		printf "$GREEN"  "[*] Success Installed DNSlivery"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	WebDavDelivery="webdavdelivery"
-	if [ ! -d "/usr/share/$WebDavDelivery" ]; then
-		git clone https://github.com/Arno0x/WebDavDelivery /usr/share/$WebDavDelivery
-		chmod 755 /usr/share/$WebDavDelivery/*
-		cat > /usr/bin/$WebDavDelivery << EOF
+	# install webdavdelivery
+	if [ ! -d "/usr/share/webdavdelivery" ]; then
+		local name="webdavdelivery"
+		git clone https://github.com/Arno0x/WebDavDelivery /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$WebDavDelivery;python3 webDavDelivery.py "\$@"
+cd /usr/share/$name;python3 webDavDelivery.py "\$@"
 EOF
-		chmod +x /usr/bin/$WebDavDelivery
-		menu_entry "Exfiltration" "Red-Team" "WebDavDelivery" "/usr/share/kali-menu/exec-in-shell '$WebDavDelivery -h'"
-		printf "$GREEN"  "[*] Success Installing WebDavDelivery"
-	else
-		printf "$GREEN"  "[*] Success Installed WebDavDelivery"
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	WSTunnel="wstunnel"
-	if [ ! -d "/usr/share/$WSTunnel" ]; then
-		mkdir -p /usr/share/$WSTunnel
-		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.5_linux_amd64.tar.gz -O /tmp/$WSTunnel.tar.gz
-		tar -xvf /tmp/$WSTunnel.tar.gz -C /usr/share/$WSTunnel;rm -f /tmp/$WSTunnel.tar.gz
-		chmod 755 /usr/share/$WSTunnel/*
-		ln -fs /usr/share/$WSTunnel/wstunnel /usr/bin/$WSTunnel
-		chmod +x /usr/bin/$WSTunnel
-		menu_entry "Exfiltration" "Red-Team" "WSTunnel" "/usr/share/kali-menu/exec-in-shell '$WSTunnel -h'"
-		printf "$GREEN"  "[*] Success Installing WSTunnel"
-	else
-		printf "$GREEN"  "[*] Success Installed WSTunnel"
+	# install wstunnel
+	if [ ! -d "/usr/share/wstunnel" ]; then
+		local name="wstunnel"
+		mkdir -p /usr/share/$name
+		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.5_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/wstunnel /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	IPFS="kubo"
-	if [ ! -d "/usr/share/$IPFS" ]; then
-		wget https://github.com/ipfs/kubo/releases/latest/download/kubo_v0.28.0_linux-amd64.tar.gz -O /tmp/$IPFS.tar.gz
-		tar -xvf /tmp/$IPFS.tar.gz -C /usr/share;rm -f /tmp/$IPFS.tar.gz
-		chmod 755 /usr/share/$IPFS/*
-		cd /usr/share/$IPFS;./install.sh
-		menu_entry "Exfiltration" "Red-Team" "IPFS" "/usr/share/kali-menu/exec-in-shell '$IPFS'"
-		printf "$GREEN"  "[*] Success Installing IPFS"
-	else
-		printf "$GREEN"  "[*] Success Installed IPFS"
+	# install kubo
+	if [ ! -d "/usr/share/kubo" ]; then
+		local name="kubo"
+		wget https://github.com/ipfs/kubo/releases/latest/download/kubo_v0.28.0_linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	FRP="frp"
-	if [ ! -d "/usr/share/$FRP" ]; then
-		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz -O /tmp/$FRP.tar.gz
-		tar -xzf /tmp/$FRP.tar.gz -C /usr/share/$FRP;rm -f /tmp/$FRP.tar.gz
-		chmod 755 /usr/share/$FRP/*
-		ln -fs /usr/share/$FRP/frps /usr/bin/$FRP
-		chmod +x /usr/bin/$FRP
-		menu_entry "Exfiltration" "Red-Team" "FRP" "/usr/share/kali-menu/exec-in-shell '$FRP -h'"
-		printf "$GREEN"  "[*] Success Installing FRP"
-	else
-		printf "$GREEN"  "[*] Success Installed FRP"
+	# install frp
+	if [ ! -d "/usr/share/frp" ]; then
+		local name="frp"
+		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/frps /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	rathole="rathole"
-	if [ ! -d "/usr/share/$rathole" ]; then
-		mkdir -p /usr/share/$rathole
-		wget https://github.com/rapiz1/rathole/releases/latest/download/rathole-x86_64-unknown-linux-gnu.zip -O /tmp/$rathole.zip
-		unzip /tmp/$rathole.zip -d /usr/share/$rathole;rm -f /tmp/$rathole.zip
-		chmod 755 /usr/share/$rathole/*
-		ln -fs /usr/share/$rathole/rathole /usr/bin/$rathole
-		chmod +x /usr/bin/$rathole
-		menu_entry "Exfiltration" "Red-Team" "rathole" "/usr/share/kali-menu/exec-in-shell '$rathole -h'"
-		printf "$GREEN"  "[*] Success Installing rathole"
-	else
-		printf "$GREEN"  "[*] Success Installed rathole"
+	# install rathole
+	if [ ! -d "/usr/share/rathole" ]; then
+		local name="rathole"
+		mkdir -p /usr/share/$name
+		wget https://github.com/rapiz1/rathole/releases/latest/download/rathole-x86_64-unknown-linux-gnu.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/rathole /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GOProxy="goproxy"
-	if [ ! -d "/usr/share/$GOProxy" ]; then
-		mkdir -p /usr/share/$GOProxy
-		wget https://github.com/snail007/goproxy/releases/latest/download/proxy-linux-amd64.tar.gz -O /tmp/$GOProxy.tar.gz
-		tar -xvf /tmp/$GOProxy.tar.gz -C /usr/share/$GOProxy;rm -f /tmp/$GOProxy.tar.gz
-		chmod 755 /usr/share/$GOProxy/*
-		ln -fs /usr/share/$GOProxy/proxy /usr/bin/$GOProxy
-		chmod +x /usr/bin/$GOProxy
-		menu_entry "Exfiltration" "Red-Team" "GOProxy" "/usr/share/kali-menu/exec-in-shell '$GOProxy -h'"
-		printf "$GREEN"  "[*] Success Installing GOProxy"
-	else
-		printf "$GREEN"  "[*] Success Installed GOProxy"
+	# install goproxy
+	if [ ! -d "/usr/share/goproxy" ]; then
+		local name="goproxy"
+		mkdir -p /usr/share/$name
+		wget https://github.com/snail007/goproxy/releases/latest/download/proxy-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/proxy /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------------------Impact-Red-Team------------------------------------------ #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# impact_pip=""
 	pip_installer "Impact" "Red-Team" "$impact_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# impact_npm=""
 	npm_installer "Impact" "Red-Team" "$impact_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# impact_gem=""
 	gem_installer "Impact" "Red-Team" "$impact_gem"
 
-	# Install Golang
+	# install Golang
 	# impact_golang=""
 	go_installer "Impact" "Red-Team" "$impact_golang"
 
@@ -3177,132 +3016,129 @@ EOF
 ics_security ()
 {
 	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# penetration_testing_pip=""
 	pip_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# penetration_testing_npm=""
 	npm_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	penetration_testing_gem="modbus-cli"
 	gem_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_gem"
 
-	# Install Golang
+	# install Golang
 	# penetration_testing_golang=""
 	go_installer "Penetration-Testing" "ICS-Security" "$penetration_testing_golang"
 
-	S7Scan="s7scan"
-	if [ ! -d "/usr/share/$S7Scan" ]; then
-		git clone https://github.com/klsecservices/s7scan /usr/share/$S7Scan
-		chmod 755 /usr/share/$S7Scan/*
-		cat > /usr/bin/$S7Scan << EOF
+	# install s7scan
+	if [ ! -d "/usr/share/s7scan" ]; then
+		local name="s7scan"
+		git clone https://github.com/klsecservices/s7scan /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$S7Scan;python2 s7scan.py "\$@"
+cd /usr/share/$name;python2 s7scan.py "\$@"
 EOF
-		chmod +x /usr/bin/$S7Scan
-		menu_entry "Penetration-Testing" "ICS-Security" "S7Scan" "/usr/share/kali-menu/exec-in-shell '$S7Scan -h'"
-		printf "$GREEN"  "[*] Success Installing S7Scan"
-	else
-		printf "$GREEN"  "[*] Success Installed S7Scan"
+		chmod +x /usr/bin/$name
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ModbusPal="modbuspal"
-	if [ ! -d "/usr/share/$ModbusPal" ]; then
-		mkdir -p /usr/share/$ModbusPal
-		wget https://cfhcable.dl.sourceforge.net/project/modbuspal/modbuspal/RC%20version%201.6c/ModbusPal.jar -O /usr/share/$ModbusPal/ModbusPal.jar
-		chmod 755 /usr/share/$ModbusPal/*
-		cat > /usr/bin/$ModbusPal << EOF
+	# install modbuspal
+	if [ ! -d "/usr/share/modbuspal" ]; then
+		local name="modbuspal"
+		mkdir -p /usr/share/$name
+		wget https://cfhcable.dl.sourceforge.net/project/modbuspal/modbuspal/RC%20version%201.6c/ModbusPal.jar -O /usr/share/$name/ModbusPal.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ModbusPal;java -jar ModbusPal.jar "\$@"
+cd /usr/share/$name;java -jar ModbusPal.jar "\$@"
 EOF
-		chmod +x /usr/bin/$ModbusPal
-		menu_entry "Penetration-Testing" "ICS-Security" "ModbusPal" "/usr/share/kali-menu/exec-in-shell '$ModbusPal -h'"
-		printf "$GREEN"  "[*] Success Installing ModbusPal"
-	else
-		printf "$GREEN"  "[*] Success Installed ModbusPal"
+		chmod +x /usr/bin/$name
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ISF="isf"
-	if [ ! -d "/usr/share/$ISF" ]; then
-		git clone https://github.com/dark-lbp/isf /usr/share/$ISF
-		chmod 755 /usr/share/$ISF/*
-		cat > /usr/bin/$ISF << EOF
+	# install isf
+	if [ ! -d "/usr/share/isf" ]; then
+		local name="isf"
+		git clone https://github.com/dark-lbp/isf /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$ISF;python2 isf.py "\$@"
+cd /usr/share/$name;python2 isf.py "\$@"
 EOF
-		chmod +x /usr/bin/$ISF
-		pip2 install -r /usr/share/$ISF/requirements.txt
-		menu_entry "Penetration-Testing" "ICS-Security" "ISF" "/usr/share/kali-menu/exec-in-shell '$ISF -h'"
-		printf "$GREEN"  "[*] Success Installing ISF"
-	else
-		printf "$GREEN"  "[*] Success Installed ISF"
+		chmod +x /usr/bin/$name
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
 	printf "$YELLOW"  "# ----------------------------------------Red-Team-ICS-Security-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# red_team_pip=""
 	pip_installer "Red-Team" "ICS-Security" "$red_team_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# red_team_npm=""
 	npm_installer "Red-Team" "ICS-Security" "$red_team_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# red_team_gem=""
 	gem_installer "Red-Team" "ICS-Security" "$red_team_gem"
 
-	# Install Golang
+	# install Golang
 	# red_team_golang=""
 	go_installer "Red-Team" "ICS-Security" "$red_team_golang"
 
 
 	printf "$YELLOW"  "# ------------------------------------Digital-Forensic-ICS-Security---------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# digital_forensic_pip=""
 	pip_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# digital_forensic_npm=""
 	npm_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# digital_forensic_gem=""
 	gem_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_gem"
 
-	# Install Golang
+	# install Golang
 	# digital_forensic_golang=""
 	go_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_golang"
 
 
 	printf "$YELLOW"  "# ---------------------------------------Blue-Team-ICS-Security-------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	blue_team_pip="conpot"
 	pip_installer "Blue-Team" "ICS-Security" "$blue_team_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# blue_team_npm=""
 	npm_installer "Blue-Team" "ICS-Security" "$blue_team_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# blue_team_gem=""
 	gem_installer "Blue-Team" "ICS-Security" "$blue_team_gem"
 
-	# Install Golang
+	# install Golang
 	# blue_team_golang=""
 	go_installer "Blue-Team" "ICS-Security" "$blue_team_golang"
 
@@ -3313,43 +3149,43 @@ EOF
 digital_forensic ()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy ghidra foremost qpdf kafkacat gdb pspy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
 	pip_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# reverse_engineering_npm=""
 	npm_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# reverse_engineering_gem=""
 	gem_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_gem"
 
-	# Install Golang
+	# install Golang
 	# reverse_engineering_golang=""
 	go_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_golang"
 
 
 	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool pev readpe 
 
-	# Install Python3 pip
+	# install Python3 pip
 	malware_analysis_pip="stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
 	pip_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	malware_analysis_npm="box-js f5stegojs"
 	npm_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	malware_analysis_gem="pedump zsteg"
 	gem_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_gem"
 
-	# Install Golang
+	# install Golang
 	malware_analysis_golang="
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 	go_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_golang"
@@ -3361,9 +3197,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
     		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
 		mkdir -p /etc/apt/keyrings/;mv fpf-apt-tools-archive-keyring.gpg /etc/apt/keyrings
 		apt update;apt install -qy dangerzone
-		printf "$GREEN"  "[*] Sucess Installing Dangerzone"
+		printf "$GREEN"  "[*] Sucess installing Dangerzone"
 	else
-		printf "$GREEN"  "[*] Sucess Installed Dangerzone"
+		printf "$GREEN"  "[*] Sucess installed Dangerzone"
 	fi
 
 	StegoCracker="stegocracker"
@@ -3373,9 +3209,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		pip3 install -r /usr/share/$StegoCracker/requirements.txt 
 		cd /usr/share/$StegoCracker;python3 setup.py install;bash install.sh 
 		menu_entry "Malware-Analysis" "Digital-Forensic" "StegoCracker" "/usr/share/kali-menu/exec-in-shell 'stego -h'"
-		printf "$GREEN"  "[*] Success Installing StegoCracker"
+		printf "$GREEN"  "[*] Success installing StegoCracker"
 	else
-		printf "$GREEN"  "[*] Success Installed StegoCracker"
+		printf "$GREEN"  "[*] Success installed StegoCracker"
 	fi
 
 	OpenStego="openstego"
@@ -3383,9 +3219,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		wget https://github.com/syvaidya/openstego/releases/latest/download/openstego_0.8.6-1_all.deb -O /tmp/$OpenStego.deb
 		chmod +x /tmp/$OpenStego.deb;dpkg -i /tmp/$OpenStego.deb;apt --fix-broken install -qy;rm -f /tmp/$OpenStego.deb
 		menu_entry "Malware-Analysis" "Digital-Forensic" "OpenStego" "/usr/share/kali-menu/exec-in-shell 'sudo $OpenStego -h'"
-		printf "$GREEN"  "[*] Success Installing OpenStego"
+		printf "$GREEN"  "[*] Success installing OpenStego"
 	else
-		printf "$GREEN"  "[*] Success Installed OpenStego"
+		printf "$GREEN"  "[*] Success installed OpenStego"
 	fi
 
 	StegoSaurus="stegosaurus"
@@ -3396,9 +3232,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		ln -fs /usr/share/$StegoSaurus/stegosaurus /usr/bin/$StegoSaurus
 		chmod +x /usr/bin/$StegoSaurus
 		menu_entry "Malware-Analysis" "Digital-Forensic" "StegoSaurus" "/usr/share/kali-menu/exec-in-shell 'sudo $StegoSaurus -h'"
-		printf "$GREEN"  "[*] Success Installing StegoSaurus"
+		printf "$GREEN"  "[*] Success installing StegoSaurus"
 	else
-		printf "$GREEN"  "[*] Success Installed StegoSaurus"
+		printf "$GREEN"  "[*] Success installed StegoSaurus"
 	fi
 
 	AudioStego="audiostego"
@@ -3409,9 +3245,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		ln -fs /usr/share/$AudioStego/build/hideme /usr/bin/hideme
 		chmod +x /usr/bin/hideme
 		menu_entry "Malware-Analysis" "Digital-Forensic" "AudioStego" "/usr/share/kali-menu/exec-in-shell 'sudo hideme -h'"
-		printf "$GREEN"  "[*] Success Installing AudioStego"
+		printf "$GREEN"  "[*] Success installing AudioStego"
 	else
-		printf "$GREEN"  "[*] Success Installed AudioStego"
+		printf "$GREEN"  "[*] Success installed AudioStego"
 	fi
 
 	CloackedPixel="cloackedpixel"
@@ -3424,9 +3260,9 @@ cd /usr/share/$CloackedPixel;python2 lsb.py "\$@"
 EOF
 		chmod +x /usr/bin/$CloackedPixel
 		menu_entry "Malware-Analysis" "Digital-Forensic" "CloackedPixel" "/usr/share/kali-menu/exec-in-shell '$CloackedPixel -h'"
-		printf "$GREEN"  "[*] Success Installing CloackedPixel"
+		printf "$GREEN"  "[*] Success installing CloackedPixel"
 	else
-		printf "$GREEN"  "[*] Success Installed CloackedPixel"
+		printf "$GREEN"  "[*] Success installed CloackedPixel"
 	fi
 
 	Steganabara="steganabara"
@@ -3439,9 +3275,9 @@ cd /usr/share/$Steganabara;./run "\$@"
 EOF
 		chmod +x /usr/bin/$Steganabara
 		menu_entry "Malware-Analysis" "Digital-Forensic" "Steganabara" "/usr/share/kali-menu/exec-in-shell '$Steganabara -h'"
-		printf "$GREEN"  "[*] Success Installing Steganabara"
+		printf "$GREEN"  "[*] Success installing Steganabara"
 	else
-		printf "$GREEN"  "[*] Success Installed Steganabara"
+		printf "$GREEN"  "[*] Success installed Steganabara"
 	fi
 
 	Stegsolve="stegsolve"
@@ -3455,9 +3291,9 @@ cd /usr/share/$Stegsolve;java -jar stegsolve.jar "\$@"
 EOF
 		chmod +x /usr/bin/$Stegsolve
 		menu_entry "Malware-Analysis" "Digital-Forensic" "Stegsolve" "/usr/share/kali-menu/exec-in-shell '$Stegsolve -h'"
-		printf "$GREEN"  "[*] Success Installing Stegsolve"
+		printf "$GREEN"  "[*] Success installing Stegsolve"
 	else
-		printf "$GREEN"  "[*] Success Installed Stegsolve"
+		printf "$GREEN"  "[*] Success installed Stegsolve"
 	fi
 
 	OpenPuff="openpuff"
@@ -3471,9 +3307,9 @@ cd /usr/share/$OpenPuff;wine OpenPuff.exe "\$@"
 EOF
 		chmod +x /usr/bin/$OpenPuff
 		menu_entry "Malware-Analysis" "Digital-Forensic" "OpenPuff" "/usr/share/kali-menu/exec-in-shell '$OpenPuff'"
-		printf "$GREEN"  "[*] Success Installing OpenPuff"
+		printf "$GREEN"  "[*] Success installing OpenPuff"
 	else
-		printf "$GREEN"  "[*] Success Installed OpenPuff"
+		printf "$GREEN"  "[*] Success installed OpenPuff"
 	fi
 
 	MP3Stego="mp3stego"
@@ -3492,9 +3328,9 @@ cd /usr/share/$MP3Stego/MP3Stego;wine Decode.exe "\$@"
 EOF
 		chmod +x /usr/bin/$MP3Stego-decode
 		menu_entry "Malware-Analysis" "Digital-Forensic" "MP3Stego-decode" "/usr/share/kali-menu/exec-in-shell '$MP3Stego-decode'"
-		printf "$GREEN"  "[*] Success Installing MP3Stego"
+		printf "$GREEN"  "[*] Success installing MP3Stego"
 	else
-		printf "$GREEN"  "[*] Success Installed MP3Stego"
+		printf "$GREEN"  "[*] Success installed MP3Stego"
 	fi
 
 	jstegslink="jsteg-slink"
@@ -3509,9 +3345,9 @@ EOF
 		chmod +x /usr/bin/slink
 		menu_entry "Malware-Analysis" "Digital-Forensic" "Slink" "/usr/share/kali-menu/exec-in-shell 'sudo slink -h'"
 		chmod 755 /usr/share/jsteg-slink/*
-		printf "$GREEN"  "[*] Success Installing JSteg & Slink"
+		printf "$GREEN"  "[*] Success installing JSteg & Slink"
 	else
-		printf "$GREEN"  "[*] Success Installed JSteg & Slink"
+		printf "$GREEN"  "[*] Success installed JSteg & Slink"
 	fi
 
 	SSAK="ssak"
@@ -3548,29 +3384,29 @@ EOF
 		ln -fs /usr/share/$SSAK/programs/64/stegdetect /usr/bin/stegdetect
 		chmod +x /usr/bin/stegdetect
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegdetect" "/usr/share/kali-menu/exec-in-shell 'sudo stegdetect -h'"
-		printf "$GREEN"  "[*] Success Installing SSAK"
+		printf "$GREEN"  "[*] Success installing SSAK"
 	else
-		printf "$GREEN"  "[*] Success Installed SSAK"
+		printf "$GREEN"  "[*] Success installed SSAK"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump 
 
-	# Install Python3 pip
+	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
 	pip_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# threat_hunting_npm=""
 	npm_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# threat_hunting_gem=""
 	gem_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_gem"
 
-	# Install Golang
+	# install Golang
 	# threat_hunting_golang=""
 	go_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_golang"
 
@@ -3578,9 +3414,9 @@ EOF
 	if [ ! -d "/usr/share/$Matano" ]; then
 		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$Matano.sh
 		chmod +x /tmp/$Matano.sh;cd /tmp;bash $Matano.sh;rm -f $Matano.sh
-		printf "$GREEN"  "[*] Success Installing Matano"
+		printf "$GREEN"  "[*] Success installing Matano"
 	else
-		printf "$GREEN"  "[*] Success Installed Matano"
+		printf "$GREEN"  "[*] Success installed Matano"
 	fi
 
 	APTHunter="apt-hunter"
@@ -3594,9 +3430,9 @@ EOF
 		chmod +x /usr/bin/$APTHunter
 		pip3 install -r /usr/share/$APTHunter/requirements.txt
 		menu_entry "Threat-Hunting" "Digital-Forensic" "APT-Hunter" "/usr/share/kali-menu/exec-in-shell '$APTHunter -h'"
-		printf "$GREEN"  "[*] Success Installing APT-Hunter"
+		printf "$GREEN"  "[*] Success installing APT-Hunter"
 	else
-		printf "$GREEN"  "[*] Success Installed APT-Hunter"
+		printf "$GREEN"  "[*] Success installed APT-Hunter"
 	fi
 
 	pspy="pspy"
@@ -3607,29 +3443,29 @@ EOF
 		ln -fs /usr/share/$pspy/pspy64 /usr/bin/$pspy
 		chmod +x /usr/bin/$pspy
 		menu_entry "Threat-Hunting" "Digital-Forensic" "pspy" "/usr/share/kali-menu/exec-in-shell '$pspy -h'"
-		printf "$GREEN"  "[*] Success Installing pspy"
+		printf "$GREEN"  "[*] Success installing pspy"
 	else
-		printf "$GREEN"  "[*] Success Installed pspy"
+		printf "$GREEN"  "[*] Success installed pspy"
 	fi
 
 
 	printf "$YELLOW"  "# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy thehive 
 
-	# Install Python3 pip
+	# install Python3 pip
 	incident_response_pip="dissect aws_ir intelmq otx-misp threat_intel"
 	pip_installer "Incident-Response" "Digital-Forensic" "$incident_response_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# incident_response_npm=""
 	npm_installer "Incident-Response" "Digital-Forensic" "$incident_response_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# incident_response_gem=""
 	gem_installer "Incident-Response" "Digital-Forensic" "$incident_response_gem"
 
-	# Install Golang
+	# install Golang
 	# incident_response_golang=""
 	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
 
@@ -3640,38 +3476,38 @@ EOF
 		chmod 755 /usr/share/$Velociraptor/*
 		ln -fs /usr/share/$Velociraptor/velociraptor /usr/bin/$Velociraptor
 		menu_entry "Incident-Response" "Digital-Forensic" "Velociraptor" "/usr/share/kali-menu/exec-in-shell '$Velociraptor -h'"
-		printf "$GREEN"  "[*] Success Installing Velociraptor"
+		printf "$GREEN"  "[*] Success installing Velociraptor"
 	else
-		printf "$GREEN"  "[*] Success Installed Velociraptor"
+		printf "$GREEN"  "[*] Success installed Velociraptor"
 	fi
 
 	GRR="grr-server"
 	if [ ! -d "/usr/share/$GRR" ]; then
 		wget https://github.com/google/grr/releases/latest/download/grr-server_3.4.7-1_amd64.deb -O /tmp/$GRR.deb
 		chmod +x /tmp/$GRR.deb;dpkg -i /tmp/$GRR.deb;rm -f /tmp/$GRR.deb
-		printf "$GREEN"  "[*] Success Installing GRR"
+		printf "$GREEN"  "[*] Success installing GRR"
 	else
-		printf "$GREEN"  "[*] Success Installed GRR"
+		printf "$GREEN"  "[*] Success installed GRR"
 	fi
 
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy opentaxii 
 
-	# Install Python3 pip
+	# install Python3 pip
 	threat_intelligence_pip="threatingestor stix stix-validator stix2 stix2-matcher stix2-elevator attackcti iocextract threatbus apiosintDS sigmatools msticpy"
 	pip_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# threat_intelligence_npm=""
 	npm_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# threat_intelligence_gem=""
 	gem_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_gem"
 
-	# Install Golang
+	# install Golang
 	# threat_intelligence_golang=""
 	go_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_golang"
 
@@ -3691,27 +3527,27 @@ sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$OpenCTI
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "OpenCTI" "/usr/share/kali-menu/exec-in-shell '$OpenCTI'"
-		printf "$GREEN"  "[*] Success Installing OpenCTI"
+		printf "$GREEN"  "[*] Success installing OpenCTI"
 	else
-		printf "$GREEN"  "[*] Success Installed OpenCTI"
+		printf "$GREEN"  "[*] Success installed OpenCTI"
 	fi
 
 	TRAM="tram"
 	if [ ! -d "/usr/share/$TRAM" ]; then
 		curl -LO https://github.com/center-for-threat-informed-defense/tram/raw/main/docker/docker-compose.yml
 		docker-compose up
-		printf "$GREEN"  "[*] Success Installing TRAM"
+		printf "$GREEN"  "[*] Success installing TRAM"
 	else
-		printf "$GREEN"  "[*] Success Installed TRAM"
+		printf "$GREEN"  "[*] Success installed TRAM"
 	fi
 
 	RITA="rita"
 	if [ ! -d "/var/opt/$RITA" ]; then
 		wget https://github.com/activecm/rita/releases/latest/download/install.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
-		printf "$GREEN"  "[*] Success Installing RITA"
+		printf "$GREEN"  "[*] Success installing RITA"
 	else
-		printf "$GREEN"  "[*] Success Installed RITA"
+		printf "$GREEN"  "[*] Success installed RITA"
 	fi
 
 	exit
@@ -3721,50 +3557,50 @@ EOF
 blue_team ()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible-core 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# harden_pip=""
 	pip_installer "Harden" "Blue-Team" "$harden_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# harden_npm=""
 	npm_installer "Harden" "Blue-Team" "$harden_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# harden_gem=""
 	gem_installer "Harden" "Blue-Team" "$harden_gem"
 
-	# Install Golang
+	# install Golang
 	# harden_golang=""
 	go_installer "Harden" "Blue-Team" "$harden_golang"
 
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus 
 
-	# Install Python3 pip
+	# install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma"
 	pip_installer "Detect" "Blue-Team" "$detect_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# detect_npm=""
 	npm_installer "Detect" "Blue-Team" "$detect_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# detect_gem=""
 	gem_installer "Detect" "Blue-Team" "$detect_gem"
 
-	# Install Golang
+	# install Golang
 	detect_golang="
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
 	go_installer "Detect" "Blue-Team" "$detect_golang"
 
-	# Install Wazuh Indexer & Server & Agent
+	# install Wazuh Indexer & Server & Agent
 	if [ ! -f "/etc/apt/sources.list.d/wazuh.list" ]; then
-		# Install Indexer
+		# install Indexer
 		cd /tmp;curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh;curl -sO https://packages.wazuh.com/4.7/config.yml
 		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|wazuh-manager-ip|$LAN|g" /tmp/config.yml;sed -i "s|dashboard-node-ip|$LAN|g" /tmp/config.yml
 		bash wazuh-install.sh --generate-config-files
@@ -3773,26 +3609,26 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		ADMIN_PASSWORD=$(tar -axf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt -O | grep -P "\'admin\'" -A 1)
 		curl -k -u admin:$ADMIN_PASSWORD https://$LAN:9200
 		curl -k -u admin:$ADMIN_PASSWORD https://$LAN:9200/_cat/nodes?v
-		# Install Server
+		# install Server
 		cd /tmp;bash wazuh-install.sh --wazuh-server wazuh-1
-		# Install Dashboard
+		# install Dashboard
 		cd /tmp;bash wazuh-install.sh --wazuh-dashboard dashboard
-		# Install Linux Agent
+		# install Linux Agent
 		curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 		echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
 		apt-get update;apt-get install -y wazuh-agent
-		printf "$GREEN"  "[*] Success Installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
+		printf "$GREEN"  "[*] Success installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	else
-		printf "$GREEN"  "[*] Success Installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
+		printf "$GREEN"  "[*] Success installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	fi
 
 	OpenSearch="opensearch"
 	if [ ! -d "/usr/share/$OpenSearch" ]; then
 		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$OpenSearch.deb
 		chmod +x /tmp/$OpenSearch.deb;dpkg -i /tmp/$OpenSearch.deb;rm -f /tmp/$OpenSearch.deb
-		printf "$GREEN"  "[*] Success Installing OpenSearch"
+		printf "$GREEN"  "[*] Success installing OpenSearch"
 	else
-		printf "$GREEN"  "[*] Success Installed OpenSearch"
+		printf "$GREEN"  "[*] Success installed OpenSearch"
 	fi
 
 	Falco="falcosecurity.list"
@@ -3802,9 +3638,9 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
 EOF
 		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y falco
-		printf "$GREEN"  "[*] Success Installing Falco"
+		printf "$GREEN"  "[*] Success installing Falco"
 	else
-		printf "$GREEN"  "[*] Success Installed Falco"
+		printf "$GREEN"  "[*] Success installed Falco"
 	fi
 
 	SIEGMA="siegma"
@@ -3818,9 +3654,9 @@ EOF
 		chmod +x /usr/bin/$SIEGMA
 		pip3 install -r /usr/share/$SIEGMA/requirements.txt
 		menu_entry "Detect" "Blue-Team" "SIEGMA" "/usr/share/kali-menu/exec-in-shell '$SIEGMA -h'"
-		printf "$GREEN"  "[*] Success Installing SIEGMA"
+		printf "$GREEN"  "[*] Success installing SIEGMA"
 	else
-		printf "$GREEN"  "[*] Success Installed SIEGMA"
+		printf "$GREEN"  "[*] Success installed SIEGMA"
 	fi
 
 	Cilium="cilium"
@@ -3833,9 +3669,9 @@ EOF
 		tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 		rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 		menu_entry "Detect" "Blue-Team" "Cilium" "/usr/share/kali-menu/exec-in-shell '$Cilium -h'"
-		printf "$GREEN"  "[*] Success Installing Cilium"
+		printf "$GREEN"  "[*] Success installing Cilium"
 	else
-		printf "$GREEN"  "[*] Success Installed Cilium"
+		printf "$GREEN"  "[*] Success installed Cilium"
 	fi
 
 	OSSEC="atomic.list"
@@ -3843,9 +3679,9 @@ EOF
 		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt  | sudo apt-key add -
 		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/$OSSEC
 		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
-		printf "$GREEN"  "[*] Success Installing OSSEC"
+		printf "$GREEN"  "[*] Success installing OSSEC"
 	else
-		printf "$GREEN"  "[*] Success Installed OSSEC"
+		printf "$GREEN"  "[*] Success installed OSSEC"
 	fi
 
 	Cilium="cilium"
@@ -3855,36 +3691,36 @@ EOF
 		tar -xvf /tmp/$Cilium.tar.gz -C /usr/share/$Cilium;rm -f /tmp/$Cilium.tar.gz
 		ln -fs /usr/share/$Cilium/cilium /usr/bin/$Cilium
 		menu_entry "Detect" "Blue-Team" "Cilium" "/usr/share/kali-menu/exec-in-shell '$Cilium -h'"
-		printf "$GREEN"  "[*] Success Installing Cilium"
+		printf "$GREEN"  "[*] Success installing Cilium"
 	else
-		printf "$GREEN"  "[*] Success Installed Cilium"
+		printf "$GREEN"  "[*] Success installed Cilium"
 	fi
 
 	ElasticSeaerch="elasticsearch"
 	if [ ! -d "/usr/share/$ElasticSeaerch" ]; then
 		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/$ElasticSeaerch.deb
 		chmod +x /tmp/$ElasticSeaerch.deb;dpkg -i /tmp/$ElasticSeaerch.deb;rm -f /tmp/$ElasticSeaerch.deb
-		printf "$GREEN"  "[*] Success Installing ElasticSeaerch"
+		printf "$GREEN"  "[*] Success installing ElasticSeaerch"
 	else
-		printf "$GREEN"  "[*] Success Installed ElasticSeaerch"
+		printf "$GREEN"  "[*] Success installed ElasticSeaerch"
 	fi
 
 	Kibana="kibana"
 	if [ ! -d "/usr/share/$Kibana" ]; then
 		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$Kibana.deb
 		chmod +x /tmp/$Kibana.deb;dpkg -i /tmp/$Kibana.deb;rm -f /tmp/$Kibana.deb
-		printf "$GREEN"  "[*] Success Installing Kibana"
+		printf "$GREEN"  "[*] Success installing Kibana"
 	else
-		printf "$GREEN"  "[*] Success Installed Kibana"
+		printf "$GREEN"  "[*] Success installed Kibana"
 	fi
 
 	Logstash="logstash"
 	if [ ! -d "/usr/share/$Logstash" ]; then
 		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/$Logstash.deb
 		chmod +x /tmp/$Logstash.deb;dpkg -i /tmp/$Logstash.deb;rm -f /tmp/$Logstash.deb
-		printf "$GREEN"  "[*] Success Installing Logstash"
+		printf "$GREEN"  "[*] Success installing Logstash"
 	else
-		printf "$GREEN"  "[*] Success Installed Logstash"
+		printf "$GREEN"  "[*] Success installed Logstash"
 	fi
 
 	Zabbix="zabbix"
@@ -3898,72 +3734,72 @@ EOF
 		sed -i "s|DBPassword=password|DBPassword=unk12341234|g" /etc/zabbix/zabbix_server.conf
 		systemctl restart zabbix-server zabbix-agent apache2
 		systemctl enable zabbix-server zabbix-agent apache2
-		printf "$GREEN"  "[*] Success Installing Zabbix -> http://$LAN/zabbix"
+		printf "$GREEN"  "[*] Success installing Zabbix -> http://$LAN/zabbix"
 	else
-		printf "$GREEN"  "[*] Success Installed Zabbix -> http://$LAN/zabbix"
+		printf "$GREEN"  "[*] Success installed Zabbix -> http://$LAN/zabbix"
 	fi
 
 
 	printf "$YELLOW"  "# -------------------------------------------Isolate-Blue-Team--------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy openvpn wireguard 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# isolate_pip=""
 	pip_installer "Isolate" "Blue-Team" "$isolate_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# isolate_npm=""
 	npm_installer "Isolate" "Blue-Team" "$isolate_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# isolate_gem=""
 	gem_installer "Isolate" "Blue-Team" "$isolate_gem"
 
-	# Install Golang
+	# install Golang
 	isolate_golang="
 go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/casbin"
 	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
 
 	printf "$YELLOW"  "# -------------------------------------------Deceive-Blue-Team--------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	deceive_pip="thug conpot honeypots heralding"
 	pip_installer "Deceive" "Blue-Team" "$deceive_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# deceive_npm=""
 	npm_installer "Deceive" "Blue-Team" "$deceive_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# deceive_gem=""
 	gem_installer "Deceive" "Blue-Team" "$deceive_gem"
 
-	# Install Golang
+	# install Golang
 	# deceive_golang=""
 	go_installer "Deceive" "Blue-Team" "$deceive_golang"
 
 
 	printf "$YELLOW"  "# -------------------------------------------Evict-Blue-Team----------------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# evict_pip=""
 	pip_installer "Evict" "Blue-Team" "$evict_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# evict_npm=""
 	npm_installer "Evict" "Blue-Team" "$evict_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# evict_gem=""
 	gem_installer "Evict" "Blue-Team" "$evict_gem"
 
-	# Install Golang
+	# install Golang
 	# evict_golang=""
 	go_installer "Evict" "Blue-Team" "$evict_golang"
 
@@ -3974,22 +3810,22 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 security_audit ()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
 
-	# Install Python3 pip
+	# install Python3 pip
 	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
 	pip_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	preliminary_audit_assessment_npm="snyk @sandworm/audit"
 	npm_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	preliminary_audit_assessment_gem="brakeman bundler-audit"
 	gem_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_gem"
 
-	# Install Golang
+	# install Golang
 	preliminary_audit_assessment_golang="
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
 go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap"
@@ -3999,9 +3835,9 @@ go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/
 	if [ ! -f "/usr/local/bin/$Bearer" ]; then
 		wget https://github.com/Bearer/bearer/releases/download/v1.37.0/bearer_1.37.0_linux-amd64.deb -O /tmp/$Bearer.deb
 		chmod +x /tmp/$Bearer.deb;dpkg -i /tmp/$Bearer.deb;rm -f /tmp/$Bearer.deb
-		printf "$GREEN"  "[*] Success Installing Bearer"
+		printf "$GREEN"  "[*] Success installing Bearer"
 	else
-		printf "$GREEN"  "[*] Success Installed Bearer"
+		printf "$GREEN"  "[*] Success installed Bearer"
 	fi
 
 	CheckStyle="checkstyle"
@@ -4015,9 +3851,9 @@ cd /usr/share/$CheckStyle;java -jar checkstyle.jar "\$@"
 EOF
 		chmod +x /usr/bin/$CheckStyle
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "CheckStyle" "/usr/share/kali-menu/exec-in-shell '$CheckStyle'"
-		printf "$GREEN"  "[*] Success Installing CheckStyle"
+		printf "$GREEN"  "[*] Success installing CheckStyle"
 	else
-		printf "$GREEN"  "[*] Success Installed CheckStyle"
+		printf "$GREEN"  "[*] Success installed CheckStyle"
 	fi
 
 	AFLplusplus="aflplusplus"
@@ -4026,9 +3862,9 @@ EOF
 		chmod 755 /usr/share/$AFLplusplus/*
 		cd /usr/share/$AFLplusplus;make distrib;make install
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "afl-cc" "/usr/share/kali-menu/exec-in-shell 'afl-cc -h'"
-		printf "$GREEN"  "[*] Success Installing AFLplusplus"
+		printf "$GREEN"  "[*] Success installing AFLplusplus"
 	else
-		printf "$GREEN"  "[*] Success Installed AFLplusplus"
+		printf "$GREEN"  "[*] Success installed AFLplusplus"
 	fi
 
 	vulsscanner="vuls-scanner"
@@ -4040,9 +3876,9 @@ EOF
 		ln -fs /usr/share/$vulsscanner/vuls /usr/bin/vuls
 		chmod +x /usr/bin/vuls
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "vuls-scanner" "/usr/share/kali-menu/exec-in-shell 'vuls -h'"
-		printf "$GREEN"  "[*] Success Installing vuls-scanner"
+		printf "$GREEN"  "[*] Success installing vuls-scanner"
 	else
-		printf "$GREEN"  "[*] Success Installed vuls-scanner"
+		printf "$GREEN"  "[*] Success installed vuls-scanner"
 	fi
 
 	syzkaller="syzkaller"
@@ -4054,9 +3890,9 @@ EOF
 		ln -fs /usr/share/$syzkaller/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
 		chmod +x /usr/bin/syz-fuzzer;chmod +x /usr/bin/syz-stress;chmod +x /usr/bin/syz-executor
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "syz-fuzzer" "/usr/share/kali-menu/exec-in-shell 'syz-fuzzer -h'"
-		printf "$GREEN"  "[*] Success Installing syzkaller"
+		printf "$GREEN"  "[*] Success installing syzkaller"
 	else
-		printf "$GREEN"  "[*] Success Installed syzkaller"
+		printf "$GREEN"  "[*] Success installed syzkaller"
 	fi
 
 	Honggfuzz="honggfuzz"
@@ -4066,9 +3902,9 @@ EOF
 		ln -fs /usr/share/$Honggfuzz/honggfuzz /usr/bin/$Honggfuzz
 		chmod +x /usr/bin/$Honggfuzz
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Honggfuzz" "/usr/share/kali-menu/exec-in-shell '$Honggfuzz -h'"
-		printf "$GREEN"  "[*] Success Installing Honggfuzz"
+		printf "$GREEN"  "[*] Success installing Honggfuzz"
 	else
-		printf "$GREEN"  "[*] Success Installed Honggfuzz"
+		printf "$GREEN"  "[*] Success installed Honggfuzz"
 	fi
 
 	Cmder="cmder"
@@ -4083,9 +3919,9 @@ cd /usr/share/$Cmder;wine Cmder.exe "\$@"
 EOF
 		chmod +x /usr/bin/$Cmder
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Cmder" "/usr/share/kali-menu/exec-in-shell '$Cmder'"
-		printf "$GREEN"  "[*] Success Installing Cmder"
+		printf "$GREEN"  "[*] Success installing Cmder"
 	else
-		printf "$GREEN"  "[*] Success Installed Cmder"
+		printf "$GREEN"  "[*] Success installed Cmder"
 	fi
 
 	OPA="open-policy-agent"
@@ -4096,50 +3932,50 @@ EOF
 		ln -fs /usr/share/$OPA/opa /usr/bin/opa
 		chmod +x /usr/bin/opa
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Open-Policy-Agent" "/usr/share/kali-menu/exec-in-shell 'opa -h'"
-		printf "$GREEN"  "[*] Success Installing Open-Policy-Agent"
+		printf "$GREEN"  "[*] Success installing Open-Policy-Agent"
 	else
-		printf "$GREEN"  "[*] Success Installed Open-Policy-Agent"
+		printf "$GREEN"  "[*] Success installed Open-Policy-Agent"
 	fi
 
 
 	printf "$YELLOW"  "# ------------------------------Planning-and-Preparation-Security-Audit------------------------------ #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# planning_and_preparation_pip=""
 	pip_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	planning_and_preparation_npm="solidity-code-metrics"
 	npm_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# planning_and_preparation_gem=""
 	gem_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_gem"
 
-	# Install Golang
+	# install Golang
 	# planning_and_preparation_golang=""
 	go_installer "Planning-and-Preparation" "Security-Audit" "$planning_and_preparation_golang"
 
 
 	printf "$YELLOW"  "# ----------------------------Establishing-Audit-Objectives-Security-Audit--------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# establishing_audit_objectives_pip=""
 	pip_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# establishing_audit_objectives_npm=""
 	npm_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# establishing_audit_objectives_gem=""
 	gem_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_gem"
 
-	# Install Golang
+	# install Golang
 	# establishing_audit_objectives_golang=""
 	go_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_golang"
 
@@ -4152,29 +3988,29 @@ EOF
 		ln -fs /usr/share/$Selefra/selefra /usr/bin/$Selefra
 		chmod +x /usr/bin/$Selefra
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Selefra" "/usr/share/kali-menu/exec-in-shell '$Selefra -h'"
-		printf "$GREEN"  "[*] Success Installing Selefra"
+		printf "$GREEN"  "[*] Success installing Selefra"
 	else
-		printf "$GREEN"  "[*] Success Installed Selefra"
+		printf "$GREEN"  "[*] Success installed Selefra"
 	fi
 
 
 	printf "$YELLOW"  "# -------------------------------Performing-the-Review-Security-Audit-------------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	performing_the_review_pip="ruff"
 	pip_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# performing_the_review_npm=""
 	npm_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	performing_the_review_gem="rubocop"
 	gem_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_gem"
 
-	# Install Golang
+	# install Golang
 	# performing_the_review_golang=""
 	go_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_golang"
 
@@ -4190,9 +4026,9 @@ cd /usr/share/$Postman/;./postman "\$@"
 EOF
 		chmod +x /usr/bin/$Postman
 		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell '$Postman'"
-		printf "$GREEN"  "[*] Success Installing Postman"
+		printf "$GREEN"  "[*] Success installing Postman"
 	else
-		printf "$GREEN"  "[*] Success Installed Postman"
+		printf "$GREEN"  "[*] Success installed Postman"
 	fi
 
 	Clion="clion"
@@ -4206,9 +4042,9 @@ cd /usr/share/$Clion/bin;bash clion.sh "\$@"
 EOF
 		chmod +x /usr/bin/$Clion
 		menu_entry "Performing-the-Review" "Security-Audit" "Clion" "/usr/bin/$Clion"
-		printf "$GREEN"  "[*] Success Installing Clion"
+		printf "$GREEN"  "[*] Success installing Clion"
 	else
-		printf "$GREEN"  "[*] Success Installed Clion"
+		printf "$GREEN"  "[*] Success installed Clion"
 	fi
 
 	PhpStorm="phpstorm"
@@ -4222,9 +4058,9 @@ cd /usr/share/$PhpStorm/bin;bash phpstorm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$PhpStorm
 		menu_entry "Performing-the-Review" "Security-Audit" "PhpStorm" "/usr/bin/$PhpStorm"
-		printf "$GREEN"  "[*] Success Installing PhpStorm"
+		printf "$GREEN"  "[*] Success installing PhpStorm"
 	else
-		printf "$GREEN"  "[*] Success Installed PhpStorm"
+		printf "$GREEN"  "[*] Success installed PhpStorm"
 	fi
 
 	GoLand="goland"
@@ -4238,9 +4074,9 @@ cd /usr/share/$GoLand/bin;bash goland.sh "\$@"
 EOF
 		chmod +x /usr/bin/$GoLand
 		menu_entry "Performing-the-Review" "Security-Audit" "GoLand" "/usr/bin/$GoLand"
-		printf "$GREEN"  "[*] Success Installing GoLand"
+		printf "$GREEN"  "[*] Success installing GoLand"
 	else
-		printf "$GREEN"  "[*] Success Installed GoLand"
+		printf "$GREEN"  "[*] Success installed GoLand"
 	fi
 
 	PyCharm="pycharm"
@@ -4254,9 +4090,9 @@ cd /usr/share/$PyCharm/bin;bash pycharm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$PyCharm
 		menu_entry "Performing-the-Review" "Security-Audit" "PyCharm" "/usr/bin/$PyCharm"
-		printf "$GREEN"  "[*] Success Installing PyCharm"
+		printf "$GREEN"  "[*] Success installing PyCharm"
 	else
-		printf "$GREEN"  "[*] Success Installed PyCharm"
+		printf "$GREEN"  "[*] Success installed PyCharm"
 	fi
 
 	RubyMine="rubymine"
@@ -4270,9 +4106,9 @@ cd /usr/share/$RubyMine/bin;bash rubymine.sh "\$@"
 EOF
 		chmod +x /usr/bin/$RubyMine
 		menu_entry "Performing-the-Review" "Security-Audit" "RubyMine" "/usr/bin/$RubyMine"
-		printf "$GREEN"  "[*] Success Installing RubyMine"
+		printf "$GREEN"  "[*] Success installing RubyMine"
 	else
-		printf "$GREEN"  "[*] Success Installed RubyMine"
+		printf "$GREEN"  "[*] Success installed RubyMine"
 	fi
 
 	WebStorm="webstorm"
@@ -4286,9 +4122,9 @@ cd /usr/share/$WebStorm/bin;bash webstorm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$WebStorm
 		menu_entry "Performing-the-Review" "Security-Audit" "WebStorm" "/usr/bin/$WebStorm"
-		printf "$GREEN"  "[*] Success Installing WebStorm"
+		printf "$GREEN"  "[*] Success installing WebStorm"
 	else
-		printf "$GREEN"  "[*] Success Installed WebStorm"
+		printf "$GREEN"  "[*] Success installed WebStorm"
 	fi
 
 	IDEA="idea"
@@ -4302,50 +4138,50 @@ cd /usr/share/$IDEA/bin;bash idea.sh "\$@"
 EOF
 		chmod +x /usr/bin/$IDEA
 		menu_entry "Performing-the-Review" "Security-Audit" "IDEA" "/usr/bin/$IDEA"
-		printf "$GREEN"  "[*] Success Installing IDEA"
+		printf "$GREEN"  "[*] Success installing IDEA"
 	else
-		printf "$GREEN"  "[*] Success Installed IDEA"
+		printf "$GREEN"  "[*] Success installed IDEA"
 	fi
 
 
 	printf "$YELLOW"  "# -----------------------------Preparing-the-Audit-Report-Security-Audit----------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# preparing_the_audit_report_pip=""
 	pip_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# preparing_the_audit_report_npm=""
 	npm_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# preparing_the_audit_report_gem=""
 	gem_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_gem"
 
-	# Install Golang
+	# install Golang
 	# preparing_the_audit_report_golang=""
 	go_installer "Preparing-the-Audit-Report" "Security-Audit" "$preparing_the_audit_report_golang"
 
 
 	printf "$YELLOW"  "# ------------------------------Issuing-the-Review-Report-Security-Audit----------------------------- #"
-	# Install Repository Tools
+	# install Repository Tools
 	# apt install -qy 
 
-	# Install Python3 pip
+	# install Python3 pip
 	# issuing_the_review_report_pip=""
 	pip_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_pip"
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# issuing_the_review_report_npm=""
 	npm_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_npm"
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# issuing_the_review_report_gem=""
 	gem_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_gem"
 
-	# Install Golang
+	# install Golang
 	# issuing_the_review_report_golang=""
 	go_installer "Issuing-the-Review-Report" "Security-Audit" "$issuing_the_review_report_golang"
 
@@ -4363,25 +4199,25 @@ main ()
 	# Update & Upgrade OS
 	apt update;apt upgrade -qy;apt dist-upgrade -qy
 
-	# Install Init Tools
+	# install Init Tools
 	apt install -qy curl git apt-transport-https build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg
 
-	# Install Requirements
+	# install Requirements
 	apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry libpe-dev
 
-	# Install Utilities Tools
+	# install Utilities Tools
 	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind net-tools docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
 
-	# Install Python2 pip
+	# install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
 
-	# Install Python3 pip
-	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib 
+	# install Python3 pip
+	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
 
-	# Install Nodejs NPM
+	# install Nodejs NPM
 	# npm install -g 
 
-	# Install Ruby GEM
+	# install Ruby GEM
 	# gem install 
 
 	KaliElite="kalielite"
