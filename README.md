@@ -23,7 +23,7 @@ curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-e
 ```
 sudo linux-elite
 ```
-## Install Windows Elite
+### Install Windows Elite
 ```
 ...
 ```
