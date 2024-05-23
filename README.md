@@ -7,15 +7,15 @@
 </div>
 
 ## Cybersecurity roadmap:
-[unk9vvn.github.io/cybersecurity-roadmaps](unk9vvn.github.io/cybersecurity-roadmaps)
+[unk9vvn.github.io/cybersecurity-roadmaps](https://unk9vvn.github.io/cybersecurity-roadmaps)
 
 ## Cheat sheet and checklist:
-[link text](https://unk9vvn.github.io/#cheat-sheet)
+[unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
 ## Tools online installer:
 
 ### Install Linux Elite
-[link text](unk9vvn.github.io/projects/)
+[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects/)
 ```
 curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh | sudo bash
 ```
