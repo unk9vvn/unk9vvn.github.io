@@ -4182,7 +4182,9 @@ main ()
 			ubuntu)
 				# APT fixed
 				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
-					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
+					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
+					apt update
 				fi
 
 				# update & upgrade OS
