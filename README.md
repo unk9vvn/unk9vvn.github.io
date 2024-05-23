@@ -6,10 +6,10 @@
 <br>
 </div>
 
-# Elite Tools Online Installer
-Two Kali Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
+# Elite Tools Installer
+Two Ubuntu Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
 
-## Cheat Sheets & Check Lists & Tools
+## Check Lists & Cheat Sheets
 * Penetration Testing
 * Red Team
 * ICS Security
@@ -17,15 +17,15 @@ Two Kali Elite and Windows Elite tools online installer are designed to Provide 
 * Blue Team
 * Security Audit
 
-## Kali Elite
+## Ubuntu Elite
 
 ### Install Script
 ```
-curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh | sudo bash
+curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/ubuntu-elite.sh | sudo bash
 ```
 ### Run Script
 ```
-sudo kalielite
+sudo ubuntu-elite
 ```
 ## Windows Elite
 
