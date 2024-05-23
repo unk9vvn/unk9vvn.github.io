@@ -4220,20 +4220,20 @@ main ()
 		echo "/etc/os-release file not found. Cannot determine the OS."
 	fi
 
-	# install kali-elite
-	if [ ! -d "/usr/share/kalielite" ]; then
-		local name="kalielite"
+	# install linux-elite
+	if [ ! -d "/usr/share/linux-elite" ]; then
+		local name="linux-elite"
 		mkdir -p /usr/share/$name
-		curl -s -o /usr/share/$name/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
+		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;bash kalielite.sh "\$@"
+cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-Name=kali-elite
+Name=$name
 Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
 Comment=
 Terminal=true
@@ -4255,17 +4255,17 @@ EOF
 </Menu>
 EOF
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
-		local name="kalielite"
-		curl -s -o /usr/share/$name/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
+		local name="linux-elite"
+		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;bash kalielite.sh "\$@"
+cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-Name=kali-elite
+Name=$name
 Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
 Comment=
 Terminal=true
@@ -4286,7 +4286,7 @@ EOF
   </Menu>
 </Menu>
 EOF
-		bash /usr/share/$name/kalielite.sh
+		bash /usr/share/$name/$name.sh
 	fi
 }
 
