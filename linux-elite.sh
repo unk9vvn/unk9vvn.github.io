@@ -20,7 +20,7 @@ if [ "$(id -u)" != "0" ];then
 	printf "$GREEN"		"sudo kalielite"
 	exit 0
 else
-	apt install -y apt-utils curl git net-tools gnupg apt-transport-https alacarte
+	apt install -y open-vm-tools curl git net-tools gnupg apt-transport-https alacarte
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -4178,7 +4178,7 @@ main ()
 				apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 				# install init
-				apt install -qy open-vm-tools build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
 				;;
 			ubuntu)
 				# kali repo added
@@ -4192,7 +4192,7 @@ main ()
 				apt update;apt upgrade -qy;apt dist-upgrade -qy
 
 				# install init
-				apt install -qy open-vm-tools build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
