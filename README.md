@@ -13,9 +13,9 @@
 [unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
 ## Tools online installer:
+[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects/)
 
 ### Install Linux Elite
-[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects/)
 ```
 curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh | sudo bash
 ```
