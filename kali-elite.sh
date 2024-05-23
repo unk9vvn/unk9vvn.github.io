@@ -4178,7 +4178,7 @@ main ()
 
 				# install ruby GEM
 				# gem install 
-                	;;
+				;;
 			ubuntu)
 				# APT fixed
 				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
@@ -4216,9 +4216,9 @@ main ()
 				echo "Unsupported OS detected: $ID"
 				;;
 		esac
-    else
-        echo "/etc/os-release file not found. Cannot determine the OS."
-    fi
+	else
+		echo "/etc/os-release file not found. Cannot determine the OS."
+	fi
 
 	# install kali-elite
 	if [ ! -d "/usr/share/kalielite" ]; then
