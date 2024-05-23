@@ -6,18 +6,16 @@
 <br>
 </div>
 
-## Tools Installer & Check List & Cheat Sheet
-Two Linux Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
-* Penetration Testing
-* Red Team
-* ICS Security
-* Digital Forensic
-* Blue Team
-* Security Audit
+## Cybersecurity roadmap:
+[unk9vvn.github.io/cybersecurity-roadmaps](unk9vvn.github.io/cybersecurity-roadmaps)
 
-## Linux Elite
+## Cheat sheet and checklist:
+[link text](https://unk9vvn.github.io/#cheat-sheet)
 
-### Install Script
+## Tools online installer:
+
+### Install Linux Elite
+[link text](unk9vvn.github.io/projects/)
 ```
 curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh | sudo bash
 ```
@@ -25,7 +23,11 @@ curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-e
 ```
 sudo linux-elite
 ```
-## Windows Elite
-
-### Install Script
+## Install Windows Elite
+```
 ...
+```
+### Run Script
+```
+...
+```
