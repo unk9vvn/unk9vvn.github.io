@@ -3849,6 +3849,22 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install vulhub
+	if [ ! -d "/usr/share/vulhub" ]; then
+		local name="vulhub"
+		mkdir -p /usr/share/$name
+		wget https://github.com/vulhub/vulhub/archive/master.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;ls "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install syzkaller
 	if [ ! -d "/usr/share/syzkaller" ]; then
 		local name="syzkaller"
