@@ -7,7 +7,7 @@
 </div>
 
 # Elite Tools Installer
-Two Ubuntu Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
+Two Linux Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
 
 ## Check Lists & Cheat Sheets
 * Penetration Testing
@@ -17,15 +17,15 @@ Two Ubuntu Elite and Windows Elite tools online installer are designed to Provid
 * Blue Team
 * Security Audit
 
-## Ubuntu Elite
+## Linux Elite
 
 ### Install Script
 ```
-curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/ubuntu-elite.sh | sudo bash
+curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh | sudo bash
 ```
 ### Run Script
 ```
-sudo ubuntu-elite
+sudo linux-elite
 ```
 ## Windows Elite
 
