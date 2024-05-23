@@ -6,13 +6,13 @@
 <br>
 </div>
 
-## Cybersecurity roadmap:
+## Cybersecurity Roadmap:
 [unk9vvn.github.io/cybersecurity-roadmaps](https://unk9vvn.github.io/cybersecurity-roadmaps)
 
-## Cheat sheet and checklist:
+## Cheat Sheet and Check List:
 [unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
-## Tools online installer:
+## Tools Online Installer:
 [unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects/)
 
 ### Install Linux Elite
