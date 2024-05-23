@@ -20,7 +20,11 @@ if [ "$(id -u)" != "0" ];then
 	printf "$GREEN"		"sudo kalielite"
 	exit 0
 else
-	apt install -y open-vm-tools curl git net-tools gnupg apt-transport-https alacarte
+	# update & upgrade & dist-upgrade
+	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy
+
+	# init requirements
+	apt install -y open-vm-tools curl git net-tools gnupg apt-transport-https alacarte locate 
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -4174,11 +4178,8 @@ main ()
 					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 				fi
 
-				# update & upgrade OS
-				apt update;apt upgrade -qy;apt dist-upgrade -qy
-
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser jq ffmpeg 
 				;;
 			ubuntu)
 				# kali repo added
@@ -4188,11 +4189,8 @@ main ()
 					apt update
 				fi
 
-				# update & upgrade OS
-				apt update;apt upgrade -qy;apt dist-upgrade -qy
-
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser jq ffmpeg 
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
