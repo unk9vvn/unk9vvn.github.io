@@ -65,7 +65,7 @@ logo ()
 
 menu ()
 {
-	# Initialize Main Menu
+	# initialize main menu
 	mkdir -p /home/$USERS/.config/menus;mkdir -p /home/$USERS/.config/menus/applications-merged
 	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories;mkdir -p /home/$USERS/.local/images
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
@@ -78,7 +78,7 @@ Comment=unk9vvn.github.io
 Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
 EOF
 
-	# Initialize Penetration Testing Menu
+	# initialize penetration testing menu
 	curl -s -o /home/$USERS/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing.directory << EOF
@@ -102,7 +102,7 @@ EOF
 		dir_pentest_index=$((dir_pentest_index + 1))
 	done
 
-	# Initialize Red Team Menu
+	# initialize red team menu
 	curl -s -o /home/$USERS/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team.directory << EOF
@@ -126,7 +126,7 @@ EOF
 		dir_redteam_index=$((dir_redteam_index + 1))
 	done
 
-	# Initialize ICS Security Menu
+	# initialize ics security menu
 	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
@@ -150,7 +150,7 @@ EOF
 		dir_ics_index=$((dir_ics_index + 1))
 	done
 
-	# Initialize Digital Forensic Menu
+	# initialize digital forensic menu
 	curl -s -o /home/$USERS/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic.directory << EOF
@@ -174,7 +174,7 @@ EOF
 		dir_digital_index=$((dir_digital_index + 1))
 	done
 
-	# Initialize Blue Team Menu
+	# initialize blue team menu
 	curl -s -o /home/$USERS/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team.directory << EOF
@@ -198,7 +198,7 @@ EOF
 		dir_blueteam_index=$((dir_blueteam_index + 1))
 	done
 
-	# Initialize Security Audit Menu
+	# initialize security audit menu
 	curl -s -o /home/$USERS/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit.directory << EOF
@@ -4180,8 +4180,8 @@ main ()
 				# gem install 
 				;;
 			ubuntu)
-				# APT fixed
-				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
+				# kali repo added
+				if [ ! -f "/etc/apt/sources.list.d/kali.list" ]; then
 					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
 					apt update
