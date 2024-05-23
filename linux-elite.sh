@@ -4176,24 +4176,6 @@ main ()
 
 				# install init
 				apt install -qy open-vm-tools curl git apt-transport-https build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg net-tools
-
-				# install requirements
-				apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry
-
-				# install utilities
-				apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit powershell filezilla thunderbird 
-
-				# install Python2 pip
-				wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
-
-				# install Python3 pip
-				pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
-
-				# install nodejs NPM
-				# npm install -g 
-
-				# install ruby GEM
-				# gem install 
 				;;
 			ubuntu)
 				# kali repo added
@@ -4211,30 +4193,30 @@ main ()
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
-
-				# install requirements
-				apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry
-
-				# install utilities
-				apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird 
-
-				# install Python2 pip
-				wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
-
-				# install Python3 pip
-				pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
-
-				# install nodejs NPM
-				# npm install -g 
-
-				# install ruby GEM
-				# gem install 
 				;;
 			*) echo "Unsupported OS detected: $ID";;
 		esac
 	else
 		echo "/etc/os-release file not found. Cannot determine the OS."
 	fi
+
+	# install requirements
+	apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry
+
+	# install utilities
+	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird 
+
+	# install Python2 pip
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
+
+	# install Python3 pip
+	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
+
+	# install nodejs NPM
+	# npm install -g 
+
+	# install ruby GEM
+	# gem install 
 
 	# install linux-elite
 	if [ ! -d "/usr/share/linux-elite" ]; then
