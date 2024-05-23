@@ -6,10 +6,8 @@
 <br>
 </div>
 
-# Elite Tools Installer
+## Tools Installer & Check List & Cheat Sheet
 Two Linux Elite and Windows Elite tools online installer are designed to Provide Penetration Testing, Red Team, ICS Security, Digital Forensic, Blue Team and Security Audit operations.
-
-## Check List & Cheat Sheet
 * Penetration Testing
 * Red Team
 * ICS Security
@@ -30,9 +28,4 @@ sudo linux-elite
 ## Windows Elite
 
 ### Install Script
-```
-...
-```
-### Run Script
-```
 ...
