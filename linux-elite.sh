@@ -11,8 +11,7 @@ BLUE='\e[1;34m%s\e[0m\n'
 MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
-USERS=$(users | awk '{print $1}')
-LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+
  
 
 
@@ -20,6 +19,10 @@ if [ "$(id -u)" != "0" ];then
 	printf "$RED"		"[X] Please run as RooT ..."
 	printf "$GREEN"		"sudo kalielite"
 	exit 0
+else
+	apt install -y curl net-tools
+	USERS=$(users | awk '{print $1}')
+	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
 
 
