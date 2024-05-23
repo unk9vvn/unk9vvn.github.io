@@ -11,7 +11,7 @@ BLUE='\e[1;34m%s\e[0m\n'
 MAGENTO='\e[1;35m%s\e[0m\n'
 CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
-
+ 
 
 
 
@@ -20,11 +20,7 @@ if [ "$(id -u)" != "0" ];then
 	printf "$GREEN"		"sudo kalielite"
 	exit 0
 else
-	# update & upgrade OS
-	apt update;apt upgrade -qy;apt dist-upgrade -qy
-
-	# install init
-	apt install -qy curl net-tools git apt-transport-https open-vm-tools build-essential mingw-w64 apt-utils automake autoconf cmake gnupg default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+	apt install -y apt-utils curl git net-tools gnupg apt-transport-https alacarte
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -4177,6 +4173,12 @@ main ()
 				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
 					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 				fi
+
+				# update & upgrade OS
+				apt update;apt upgrade -qy;apt dist-upgrade -qy
+
+				# install init
+				apt install -qy open-vm-tools build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
 				;;
 			ubuntu)
 				# kali repo added
@@ -4185,6 +4187,13 @@ main ()
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
 					apt update
 				fi
+
+				# update & upgrade OS
+				apt update;apt upgrade -qy;apt dist-upgrade -qy
+
+				# install init
+				apt install -qy open-vm-tools build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser alacarte jq locate ffmpeg 
+
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
 				;;
