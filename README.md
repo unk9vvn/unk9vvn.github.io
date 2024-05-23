@@ -13,7 +13,7 @@
 [unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
 ## Tools Online Installer:
-[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects/)
+[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects)
 
 ### Install Linux Elite
 ```
