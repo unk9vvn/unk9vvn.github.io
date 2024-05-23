@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.5'
+ver='5.0'
 
 
 
@@ -3190,203 +3190,193 @@ digital_forensic ()
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 	go_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_golang"
 
-	Dangerzone="dangerzone"
-	if [ ! -d "/usr/share/$Dangerzone" ]; then
+	# install dangerzone
+	if [ ! -d "/usr/share/dangerzone" ]; then
+		local name="dangerzone"
 		gpg --keyserver hkps://keys.openpgp.org \
     		--no-default-keyring --keyring ./fpf-apt-tools-archive-keyring.gpg \
     		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
 		mkdir -p /etc/apt/keyrings/;mv fpf-apt-tools-archive-keyring.gpg /etc/apt/keyrings
-		apt update;apt install -qy dangerzone
+		apt update;apt install -qy $name
 		printf "$GREEN"  "[*] Sucess installing Dangerzone"
 	else
 		printf "$GREEN"  "[*] Sucess installed Dangerzone"
 	fi
 
-	StegoCracker="stegocracker"
-	if [ ! -d "/usr/share/$StegoCracker" ]; then
-		git clone https://github.com/W1LDN16H7/StegoCracker /usr/share/$StegoCracker
-		chmod 755 /usr/share/$StegoCracker/*
-		pip3 install -r /usr/share/$StegoCracker/requirements.txt 
-		cd /usr/share/$StegoCracker;python3 setup.py install;bash install.sh 
-		menu_entry "Malware-Analysis" "Digital-Forensic" "StegoCracker" "/usr/share/kali-menu/exec-in-shell 'stego -h'"
+	# install stegocracker
+	if [ ! -d "/usr/share/stegocracker" ]; then
+		local name="stegocracker"
+		git clone https://github.com/W1LDN16H7/StegoCracker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt 
+		cd /usr/share/$name;python3 setup.py install;bash install.sh 
+		menu_entry "Malware-Analysis" "Digital-Forensic" "stego" "/usr/share/kali-menu/exec-in-shell 'stego -h'"
 		printf "$GREEN"  "[*] Success installing StegoCracker"
-	else
-		printf "$GREEN"  "[*] Success installed StegoCracker"
 	fi
 
-	OpenStego="openstego"
-	if [ ! -d "/usr/share/$OpenStego" ]; then
-		wget https://github.com/syvaidya/openstego/releases/latest/download/openstego_0.8.6-1_all.deb -O /tmp/$OpenStego.deb
-		chmod +x /tmp/$OpenStego.deb;dpkg -i /tmp/$OpenStego.deb;apt --fix-broken install -qy;rm -f /tmp/$OpenStego.deb
-		menu_entry "Malware-Analysis" "Digital-Forensic" "OpenStego" "/usr/share/kali-menu/exec-in-shell 'sudo $OpenStego -h'"
-		printf "$GREEN"  "[*] Success installing OpenStego"
-	else
-		printf "$GREEN"  "[*] Success installed OpenStego"
+	# install openstego
+	if [ ! -d "/usr/share/openstego" ]; then
+		local name="openstego"
+		wget https://github.com/syvaidya/openstego/releases/latest/download/openstego_0.8.6-1_all.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;apt --fix-broken install -qy;rm -f /tmp/$name.deb
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	StegoSaurus="stegosaurus"
-	if [ ! -d "/usr/share/$StegoSaurus" ]; then
-		mkdir -p /usr/share/$StegoSaurus
-		wget https://github.com/AngelKitty/stegosaurus/releases/latest/download/stegosaurus -O /usr/share/$StegoSaurus/stegosaurus
-		chmod 755 /usr/share/$StegoSaurus/*
-		ln -fs /usr/share/$StegoSaurus/stegosaurus /usr/bin/$StegoSaurus
-		chmod +x /usr/bin/$StegoSaurus
-		menu_entry "Malware-Analysis" "Digital-Forensic" "StegoSaurus" "/usr/share/kali-menu/exec-in-shell 'sudo $StegoSaurus -h'"
-		printf "$GREEN"  "[*] Success installing StegoSaurus"
-	else
-		printf "$GREEN"  "[*] Success installed StegoSaurus"
+	# install stegosaurus
+	if [ ! -d "/usr/share/stegosaurus" ]; then
+		local name="stegosaurus"
+		mkdir -p /usr/share/$name
+		wget https://github.com/AngelKitty/stegosaurus/releases/latest/download/stegosaurus -O /usr/share/$name/stegosaurus
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/stegosaurus /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	AudioStego="audiostego"
-	if [ ! -d "/usr/share/$AudioStego" ]; then
-		git clone https://github.com/danielcardeenas/AudioStego /usr/share/$AudioStego
-		cd /usr/share/$AudioStego;mkdir build;cd build;cmake ..;make
-		chmod 755 /usr/share/$AudioStego/*
-		ln -fs /usr/share/$AudioStego/build/hideme /usr/bin/hideme
-		chmod +x /usr/bin/hideme
-		menu_entry "Malware-Analysis" "Digital-Forensic" "AudioStego" "/usr/share/kali-menu/exec-in-shell 'sudo hideme -h'"
-		printf "$GREEN"  "[*] Success installing AudioStego"
-	else
-		printf "$GREEN"  "[*] Success installed AudioStego"
+	# install audiostego
+	if [ ! -d "/usr/share/audiostego" ]; then
+		local name="audiostego"
+		git clone https://github.com/danielcardeenas/AudioStego /usr/share/$name
+		cd /usr/share/$name;mkdir build;cd build;cmake ..;make
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/build/hideme /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CloackedPixel="cloackedpixel"
-	if [ ! -d "/usr/share/$CloackedPixel" ]; then
-		git clone https://github.com/livz/cloacked-pixel /usr/share/$CloackedPixel
-		chmod 755 /usr/share/$CloackedPixel/*
-		cat > /usr/bin/$CloackedPixel << EOF
+	# install cloacked-pixel
+	if [ ! -d "/usr/share/cloacked-pixel" ]; then
+		local name="cloacked-pixel"
+		git clone https://github.com/livz/cloacked-pixel /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CloackedPixel;python2 lsb.py "\$@"
+cd /usr/share/$name;python2 lsb.py "\$@"
 EOF
-		chmod +x /usr/bin/$CloackedPixel
-		menu_entry "Malware-Analysis" "Digital-Forensic" "CloackedPixel" "/usr/share/kali-menu/exec-in-shell '$CloackedPixel -h'"
-		printf "$GREEN"  "[*] Success installing CloackedPixel"
-	else
-		printf "$GREEN"  "[*] Success installed CloackedPixel"
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Steganabara="steganabara"
-	if [ ! -d "/usr/share/$Steganabara" ]; then
-		git clone https://github.com/quangntenemy/Steganabara /usr/share/$Steganabara
-		chmod 755 /usr/share/$Steganabara/*
-		cat > /usr/bin/$Steganabara << EOF
+	# install steganabara
+	if [ ! -d "/usr/share/steganabara" ]; then
+		local name="steganabara"
+		git clone https://github.com/quangntenemy/Steganabara /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Steganabara;./run "\$@"
+cd /usr/share/$name;./run "\$@"
 EOF
-		chmod +x /usr/bin/$Steganabara
-		menu_entry "Malware-Analysis" "Digital-Forensic" "Steganabara" "/usr/share/kali-menu/exec-in-shell '$Steganabara -h'"
-		printf "$GREEN"  "[*] Success installing Steganabara"
-	else
-		printf "$GREEN"  "[*] Success installed Steganabara"
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Stegsolve="stegsolve"
-	if [ ! -d "/usr/share/$Stegsolve" ]; then
-		mkdir -p /usr/share/stegsolve
-		wget http://www.caesum.com/handbook/Stegsolve.jar -O /usr/share/$Stegsolve/stegsolve.jar
-		chmod 755 /usr/share/$Stegsolve/*
-		cat > /usr/bin/$Stegsolve << EOF
+	# install stegsolve
+	if [ ! -d "/usr/share/stegsolve" ]; then
+		local name="stegsolve"
+		mkdir -p /usr/share/$name
+		wget http://www.caesum.com/handbook/Stegsolve.jar -O /usr/share/$name/stegsolve.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Stegsolve;java -jar stegsolve.jar "\$@"
+cd /usr/share/$name;java -jar stegsolve.jar "\$@"
 EOF
-		chmod +x /usr/bin/$Stegsolve
-		menu_entry "Malware-Analysis" "Digital-Forensic" "Stegsolve" "/usr/share/kali-menu/exec-in-shell '$Stegsolve -h'"
-		printf "$GREEN"  "[*] Success installing Stegsolve"
-	else
-		printf "$GREEN"  "[*] Success installed Stegsolve"
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	OpenPuff="openpuff"
-	if [ ! -d "/usr/share/$OpenPuff" ]; then
-		wget https://embeddedsw.net/zip/OpenPuff_release.zip -O /tmp/$OpenPuff.zip
-		unzip /tmp/$OpenPuff.zip -d /usr/share/$OpenPuff;rm -f /tmp/$OpenPuff.zip
-		chmod 755 /usr/share/$OpenPuff/*
-		cat > /usr/bin/$OpenPuff << EOF
+	# install openpuff
+	if [ ! -d "/usr/share/openpuff" ]; then
+		local name="openpuff"
+		wget https://embeddedsw.net/zip/OpenPuff_release.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$OpenPuff;wine OpenPuff.exe "\$@"
+cd /usr/share/$name;wine OpenPuff.exe "\$@"
 EOF
-		chmod +x /usr/bin/$OpenPuff
-		menu_entry "Malware-Analysis" "Digital-Forensic" "OpenPuff" "/usr/share/kali-menu/exec-in-shell '$OpenPuff'"
-		printf "$GREEN"  "[*] Success installing OpenPuff"
-	else
-		printf "$GREEN"  "[*] Success installed OpenPuff"
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	MP3Stego="mp3stego"
-	if [ ! -d "/usr/share/$MP3Stego" ]; then
-		git clone https://github.com/fabienpe/MP3Stego /usr/share/$MP3Stego
-		chmod 755 /usr/share/$MP3Stego/MP3Stego/*
-		cat > /usr/bin/$MP3Stego-encode << EOF
+	# install mp3stego
+	if [ ! -d "/usr/share/mp3stego" ]; then
+		local name="mp3stego"
+		git clone https://github.com/fabienpe/MP3Stego /usr/share/$name
+		chmod 755 /usr/share/$name/MP3Stego/*
+		cat > /usr/bin/$name-encode << EOF
 #!/bin/bash
-cd /usr/share/$MP3Stego/MP3Stego;wine Encode.exe "\$@"
+cd /usr/share/$name/MP3Stego;wine Encode.exe "\$@"
 EOF
-		chmod +x /usr/bin/$MP3Stego-encode
-		menu_entry "Malware-Analysis" "Digital-Forensic" "MP3Stego-encode" "/usr/share/kali-menu/exec-in-shell '$MP3Stego-encode'"
-		cat > /usr/bin/$MP3Stego-decode << EOF
+		chmod +x /usr/bin/$name-encode
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-encode" "/usr/share/kali-menu/exec-in-shell '$name-encode'"
+		cat > /usr/bin/$name-decode << EOF
 #!/bin/bash
-cd /usr/share/$MP3Stego/MP3Stego;wine Decode.exe "\$@"
+cd /usr/share/$name/MP3Stego;wine Decode.exe "\$@"
 EOF
-		chmod +x /usr/bin/$MP3Stego-decode
-		menu_entry "Malware-Analysis" "Digital-Forensic" "MP3Stego-decode" "/usr/share/kali-menu/exec-in-shell '$MP3Stego-decode'"
-		printf "$GREEN"  "[*] Success installing MP3Stego"
-	else
-		printf "$GREEN"  "[*] Success installed MP3Stego"
+		chmod +x /usr/bin/$name-decode
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-decode" "/usr/share/kali-menu/exec-in-shell '$name-decode'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	jstegslink="jsteg-slink"
-	if [ ! -d "/usr/share/$jstegslink" ]; then
-		mkdir -p /usr/share/$jstegslink
-		wget https://github.com/lukechampine/jsteg/releases/latest/download/jsteg-linux-amd64 -O /usr/share/$jstegslink/jsteg
+	# install jsteg-slink
+	if [ ! -d "/usr/share/jsteg-slink" ]; then
+		local name="jsteg-slink"
+		mkdir -p /usr/share/$name
+		wget https://github.com/lukechampine/jsteg/releases/latest/download/jsteg-linux-amd64 -O /usr/share/$name/jsteg
 		chmod +x /usr/bin/jsteg
-		ln -fs /usr/share/$jstegslink/jsteg /usr/bin/jsteg
+		ln -fs /usr/share/$name/jsteg /usr/bin/jsteg
 		menu_entry "Malware-Analysis" "Digital-Forensic" "JSteg" "/usr/share/kali-menu/exec-in-shell 'sudo jsteg -h'"
-		wget https://github.com/lukechampine/jsteg/releases/latest/download/slink-linux-amd64 -O /usr/share/$jstegslink/slink
-		ln -fs /usr/share/$jstegslink/slink /usr/bin/slink
+		wget https://github.com/lukechampine/jsteg/releases/latest/download/slink-linux-amd64 -O /usr/share/$name/slink
+		ln -fs /usr/share/$name/slink /usr/bin/slink
 		chmod +x /usr/bin/slink
 		menu_entry "Malware-Analysis" "Digital-Forensic" "Slink" "/usr/share/kali-menu/exec-in-shell 'sudo slink -h'"
 		chmod 755 /usr/share/jsteg-slink/*
-		printf "$GREEN"  "[*] Success installing JSteg & Slink"
-	else
-		printf "$GREEN"  "[*] Success installed JSteg & Slink"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SSAK="ssak"
-	if [ ! -d "/usr/share/$SSAK" ]; then
-		git clone https://github.com/mmtechnodrone/SSAK /usr/share/$SSAK
-		chmod 755 /usr/share/$SSAK/programs/64/*
-		ln -fs /usr/share/$SSAK/programs/64/cjpeg /usr/bin/cjpeg
+	# install ssak
+	if [ ! -d "/usr/share/ssak" ]; then
+		local name="ssak"
+		git clone https://github.com/mmtechnodrone/SSAK /usr/share/$name
+		chmod 755 /usr/share/$name/programs/64/*
+		ln -fs /usr/share/$name/programs/64/cjpeg /usr/bin/cjpeg
 		chmod +x /usr/bin/cjpeg
 		menu_entry "Malware-Analysis" "Digital-Forensic" "cjpeg" "/usr/share/kali-menu/exec-in-shell 'sudo cjpeg -h'"
-		ln -fs /usr/share/$SSAK/programs/64/djpeg /usr/bin/djpeg
+		ln -fs /usr/share/$name/programs/64/djpeg /usr/bin/djpeg
 		chmod +x /usr/bin/djpeg
 		menu_entry "Malware-Analysis" "Digital-Forensic" "djpeg" "/usr/share/kali-menu/exec-in-shell 'sudo djpeg -h'"
-		ln -fs /usr/share/$SSAK/programs/64/histogram /usr/bin/histogram
+		ln -fs /usr/share/$name/programs/64/histogram /usr/bin/histogram
 		chmod +x /usr/bin/histogram
 		menu_entry "Malware-Analysis" "Digital-Forensic" "histogram" "/usr/share/kali-menu/exec-in-shell 'sudo histogram -h'"
-		ln -fs /usr/share/$SSAK/programs/64/jphide /usr/bin/jphide
+		ln -fs /usr/share/$name/programs/64/jphide /usr/bin/jphide
 		chmod +x /usr/bin/jphide
 		menu_entry "Malware-Analysis" "Digital-Forensic" "jphide" "/usr/share/kali-menu/exec-in-shell 'sudo jphide -h'"
-		ln -fs /usr/share/$SSAK/programs/64/jpseek /usr/bin/jpseek
+		ln -fs /usr/share/$name/programs/64/jpseek /usr/bin/jpseek
 		chmod +x /usr/bin/jpseek
 		menu_entry "Malware-Analysis" "Digital-Forensic" "jpseek" "/usr/share/kali-menu/exec-in-shell 'sudo jpseek -h'"
-		ln -fs /usr/share/$SSAK/programs/64/outguess_0.13 /usr/bin/outguess
+		ln -fs /usr/share/$name/programs/64/outguess_0.13 /usr/bin/outguess
 		chmod +x /usr/bin/outguess
 		menu_entry "Malware-Analysis" "Digital-Forensic" "outguess" "/usr/share/kali-menu/exec-in-shell 'sudo outguess -h'"
-		ln -fs /usr/share/$SSAK/programs/64/stegbreak /usr/bin/stegbreak
+		ln -fs /usr/share/$name/programs/64/stegbreak /usr/bin/stegbreak
 		chmod +x /usr/bin/stegbreak
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegbreak" "/usr/share/kali-menu/exec-in-shell 'sudo stegbreak -h'"
-		ln -fs /usr/share/$SSAK/programs/64/stegcompare /usr/bin/stegcompare
+		ln -fs /usr/share/$name/programs/64/stegcompare /usr/bin/stegcompare
 		chmod +x /usr/bin/stegcompare
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegcompare" "/usr/share/kali-menu/exec-in-shell 'sudo stegcompare -h'"
-		ln -fs /usr/share/$SSAK/programs/64/stegdeimage /usr/bin/stegdeimage
+		ln -fs /usr/share/$name/programs/64/stegdeimage /usr/bin/stegdeimage
 		chmod +x /usr/bin/stegdeimage
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegdeimage" "/usr/share/kali-menu/exec-in-shell 'sudo stegdeimage -h'"
-		ln -fs /usr/share/$SSAK/programs/64/stegdetect /usr/bin/stegdetect
+		ln -fs /usr/share/$name/programs/64/stegdetect /usr/bin/stegdetect
 		chmod +x /usr/bin/stegdetect
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegdetect" "/usr/share/kali-menu/exec-in-shell 'sudo stegdetect -h'"
-		printf "$GREEN"  "[*] Success installing SSAK"
-	else
-		printf "$GREEN"  "[*] Success installed SSAK"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -3410,42 +3400,39 @@ EOF
 	# threat_hunting_golang=""
 	go_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_golang"
 
-	Matano="matano"
-	if [ ! -d "/usr/share/$Matano" ]; then
-		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$Matano.sh
-		chmod +x /tmp/$Matano.sh;cd /tmp;bash $Matano.sh;rm -f $Matano.sh
-		printf "$GREEN"  "[*] Success installing Matano"
-	else
-		printf "$GREEN"  "[*] Success installed Matano"
+	# install matano
+	if [ ! -d "/usr/share/matano" ]; then
+		local name="matano"
+		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$name.sh
+		chmod +x /tmp/$Matano.sh;cd /tmp;bash $name.sh;rm -f $name.sh
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	APTHunter="apt-hunter"
-	if [ ! -d "/usr/share/$APTHunter" ]; then
-		git clone https://github.com/ahmedkhlief/APT-Hunter -O /usr/share/$APTHunter
-		chmod 755 /usr/share/$APTHunter/*
-		cat > /usr/bin/$APTHunter << EOF
+	# install apt-hunter
+	if [ ! -d "/usr/share/apt-hunter" ]; then
+		local name="apt-hunter"
+		git clone https://github.com/ahmedkhlief/APT-Hunter -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$APTHunter;python3 APT-Hunter.py "\$@"
+cd /usr/share/$name;python3 APT-Hunter.py "\$@"
 EOF
-		chmod +x /usr/bin/$APTHunter
-		pip3 install -r /usr/share/$APTHunter/requirements.txt
-		menu_entry "Threat-Hunting" "Digital-Forensic" "APT-Hunter" "/usr/share/kali-menu/exec-in-shell '$APTHunter -h'"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Threat-Hunting" "Digital-Forensic" "APT-Hunter" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing APT-Hunter"
-	else
-		printf "$GREEN"  "[*] Success installed APT-Hunter"
 	fi
 
-	pspy="pspy"
-	if [ ! -d "/usr/share/$pspy" ]; then
-		mkdir -p /usr/share/$pspy
-		wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64 -O /usr/share/$pspy/pspy64
-		chmod 755 /usr/share/$pspy/*
-		ln -fs /usr/share/$pspy/pspy64 /usr/bin/$pspy
-		chmod +x /usr/bin/$pspy
-		menu_entry "Threat-Hunting" "Digital-Forensic" "pspy" "/usr/share/kali-menu/exec-in-shell '$pspy -h'"
-		printf "$GREEN"  "[*] Success installing pspy"
-	else
-		printf "$GREEN"  "[*] Success installed pspy"
+	# install pspy
+	if [ ! -d "/usr/share/pspy" ]; then
+		local name="pspy"
+		mkdir -p /usr/share/$name
+		wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64 -O /usr/share/$name/pspy64
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/pspy64 /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -3469,25 +3456,24 @@ EOF
 	# incident_response_golang=""
 	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
 
-	Velociraptor="velociraptor"
-	if [ ! -d "/usr/share/$Velociraptor" ]; then
-		mkdir -p /usr/share/$Velociraptor
-		wget https://github.com/Velocidex/velociraptor/releases/latest/download/velociraptor-v0.7.1-2-linux-amd64 -O /usr/share/$Velociraptor/velociraptor
-		chmod 755 /usr/share/$Velociraptor/*
-		ln -fs /usr/share/$Velociraptor/velociraptor /usr/bin/$Velociraptor
-		menu_entry "Incident-Response" "Digital-Forensic" "Velociraptor" "/usr/share/kali-menu/exec-in-shell '$Velociraptor -h'"
-		printf "$GREEN"  "[*] Success installing Velociraptor"
-	else
-		printf "$GREEN"  "[*] Success installed Velociraptor"
+	# install velociraptor
+	if [ ! -d "/usr/share/velociraptor" ]; then
+		local name="velociraptor"
+		mkdir -p /usr/share/$name
+		wget https://github.com/Velocidex/velociraptor/releases/latest/download/velociraptor-v0.7.1-2-linux-amd64 -O /usr/share/$name/velociraptor
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Incident-Response" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GRR="grr-server"
-	if [ ! -d "/usr/share/$GRR" ]; then
-		wget https://github.com/google/grr/releases/latest/download/grr-server_3.4.7-1_amd64.deb -O /tmp/$GRR.deb
-		chmod +x /tmp/$GRR.deb;dpkg -i /tmp/$GRR.deb;rm -f /tmp/$GRR.deb
-		printf "$GREEN"  "[*] Success installing GRR"
-	else
-		printf "$GREEN"  "[*] Success installed GRR"
+	# install grr
+	if [ ! -d "/usr/share/grr" ]; then
+		local name="grr"
+		wget https://github.com/google/grr/releases/latest/download/grr-server_3.4.7-1_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -3511,43 +3497,40 @@ EOF
 	# threat_intelligence_golang=""
 	go_installer "Threat-Intelligence" "Digital-Forensic" "$threat_intelligence_golang"
 
-	OpenCTI="opencti"
-	if [ ! -d "/usr/share/$OpenCTI" ]; then
-		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.0.10/opencti-release-6.0.10.tar.gz -O /tmp/$OpenCTI.tar.gz
-		tar -xvf /tmp/$OpenCTI.tar.gz -C /usr/share/$OpenCTI;rm -f /tmp/$OpenCTI.tar.gz
-		chmod 755 /usr/share/$OpenCTI/*
-		cp /usr/share/$OpenCTI/config/default.json /usr/share/$OpenCTI/config/production.json
-		pip3 install -r /usr/share/$OpenCTI/src/python/requirements.txt
-		cd /usr/share/$OpenCTI;yarn install;yarn build;yarn serv
-		pip3 install -r /usr/share/$OpenCTI/worker/requirements.txt
-		cp /usr/share/$OpenCTI/worker/config.yml.sample /usr/share/$OpenCTI/worker/config.yml
-		cat > /usr/bin/$OpenCTI << EOF
-cd /usr/share/$OpenCTI/worker;python3 worker.py > /dev/null &
+	# install opencti
+	if [ ! -d "/usr/share/opencti" ]; then
+		local name="opencti"
+		wget https://github.com/OpenCTI-Platform/opencti/releases/latest/download/opencti-release-6.1.3.tar.gz  -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
+		pip3 install -r /usr/share/$name/src/python/requirements.txt
+		cd /usr/share/$name;yarn install;yarn build;yarn serv
+		pip3 install -r /usr/share/$name/worker/requirements.txt
+		cp /usr/share/$name/worker/config.yml.sample /usr/share/$name/worker/config.yml
+		cat > /usr/bin/$name << EOF
+cd /usr/share/$name/worker;python3 worker.py > /dev/null &
 sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
 EOF
-		chmod +x /usr/bin/$OpenCTI
-		menu_entry "Threat-Intelligence" "Digital-Forensic" "OpenCTI" "/usr/share/kali-menu/exec-in-shell '$OpenCTI'"
-		printf "$GREEN"  "[*] Success installing OpenCTI"
-	else
-		printf "$GREEN"  "[*] Success installed OpenCTI"
+		chmod +x /usr/bin/$name
+		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	TRAM="tram"
-	if [ ! -d "/usr/share/$TRAM" ]; then
+	# install tram
+	if [ ! -d "/usr/share/tram" ]; then
+		local name="tram"
 		curl -LO https://github.com/center-for-threat-informed-defense/tram/raw/main/docker/docker-compose.yml
 		docker-compose up
-		printf "$GREEN"  "[*] Success installing TRAM"
-	else
-		printf "$GREEN"  "[*] Success installed TRAM"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RITA="rita"
-	if [ ! -d "/var/opt/$RITA" ]; then
+	# install rita
+	if [ ! -d "/var/opt/rita" ]; then
+		local name="rita"
 		wget https://github.com/activecm/rita/releases/latest/download/install.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
-		printf "$GREEN"  "[*] Success installing RITA"
-	else
-		printf "$GREEN"  "[*] Success installed RITA"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 	exit
@@ -3598,8 +3581,9 @@ blue_team ()
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
 	go_installer "Detect" "Blue-Team" "$detect_golang"
 
-	# install Wazuh Indexer & Server & Agent
+	# install wazuh
 	if [ ! -f "/etc/apt/sources.list.d/wazuh.list" ]; then
+		local name="wazuh"
 		# install Indexer
 		cd /tmp;curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh;curl -sO https://packages.wazuh.com/4.7/config.yml
 		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|wazuh-manager-ip|$LAN|g" /tmp/config.yml;sed -i "s|dashboard-node-ip|$LAN|g" /tmp/config.yml
@@ -3617,50 +3601,46 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 		echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
 		apt-get update;apt-get install -y wazuh-agent
-		printf "$GREEN"  "[*] Success installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
-	else
-		printf "$GREEN"  "[*] Success installing Wazuh https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
+		printf "$GREEN"  "[*] Success installing $name https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	fi
 
-	OpenSearch="opensearch"
-	if [ ! -d "/usr/share/$OpenSearch" ]; then
-		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$OpenSearch.deb
-		chmod +x /tmp/$OpenSearch.deb;dpkg -i /tmp/$OpenSearch.deb;rm -f /tmp/$OpenSearch.deb
-		printf "$GREEN"  "[*] Success installing OpenSearch"
-	else
-		printf "$GREEN"  "[*] Success installed OpenSearch"
+	# install opensearch
+	if [ ! -d "/usr/share/opensearch" ]; then
+		local name="opensearch"
+		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Falco="falcosecurity.list"
-	if [ ! -f "/etc/apt/sources.list.d/$Falco" ]; then
+	# install falco
+	if [ ! -f "/etc/apt/sources.list.d/falcosecurity.list" ]; then
+		local name="falco"
 		curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
-		cat > /etc/apt/sources.list.d/$Falco << EOF
+		cat > /etc/apt/sources.list.d/falcosecurity.list << EOF
 deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
 EOF
-		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y falco
-		printf "$GREEN"  "[*] Success installing Falco"
-	else
-		printf "$GREEN"  "[*] Success installed Falco"
+		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y $name
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	SIEGMA="siegma"
-	if [ ! -d "/usr/share/$SIEGMA" ]; then
-		git clone https://github.com/3CORESec/SIEGMA /usr/share/$SIEGMA
-		chmod 755 /usr/share/$SIEGMA/*
-		cat > /usr/bin/$SIEGMA << EOF
+	# install siegma
+	if [ ! -d "/usr/share/siegma" ]; then
+		local name="siegma"
+		git clone https://github.com/3CORESec/SIEGMA /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$SIEGMA;python3 siegma.py "\$@"
+cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
-		chmod +x /usr/bin/$SIEGMA
-		pip3 install -r /usr/share/$SIEGMA/requirements.txt
-		menu_entry "Detect" "Blue-Team" "SIEGMA" "/usr/share/kali-menu/exec-in-shell '$SIEGMA -h'"
-		printf "$GREEN"  "[*] Success installing SIEGMA"
-	else
-		printf "$GREEN"  "[*] Success installed SIEGMA"
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Detect" "Blue-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Cilium="cilium"
-	if [ ! -d "/usr/local/bin/$Cilium" ]; then
+	# install cilium
+	if [ ! -d "/usr/local/bin/cilium" ]; then
+		local name="cilium"
 		CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
 		CLI_ARCH=amd64
 		if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
@@ -3668,65 +3648,59 @@ EOF
 		sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
 		tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 		rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-		menu_entry "Detect" "Blue-Team" "Cilium" "/usr/share/kali-menu/exec-in-shell '$Cilium -h'"
-		printf "$GREEN"  "[*] Success installing Cilium"
-	else
-		printf "$GREEN"  "[*] Success installed Cilium"
+		menu_entry "Detect" "Blue-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	OSSEC="atomic.list"
-	if [ ! -f "/etc/apt/sources.list.d/$OSSEC" ]; then
+	# install ossec
+	if [ ! -f "/etc/apt/sources.list.d/atomic.list" ]; then
+		local name="ossec"
 		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt  | sudo apt-key add -
-		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/$OSSEC
+		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/atomic.list
 		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
-		printf "$GREEN"  "[*] Success installing OSSEC"
-	else
-		printf "$GREEN"  "[*] Success installed OSSEC"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Cilium="cilium"
-	if [ ! -d "/usr/share/$Cilium" ]; then
-		mkdir -p /usr/share/$Cilium
-		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/$Cilium.tar.gz
-		tar -xvf /tmp/$Cilium.tar.gz -C /usr/share/$Cilium;rm -f /tmp/$Cilium.tar.gz
-		ln -fs /usr/share/$Cilium/cilium /usr/bin/$Cilium
-		menu_entry "Detect" "Blue-Team" "Cilium" "/usr/share/kali-menu/exec-in-shell '$Cilium -h'"
-		printf "$GREEN"  "[*] Success installing Cilium"
-	else
-		printf "$GREEN"  "[*] Success installed Cilium"
+	# install cilium
+	if [ ! -d "/usr/share/cilium" ]; then
+		local name="cilium"
+		mkdir -p /usr/share/$name
+		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/cilium /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	ElasticSeaerch="elasticsearch"
-	if [ ! -d "/usr/share/$ElasticSeaerch" ]; then
-		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/$ElasticSeaerch.deb
-		chmod +x /tmp/$ElasticSeaerch.deb;dpkg -i /tmp/$ElasticSeaerch.deb;rm -f /tmp/$ElasticSeaerch.deb
-		printf "$GREEN"  "[*] Success installing ElasticSeaerch"
-	else
-		printf "$GREEN"  "[*] Success installed ElasticSeaerch"
+	# install elasticsearch
+	if [ ! -d "/usr/share/elasticsearch" ]; then
+		local name="elasticsearch"
+		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Kibana="kibana"
-	if [ ! -d "/usr/share/$Kibana" ]; then
-		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$Kibana.deb
-		chmod +x /tmp/$Kibana.deb;dpkg -i /tmp/$Kibana.deb;rm -f /tmp/$Kibana.deb
-		printf "$GREEN"  "[*] Success installing Kibana"
-	else
-		printf "$GREEN"  "[*] Success installed Kibana"
+	# install kibana
+	if [ ! -d "/usr/share/kibana" ]; then
+		local name="kibana"
+		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Logstash="logstash"
-	if [ ! -d "/usr/share/$Logstash" ]; then
-		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/$Logstash.deb
-		chmod +x /tmp/$Logstash.deb;dpkg -i /tmp/$Logstash.deb;rm -f /tmp/$Logstash.deb
-		printf "$GREEN"  "[*] Success installing Logstash"
-	else
-		printf "$GREEN"  "[*] Success installed Logstash"
+	# install logstash
+	if [ ! -d "/usr/share/logstash" ]; then
+		local name="logstash"
+		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Zabbix="zabbix"
-	if [ ! -d "/usr/share/$Zabbix" ]; then
-		wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb -O /tmp/$Zabbix.deb
-		chmod +x /tmp/$Zabbix.deb;dpkg -i /tmp/$Zabbix.deb
+	# install zabbix
+	if [ ! -d "/usr/share/zabbix" ]; then
+		local name="zabbix"
+		wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
 		apt update;apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent
 		mysql -u root -p -h localhost -e "create database zabbix character set utf8mb4 collate utf8mb4_bin;create user zabbix@localhost identified by 'password';grant all privileges on zabbix.* to zabbix@localhost;set global log_bin_trust_function_creators = 1;quit;"
 		zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix
@@ -3735,8 +3709,6 @@ EOF
 		systemctl restart zabbix-server zabbix-agent apache2
 		systemctl enable zabbix-server zabbix-agent apache2
 		printf "$GREEN"  "[*] Success installing Zabbix -> http://$LAN/zabbix"
-	else
-		printf "$GREEN"  "[*] Success installed Zabbix -> http://$LAN/zabbix"
 	fi
 
 
@@ -3831,110 +3803,102 @@ go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/
 go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap"
 	go_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_golang"
 
-	Bearer="bearer"
-	if [ ! -f "/usr/local/bin/$Bearer" ]; then
-		wget https://github.com/Bearer/bearer/releases/download/v1.37.0/bearer_1.37.0_linux-amd64.deb -O /tmp/$Bearer.deb
-		chmod +x /tmp/$Bearer.deb;dpkg -i /tmp/$Bearer.deb;rm -f /tmp/$Bearer.deb
-		printf "$GREEN"  "[*] Success installing Bearer"
-	else
-		printf "$GREEN"  "[*] Success installed Bearer"
+	# install bearer
+	if [ ! -f "/usr/local/bin/bearer" ]; then
+		local name="bearer"
+		wget https://github.com/Bearer/bearer/releases/download/v1.37.0/bearer_1.37.0_linux-amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	CheckStyle="checkstyle"
-	if [ ! -d "/usr/share/$CheckStyle" ]; then
-		mkdir -p /usr/share/$CheckStyle
-		wget https://github.com/checkstyle/checkstyle/releases/latest/download/checkstyle-10.13.0-all.jar -O /usr/share/$CheckStyle/checkstyle.jar
-		chmod 755 /usr/share/$CheckStyle/*
-		cat > /usr/bin/$CheckStyle << EOF
+	# install checkstyle
+	if [ ! -d "/usr/share/checkstyle" ]; then
+		local name="checkstyle"
+		mkdir -p /usr/share/$name
+		wget https://github.com/checkstyle/checkstyle/releases/latest/download/checkstyle-10.13.0-all.jar -O /usr/share/$name/checkstyle.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$CheckStyle;java -jar checkstyle.jar "\$@"
+cd /usr/share/$name;java -jar checkstyle.jar "\$@"
 EOF
-		chmod +x /usr/bin/$CheckStyle
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "CheckStyle" "/usr/share/kali-menu/exec-in-shell '$CheckStyle'"
-		printf "$GREEN"  "[*] Success installing CheckStyle"
-	else
-		printf "$GREEN"  "[*] Success installed CheckStyle"
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	AFLplusplus="aflplusplus"
-	if [ ! -d "/usr/share/$AFLplusplus" ]; then
-		git clone https://github.com/AFLplusplus/AFLplusplus /usr/share/$AFLplusplus
-		chmod 755 /usr/share/$AFLplusplus/*
-		cd /usr/share/$AFLplusplus;make distrib;make install
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "afl-cc" "/usr/share/kali-menu/exec-in-shell 'afl-cc -h'"
-		printf "$GREEN"  "[*] Success installing AFLplusplus"
-	else
-		printf "$GREEN"  "[*] Success installed AFLplusplus"
+	# install aflplusplus
+	if [ ! -d "/usr/share/afl" ]; then
+		local name="afl"
+		git clone https://github.com/AFLplusplus/AFLplusplus /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make distrib;make install
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name-cc" "/usr/share/kali-menu/exec-in-shell '$name-cc -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	vulsscanner="vuls-scanner"
-	if [ ! -d "/usr/share/$vulsscanner" ]; then
-		mkdir -p /usr/share/$vulsscanner
-		wget https://github.com/future-architect/vuls/releases/latest/download/vuls-scanner_0.24.9_linux_amd64.tar.gz -O /tmp/$vulsscanner.tar.gz
-		tar -xvf /tmp/$vulsscanner.tar.gz -C /usr/share/$vulsscanner;rm -r /tmp/$vulsscanner.tar.gz
-		chmod 755 /usr/share/$vulsscanner/*
-		ln -fs /usr/share/$vulsscanner/vuls /usr/bin/vuls
-		chmod +x /usr/bin/vuls
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "vuls-scanner" "/usr/share/kali-menu/exec-in-shell 'vuls -h'"
-		printf "$GREEN"  "[*] Success installing vuls-scanner"
-	else
-		printf "$GREEN"  "[*] Success installed vuls-scanner"
+	# install vuls-scanner
+	if [ ! -d "/usr/share/vuls" ]; then
+		local name="vuls"
+		mkdir -p /usr/share/$name
+		wget https://github.com/future-architect/vuls/releases/latest/download/vuls-scanner_0.24.9_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -r /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/vuls /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	syzkaller="syzkaller"
-	if [ ! -d "/usr/share/$syzkaller" ]; then
-		git clone https://github.com/google/syzkaller /usr/share/$syzkaller
-		chmod 755 /usr/share/$syzkaller/*;cd /usr/share/$syzkaller;make
-		ln -fs /usr/share/$syzkaller/syzkaller/bin/linux_amd64/syz-fuzzer /usr/bin/syz-fuzzer
-		ln -fs /usr/share/$syzkaller/syzkaller/bin/linux_amd64/syz-stress /usr/bin/syz-stress
-		ln -fs /usr/share/$syzkaller/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
+	# install syzkaller
+	if [ ! -d "/usr/share/syzkaller" ]; then
+		local name="syzkaller"
+		git clone https://github.com/google/syzkaller /usr/share/$name
+		chmod 755 /usr/share/$name/*;cd /usr/share/$name;make
+		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-fuzzer /usr/bin/syz-fuzzer
+		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-stress /usr/bin/syz-stress
+		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
 		chmod +x /usr/bin/syz-fuzzer;chmod +x /usr/bin/syz-stress;chmod +x /usr/bin/syz-executor
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "syz-fuzzer" "/usr/share/kali-menu/exec-in-shell 'syz-fuzzer -h'"
-		printf "$GREEN"  "[*] Success installing syzkaller"
-	else
-		printf "$GREEN"  "[*] Success installed syzkaller"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Honggfuzz="honggfuzz"
-	if [ ! -d "/usr/share/$Honggfuzz" ]; then
-		git clone https://github.com/google/honggfuzz /usr/share/$Honggfuzz
-		chmod 755 /usr/share/$Honggfuzz/*;cd /usr/share/$Honggfuzz;make
-		ln -fs /usr/share/$Honggfuzz/honggfuzz /usr/bin/$Honggfuzz
-		chmod +x /usr/bin/$Honggfuzz
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Honggfuzz" "/usr/share/kali-menu/exec-in-shell '$Honggfuzz -h'"
-		printf "$GREEN"  "[*] Success installing Honggfuzz"
-	else
-		printf "$GREEN"  "[*] Success installed Honggfuzz"
+	# install honggfuzz
+	if [ ! -d "/usr/share/honggfuzz" ]; then
+		local name="honggfuzz"
+		git clone https://github.com/google/honggfuzz /usr/share/$name
+		chmod 755 /usr/share/$name/*;cd /usr/share/$name;make
+		ln -fs /usr/share/$name/honggfuzz /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Cmder="cmder"
-	if [ ! -d "/usr/share/$Cmder" ]; then
-		mkdir -p /usr/share/$Cmder
-		wget https://github.com/cmderdev/cmder/releases/latest/download/cmder.zip -O /tmp/$Cmder.zip
-		unzip /tmp/$Cmder.zip -d /usr/share/$Cmder;rm -f /tmp/$Cmder.zip
-		chmod 755 /usr/share/$Cmder/*
-		cat > /usr/bin/$Cmder << EOF
+	# install cmder
+	if [ ! -d "/usr/share/cmder" ]; then
+		local name="cmder"
+		mkdir -p /usr/share/$name
+		wget https://github.com/cmderdev/cmder/releases/latest/download/cmder.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Cmder;wine Cmder.exe "\$@"
+cd /usr/share/$name;wine Cmder.exe "\$@"
 EOF
-		chmod +x /usr/bin/$Cmder
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Cmder" "/usr/share/kali-menu/exec-in-shell '$Cmder'"
-		printf "$GREEN"  "[*] Success installing Cmder"
-	else
-		printf "$GREEN"  "[*] Success installed Cmder"
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	OPA="open-policy-agent"
-	if [ ! -d "/usr/share/$OPA" ]; then
-		mkdir -p /usr/share/$OPA
-		wget https://github.com/open-policy-agent/opa/releases/latest/download/opa_linux_amd64 -O /usr/share/$OPA/opa
-		chmod 755 /usr/share/$OPA/*
-		ln -fs /usr/share/$OPA/opa /usr/bin/opa
-		chmod +x /usr/bin/opa
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Open-Policy-Agent" "/usr/share/kali-menu/exec-in-shell 'opa -h'"
-		printf "$GREEN"  "[*] Success installing Open-Policy-Agent"
-	else
-		printf "$GREEN"  "[*] Success installed Open-Policy-Agent"
+	# install open-policy-agent
+	if [ ! -d "/usr/share/opa" ]; then
+		local name="opa"
+		mkdir -p /usr/share/$name
+		wget https://github.com/open-policy-agent/opa/releases/latest/download/opa_linux_amd64 -O /usr/share/$name/opa
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/opa /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -3979,18 +3943,17 @@ EOF
 	# establishing_audit_objectives_golang=""
 	go_installer "Establishing-Audit-Objectives" "Security-Audit" "$establishing_audit_objectives_golang"
 
-	Selefra="selefra"
-	if [ ! -d "/usr/share/$Selefra" ]; then
-		mkdir -p /usr/share/$Selefra
-		wget https://github.com/selefra/selefra/releases/latest/download/selefra_linux_amd64.tar.gz -O /tmp/$Selefra.tar.gz
-		tar -xvf /tmp/$Selefra.tar.gz -C /usr/share/$Selefra;rm -f /tmp/$Selefra.tar.gz
-		chmod 755 /usr/share/$Selefra/*
-		ln -fs /usr/share/$Selefra/selefra /usr/bin/$Selefra
-		chmod +x /usr/bin/$Selefra
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "Selefra" "/usr/share/kali-menu/exec-in-shell '$Selefra -h'"
-		printf "$GREEN"  "[*] Success installing Selefra"
-	else
-		printf "$GREEN"  "[*] Success installed Selefra"
+	# install selefra
+	if [ ! -d "/usr/share/selefra" ]; then
+		local name="selefra"
+		mkdir -p /usr/share/$name
+		wget https://github.com/selefra/selefra/releases/latest/download/selefra_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/selefra /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -4014,133 +3977,125 @@ EOF
 	# performing_the_review_golang=""
 	go_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_golang"
 
-	Postman="postman"
-	if [ ! -d "/usr/share/$Postman" ]; then
-		mkdir -p /usr/share/$Postman
-		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$Postman.tar.gz
-		tar -xvf /tmp/$Postman.tar.gz -C /usr/share;rm -f /tmp/$Postman.tar.gz
-		chmod 755 /usr/share/$Postman/*
-		cat > /usr/bin/$Postman << EOF
+	# install postman
+	if [ ! -d "/usr/share/postman" ]; then
+		local name="postman"
+		mkdir -p /usr/share/$name
+		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Postman/;./postman "\$@"
+cd /usr/share/$name/;./postman "\$@"
 EOF
-		chmod +x /usr/bin/$Postman
-		menu_entry "Web" "Penetration-Testing" "Postman" "/usr/share/kali-menu/exec-in-shell '$Postman'"
-		printf "$GREEN"  "[*] Success installing Postman"
-	else
-		printf "$GREEN"  "[*] Success installed Postman"
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	Clion="clion"
-	if [ ! -d "/usr/share/$Clion" ]; then
-		wget https://download-cdn.jetbrains.com/cpp/CLion-2023.1.1.tar.gz -O /tmp/$Clion.tar.gz
-		tar -xvf /tmp/$Clion.tar.gz -C /usr/share/$Clion;rm -f /tmp/$Clion.tar.gz
-		chmod 755 /usr/share/$Clion/bin/*
-		cat > /usr/bin/$Clion << EOF
+	# install clion
+	if [ ! -d "/usr/share/clion" ]; then
+		local name="clion"
+		wget https://download-cdn.jetbrains.com/cpp/CLion-2023.1.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$Clion/bin;bash clion.sh "\$@"
+cd /usr/share/$name/bin;bash clion.sh "\$@"
 EOF
-		chmod +x /usr/bin/$Clion
-		menu_entry "Performing-the-Review" "Security-Audit" "Clion" "/usr/bin/$Clion"
-		printf "$GREEN"  "[*] Success installing Clion"
-	else
-		printf "$GREEN"  "[*] Success installed Clion"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PhpStorm="phpstorm"
-	if [ ! -d "/usr/share/$PhpStorm" ]; then
-		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2023.1.tar.gz -O /tmp/$PhpStorm.tar.gz
-		tar -xvf /tmp/$PhpStorm.tar.gz -C /usr/share/$PhpStorm;rm -f /tmp/$PhpStorm.tar.gz
-		chmod 755 /usr/share/$PhpStorm/bin/*
-		cat > /usr/bin/$PhpStorm << EOF
+	# install phpstorm
+	if [ ! -d "/usr/share/phpstorm" ]; then
+		local name="phpstorm"
+		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2023.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PhpStorm/bin;bash phpstorm.sh "\$@"
+cd /usr/share/$name/bin;bash phpstorm.sh "\$@"
 EOF
-		chmod +x /usr/bin/$PhpStorm
-		menu_entry "Performing-the-Review" "Security-Audit" "PhpStorm" "/usr/bin/$PhpStorm"
-		printf "$GREEN"  "[*] Success installing PhpStorm"
-	else
-		printf "$GREEN"  "[*] Success installed PhpStorm"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	GoLand="goland"
-	if [ ! -d "/usr/share/$GoLand" ]; then
-		wget https://download-cdn.jetbrains.com/go/goland-2023.1.tar.gz -O /tmp/$GoLand.tar.gz
-		tar -xvf /tmp/$GoLand.tar.gz -C /usr/share/$GoLand;rm -f /tmp/$GoLand.tar.gz
-		chmod 755 /usr/share/$GoLand/bin/*
-		cat > /usr/bin/$GoLand << EOF
+	# install goland
+	if [ ! -d "/usr/share/goland" ]; then
+		local name="goland"
+		wget https://download-cdn.jetbrains.com/go/goland-2023.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$GoLand/bin;bash goland.sh "\$@"
+cd /usr/share/$name/bin;bash goland.sh "\$@"
 EOF
-		chmod +x /usr/bin/$GoLand
-		menu_entry "Performing-the-Review" "Security-Audit" "GoLand" "/usr/bin/$GoLand"
-		printf "$GREEN"  "[*] Success installing GoLand"
-	else
-		printf "$GREEN"  "[*] Success installed GoLand"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	PyCharm="pycharm"
-	if [ ! -d "/usr/share/$PyCharm" ]; then
-		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2023.1.tar.gz -O /tmp/$PyCharm.tar.gz
-		tar -xvf /tmp/$PyCharm.tar.gz -C /usr/share/$PyCharm;rm -f /tmp/$PyCharm.tar.gz
-		chmod 755 /usr/share/$PyCharm/bin/*
-		cat > /usr/bin/$PyCharm << EOF
+	# install pycharm
+	if [ ! -d "/usr/share/pycharm" ]; then
+		local name="pycharm"
+		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2023.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$PyCharm/bin;bash pycharm.sh "\$@"
+cd /usr/share/$name/bin;bash pycharm.sh "\$@"
 EOF
-		chmod +x /usr/bin/$PyCharm
-		menu_entry "Performing-the-Review" "Security-Audit" "PyCharm" "/usr/bin/$PyCharm"
-		printf "$GREEN"  "[*] Success installing PyCharm"
-	else
-		printf "$GREEN"  "[*] Success installed PyCharm"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	RubyMine="rubymine"
-	if [ ! -d "/usr/share/$RubyMine" ]; then
-		wget https://download-cdn.jetbrains.com/ruby/RubyMine-2023.1.tar.gz -O /tmp/$RubyMine.tar.gz
-		tar -xvf /tmp/$RubyMine.tar.gz -C /usr/share/$RubyMine;rm -f /tmp/$RubyMine.tar.gz
-		chmod 755 /usr/share/$RubyMine/bin/*
-		cat > /usr/bin/$RubyMine << EOF
+	# install rubymine
+	if [ ! -d "/usr/share/rubymine" ]; then
+		local name="rubymine"
+		wget https://download-cdn.jetbrains.com/ruby/RubyMine-2023.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$RubyMine/bin;bash rubymine.sh "\$@"
+cd /usr/share/$name/bin;bash rubymine.sh "\$@"
 EOF
-		chmod +x /usr/bin/$RubyMine
-		menu_entry "Performing-the-Review" "Security-Audit" "RubyMine" "/usr/bin/$RubyMine"
-		printf "$GREEN"  "[*] Success installing RubyMine"
-	else
-		printf "$GREEN"  "[*] Success installed RubyMine"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	WebStorm="webstorm"
-	if [ ! -d "/usr/share/$WebStorm" ]; then
-		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.tar.gz -O /tmp/$WebStorm.tar.gz
-		tar -xvf /tmp/$WebStorm.tar.gz -C /usr/share/$WebStorm;rm -f /tmp/$WebStorm.tar.gz
-		chmod 755 /usr/share/$WebStorm/bin/*
-		cat > /usr/bin/$WebStorm << EOF
+	# install webstorm
+	if [ ! -d "/usr/share/webstorm" ]; then
+		local name="webstorm"
+		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/bin/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$WebStorm/bin;bash webstorm.sh "\$@"
+cd /usr/share/$name/bin;bash webstorm.sh "\$@"
 EOF
-		chmod +x /usr/bin/$WebStorm
-		menu_entry "Performing-the-Review" "Security-Audit" "WebStorm" "/usr/bin/$WebStorm"
-		printf "$GREEN"  "[*] Success installing WebStorm"
-	else
-		printf "$GREEN"  "[*] Success installed WebStorm"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	IDEA="idea"
-	if [ ! -d "/usr/share/$IDEA" ]; then
-		wget https://download-cdn.jetbrains.com/idea/ideaIU-2023.1.tar.gz -O /tmp/IDE$IDEAA.tar.gz
-		tar -xvf /tmp/$IDEA.tar.gz -C /usr/share/$IDEA;rm -f /tmp/$IDEA.tar.gz
-		chmod 755 /usr/share/$IDEA/*
-		cat > /usr/bin/$IDEA << EOF
+	# install idea
+	if [ ! -d "/usr/share/idea" ]; then
+		local name="idea"
+		wget https://download-cdn.jetbrains.com/idea/ideaIU-2023.1.tar.gz -O /tmp/IDE$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$IDEA/bin;bash idea.sh "\$@"
+cd /usr/share/$name/bin;bash idea.sh "\$@"
 EOF
-		chmod +x /usr/bin/$IDEA
-		menu_entry "Performing-the-Review" "Security-Audit" "IDEA" "/usr/bin/$IDEA"
-		printf "$GREEN"  "[*] Success installing IDEA"
-	else
-		printf "$GREEN"  "[*] Success installed IDEA"
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 
@@ -4220,26 +4175,27 @@ main ()
 	# install Ruby GEM
 	# gem install 
 
-	KaliElite="kalielite"
-	if [ ! -d "/usr/share/$KaliElite" ]; then
-		mkdir -p /usr/share/$KaliElite
-		curl -s -o /usr/share/$KaliElite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
-		chmod 755 /usr/share/$KaliElite/*
-		cat > /usr/bin/$KaliElite << EOF
+	# install kali-elite
+	if [ ! -d "/usr/share/kalielite" ]; then
+		local name="kalielite"
+		mkdir -p /usr/share/$name
+		curl -s -o /usr/share/$name/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$KaliElite;bash kalielite.sh "\$@"
+cd /usr/share/$name;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/$KaliElite
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$KaliElite.desktop" << EOF
+		chmod +x /usr/bin/$name
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
 Name=kali-elite
-Exec=/usr/share/kali-menu/exec-in-shell "sudo $KaliElite"
+Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$KaliElite.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$name.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -4248,29 +4204,30 @@ EOF
     <Name>Unk9vvN</Name>
     <Directory>Unk9vvN.directory</Directory>
     <Include>
-      <Filename>Unk9vvN-$KaliElite.desktop</Filename>
+      <Filename>Unk9vvN-$name.desktop</Filename>
     </Include>
   </Menu>
 </Menu>
 EOF
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
-		curl -s -o /usr/share/$KaliElite/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
-		chmod 755 /usr/share/$KaliElite/*
-		cat > /usr/bin/$KaliElite << EOF
+		local name="kalielite"
+		curl -s -o /usr/share/$name/kalielite.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/kali-elite.sh
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$KaliElite;bash kalielite.sh "\$@"
+cd /usr/share/$name;bash kalielite.sh "\$@"
 EOF
-		chmod +x /usr/bin/$KaliElite
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$KaliElite.desktop" << EOF
+		chmod +x /usr/bin/$name
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
 Name=kali-elite
-Exec=/usr/share/kali-menu/exec-in-shell "sudo $KaliElite"
+Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$KaliElite.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$name.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -4279,12 +4236,12 @@ EOF
     <Name>Unk9vvN</Name>
     <Directory>Unk9vvN.directory</Directory>
     <Include>
-      <Filename>Unk9vvN-$KaliElite.desktop</Filename>
+      <Filename>Unk9vvN-$name.desktop</Filename>
     </Include>
   </Menu>
 </Menu>
 EOF
-		bash /usr/share/$KaliElite/kalielite.sh
+		bash /usr/share/$name/kalielite.sh
 	fi
 }
 
