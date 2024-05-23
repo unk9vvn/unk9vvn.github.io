@@ -4212,9 +4212,7 @@ main ()
 				# install ruby GEM
 				# gem install 
 				;;
-			*)
-				echo "Unsupported OS detected: $ID"
-				;;
+			*) echo "Unsupported OS detected: $ID";;
 		esac
 	else
 		echo "/etc/os-release file not found. Cannot determine the OS."
