@@ -2290,6 +2290,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install dfscoerce
+	if [ ! -d "/usr/share/dfscoerce" ]; then
+		local name="dfscoerce"
+		git clone https://github.com/Wh04m1001/DFSCoerce /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 dfscoerce.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Credential-Access" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install netripper
 	if [ ! -d "/usr/share/metasploit-framework/modules/post/windows/gather/netripper" ]; then
 		local name="netripper"
@@ -3157,7 +3171,7 @@ digital_forensic ()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# install Repository Tools
-	apt install -qy ghidra foremost qpdf kafkacat gdb pspy 
+	apt install -qy ghidra foremost qpdf kafkacat gdb pspy llvm 
 
 	# install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
@@ -4179,7 +4193,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go llvm nasm qtchooser jq ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg 
 				;;
 			ubuntu)
 				# kali repo added
@@ -4190,7 +4204,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go llvm nasm qtchooser jq ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg 
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
