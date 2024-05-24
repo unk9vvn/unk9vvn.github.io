@@ -2539,6 +2539,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install sillyrat
+	if [ ! -d "/usr/share/sillyrat" ]; then
+		local name="sillyrat"
+		git clone https://github.com/hash3liZer/SillyRAT /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 server.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install godgenesis
 	if [ ! -d "/usr/share/godgenesis" ]; then
 		local name="godgenesis"
