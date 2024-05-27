@@ -22,7 +22,7 @@ if [ "$(id -u)" != "0" ];then
 else
 	# update & upgrade & dist-upgrade
 	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
-	
+
 	# init requirements
 	apt install -y wget curl git net-tools gnupg apt-transport-https alacarte locate 
 	USERS=$(users | awk '{print $1}')
@@ -438,18 +438,28 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install Postman
+	# install postman
 	if [ ! -d "/usr/share/postman" ]; then
 		local name="postman"
 		mkdir -p /usr/share/$name
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;mv -f /usr/share/Postman /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;./postman "\$@"
+cd /usr/share/$name/;./postman "\$@"
 EOF
 		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install graphql-playground
+	if [ ! -d "/usr/share/graphql-playground" ]; then
+		local name="graphql-playground"
+		mkdir -p /usr/share/$name
+		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4040,7 +4050,7 @@ EOF
 cd /usr/share/$name/;./postman "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4050,7 +4060,7 @@ EOF
 		mkdir -p /usr/share/$name
 		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
