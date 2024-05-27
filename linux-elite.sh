@@ -16,15 +16,15 @@ WHITE='\e[1;37m%s\e[0m\n'
 
 
 if [ "$(id -u)" != "0" ];then
-	printf "$RED"		"[X] Please run as RooT ..."
-	printf "$GREEN"		"sudo kalielite"
+	printf "$RED"		"[X] Please run as ROOT..."
+	printf "$GREEN"		"[*] sudo linux-elite"
 	exit 0
 else
 	# update & upgrade & dist-upgrade
-	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy
-
+	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
+	
 	# init requirements
-	apt install -y open-vm-tools curl git net-tools gnupg apt-transport-https alacarte locate 
+	apt install -y wget curl git net-tools gnupg apt-transport-https alacarte locate 
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -4217,7 +4217,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
 				;;
 			ubuntu)
 				# kali repo added
@@ -4228,7 +4228,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg 
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
@@ -4241,9 +4241,6 @@ main ()
  
 	# install requirements
 	apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry
-
-	# install utilities
-	apt install -qy p7zip tor obfs4proxy proxychains p7zip-full zipalign wine winetricks winbind docker.io docker-compose mono-complete mono-devel ffmpeg rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird 
 
 	# install Python2 pip
 	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
