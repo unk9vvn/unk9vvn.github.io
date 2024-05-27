@@ -73,8 +73,11 @@ logo ()
 menu ()
 {
 	# initialize main menu
-	mkdir -p /home/$USERS/.config/menus;mkdir -p /home/$USERS/.config/menus/applications-merged
-	mkdir -p /home/$USERS/.local/share/applications;mkdir -p /home/$USERS/.local/share/desktop-directories;mkdir -p /home/$USERS/.local/images
+	mkdir -p /home/$USERS/.config/menus
+	mkdir -p /home/$USERS/.config/menus/applications-merged
+	mkdir -p /home/$USERS/.local/images
+	mkdir -p /home/$USERS/.local/share/applications
+	mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
