@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.0'
+ver='5.2'
 
 
 
@@ -65,7 +65,7 @@ logo ()
     printf "$RED"     "                            --/osssssssssssso/--                    "
     printf "$BLUE"    "                                  Unk9vvN                           "
     printf "$YELLOW"  "                            https://unk9vvn.com                     "
-    printf "$CYAN"    "                              Kali Elite "$ver"                     "
+    printf "$CYAN"    "                             Linux Elite "$ver"                     "
     printf "\n\n"
 }
 
@@ -4044,6 +4044,16 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install graphql-playground
+	if [ ! -d "/usr/share/graphql-playground" ]; then
+		local name="graphql-playground"
+		mkdir -p /usr/share/$name
+		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install clion
 	if [ ! -d "/usr/share/clion" ]; then
 		local name="clion"
@@ -4228,7 +4238,7 @@ main ()
 	else
 		echo "/etc/os-release file not found. Cannot determine the OS."
 	fi
-
+ 
 	# install requirements
 	apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libboost-all-dev qtchooser python3-dev python3-pip python3-poetry
 
@@ -4281,7 +4291,7 @@ EOF
   </Menu>
 </Menu>
 EOF
-	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
+	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" !=$ver ]; then
 		local name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
