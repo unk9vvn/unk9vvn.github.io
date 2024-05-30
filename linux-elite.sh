@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.2'
+ver='5.3'
 
 
 
@@ -3822,6 +3822,18 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 	# install Golang
 	# evict_golang=""
 	go_installer "Evict" "Blue-Team" "$evict_golang"
+
+	# install honeytrap
+	if [ ! -d "/usr/share/honeytrap" ]; then
+		local name="honeytrap"
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+docker run -p 8022:8022 honeytrap/honeytrap:latest "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
 
 	exit
 }
