@@ -4297,7 +4297,7 @@ EOF
 [Desktop Entry]
 Name=$name
 Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
-Comment=
+Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
@@ -4329,7 +4329,7 @@ EOF
 [Desktop Entry]
 Name=$name
 Exec=/usr/share/kali-menu/exec-in-shell "sudo $name"
-Comment=
+Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
