@@ -450,7 +450,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name/;./postman "\$@"
+cd /usr/share/$name;./postman "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
@@ -4062,7 +4062,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name/;./postman "\$@"
+cd /usr/share/$name;./postman "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/share/kali-menu/exec-in-shell '$name'"
