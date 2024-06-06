@@ -1595,6 +1595,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install thetimemachine
+	if [ ! -d "/usr/share/thetimemachine" ]; then
+		local name="thetimemachine"
+		git clone https://github.com/anmolksachan/TheTimeMachine /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 thetimemachine.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -----------------------------------Resource-Development-Red-Team----------------------------------- #"
 	# install Repository Tools
