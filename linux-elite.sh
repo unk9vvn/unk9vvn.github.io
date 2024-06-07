@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.4'
+ver='5.5'
 
 
 
@@ -4097,7 +4097,7 @@ EOF
 	# install clion
 	if [ ! -d "/usr/share/clion" ]; then
 		local name="clion"
-		wget https://download-cdn.jetbrains.com/cpp/CLion-2023.1.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/cpp/CLion-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4112,7 +4112,7 @@ EOF
 	# install phpstorm
 	if [ ! -d "/usr/share/phpstorm" ]; then
 		local name="phpstorm"
-		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2023.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4127,7 +4127,7 @@ EOF
 	# install goland
 	if [ ! -d "/usr/share/goland" ]; then
 		local name="goland"
-		wget https://download-cdn.jetbrains.com/go/goland-2023.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/go/goland-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4142,7 +4142,7 @@ EOF
 	# install pycharm
 	if [ ! -d "/usr/share/pycharm" ]; then
 		local name="pycharm"
-		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2023.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4157,7 +4157,7 @@ EOF
 	# install rubymine
 	if [ ! -d "/usr/share/rubymine" ]; then
 		local name="rubymine"
-		wget https://download-cdn.jetbrains.com/ruby/RubyMine-2023.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/ruby/RubyMine-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4172,7 +4172,7 @@ EOF
 	# install webstorm
 	if [ ! -d "/usr/share/webstorm" ]; then
 		local name="webstorm"
-		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.tar.gz -O /tmp/$name.tar.gz
+		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
@@ -4187,7 +4187,7 @@ EOF
 	# install idea
 	if [ ! -d "/usr/share/idea" ]; then
 		local name="idea"
-		wget https://download-cdn.jetbrains.com/idea/ideaIU-2023.1.tar.gz -O /tmp/IDE$name.tar.gz
+		wget https://download-cdn.jetbrains.com/idea/ideaIU-2024.1.tar.gz -O /tmp/IDE$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
