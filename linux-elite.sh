@@ -21,7 +21,7 @@ if [ "$(id -u)" != "0" ];then
 	exit 0
 else
 	# update & upgrade & dist-upgrade
-	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
+	apt update;apt upgrade -qqy;apt dist-upgrade -qqy;apt autoremove -qqy;apt autoclean
 
 	# init requirements
 	apt install -y wget curl git net-tools gnupg apt-transport-https alacarte locate 
@@ -4258,10 +4258,17 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
 
 				# install requirements
-				apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+				apt install -qqy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+
+				# install Python2 pip
+				if [ ! -f "/usr/local/bin/pip2" ]; then
+					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
+				fi
+
+				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
 			ubuntu)
 				# kali repo added
@@ -4272,13 +4279,20 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
 
 				# install requirements
-				apt install -qy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+				apt install -qqy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+
+				# install Python2 pip
+				if [ ! -f "/usr/local/bin/pip2" ]; then
+					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
+				fi
+
+				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
 			*) echo "Unsupported OS detected: $ID";;
 		esac
@@ -4287,10 +4301,10 @@ main ()
 	fi
 
 	# install Python2 pip
-	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip;pip2 install --upgrade pip
+	pip2 install setuptools env pipenv wheel requests colorama
 
 	# install Python3 pip
-	pip3 install --upgrade pip;pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
+	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
 
 	# install nodejs NPM
 	# npm install -g 
