@@ -746,7 +746,7 @@ EOF
 	# install smuggle
 	if [ ! -d "/usr/share/smuggle" ]; then
 		local name="smuggle"
-		git clone https://github.com/anshumanpattnaik/http-request-smuggling -O /usr/share/$name
+		git clone https://github.com/anshumanpattnaik/http-request-smuggling /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
