@@ -694,7 +694,7 @@ EOF
 cd /usr/share/$name;java -jar dtd-finder-all.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
