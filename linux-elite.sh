@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.5'
+ver='5.6'
 
 
 
@@ -4268,6 +4268,7 @@ main ()
 					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
 				fi
 
+				# upgrade pips
 				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
 			ubuntu)
@@ -4292,6 +4293,7 @@ main ()
 					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
 				fi
 
+				# upgrade pips
 				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
 			*) echo "Unsupported OS detected: $ID";;
