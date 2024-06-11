@@ -340,7 +340,7 @@ penetrating_testing ()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy proxychains pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
+	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer"
@@ -1228,7 +1228,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 	# install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum proxychains pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above 
+	apt install -qy cme amap bettercap dsniff arpwatch sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above 
 
 	# install Python3 pip
 	network_pip="networkx ropper mitmproxy mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
@@ -2362,7 +2362,7 @@ EOF
 
 	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
 	# install Repository Tools
-	apt install -qy pptpd kerberoast isr-evilgrade proxychains
+	apt install -qy pptpd kerberoast isr-evilgrade 
 
 	# install Python3 pip
 	lateral_movement_pip="coercer krbjack"
@@ -2821,7 +2821,7 @@ EOF
 
 	printf "$YELLOW"  "# ---------------------------------------Exfiltration-Red-Team--------------------------------------- #"
 	# install Repository Tools
-	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxychains proxify privoxy 
+	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxify privoxy 
 
 	# install Python3 pip
 	exfiltration_pip="updog pivotnacci"
@@ -4266,7 +4266,7 @@ main ()
 				# upgrade pips
 				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
-			*) echo "Unsupported OS detected: $ID";;
+			*) echo "Unsupported OS detected: $ID";exit;;
 		esac
 	else
 		echo "/etc/os-release file not found. Cannot determine the OS."
@@ -4360,7 +4360,7 @@ main
 logo
 
 
-select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Quit
+select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Exit
 do
 	case $opt in
 		"Penetrating Testing")
@@ -4381,7 +4381,7 @@ do
 		"Security Audit")
 			printf "$GREEN"  "[*] Running Security-Audit..."
 			security_audit;;
-		"Quit")
+		"Exit")
 			echo "Exiting..."
 			break;;
 		*) echo "invalid option...";;
