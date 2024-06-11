@@ -351,7 +351,7 @@ penetrating_testing ()
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# install Ruby GEM
-	web_gem="ssrf_proxy api_fuzzer dawnscanner mechanize xspear"
+	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear"
 	gem_installer "Web" "Penetration-Testing" "$web_gem"
 
 	# install Golang
