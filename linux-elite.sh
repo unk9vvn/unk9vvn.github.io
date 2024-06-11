@@ -65,7 +65,7 @@ logo ()
     printf "$RED"     "                            --/osssssssssssso/--                    "
     printf "$BLUE"    "                                  Unk9vvN                           "
     printf "$YELLOW"  "                            https://unk9vvn.com                     "
-    printf "$CYAN"    "                             Linux Elite "$ver"                     "
+    printf "$CYAN"    "                              Linux Elite "$ver"                    "
     printf "\n\n"
 }
 
@@ -508,21 +508,6 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install reconftw
-	if [ ! -d "/usr/share/reconftw" ]; then
-		local name="reconftw"
-		git clone https://github.com/six2dez/reconftw /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;./install.sh
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;./reconftw.sh "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
 	# install googlerecaptchabypass
 	if [ ! -d "/usr/share/grb" ]; then
 		local name="grb"
@@ -716,7 +701,7 @@ EOF
 	# install docem
 	if [ ! -d "/usr/share/docem" ]; then
 		local name="docem"
-		git clone https://github.com/whitel1st/docem -O /usr/share/$name
+		git clone https://github.com/whitel1st/docem /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -1560,21 +1545,6 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;./Dracnmap.sh "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
-	# install reconftw
-	if [ ! -d "/usr/share/reconftw" ]; then
-		local name="reconftw"
-		git clone https://github.com/six2dez/reconftw /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;./install.sh
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;./reconftw.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Reconnaissance" "Red-Team" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
