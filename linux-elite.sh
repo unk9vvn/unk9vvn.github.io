@@ -418,12 +418,12 @@ go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bi
 		local name="cloudbunny"
 		git clone https://github.com/Warflop/CloudBunny /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudbunny.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -513,12 +513,12 @@ EOF
 		local name="grb"
 		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 test.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -556,12 +556,12 @@ EOF
 		local name="cloakquest3r"
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -571,12 +571,12 @@ EOF
 		local name="asnlookup"
 		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 asnlookup.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -586,12 +586,12 @@ EOF
 		local name="waymore"
 		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 waymore.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -703,12 +703,12 @@ EOF
 		local name="docem"
 		git clone https://github.com/whitel1st/docem /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 docem.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -732,13 +732,13 @@ EOF
 		local name="jsa"
 		git clone https://github.com/w9w/JSA /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cd /usr/share/$name;bash install.sh
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 jsa.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		cd /usr/share/$name;bash install.sh
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -748,12 +748,12 @@ EOF
 		local name="smuggle"
 		git clone https://github.com/anshumanpattnaik/http-request-smuggling /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 smuggle.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -801,12 +801,12 @@ EOF
 		local name="spartan"
 		git clone https://github.com/sensepost/SPartan /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SPartan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip2 install -r /usr/share/$name/requirements.txt
 		menu_entry "Web" "Penetration-Testing" "$name" "/usr/share/kali-menu/exec-in-shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
