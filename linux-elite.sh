@@ -4265,7 +4265,7 @@ main ()
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
-					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
+					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qqy python3-pip
 				fi
 
 				# upgrade pips
@@ -4290,7 +4290,7 @@ main ()
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
-					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
+					wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qqy python3-pip
 				fi
 
 				# upgrade pips
@@ -4303,7 +4303,7 @@ main ()
 	fi
 
 	# install Python2 pip
-	pip2 install setuptools env pipenv wheel requests colorama
+	pip2 install setuptools env pipenv wheel requests colorama 
 
 	# install Python3 pip
 	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip 
@@ -4348,7 +4348,7 @@ EOF
   </Menu>
 </Menu>
 EOF
-	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" !=$ver ]; then
+	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		local name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
