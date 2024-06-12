@@ -4247,7 +4247,7 @@ main ()
 				;;
 			ubuntu)
 				# exec env
-				exec_shell="/usr/share/kali-menu/exec-in-shell"
+				exec_shell="/usr/share/ubuntu-menu/exec-in-shell"
 
 				# kali repo added
 				if [ ! -f "/etc/apt/sources.list.d/kali.list" ]; then
