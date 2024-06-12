@@ -4223,10 +4223,10 @@ main ()
 		. /etc/os-release
 		case "$ID" in
 			kali)
-				# EXEC ENV
+				# exec env
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
-				# APT fixed
+				# apt fixed
 				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
 					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 				fi
@@ -4246,7 +4246,7 @@ main ()
 				pip2 install --upgrade pip;pip3 install --upgrade pip
 				;;
 			ubuntu)
-				# EXEC ENV
+				# exec env
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
 				# kali repo added
