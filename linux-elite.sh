@@ -3010,6 +3010,19 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install hfs
+	if [ ! -d "/usr/share/hfs" ]; then
+		local name="hfs"
+		mkdir -p /usr/share/$name
+		wget https://github.com/rejetto/hfs/releases/latest/download/hfs-linux.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/hfs /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install goproxy
 	if [ ! -d "/usr/share/goproxy" ]; then
 		local name="goproxy"
