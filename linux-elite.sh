@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.9'
+ver='6.0'
 
 
 
@@ -24,7 +24,7 @@ else
 	apt update;apt upgrade -qqy;apt dist-upgrade -qqy;apt autoremove -qqy;apt autoclean
 
 	# init requirements
-	apt install -qqy wget curl git net-tools gnupg apt-transport-https alacarte locate 
+	apt install -qqy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify software-properties-common
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -3450,7 +3450,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump 
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -3519,15 +3519,6 @@ EOF
 	if [ ! -d "/usr/share/sysinternalsebpf" ]; then
 		local name="sysinternalsebpf"
 		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
-		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
-	# install procdump
-	if [ ! -d "/usr/share/procdump" ]; then
-		local name="procdump"
-		wget https://github.com/Sysinternals/ProcDump-for-Linux/releases/download/3.3.0/procdump_3.3.0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4267,13 +4258,22 @@ main ()
 				# exec env
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
+				# microsoft repo added
+				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+					wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
+					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
+					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+					apt update
+				fi
+
 				# apt fixed
 				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
 					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 				fi
 
 				# install init
-				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
 
 				# install requirements
 				apt install -qqy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
@@ -4290,6 +4290,15 @@ main ()
 				# exec env
 				exec_shell="/usr/share/ubuntu-menu/exec-in-shell"
 
+				# microsoft repo added
+				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+					wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
+					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
+					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+					apt update
+				fi
+
 				# kali repo added
 				if [ ! -f "/etc/apt/sources.list.d/kali.list" ]; then
 					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
@@ -4298,7 +4307,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
