@@ -6,13 +6,21 @@
 <br>
 </div>
 
-## Cybersecurity Roadmap:
+# Features
+### Attractive features
+- Easy installation of all cyber security tools online.
+- Automatic script updates and new changes.
+- Compatibility with Kali Linux and Ubuntu operating systems.
+- The possibility of installing only one of the required sections in the menu.
+- Creating a dedicated menu and icon design for all tools.
+
+## Cybersecurity Roadmap
 [unk9vvn.github.io/cybersecurity-roadmaps](https://unk9vvn.github.io/cybersecurity-roadmaps)
 
-## Cheat Sheet and Check List:
+## Cheat Sheet and Check List
 [unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
-## Tools Installer:
+## Tools Installer
 [unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects)
 
 ### Install Linux Elite
