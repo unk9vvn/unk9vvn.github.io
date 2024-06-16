@@ -4259,7 +4259,7 @@ main ()
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
 				# microsoft repo added
-				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
 					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 					wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
 					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
@@ -4291,7 +4291,7 @@ main ()
 				exec_shell="/usr/share/ubuntu-menu/exec-in-shell"
 
 				# microsoft repo added
-				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
 					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 					wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
 					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
