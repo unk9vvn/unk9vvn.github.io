@@ -6,12 +6,6 @@
 <br>
 </div>
 
-## Cybersecurity Roadmap
-[unk9vvn.github.io/cybersecurity-roadmaps](https://unk9vvn.github.io/cybersecurity-roadmaps)
-
-## Cheat Sheet and Check List
-[unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
-
 ## Tools Installer
 ### Features
 - Easy installation of all cyber security tools online.
