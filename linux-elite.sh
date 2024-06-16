@@ -2759,7 +2759,7 @@ EOF
 	# install emp3r0r
 	if [ ! -d "/usr/share/emp3r0r" ]; then
 		local name="emp3r0r"
-		wget https://github.com/jm33-m0/emp3r0r/releases/latest/download/emp3r0r-v1.36.0.tar.xz -O /tmp/$name.tar.xz
+		wget https://github.com/jm33-m0/emp3r0r/releases/download/v1.37.1/emp3r0r-v1.37.1.tar.xz -O /tmp/$name.tar.xz
 		tar -xvf /tmp/$name.tar.xz -C /usr/share;mv -f /usr/share/emp3r0r-build /usr/share/$name;rm -f /tmp/$name.tar.xz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./emp3r0r --install
