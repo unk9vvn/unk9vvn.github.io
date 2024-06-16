@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.7'
+ver='5.8'
 
 
 
@@ -2812,10 +2812,10 @@ EOF
 		git clone https://github.com/HavocFramework/Havoc /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /user/share/$name/client;make
-		cd /user/share/$name/Teamserver;./install.sh;make
-		ln -fs /user/share/$name/Teamserver/teamserver /usr/bin/$name
+		cd /user/share/$name/teamserver;./install.sh;make
+		ln -fs /user/share/$name/teamserver/teamserver /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $Havoc -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -2988,7 +2988,7 @@ EOF
 	# install frp
 	if [ ! -d "/usr/share/frp" ]; then
 		local name="frp"
-		wget https://github.com/fatedier/frp/releases/latest/download/frp_0.57.0_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/frps /usr/bin/$name
