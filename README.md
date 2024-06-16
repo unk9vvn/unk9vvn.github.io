@@ -6,14 +6,6 @@
 <br>
 </div>
 
-# Features
-### Attractive features
-- Easy installation of all cyber security tools online.
-- Automatic script updates and new changes.
-- Compatibility with Kali Linux and Ubuntu operating systems.
-- The possibility of installing only one of the required sections in the menu.
-- Creating a dedicated menu and icon design for all tools.
-
 ## Cybersecurity Roadmap
 [unk9vvn.github.io/cybersecurity-roadmaps](https://unk9vvn.github.io/cybersecurity-roadmaps)
 
@@ -21,7 +13,12 @@
 [unk9vvn.github.io/#cheat-sheet](https://unk9vvn.github.io/#cheat-sheet)
 
 ## Tools Installer
-[unk9vvn.github.io/projects/](https://unk9vvn.github.io/projects)
+### Features
+- Easy installation of all cyber security tools online.
+- Automatic script updates and new changes.
+- Compatibility with Kali Linux and Ubuntu operating systems.
+- The possibility of installing only one of the required sections in the menu.
+- Creating a dedicated menu and icon design for all tools.
 
 ### Install Linux Elite
 ```
