@@ -6,8 +6,8 @@
 <br>
 </div>
 
-## Tools Installer
-### Features
+# Tools Installer
+## Features
 - Easy installation of all cyber security tools online.
 - Automatic script updates and new changes.
 - Compatibility with Kali Linux and Ubuntu operating systems.
