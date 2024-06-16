@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='5.8'
+ver='5.9'
 
 
 
@@ -3227,10 +3227,19 @@ digital_forensic ()
 	# reverse_engineering_golang=""
 	go_installer "Reverse-Engineering" "Digital-Forensic" "$reverse_engineering_golang"
 
+	# install sysmonforlinux
+	if [ ! -d "/usr/share/sysmonforlinux" ]; then
+		local name="sysmonforlinux"
+		wget https://github.com/Sysinternals/SysmonForLinux/releases/download/1.3.3.0/sysmonforlinux_1.3.3_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
 	# install Repository Tools
-	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic-visualiser bpftool pev readpe 
+	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic bpftool pev readpe 
 
 	# install Python3 pip
 	malware_analysis_pip="stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
@@ -3463,23 +3472,24 @@ EOF
 	if [ ! -d "/usr/share/matano" ]; then
 		local name="matano"
 		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$name.sh
-		chmod +x /tmp/$Matano.sh;cd /tmp;bash $name.sh;rm -f $name.sh
+		chmod +x /tmp/$name.sh;cd /tmp;bash $name.sh;rm -f $name.sh
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 	# install apt-hunter
 	if [ ! -d "/usr/share/apt-hunter" ]; then
 		local name="apt-hunter"
-		git clone https://github.com/ahmedkhlief/APT-Hunter -O /usr/share/$name
+		git clone https://github.com/ahmedkhlief/APT-Hunter /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 APT-Hunter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
-		menu_entry "Threat-Hunting" "Digital-Forensic" "APT-Hunter" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing APT-Hunter"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
 	# install pspy
@@ -3490,6 +3500,35 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/pspy64 /usr/bin/$name
 		chmod +x /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install tracee
+	if [ ! -d "/usr/share/tracee" ]; then
+		local name="tracee"
+		mkdir -p /usr/share/$name
+		wget https://github.com/aquasecurity/tracee/releases/download/v0.20.0/tracee-x86_64.v0.20.0.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/dist/tracee /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install sysinternalsebpf
+	if [ ! -d "/usr/share/sysinternalsebpf" ]; then
+		local name="sysinternalsebpf"
+		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install procdump
+	if [ ! -d "/usr/share/procdump" ]; then
+		local name="procdump"
+		wget https://github.com/Sysinternals/ProcDump-for-Linux/releases/download/3.3.0/procdump_3.3.0_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -3559,7 +3598,7 @@ EOF
 	# install opencti
 	if [ ! -d "/usr/share/opencti" ]; then
 		local name="opencti"
-		wget https://github.com/OpenCTI-Platform/opencti/releases/latest/download/opencti-release-6.1.3.tar.gz  -O /tmp/$name.tar.gz
+		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.1.11/opencti-release-6.1.11.tar.gz  -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
@@ -3573,14 +3612,6 @@ sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
-	# install tram
-	if [ ! -d "/usr/share/tram" ]; then
-		local name="tram"
-		curl -LO https://github.com/center-for-threat-informed-defense/tram/raw/main/docker/docker-compose.yml
-		docker-compose up
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -3693,20 +3724,6 @@ cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		pip3 install -r /usr/share/$name/requirements.txt
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
-	# install cilium
-	if [ ! -d "/usr/local/bin/cilium" ]; then
-		local name="cilium"
-		CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
-		CLI_ARCH=amd64
-		if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
-		curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-		sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
-		tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
-		rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
