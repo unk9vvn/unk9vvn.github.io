@@ -1419,7 +1419,7 @@ EOF
 	# install Ruby GEM
 	# wireless_gem=""
 	gem_installer "Wireless" "Penetration-Testing" "$wireless_gem"
-	
+
 	# install Golang
 	# wireless_golang=""
 	go_installer "Wireless" "Penetration-Testing" "$wireless_golang"
