@@ -2064,8 +2064,7 @@ EOF
 	gem_installer "Defense-Evasion" "Red-Team" "$defense_evasion_gem"
 
 	# install Golang
-	defense_evasion_golang="
-go install github.com/optiv/ScareCrow@latest;ln -fs ~/go/bin/ScareCrow /usr/bin/scarecrow"
+	# defense_evasion_golang=""
 	go_installer "Defense-Evasion" "Red-Team" "$defense_evasion_golang"
 
 	# install aswcrypter
@@ -2121,6 +2120,18 @@ EOF
 #!/bin/bash
 cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install scarecrow
+	if [ ! -d "/usr/share/scarecrow" ]; then
+		local name="scarecrow"
+		mkdir -p /usr/share/$name
+		wget https://github.com/optiv/ScareCrow/releases/download/v5.1/ScareCrow_5.1_linux_amd64 -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/scarecrow /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
