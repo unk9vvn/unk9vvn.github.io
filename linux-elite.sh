@@ -1980,6 +1980,19 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install medusa
+	if [ ! -d "/usr/share/medusa" ]; then
+		local name="medusa"
+		git clone https://github.com/ldpreload/Medusa /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		mkdir -p /usr/share/$name/build;mkdir -p /usr/share/$name/bin
+		cd /usr/share/$name;make
+		ln -fs /usr/share/$name/rkload /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -----------------------------------Privilege-Escalation-Red-Team----------------------------------- #"
 	# install Repository Tools
@@ -4273,10 +4286,10 @@ main ()
 				fi
 
 				# install init
-				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
 
 				# install requirements
-				apt install -qqy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+				apt install -qqy libwrap0-dev libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -4307,13 +4320,13 @@ main ()
 				fi
 
 				# install init
-				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io docker-compose mono-complete mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
+				apt install -qqy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk python3 python3-dev python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
 
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
 
 				# install requirements
-				apt install -qqy libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
+				apt install -qqy libwrap0-dev libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
