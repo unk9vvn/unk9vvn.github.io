@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.0'
+ver='6.1'
 
 
 
@@ -1973,7 +1973,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;python3 smm_backdoor.py "\$@"
+cd /usr/share/$name;python2 smm_backdoor.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
