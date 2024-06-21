@@ -3928,11 +3928,11 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install vuls-scanner
+	# install vuls
 	if [ ! -d "/usr/share/vuls" ]; then
 		local name="vuls"
 		mkdir -p /usr/share/$name
-		wget https://github.com/future-architect/vuls/releases/latest/download/vuls-scanner_0.24.9_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/future-architect/vuls/releases/download/v0.25.4/vuls_0.25.4_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -r /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/vuls /usr/bin/$name
