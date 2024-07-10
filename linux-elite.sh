@@ -1616,6 +1616,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install goredops
+	if [ ! -d "/usr/share/goredops" ]; then
+		local name="goredops"
+		git clone https://github.com/EvilBytecode/GoRedOps /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;ls "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install offensivedlr
 	if [ ! -d "/usr/share/offensivedlr" ]; then
 		local name="offensivedlr"
