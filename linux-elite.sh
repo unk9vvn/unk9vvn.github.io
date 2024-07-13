@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.1'
+ver='6.2'
 
 
 
@@ -3526,6 +3526,17 @@ EOF
 		wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64 -O /usr/share/$name/pspy64
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/pspy64 /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install hayabusa
+	if [ ! -d "/usr/share/hayabusa" ]; then
+		local name="hayabusa"
+		wget https://github.com/Yamato-Security/hayabusa/releases/download/v2.16.0/hayabusa-2.16.0-linux-intel.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		ln -fs /usr/share/$name/hayabusa-2.16.0-lin-x64-gnu /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
