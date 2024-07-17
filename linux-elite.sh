@@ -1314,6 +1314,18 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install pcredz
+	if [ ! -d "/usr/share/pcredz" ]; then
+		local name="pcredz"
+		mkdir -p /usr/share/$name
+		wget https://github.com/lgandx/PCredz -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/Pcredz /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install pret
 	if [ ! -d "/usr/share/pret" ]; then
 		local name="pret"
