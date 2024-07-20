@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.2'
+ver='6.3'
 
 
 
@@ -238,18 +238,18 @@ menu_entry ()
 {
 	local sub_category="$1"
 	local category="$2"
-	name="$3"
+	local tool_name="$3"
 	local command="$4"
-	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${name}.desktop" << EOF
+	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool_name}.desktop" << EOF
 [Desktop Entry]
-Name=${name}
+Name=${tool_name}
 Exec=${command}
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${name}.menu" << EOF
+	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${tool_name}.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -264,7 +264,7 @@ EOF
     <Name>Unk9vvN-${category}-${sub_category}</Name>
     <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
     <Include>
-      <Filename>Unk9vvN-${category}-${sub_category}-${name}.desktop</Filename>
+      <Filename>Unk9vvN-${category}-${sub_category}-${tool_name}.desktop</Filename>
     </Include>
   </Menu>
   </Menu>
