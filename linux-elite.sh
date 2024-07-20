@@ -4128,7 +4128,7 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local > /dev/null &
+firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4163,7 +4163,7 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local > /dev/null &
+firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4198,7 +4198,7 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local > /dev/null &
+firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
