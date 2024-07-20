@@ -4139,8 +4139,9 @@ EOF
 	if [ ! -d "/var/www/joomla" ]; then
 		name="joomla"
 		service apache2 start;service mysql start
+		mkdir -p /var/www/$name
 		wget https://downloads.joomla.org/cms/joomla5/5-1-2/Joomla_5-1-2-Stable-Full_Package.zip -O /tmp/$name.zip
-		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
+		unzip /tmp/$name.zip -d /var/www/$name;rm -f /tmp/$name.zip
 		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
 		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
@@ -4174,7 +4175,7 @@ EOF
 		name="drupal"
 		service apache2 start;service mysql start
 		wget https://www.drupal.org/download-latest/zip -O /tmp/$name.zip
-		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
+		mv -f /var/www/drupal-* /var/www/drupal
 		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
 		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
