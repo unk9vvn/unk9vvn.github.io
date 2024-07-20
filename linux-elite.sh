@@ -4175,6 +4175,7 @@ EOF
 		name="drupal"
 		service apache2 start;service mysql start
 		wget https://www.drupal.org/download-latest/zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
 		mv -f /var/www/drupal-* /var/www/drupal
 		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
 		cat > /etc/apache2/sites-available/$name.conf << EOF
