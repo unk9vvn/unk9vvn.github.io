@@ -4102,7 +4102,7 @@ EOF
 	fi
 
 	# install wordpress
-	if [ ! -d "/var/www/html/wordpress" ]; then
+	if [ ! -d "/var/www/wordpress" ]; then
 		name="wordpress"
 		service apache2 start;service mysql start
 		wget https://wordpress.org/latest.zip -O /tmp/$name.zip
@@ -4112,23 +4112,23 @@ EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
     ServerName $name.local
-    DocumentRoot /var/www/html/$name
-    <Directory /var/www/html/$name>
+    DocumentRoot /var/www/$name
+    <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
+    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
-		echo "127.0.0.1   wordpress.local" >> /etc/hosts
+		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local "\$@"
+firefox --tab http://$name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4136,7 +4136,7 @@ EOF
 	fi
 
 	# install joomla
-	if [ ! -d "/var/www/html/joomla" ]; then
+	if [ ! -d "/var/www/joomla" ]; then
 		name="joomla"
 		service apache2 start;service mysql start
 		wget https://downloads.joomla.org/cms/joomla5/5-1-2/Joomla_5-1-2-Stable-Full_Package.zip -O /tmp/$name.zip
@@ -4146,23 +4146,23 @@ EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
     ServerName $name.local
-    DocumentRoot /var/www/html/$name
-    <Directory /var/www/html/$name>
+    DocumentRoot /var/www/$name
+    <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
+    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
-		echo "127.0.0.1   wordpress.local" >> /etc/hosts
+		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local "\$@"
+firefox --tab http://$name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4170,7 +4170,7 @@ EOF
 	fi
 
 	# install drupal
-	if [ ! -d "/var/www/html/drupal" ]; then
+	if [ ! -d "/var/www/drupal" ]; then
 		name="drupal"
 		service apache2 start;service mysql start
 		wget https://www.drupal.org/download-latest/zip -O /tmp/$name.zip
@@ -4180,23 +4180,23 @@ EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
     ServerName $name.local
-    DocumentRoot /var/www/html/$name
-    <Directory /var/www/html/$name>
+    DocumentRoot /var/www/$name
+    <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
+    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
-		echo "127.0.0.1   wordpress.local" >> /etc/hosts
+		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
-firefox --tab http://$name.local "\$@"
+firefox --tab http://$name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
