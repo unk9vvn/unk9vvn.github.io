@@ -4102,37 +4102,33 @@ EOF
 	fi
 
 	# install wordpress
-	if [ ! -d "/var/www/html/wordpress.local" ]; then
+	if [ ! -d "/var/www/html/wordpress" ]; then
 		name="wordpress"
 		service apache2 start;service mysql start
-		mkdir -p /var/www/$name.local
 		wget https://wordpress.org/latest.zip -O /tmp/$name.zip
-		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip;mv -f /var/www/$name /var/www/$name.local
-		chown -R www-data:www-data /var/www/$name.local;chmod -R 755 /var/www/$name.local
-		chmod 755 /var/www/$name.local/*;chmod 644 -f /var/www/$name.local/*.php
-		cat > /etc/apache2/sites-available/$name.local << EOF
+		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
+		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
+		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
-    ServerAdmin webmaster@$name.local
+    ServerAdmin admin@$name.local
     ServerName $name.local
-    ServerAlias www.$name.local
-    DocumentRoot /var/www/$name.local
-    ErrorLog \${APACHE_LOG_DIR}/$name.local_error.log
-    CustomLog \${APACHE_LOG_DIR}/$name.local_access.log combined
+    DocumentRoot /var/www/html/$name
+    <Directory /var/www/html/$name>
+        AllowOverride All
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
-		cd /etc/apache2/sites-available;a2ensite $SUBDOMAIN.conf
-		# Initialize Webserver
-		if ! grep -q "AllowOverride All" /etc/apache2/apache2.conf; then
-			a2enmod rewrite;a2enmod geoip
-			sed -i "s|AllowOverride None|AllowOverride All|g" /etc/apache2/apache2.conf
-			systemctl start apache2
-		fi
+		cd /etc/apache2/sites-available
+		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		echo "127.0.0.1   wordpress.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-systemctl start apache2;systemctl start mysql
-cd /usr/share/$name.local;firefox --tab http://$name.local "\$@"
+sudo service apache2 start;sudo service mysql start
+firefox --tab http://$name.local "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4140,37 +4136,33 @@ EOF
 	fi
 
 	# install joomla
-	if [ ! -d "/var/www/html/joomla.local" ]; then
+	if [ ! -d "/var/www/html/joomla" ]; then
 		name="joomla"
 		service apache2 start;service mysql start
-		mkdir -p /var/www/$name.local
 		wget https://downloads.joomla.org/cms/joomla5/5-1-2/Joomla_5-1-2-Stable-Full_Package.zip -O /tmp/$name.zip
-		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip;mv -f /var/www/$name /var/www/$name.local
-		chown -R www-data:www-data /var/www/$name.local;chmod -R 755 /var/www/$name.local
-		chmod 755 /var/www/$name.local/*;chmod 644 /var/www/$name.local/*.php
-		cat > /etc/apache2/sites-available/$name.local << EOF
+		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
+		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
+		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
-    ServerAdmin webmaster@$name.local
+    ServerAdmin admin@$name.local
     ServerName $name.local
-    ServerAlias www.$name.local
-    DocumentRoot /var/www/$name.local
-    ErrorLog \${APACHE_LOG_DIR}/$name.local_error.log
-    CustomLog \${APACHE_LOG_DIR}/$name.local_access.log combined
+    DocumentRoot /var/www/html/$name
+    <Directory /var/www/html/$name>
+        AllowOverride All
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
-		cd /etc/apache2/sites-available;a2ensite $SUBDOMAIN.conf
-		# Initialize Webserver
-		if ! grep -q "AllowOverride All" /etc/apache2/apache2.conf; then
-			a2enmod rewrite;a2enmod geoip
-			sed -i "s|AllowOverride None|AllowOverride All|g" /etc/apache2/apache2.conf
-			systemctl start apache2
-		fi
+		cd /etc/apache2/sites-available
+		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		echo "127.0.0.1   wordpress.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-systemctl start apache2;systemctl start mysql
-cd /usr/share/$name.local;firefox --tab http://$name.local "\$@"
+sudo service apache2 start;sudo service mysql start
+firefox --tab http://$name.local "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
@@ -4178,37 +4170,33 @@ EOF
 	fi
 
 	# install drupal
-	if [ ! -d "/var/www/html/drupal.local" ]; then
+	if [ ! -d "/var/www/html/drupal" ]; then
 		name="drupal"
 		service apache2 start;service mysql start
-		mkdir -p /var/www/$name.local
 		wget https://www.drupal.org/download-latest/zip -O /tmp/$name.zip
-		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip;mv -f /var/www/$name /var/www/$name.local
-		chown -R www-data:www-data /var/www/$name.local;chmod -R 755 /var/www/$name.local
-		chmod 755 /var/www/$name.local/*;chmod 644 /var/www/$name.local/*.php
-		cat > /etc/apache2/sites-available/$name.local << EOF
+		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
+		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
+		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
-    ServerAdmin webmaster@$name.local
+    ServerAdmin admin@$name.local
     ServerName $name.local
-    ServerAlias www.$name.local
-    DocumentRoot /var/www/$name.local
-    ErrorLog \${APACHE_LOG_DIR}/$name.local_error.log
-    CustomLog \${APACHE_LOG_DIR}/$name.local_access.log combined
+    DocumentRoot /var/www/html/$name
+    <Directory /var/www/html/$name>
+        AllowOverride All
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
-		cd /etc/apache2/sites-available;a2ensite $SUBDOMAIN.conf
-		# Initialize Webserver
-		if ! grep -q "AllowOverride All" /etc/apache2/apache2.conf; then
-			a2enmod rewrite;a2enmod geoip
-			sed -i "s|AllowOverride None|AllowOverride All|g" /etc/apache2/apache2.conf
-			systemctl start apache2
-		fi
+		cd /etc/apache2/sites-available
+		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		echo "127.0.0.1   wordpress.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-systemctl start apache2;systemctl start mysql
-cd /usr/share/$name.local;firefox --tab http://$name.local "\$@"
+sudo service apache2 start;sudo service mysql start
+firefox --tab http://$name.local "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
