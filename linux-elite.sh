@@ -1484,10 +1484,10 @@ EOF
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy arduino gnuradio blue-hydra 
+	apt install -qy arduino gnuradio blue-hydra e2tools mtools
 
 	# install Python3 pip
-	iot_pip="scapy uefi_firmware unblob"
+	iot_pip="scapy uefi_firmware unblob ubi_reader"
 	pip_installer "IoT" "Penetration-Testing" "$iot_pip"
 
 	# install Nodejs NPM
@@ -1499,8 +1499,48 @@ EOF
 	gem_installer "IoT" "Penetration-Testing" "$iot_gem"
 
 	# install Golang
-	# iot_golang=""
+	iot_golang="
+go install github.com/cruise-automation/fwanalyzer@latest;ln -fs ~/go/bin/fwanalyzer /usr/bin/fwanalyzer"
 	go_installer "IoT" "Penetration-Testing" "$iot_golang"
+
+	# install firmwalker
+	if [ ! -d "/usr/share/firmwalker" ]; then
+		name="firmwalker"
+		git clone https://github.com/craigz28/firmwalker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;./firmwalker.sh "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install bytesweep
+	if [ ! -d "/usr/share/bytesweep" ]; then
+		name="bytesweep"
+		git clone https://gitlab.com/bytesweep/bytesweep /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt;pip3 install .
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install firmware-analysis-toolkit
+	if [ ! -d "/usr/share/firfirmware-analysis-toolkit" ]; then
+		name="firmware-analysis-toolkit"
+		git clone https://github.com/attify/firmware-analysis-toolkit /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./setup.sh
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 fat.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
 
 	exit
 }
