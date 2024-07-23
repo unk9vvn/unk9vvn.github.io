@@ -1206,6 +1206,18 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install ioxy
+	if [ ! -d "/usr/share/ioxy" ]; then
+		name="ioxy"
+		git clone https://github.com/NVISOsecurity/IOXY /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;CGO_CFLAGS="-g -O2 -Wno-return-local-addr" go build -ldflags="-s -w" .
+		ln -fs /usr/share/$name/ioxy /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install k8sgpt
 	if [ ! -d "/usr/share/k8sgpt" ]; then
 		name="k8sgpt"
