@@ -1125,7 +1125,7 @@ EOF
 	apt install -qy awscli trivy 
 
 	# install Python3 pip
-	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake"
+	cloud_pip="sceptre aclpwn powerpwn ggshield pacu whispers s3scanner roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# install Nodejs NPM
@@ -1171,6 +1171,18 @@ EOF
 #!/bin/bash
 cd /usr/share/$name;python3 ccat.py "\$@"
 EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install ioxy
+	if [ ! -d "/usr/share/ioxy" ]; then
+		name="ioxy"
+		git clone https://github.com/NVISOsecurity/IOXY /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;CGO_CFLAGS="-g -O2 -Wno-return-local-addr" go build -ldflags="-s -w" .
+		ln -fs /usr/share/$name/ioxy /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
