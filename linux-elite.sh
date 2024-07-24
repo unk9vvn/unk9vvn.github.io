@@ -1265,6 +1265,8 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 		name="hiddify"
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+  		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/hiddify" >> /etc/sudoers
+  		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/Hiddify-Cli" >> /etc/sudoers
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
