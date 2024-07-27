@@ -2243,6 +2243,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install edr_blocker
+	if [ ! -d "/usr/share/edr_blocker" ]; then
+		name="edr_blocker"
+		git clone https://github.com/TierZeroSecurity/edr_blocker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 edr_blocker.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install scarecrow
 	if [ ! -d "/usr/share/scarecrow" ]; then
 		name="scarecrow"
