@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.3'
+ver='6.4'
 
 
 
@@ -486,6 +486,37 @@ EOF
 		ln -fs /usr/share/$name/findomain /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install blacklist3r
+	if [ ! -d "/usr/share/blacklist3r" ]; then
+		name="blacklist3r"
+		mkdir /usr/share/$name
+		wget https://github.com/NotSoSecure/Blacklist3r/releases/download/4.0/AspDotNetWrapper.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;mono AspDotNetWrapper.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install graphpython
+	if [ ! -d "/usr/share/graphpython" ]; then
+		name="graphpython"
+		git clone https://github.com/mlcsec/Graphpython /usr/share/$name 
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;pip install .
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 Graphpython.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -2223,6 +2254,20 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 unicorn.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install edr_blocker
+	if [ ! -d "/usr/share/edr_blocker" ]; then
+		name="edr_blocker"
+		git clone https://github.com/TierZeroSecurity/edr_blocker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 edr_blocker.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
