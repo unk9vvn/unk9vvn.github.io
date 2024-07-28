@@ -576,6 +576,22 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install blacklist3r
+	if [ ! -d "/usr/share/blacklist3r" ]; then
+		name="blacklist3r"
+		mkdir /usr/share/$name
+		wget https://github.com/NotSoSecure/Blacklist3r/releases/download/4.0/AspDotNetWrapper.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;mono AspDotNetWrapper.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install asnlookup
 	if [ ! -d "/usr/share/asnlookup" ]; then
 		name="asnlookup"
