@@ -4545,11 +4545,6 @@ main ()
 					apt update
 				fi
 
-				# apt fixed
-				if ! grep -q "http.kali.org/kali kali-rolling" /etc/apt/sources.list; then
-					echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
-				fi
-
 				# install init
 				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-dev python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
 
