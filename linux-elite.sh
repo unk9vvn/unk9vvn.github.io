@@ -1846,6 +1846,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install pdfdropper
+	if [ ! -d "/usr/share/pdfdropper" ]; then
+		name="pdfdropper"
+		git clone https://github.com/0x6rss/pdfdropper /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install blackeye
 	if [ ! -d "/usr/share/blackeye" ]; then
 		name="blackeye"
