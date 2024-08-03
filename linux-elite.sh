@@ -2209,6 +2209,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install deadpotato
+	if [ ! -d "/usr/share/deadpotato" ]; then
+		name="deadpotato"
+		mkdir -p /usr/share/$name
+		wget https://github.com/lypd0/DeadPotato/releases/download/1.1/DeadPotato-NET4.exe -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;mono DeadPotato-NET4.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #"
 	# install Repository Tools
