@@ -1015,13 +1015,14 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install hashextender
-	if [ ! -d "/usr/share/hashextender" ]; then
-		name="hashextender"
+	# install hash_extender
+	if [ ! -d "/usr/share/hash_extender" ]; then
+		name="hash_extender"
 		git clone https://github.com/iagox86/hash_extender /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		sed -i "s|-Werror -Wno-deprecated||g" /usr/share/$name/Makefile
 		cd /usr/share/$name;make
-		ln -fs /usr/share/$name/hashextender /usr/bin/$name
+		ln -fs /usr/share/$name/hash_extender /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
