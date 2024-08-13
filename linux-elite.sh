@@ -4273,11 +4273,16 @@ EOF
 		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
-    ServerName $name.local
     DocumentRoot /var/www/$name
+    ServerName $name.local
+    ServerAlias www.$name.local
+
     <Directory /var/www/$name>
+        Options FollowSymLinks
         AllowOverride All
+        Require all granted
     </Directory>
+
     ErrorLog ${APACHE_LOG_DIR}/$name_error.log
     CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
@@ -4286,14 +4291,13 @@ EOF
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
+		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4308,11 +4312,16 @@ EOF
 		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
-    ServerName $name.local
     DocumentRoot /var/www/$name
+    ServerName $name.local
+    ServerAlias www.$name.local
+
     <Directory /var/www/$name>
+        Options FollowSymLinks
         AllowOverride All
+        Require all granted
     </Directory>
+
     ErrorLog ${APACHE_LOG_DIR}/$name_error.log
     CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
@@ -4321,14 +4330,13 @@ EOF
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
+		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4343,11 +4351,16 @@ EOF
 		cat > /etc/apache2/sites-available/$name.conf << EOF
 <VirtualHost *:80>
     ServerAdmin admin@$name.local
-    ServerName $name.local
     DocumentRoot /var/www/$name
+    ServerName $name.local
+    ServerAlias www.$name.local
+
     <Directory /var/www/$name>
+        Options FollowSymLinks
         AllowOverride All
+        Require all granted
     </Directory>
+
     ErrorLog ${APACHE_LOG_DIR}/$name_error.log
     CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
@@ -4356,14 +4369,13 @@ EOF
 		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;"
+		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
