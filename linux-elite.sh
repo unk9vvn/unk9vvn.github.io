@@ -4278,8 +4278,8 @@ EOF
     <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
-    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
@@ -4313,8 +4313,8 @@ EOF
     <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
-    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
@@ -4348,8 +4348,8 @@ EOF
     <Directory /var/www/$name>
         AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/"$name"_error.log
-    CustomLog ${APACHE_LOG_DIR}/"$name"_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
+    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
