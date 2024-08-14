@@ -4589,9 +4589,15 @@ main ()
 				# exec env
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
+				# debian repo added
+				if grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
+					echo "deb http://deb.debian.org/debian bullseye main contrib non-free" | tee -a /etc/apt/sources.list
+					apt update
+				fi
+
 				# microsoft repo added
 				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
-					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 					wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
 					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
 					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
@@ -4629,7 +4635,7 @@ main ()
 				if [ ! -f "/etc/apt/sources.list.d/kali.list" ]; then
 					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
-					apt update
+					apt-get -y --allow-unauthenticated install kali-archive-keyring;apt update
 				fi
 
 				# install init
