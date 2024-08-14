@@ -4591,7 +4591,7 @@ main ()
 
 				# debian repo added
 				if grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-					echo "deb http://deb.debian.org/debian bullseye main contrib non-free" | tee -a /etc/apt/sources.list
+					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
 					apt update
 				fi
 
