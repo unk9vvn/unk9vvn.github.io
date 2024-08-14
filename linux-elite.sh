@@ -21,7 +21,7 @@ if [ "$(id -u)" != "0" ];then
 	exit 0
 else
 	# update & upgrade & dist-upgrade
-	apt update;apt upgrade -qqy;apt dist-upgrade -qqy;apt autoremove -qqy;apt autoclean
+	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
 
 	# init requirements
 	apt install -qqy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify software-properties-common
@@ -4632,6 +4632,13 @@ main ()
 				# exec env
 				exec_shell="/usr/share/ubuntu-menu/exec-in-shell"
 
+				# debian repo added
+				if grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
+					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
+					apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
+					apt update
+				fi
+
 				# microsoft repo added
 				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
 					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
@@ -4649,7 +4656,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
+				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
     
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
