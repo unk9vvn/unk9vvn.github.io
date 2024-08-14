@@ -347,7 +347,7 @@ penetrating_testing ()
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
-	web_npm="jwt-cracker graphql padding-oracle-attacker http-proxy-to-socks javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze hardhat"
+	web_npm="jwt-cracker graphql padding-oracle-attacker javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze hardhat"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# install Ruby GEM
@@ -1336,6 +1336,16 @@ go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/
 cd /usr/share/$name;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install multitor
+	if [ ! -d "/usr/share/multitor" ]; then
+		name="multitor"
+		git clone https://github.com/trimstray/multitor /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./setup.sh install
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4605,7 +4615,7 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools
+				apt install -qy dnsutils apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools 
 
 				# install requirements
 				apt install -qy libwrap0-dev libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
