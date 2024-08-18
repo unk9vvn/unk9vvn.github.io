@@ -1496,6 +1496,19 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install spoofdpi
+	if [ ! -d "/usr/share/spoofdpi" ]; then
+		name="spoofdpi"
+		mkdir -p /usr/share/$name
+		wget https://github.com/xvzc/SpoofDPI/releases/latest/download/spoof-dpi-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/donut /usr/bin/$Donut
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -----------------------------------Wireless-Penetration-Testing------------------------------------ #"
 	# install Repository Tools
