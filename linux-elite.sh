@@ -4035,6 +4035,13 @@ EOF
 go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/casbin"
 	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
+	# install jumpserver
+	if [ ! -d "/usr/share/jumpserver" ]; then
+		name="jumpserver"
+		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -------------------------------------------Deceive-Blue-Team--------------------------------------- #"
 	# install Repository Tools
