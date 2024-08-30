@@ -3461,7 +3461,16 @@ digital_forensic ()
 		name="sysmonforlinux"
 		wget https://github.com/Sysinternals/SysmonForLinux/releases/download/1.3.3.0/sysmonforlinux_1.3.3_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install bindiff
+	if [ ! -d "/usr/share/bindiff" ]; then
+		name="bindiff"
+		wget https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
