@@ -3567,6 +3567,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install trace-forensic-toolkit
+	if [ ! -d "/usr/share/trace" ]; then
+		name="trace"
+		git clone https://github.com/Gadzhovski/TRACE-Forensic-Toolkit /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install steganabara
 	if [ ! -d "/usr/share/steganabara" ]; then
 		name="steganabara"
