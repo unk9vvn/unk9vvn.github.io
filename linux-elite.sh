@@ -1449,6 +1449,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+ 	# install kraken
+	if [ ! -d "/usr/share/kraken" ]; then
+		name="kraken"
+		git clone https://github.com/jasonxtn/Kraken /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 kraken.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install pwndbg
 	if [ ! -d "/usr/share/pwndbg" ]; then
 		name="pwndbg"
