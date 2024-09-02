@@ -4672,7 +4672,7 @@ main ()
 				exec_shell="/usr/share/kali-menu/exec-in-shell"
 
 				# debian repo added
-				if grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
+				if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
 					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
 					apt update
 				fi
@@ -4705,7 +4705,7 @@ main ()
 				exec_shell="/usr/share/ubuntu-menu/exec-in-shell"
 
 				# debian repo added
-				if grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
+				if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
 					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
 					apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
 					apt update
