@@ -536,7 +536,7 @@ EOF
 	# install rustscan
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		name="rustscan"
-		wget https://github.com/RustScan/RustScan/releases/latest/download/rustscan_2.2.3_amd64.deb -O /tmp/$name.deb
+		wget https://github.com/RustScan/RustScan/releases/download/2.3.0/rustscan_2.3.0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1174,6 +1174,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
+		pip3 install django
 		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$name
 		wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb -O /tmp/wkhtmltox.deb
 		chmod +x /tmp/wkhtmltox.deb;dpkg -i /tmp/wkhtmltox.deb;rm -f /tmp/wkhtmltox.deb
