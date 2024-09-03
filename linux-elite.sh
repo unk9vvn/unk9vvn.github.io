@@ -785,7 +785,8 @@ EOF
 	# install spidersuite
 	if [ ! -d "/usr/share/spidersuite" ]; then
 		name="spidersuite"
-		wget https://github.com/3nock/SpiderSuite/releases/latest/download/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/$name/SpiderSuite_linux.AppImage
+		mkdir -p /usr/share/$name
+		wget https://github.com/3nock/SpiderSuite/releases/download/v1.0.4/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/$name/SpiderSuite_linux.AppImage
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
