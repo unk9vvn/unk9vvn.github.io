@@ -472,7 +472,7 @@ EOF
 		name="x8"
 		mkdir -f /usr/share/x8
 		wget https://github.com/Sh1Yo/x8/releases/latest/download/x86_64-linux-x8.gz -O /tmp/$name.gz
-		tar -xvf /tmp/$name.gz -C /usr/share/$name;rm -f /tmp/$name.gz
+		gzip -d /tmp/$name.gz -C /usr/share/$name;rm -f /tmp/$name.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
