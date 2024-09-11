@@ -2503,7 +2503,7 @@ EOF
 	apt install -qy pdfcrack fcrackzip rarcrack 
 
 	# install Python3 pip
-	credential_access_pip="adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm"
+	credential_access_pip="adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm donpapi lsassy dploot"
 	pip_installer "Credential-Access" "Red-Team" "$credential_access_pip"
 
 	# install Nodejs NPM
