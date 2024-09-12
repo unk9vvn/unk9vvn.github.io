@@ -668,6 +668,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+ 	# install aspjinjaobfuscator
+	if [ ! -d "/usr/share/aspjinjaobfuscator" ]; then
+		name="aspjinjaobfuscator"
+		git clone https://github.com/fin3ss3g0d/ASPJinjaObfuscator /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 asp-jinja-obfuscator.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install waymore
 	if [ ! -d "/usr/share/waymore" ]; then
 		name="waymore"
