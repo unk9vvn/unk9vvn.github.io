@@ -2362,21 +2362,6 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install avet
-	if [ ! -d "/usr/share/avet" ]; then
-		name="avet"
-		git clone https://github.com/govolution/avet /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		bash /usr/share/$name/setup.sh
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;python3 avet.py "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
 	# install unicorn
 	if [ ! -d "/usr/share/unicorn" ]; then
 		name="unicorn"
