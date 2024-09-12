@@ -379,6 +379,7 @@ go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /u
 go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
 go install github.com/tomnomnom/gron@latest;ln -fs ~/go/bin/gron /usr/bin/gron
+go install github.com/projectdiscovery/chaos-client/cmd/chaos@latest;ln -fs ~/go/bin/chaos /usr/bin/chaos
 go install github.com/Hackmanit/TInjA@latest;ln -fs ~/go/bin/TInjA /usr/bin/tinja
 go install github.com/moopinger/smugglefuzz@latest;ln -fs ~/go/bin/smugglefuzz /usr/bin/smugglefuzz
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
