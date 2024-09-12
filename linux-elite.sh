@@ -551,6 +551,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install bypassneo-regeorg
+	if [ ! -d "/usr/share/bypassneo-regeorg" ]; then
+		name="bypassneo-regeorg"
+		git clone https://github.com/r00tSe7en/BypassNeo-reGeorg /usr/share/$name 
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 BypassNeoASPX.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install rustscan
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		name="rustscan"
