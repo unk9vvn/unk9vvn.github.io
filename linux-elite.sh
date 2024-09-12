@@ -470,6 +470,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install spiderfoot
+	if [ ! -d "/usr/share/spiderfoot" ]; then
+		name="spiderfoot"
+		git clone https://github.com/smicallef/spiderfoot.git /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 ./sf.py -l 127.0.0.1:5001 "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		name="x8"
