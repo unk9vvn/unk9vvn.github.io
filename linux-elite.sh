@@ -373,6 +373,8 @@ go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/sh
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
+go install github.com/trickest/mksub@latest;ln -fs ~/go/bin/mksub /usr/bin/mksub
+go install github.com/trickest/dsieve@latest;ln -fs ~/go/bin/dsieve /usr/bin/dsieve
 go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
 go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
@@ -391,6 +393,7 @@ go install github.com/takshal/freq@latest;ln -fs ~/go/bin/freq /usr/bin/freq
 go install github.com/hakluke/hakrevdns@latest;ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
 go install github.com/hakluke/haktldextract@latest;ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
 go install github.com/Emoe/kxss@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
+go install github.com/Josue87/gotator@latest;ln -fs ~/go/bin/gotator /usr/bin/gotator
 go install github.com/trap-bytes/gourlex@latest;ln -fs ~/go/bin/gourlex /usr/bin/gourlex
 go install github.com/ThreatUnkown/jsubfinder@latest;ln -fs ~/go/bin/jsubfinder /usr/bin/jsubfinder
 go install github.com/musana/fuzzuli@latest;ln -fs ~/go/bin/fuzzuli /usr/bin/fuzzuli
