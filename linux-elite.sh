@@ -591,6 +591,15 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+ 	# install ronin
+	if [ ! -f "/usr/bin/ronin" ]; then
+		name="ronin"
+		curl -o ronin-install.sh https://raw.githubusercontent.com/ronin-rb/scripts/main/ronin-install.sh && bash ronin-install.sh
+		rm -f ronin
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install hashpump
 	if [ ! -d "/usr/share/hashpump" ]; then
 		name="hashpump"
@@ -4740,7 +4749,7 @@ main ()
 				# install init
 				apt install -qy dnsutils apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools 
 
-				# install requirements
+				# install dependencies
 				apt install -qy python3-pwntools libwrap0-dev libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
@@ -4784,7 +4793,7 @@ main ()
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
 
-				# install requirements
+				# install dependencies
 				apt install -qy python3-pwntools libwrap0-dev libfontconfig1 libglu1-mesa-dev libconfig-dev libgtest-dev libspdlog-dev libboost-all-dev libunwind-dev libncurses5-dev binutils-dev libgdbm-dev libblocksruntime-dev libssl-dev libevent-dev libreadline-dev libpcre2-dev libffi-dev zlib1g-dev libsqlite3-dev libbz2-dev mesa-common-dev qt5-qmake qtbase5-dev qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev qtdeclarative5-dev libzydis-dev python3-dev python3-pip python3-poetry php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
