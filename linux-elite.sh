@@ -393,6 +393,7 @@ go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bi
 go install github.com/securebinary/firebaseExploiter@latest;ln -fs ~/go/bin/firebaseExploiter /usr/bin/firebaseexploiter
 go install github.com/devanshbatham/headerpwn@latest;ln -fs ~/go/bin/headerpwn /usr/bin/headerpwn
 go install github.com/dwisiswant0/cf-check@latest;ln -fs ~/go/bin/cf-check /usr/bin/cfcheck
+go install github.com/mlcsec/headi@latest;ln -fs ~/go/bin/headi /usr/bin/headi
 go install github.com/takshal/freq@latest;ln -fs ~/go/bin/freq /usr/bin/freq
 go install github.com/hakluke/hakrevdns@latest;ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
 go install github.com/hakluke/haktldextract@latest;ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
