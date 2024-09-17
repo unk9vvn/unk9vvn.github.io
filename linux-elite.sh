@@ -522,7 +522,6 @@ EOF
 	# install graphql-playground
 	if [ ! -d "/usr/share/graphql-playground" ]; then
 		name="graphql-playground"
-		mkdir -p /usr/share/$name
 		wget https://github.com/graphql/graphql-playground/releases/download/v1.8.10/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
