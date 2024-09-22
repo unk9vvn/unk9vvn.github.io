@@ -408,6 +408,7 @@ go install github.com/tomnomnom/qsreplace@latest;ln -fs ~/go/bin/qsreplace /usr/
 go install github.com/edoardottt/pphack/cmd/pphack@latest;ln -fs ~/go/bin/pphack /usr/bin/pphack
 go install github.com/lc/subjs@latest;ln -fs ~/go/bin/subjs /usr/bin/subjs
 go install github.com/dwisiswant0/unew@latest;ln -fs ~/go/bin/unew /usr/bin/unew
+go install github.com/edoardottt/favirecon/cmd/favirecon@latest;ln -fs ~/go/bin/favirecon /usr/bin/favirecon
 go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/unfurl
 go install github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest;ln -fs ~/go/bin/shuffledns /usr/bin/shuffledns
 go install github.com/projectdiscovery/notify/cmd/notify@latest;ln -fs ~/go/bin/notify /usr/bin/notify
@@ -552,6 +553,16 @@ EOF
 cd /usr/share/$name;mono AspDotNetWrapper.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+ 	# install wafw00f
+	if [ ! -d "/usr/share/wafw00f" ]; then
+		name="wafw00f"
+		git clone https://github.com/EnableSecurity/wafw00f /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;python3 setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
