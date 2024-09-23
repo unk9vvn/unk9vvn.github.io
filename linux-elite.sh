@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.8'
+ver='6.9'
 
 
 
@@ -343,7 +343,7 @@ penetrating_testing ()
 	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
 
 	# install Python3 pip
-	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer ja3"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
@@ -1415,7 +1415,8 @@ EOF
 
 	# install Golang
 	network_golang="
-go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan"
+go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan
+go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
 	go_installer "Network" "Penetration-Testing" "$network_golang"
 
 	# install hiddify
@@ -3792,7 +3793,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon 
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -3807,7 +3808,8 @@ EOF
 	gem_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_gem"
 
 	# install Golang
-	# threat_hunting_golang=""
+	threat_hunting_golang="
+go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
 	go_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_golang"
 
 	# install matano
@@ -3854,6 +3856,19 @@ EOF
 		ln -fs /usr/share/$name/hayabusa-2.16.0-lin-x64-gnu /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install aiengine
+	if [ ! -d "/usr/share/aiengine" ]; then
+		name="aiengine"
+		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./autogen.sh;./configure;make
+		ln -fs /usr/share/$name/aiengine /usr/bin/$name
+		chmod +x /usr/bin/$name
+		pip3 install -r /usr/share/$name/requirements.txt
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4004,10 +4019,10 @@ blue_team ()
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 	# install Repository Tools
-	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus 
+	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus stenographer 
 
 	# install Python3 pip
-	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma"
+	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma ja3"
 	pip_installer "Detect" "Blue-Team" "$detect_pip"
 
 	# install Nodejs NPM
@@ -4020,6 +4035,7 @@ blue_team ()
 
 	# install Golang
 	detect_golang="
+go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
 	go_installer "Detect" "Blue-Team" "$detect_golang"
 
@@ -4054,6 +4070,15 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install logstash
+	if [ ! -f "/etc/apt/sources.list.d/elastic-8.x.list" ]; then
+		name="logstash"
+		wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elastic-keyring.gpg
+		echo "deb [signed-by=/usr/share/keyrings/elastic-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.x.list
+		apt-get update && apt-get install logstash
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install falco
 	if [ ! -f "/etc/apt/sources.list.d/falcosecurity.list" ]; then
 		name="falco"
@@ -4080,6 +4105,27 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install ntop
+	if [ ! -d "/usr/share/ntop" ]; then
+		name="ntop"
+		apt-get install -y software-properties-common wget add-apt-repository universe
+		wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
+		chmod +x /tmp/apt-ntop-stable.deb;apt install /tmp/apt-ntop-stable.deb 
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install aiengine
+	if [ ! -d "/usr/share/aiengine" ]; then
+		name="aiengine"
+		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./autogen.sh;./configure;make
+		ln -fs /usr/share/$name/aiengine /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install ossec
 	if [ ! -f "/etc/apt/sources.list.d/atomic.list" ]; then
 		name="ossec"
@@ -4096,6 +4142,7 @@ EOF
 		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/cilium /usr/bin/$name
+		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
