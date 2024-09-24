@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='6.9'
+ver='7.0'
 
 
 
@@ -281,7 +281,7 @@ pip_installer ()
 	local pip_array="$3"
 	for pip_index in ${pip_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "$exec_shell 'sudo ${pip_index} -h'"
-		pip3 install "$pip_index"
+		pip3 install "$pip_index" --break-system-packages
 		printf "$GREEN"  "[*] Success installing ${pip_index}"
 	done
 }
@@ -4827,7 +4827,7 @@ main ()
 				fi
 
 				# upgrade pips
-				pip2 install --upgrade pip;pip3 install --upgrade pip
+				pip2 install --upgrade pip;pip3 install --upgrade pip --break-system-packages
 				;;
 			ubuntu)
 				# exec env
@@ -4883,7 +4883,7 @@ main ()
 	pip2 install setuptools env pipenv wheel requests colorama 
 
 	# install Python3 pip
-	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp 
+	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp --break-system-packages
 
 	# install nodejs NPM
 	# npm install -g 
