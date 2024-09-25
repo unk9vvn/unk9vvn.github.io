@@ -2816,7 +2816,7 @@ EOF
 		name="nebula"
 		git clone https://github.com/gl4ssesbo1/Nebula /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 main.py "\$@"
@@ -2845,7 +2845,7 @@ EOF
 		name="evilosx"
 		git clone https://github.com/Marten4n6/EvilOSX /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 start.py "\$@"
@@ -2888,12 +2888,12 @@ EOF
 		name="godgenesis"
 		git clone https://github.com/SaumyajeetDas/GodGenesis /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 c2c.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -2903,7 +2903,7 @@ EOF
 		name="phonesploit"
 		git clone https://github.com/AzeemIdrisi/PhoneSploit-Pro /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 phonesploitpro.py "\$@"
@@ -2998,7 +2998,7 @@ EOF
 		name="badrats"
 		git clone https://gitlab.com/KevinJClark/badrats /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 badrat_server.py "\$@"
@@ -3037,7 +3037,7 @@ EOF
 		name="blackmamba"
 		git clone https://github.com/loseys/BlackMamba /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 main.py "\$@"
