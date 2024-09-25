@@ -24,7 +24,7 @@ else
 	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
 
 	# init requirements
-	apt install -qqy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify software-properties-common
+	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify software-properties-common
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
