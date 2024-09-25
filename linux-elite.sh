@@ -369,7 +369,7 @@ go install github.com/projectdiscovery/dnsprobe@latest;ln -fs ~/go/bin/dnsprobe 
 go install github.com/ryandamour/crlfmap@latest;ln -fs ~/go/bin/crlfmap /usr/bin/crlfmap
 go install github.com/hahwul/dalfox/v2@latest;ln -fs ~/go/bin/dalfox /usr/bin/dalfox
 go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jsluice /usr/bin/jsluice
-go install github.com/d3mondev//v2@latest;ln -fs ~/go/bin/ /usr/bin/
+go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
