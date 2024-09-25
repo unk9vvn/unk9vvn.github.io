@@ -430,7 +430,7 @@ go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bi
 		name="cloudbunny"
 		git clone https://github.com/Warflop/CloudBunny /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudbunny.py "\$@"
@@ -482,7 +482,7 @@ EOF
 		name="spiderfoot"
 		git clone https://github.com/smicallef/spiderfoot /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 ./sf.py -l 127.0.0.1:5001 "\$@"
@@ -498,7 +498,7 @@ EOF
 		git clone https://github.com/nicholasaleks/CrackQL /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt
-cat > /usr/bin/$name << EOF
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 CrackQL.py "\$@"
 EOF
@@ -639,7 +639,7 @@ EOF
 		name="grb"
 		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 test.py "\$@"
@@ -682,7 +682,7 @@ EOF
 		name="cloakquest3r"
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
@@ -697,7 +697,7 @@ EOF
 		name="proxyshell"
 		git clone https://github.com/horizon3ai/proxyshell /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 exchange_proxyshell.py "\$@"
@@ -712,7 +712,7 @@ EOF
 		name="asnlookup"
 		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 asnlookup.py "\$@"
@@ -727,7 +727,7 @@ EOF
 		name="aspjinjaobfuscator"
 		git clone https://github.com/fin3ss3g0d/ASPJinjaObfuscator /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 asp-jinja-obfuscator.py "\$@"
@@ -742,7 +742,7 @@ EOF
 		name="waymore"
 		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 waymore.py "\$@"
@@ -859,7 +859,7 @@ EOF
 		name="docem"
 		git clone https://github.com/whitel1st/docem /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 docem.py "\$@"
@@ -889,7 +889,7 @@ EOF
 		name="jsa"
 		git clone https://github.com/w9w/JSA /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cd /usr/share/$name;bash install.sh
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -905,7 +905,7 @@ EOF
 		name="smuggle"
 		git clone https://github.com/anshumanpattnaik/http-request-smuggling /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 smuggle.py "\$@"
@@ -973,7 +973,7 @@ EOF
 		name="waf-bypass"
 		git clone https://github.com/nemesida-waf/waf-bypass /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -989,7 +989,7 @@ EOF
 		name="xssloader"
 		git clone https://github.com/capture0x/XSS-LOADER /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 payloader.py "\$@"
@@ -1004,7 +1004,7 @@ EOF
 		name="cmseek"
 		git clone https://github.com/Tuhinshubhra/CMSeeK /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cmseek.py "\$@"
@@ -1019,7 +1019,7 @@ EOF
 		name="xsstrike"
 		git clone https://github.com/s0md3v/XSStrike /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 xsstrike.py "\$@"
@@ -1063,7 +1063,7 @@ EOF
 		name="tplmap"
 		git clone https://github.com/epinna/tplmap /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 tplmap.py "\$@"
@@ -1078,7 +1078,7 @@ EOF
 		name="sstimap"
 		git clone https://github.com/vladko312/SSTImap /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 sstimap.py "\$@"
@@ -1261,7 +1261,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
-		pip3 install django
+		pip3 install django --break-system-packages
 		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$name
 		wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb -O /tmp/wkhtmltox.deb
 		chmod +x /tmp/wkhtmltox.deb;dpkg -i /tmp/wkhtmltox.deb;rm -f /tmp/wkhtmltox.deb
@@ -1309,7 +1309,7 @@ go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bi
 		name="cloudfail"
 		git clone https://github.com/m0rtem/CloudFail /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudfail.py "\$@"
@@ -1351,7 +1351,7 @@ EOF
 		name="cloudhunter"
 		git clone https://github.com/belane/CloudHunter /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudhunter.py "\$@"
@@ -1366,7 +1366,7 @@ EOF
 		name="gcpbucketbrute"
 		git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudhunter.py "\$@"
@@ -1458,7 +1458,7 @@ EOF
 		name="sippts"
 		git clone https://github.com/Pepelux/sippts /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cd /usr/share/$name;python3 setup.py install
 		menu_entry "Network" "Penetration-Testing" "rtcpbleed" "$exec_shell 'rtcpbleed -h'"
 		menu_entry "Network" "Penetration-Testing" "rtpbleed" "$exec_shell 'rtpbleed -h'"
@@ -1529,7 +1529,7 @@ EOF
 		name="geneva"
 		git clone https://github.com/Kkevsterrr/geneva /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 engine.py "\$@"
@@ -1544,7 +1544,7 @@ EOF
 		name="kraken"
 		git clone https://github.com/jasonxtn/Kraken /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 kraken.py "\$@"
@@ -1604,7 +1604,7 @@ EOF
 		name="memcrashed"
 		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 Memcrashed.py "\$@"
@@ -1653,7 +1653,7 @@ EOF
 		name="gtscan"
 		git clone https://github.com/SigPloiter/GTScan /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 gtscan.py "\$@"
@@ -1682,7 +1682,7 @@ EOF
 		name="geowifi"
 		git clone https://github.com/GONZOsint/geowifi /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 geowifi.py "\$@"
@@ -1733,7 +1733,7 @@ EOF
 		name="bytesweep"
 		git clone https://gitlab.com/bytesweep/bytesweep /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt;pip3 install .
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages;pip3 install .
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4100,7 +4100,7 @@ EOF
 cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
