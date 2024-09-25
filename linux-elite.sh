@@ -459,7 +459,7 @@ EOF
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/postman /usr/bin/$name
+		ln -fs /usr/share/$name/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
