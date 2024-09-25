@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.1'
+ver='7.2'
 
 
 
@@ -2970,9 +2970,9 @@ EOF
 	if [ ! -d "/usr/share/ligolo-mp" ]; then
 		name="ligolo-mp"
 		mkdir -p /usr/share/$name
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_server_1.0.3_linux_amd64 -O /usr/share/$name/ligolos
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_linux_amd64 -O /usr/share/$name/ligoloc
-		wget https://github.com/ttpreport/ligolo-mp/releases/latest/download/ligolo-mp_client_1.0.3_windows_amd64.exe -O /usr/share/$name/ligoloc.exe
+		wget https://github.com/ttpreport/ligolo-mp/releases/download/v1.0.4/ligolo-mp_server_1.0.4_linux_amd64 -O /usr/share/$name/ligolos
+		wget https://github.com/ttpreport/ligolo-mp/releases/download/v1.0.4/ligolo-mp_client_1.0.4_linux_amd64 -O /usr/share/$name/ligoloc
+		wget https://github.com/ttpreport/ligolo-mp/releases/download/v1.0.4/ligolo-mp_client_1.0.4_windows_amd64.exe -O /usr/share/$name/ligoloc.exe
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/ligolos /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -3254,7 +3254,7 @@ EOF
 	if [ ! -d "/usr/share/transfer.sh" ]; then
 		name="transfer.sh"
 		mkdir -p /usr/share/$name
-		wget https://github.com/dutchcoders/transfer.sh/releases/latest/download/transfersh-v1.6.1-linux-amd64 -O /usr/share/$name/transfer.sh
+		wget https://github.com/dutchcoders/transfer.sh/releases/download/v1.6.1/transfersh-v1.6.1-linux-amd64 -O /usr/share/$name/transfer.sh
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/transfersh /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -3267,7 +3267,7 @@ EOF
 		name="dnslivery"
 		git clone https://github.com/no0be/DNSlivery /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 dnslivery.py "\$@"
@@ -3295,7 +3295,7 @@ EOF
 	if [ ! -d "/usr/share/wstunnel" ]; then
 		name="wstunnel"
 		mkdir -p /usr/share/$name
-		wget https://github.com/erebe/wstunnel/releases/latest/download/wstunnel_9.2.5_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/erebe/wstunnel/releases/download/v10.1.1/wstunnel_10.1.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/wstunnel /usr/bin/$name
@@ -3307,7 +3307,7 @@ EOF
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		name="kubo"
-		wget https://github.com/ipfs/kubo/releases/latest/download/kubo_v0.28.0_linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/ipfs/kubo/releases/download/v0.30.0/kubo_v0.30.0_linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
@@ -3344,7 +3344,7 @@ EOF
 	if [ ! -d "/usr/share/hfs" ]; then
 		name="hfs"
 		mkdir -p /usr/share/$name
-		wget https://github.com/rejetto/hfs/releases/latest/download/hfs-linux.zip -O /tmp/$name.zip
+		wget https://github.com/rejetto/hfs/releases/download/v0.53.0/hfs-linux-x64-0.53.0.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/hfs /usr/bin/$name
