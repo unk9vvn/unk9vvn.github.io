@@ -1656,7 +1656,7 @@ EOF
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;python3 gtscan.py "\$@"
+cd /usr/share/$name;python3 GTScan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
