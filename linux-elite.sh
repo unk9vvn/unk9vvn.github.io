@@ -4836,7 +4836,7 @@ main ()
 				# debian repo added
 				if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
 					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
-					apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
+					apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 0E98404D386FA1D9 DCC9EFBF77E11517
 					apt update
 				fi
 
