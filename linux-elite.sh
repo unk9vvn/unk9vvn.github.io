@@ -347,7 +347,7 @@ penetrating_testing ()
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
-	web_npm="jwt-cracker graphql padding-oracle-attacker javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor infoooze hardhat"
+	web_npm="jwt-cracker graphql padding-oracle-attacker javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor crlfi infoooze hardhat is-website-vulnerable"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
 	# install Ruby GEM
@@ -375,6 +375,7 @@ go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
 go install github.com/trickest/mksub@latest;ln -fs ~/go/bin/mksub /usr/bin/mksub
+go install github.com/nullt3r/udpx/cmd/udpx@latest;ln -fs ~/go/bin/udpx /usr/bin/udpx
 go install github.com/trickest/dsieve@latest;ln -fs ~/go/bin/dsieve /usr/bin/dsieve
 go install github.com/gwen001/github-subdomains@latest;ln -fs ~/go/bin/github-subdomains /usr/bin/github-subdomains
 go install github.com/d3mondev/puredns/v2@latest;ln -fs ~/go/bin/puredns /usr/bin/puredns
@@ -413,7 +414,6 @@ go install github.com/edoardottt/favirecon/cmd/favirecon@latest;ln -fs ~/go/bin/
 go install github.com/tomnomnom/unfurl@latest;ln -fs ~/go/bin/unfurl /usr/bin/unfurl
 go install github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest;ln -fs ~/go/bin/shuffledns /usr/bin/shuffledns
 go install github.com/projectdiscovery/notify/cmd/notify@latest;ln -fs ~/go/bin/notify /usr/bin/notify
-go install github.com/edoardottt/pphack/cmd/pphack@latest;ln -fs ~/go/bin/pphack /usr/bin/pphack
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
 go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx /usr/bin/tlsx
@@ -660,6 +660,17 @@ EOF
 #!/bin/bash
 cd /usr/share/$name;python3 test.py "\$@"
 EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install webcopilot
+	if [ ! -d "/usr/share/webcopilot" ]; then
+		name="webcopilot"
+		git clone https://github.com/h4r5h1t/webcopilot /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/webcopilot /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1496,6 +1507,37 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install ivre
+	if [ ! -d "/usr/share/ivre" ]; then
+		name="ivre"
+		git clone https://github.com/ivre/ivre /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		python3 /usr/share/$name/setup.py install
+		pip3 install -r /usr/share/$name/requirements-all.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name/bin;python3 ivre.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install mr.sip
+	if [ ! -d "/usr/share/mr.sip" ]; then
+		name="mr.sip"
+		git clone https://github.com/meliht/Mr.SIP /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 mr.sip.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install multitor
 	if [ ! -d "/usr/share/multitor" ]; then
 		name="multitor"
@@ -1801,6 +1843,18 @@ EOF
 #!/bin/bash
 cd /usr/share/$name;python3 fat.py "\$@"
 EOF
+		chmod +x /usr/bin/$name
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install genzai
+	if [ ! -d "/usr/share/genzai" ]; then
+		name="genzai"
+		mkdir -p /usr/share/$name
+		wget https://github.com/umair9747/Genzai/releases/download/1.0/genzai_linux_amd64 -O /usr/share/$name/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4693,6 +4747,18 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install driftctl
+	if [ ! -d "/usr/share/driftctl" ]; then
+		name="driftctl"
+		mkdir -p /usr/share/$name
+		wget https://github.com/snyk/driftctl/releases/download/v0.40.0/driftctl_linux_amd64 -O /usr/share/$name/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/$name /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install clion
 	if [ ! -d "/usr/share/clion" ]; then
 		name="clion"
@@ -4872,7 +4938,7 @@ main ()
 				apt install -qy dnsutils apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 
 
 				# install dependencies
-				apt install -qy python3-dev python3-pip python3-poetry php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -4916,7 +4982,7 @@ main ()
 				snap install powershell --classic;snap install rustup --classic
 
 				# install dependencies
-				apt install -qy python3-dev python3-pip python3-poetry php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
