@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.3'
+ver='7.4'
 
 
 
@@ -498,7 +498,7 @@ EOF
 		name="crackql"
 		git clone https://github.com/nicholasaleks/CrackQL /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 CrackQL.py "\$@"
@@ -513,7 +513,7 @@ EOF
 		name="fuxploider"
 		git clone https://github.com/almandin/fuxploider /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 fuxploider.py "\$@"
@@ -882,7 +882,7 @@ EOF
 		name="graphqlmap"
 		git clone https://github.com/swisskyrepo/GraphQLmap /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1007,7 +1007,7 @@ EOF
 		name="spartan"
 		git clone https://github.com/sensepost/SPartan /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SPartan.py "\$@"
@@ -1183,7 +1183,7 @@ EOF
 		name="spoofcheck"
 		git clone https://github.com/BishopFox/spoofcheck /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 spoofcheck.py "\$@"
@@ -1365,7 +1365,8 @@ go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
 go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr/bin/s3finder
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
-go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox"
+go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox
+go install github.com/Rolix44/Kubestroyer@latest;ln -fs ~/go/bin/Kubestroyer /usr/bin/Kubestroyer"
 	go_installer "Cloud" "Penetration-Testing" "$cloud_golang"
 
 	# install cloudfail
@@ -1513,7 +1514,7 @@ EOF
 		git clone https://github.com/ivre/ivre /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		python3 /usr/share/$name/setup.py install
-		pip3 install -r /usr/share/$name/requirements-all.txt
+		pip3 install -r /usr/share/$name/requirements-all.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name/bin;python3 ivre.py "\$@"
@@ -1528,7 +1529,7 @@ EOF
 		name="mr.sip"
 		git clone https://github.com/meliht/Mr.SIP /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 mr.sip.py "\$@"
@@ -1898,7 +1899,7 @@ go install github.com/aydinnyunus/PackageSpy@latest;ln -fs ~/go/bin/packagespy /
 		name="trape"
 		git clone https://github.com/jofpin/trape /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 trape.py "\$@"
@@ -1927,7 +1928,7 @@ EOF
 		name="cloakquest3r"
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
@@ -1942,7 +1943,7 @@ EOF
 		name="thetimemachine"
 		git clone https://github.com/anmolksachan/TheTimeMachine /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 thetimemachine.py "\$@"
@@ -2056,7 +2057,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 	if [ ! -d "/usr/share/socialfish" ]; then
 		name="socialfish"
 		git clone https://github.com/UndeadSec/SocialFish /usr/share/$name
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -2145,7 +2146,7 @@ EOF
 		git clone https://github.com/ustayready/CredSniper /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 credsniper.py "\$@"
@@ -2231,7 +2232,7 @@ EOF
 		name="evilpdf"
 		git clone https://github.com/superzerosec/evilpdf /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 evilpdf.py "\$@"
@@ -2310,7 +2311,7 @@ EOF
 		name="sharpshooter"
 		git clone https://github.com/mdsecactivebreach/SharpShooter /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SharpShooter.py "\$@"
@@ -2568,7 +2569,7 @@ EOF
 		name="syswhispers"
 		git clone https://github.com/jthuraisamy/SysWhispers /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 syswhispers.py "\$@"
@@ -2625,7 +2626,7 @@ EOF
 		name="spookflare"
 		git clone https://github.com/hlldz/SpookFlare /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 spookflare.py "\$@"
@@ -2872,7 +2873,7 @@ EOF
 		name="caldera"
 		git clone https://github.com/mitre/caldera /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 server.py --insecure "\$@"
@@ -3304,7 +3305,7 @@ EOF
 		name="dnsexfiltrator"
 		git clone https://github.com/Arno0x/DNSExfiltrator /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 dnsexfiltrator.py "\$@"
@@ -3554,7 +3555,7 @@ EOF
 		name="isf"
 		git clone https://github.com/dark-lbp/isf /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 isf.py "\$@"
@@ -3711,7 +3712,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		name="stegocracker"
 		git clone https://github.com/W1LDN16H7/StegoCracker /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt 
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cd /usr/share/$name;python3 setup.py install;bash install.sh 
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stego" "$exec_shell 'stego -h'"
 		printf "$GREEN"  "[*] Success installing StegoCracker"
@@ -3769,7 +3770,7 @@ EOF
 		name="trace"
 		git clone https://github.com/Gadzhovski/TRACE-Forensic-Toolkit /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 main.py "\$@"
@@ -3933,7 +3934,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 		name="apt-hunter"
 		git clone https://github.com/ahmedkhlief/APT-Hunter /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 APT-Hunter.py "\$@"
@@ -3974,7 +3975,7 @@ EOF
 		cd /usr/share/$name;./autogen.sh;./configure;make
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4068,9 +4069,9 @@ EOF
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
-		pip3 install -r /usr/share/$name/src/python/requirements.txt
+		pip3 install -r /usr/share/$name/src/python/requirements.txt --break-system-packages
 		cd /usr/share/$name;yarn install;yarn build;yarn serv
-		pip3 install -r /usr/share/$name/worker/requirements.txt
+		pip3 install -r /usr/share/$name/worker/requirements.txt --break-system-packages
 		cp /usr/share/$name/worker/config.yml.sample /usr/share/$name/worker/config.yml
 		cat > /usr/bin/$name << EOF
 cd /usr/share/$name/worker;python3 worker.py > /dev/null &
