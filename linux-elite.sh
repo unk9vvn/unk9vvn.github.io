@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.2'
+ver='7.3'
 
 
 
@@ -733,6 +733,17 @@ EOF
 cd /usr/share/$name;python3 asnlookup.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install drupwn
+	if [ ! -d "/usr/share/drupwn" ]; then
+		name="drupwn"
+		git clone https://github.com/immunIT/drupwn /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		python3 /usr/share/$name/setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
