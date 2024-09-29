@@ -507,6 +507,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+  	# install fuxploider
+	if [ ! -d "/usr/share/fuxploider" ]; then
+		name="fuxploider"
+		git clone https://github.com/almandin/fuxploider /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 fuxploider.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		name="x8"
