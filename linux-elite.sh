@@ -419,6 +419,7 @@ go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /
 go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx /usr/bin/tlsx
 go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/ua /usr/bin/ua
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
+go install github.com/bitquark/shortscan/cmd/shortscan@latest;ln -fs ~/go/bin/shortscan /usr/bin/shortscan
 go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest;ln -fs ~/go/bin/naabu /usr/bin/naabu
 go install github.com/sensepost/gowitness@latest;ln -fs ~/go/bin/gowitness /usr/bin/gowitness
 go install github.com/lc/gau/v2/cmd/gau@latest;ln -fs ~/go/bin/gau /usr/bin/gau
@@ -865,6 +866,17 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install graphqlmap
+	if [ ! -d "/usr/share/graphqlmap" ]; then
+		name="graphqlmap"
+		git clone https://github.com/swisskyrepo/GraphQLmap /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		python3 /usr/share/$name/setup.py install
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install dtdfinder
 	if [ ! -d "/usr/share/dtdfinder" ]; then
 		name="dtdfinder"
@@ -1178,6 +1190,21 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;php rhawk.php "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install iis-shortname-scanner
+	if [ ! -d "/usr/share/iis-shortname-scanner" ]; then
+		name="iis-shortname-scanner"
+		mkdir -p /usr/share/$name
+		wget https://github.com/irsdl/IIS-ShortName-Scanner/blob/master/release/iis_shortname_scanner.jar -O /usr/share/$name/iis_shortname_scanner.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;java -jar iis_shortname_scanner.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
