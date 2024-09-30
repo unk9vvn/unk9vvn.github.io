@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.4'
+ver='7.5'
 
 
 
@@ -4411,7 +4411,8 @@ security_audit ()
 	# install Golang
 	preliminary_audit_assessment_golang="
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
-go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap"
+go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
+go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin/dlv"
 	go_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_golang"
 
 	# install bearer
