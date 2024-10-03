@@ -3902,7 +3902,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon flare-capa sigma ja3
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -3965,7 +3965,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Incident-Response" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -3986,10 +3986,10 @@ EOF
 		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4009,6 +4009,17 @@ EOF
 		name="sysinternalsebpf"
 		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+ 	# install capa
+	if [ ! -d "/usr/share/capa" ]; then
+		name="capa"
+		mkdir -p /usr/share/$name
+  		wget https://github.com/mandiant/capa/releases/download/v7.3.0/capa-v7.3.0-linux.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		ln -fs /usr/share/$name/capa /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
