@@ -3902,7 +3902,7 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon 
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon flare-capa sigma ja3
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
