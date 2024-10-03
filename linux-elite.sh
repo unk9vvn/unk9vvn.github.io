@@ -3957,6 +3957,18 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+ 	# install velociraptor
+	if [ ! -d "/usr/share/velociraptor" ]; then
+		name="velociraptor"
+		mkdir -p /usr/share/$name
+		wget https://github.com/Velocidex/velociraptor/releases/download/v0.72/velociraptor-v0.72.0-linux-amd64 -O /usr/share/$name/velociraptor
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Incident-Response" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install hayabusa
 	if [ ! -d "/usr/share/hayabusa" ]; then
 		name="hayabusa"
@@ -4021,18 +4033,6 @@ EOF
 	# install Golang
 	# incident_response_golang=""
 	go_installer "Incident-Response" "Digital-Forensic" "$incident_response_golang"
-
-	# install velociraptor
-	if [ ! -d "/usr/share/velociraptor" ]; then
-		name="velociraptor"
-		mkdir -p /usr/share/$name
-		wget https://github.com/Velocidex/velociraptor/releases/latest/download/velociraptor-v0.7.1-2-linux-amd64 -O /usr/share/$name/velociraptor
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
-		chmod +x /usr/bin/$name
-		menu_entry "Incident-Response" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
 
 	# install grr
 	if [ ! -d "/usr/share/grr" ]; then
