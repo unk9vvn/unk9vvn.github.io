@@ -4087,7 +4087,7 @@ EOF
 	# install opencti
 	if [ ! -d "/usr/share/opencti" ]; then
 		name="opencti"
-		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.1.11/opencti-release-6.1.11.tar.gz  -O /tmp/$name.tar.gz
+		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.3.4/opencti-release-6.3.4.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
@@ -4107,7 +4107,7 @@ EOF
 	# install rita
 	if [ ! -d "/var/opt/rita" ]; then
 		name="rita"
-		wget https://github.com/activecm/rita/releases/latest/download/install.sh -O /tmp/install.sh
+		wget https://github.com/activecm/rita/releases/download/v5.0.8/install-rita-zeek-here.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
