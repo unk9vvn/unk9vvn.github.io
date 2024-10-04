@@ -4371,10 +4371,10 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install honeytrap
-	if [ ! -f "/home/${USERS}/tpotce/docker-compose.yml" ]; then
-		name="honeytrap"
-		env bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
+	# install tpotce
+	if [ ! -d "/home/${USERS}/tpotce" ]; then
+		name="tpotce"
+		bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
 		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
