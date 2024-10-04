@@ -4780,7 +4780,7 @@ EOF
 	if [ ! -d "/usr/share/clion" ]; then
 		name="clion"
 		wget https://download-cdn.jetbrains.com/cpp/CLion-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/CLion-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4795,7 +4795,7 @@ EOF
 	if [ ! -d "/usr/share/phpstorm" ]; then
 		name="phpstorm"
 		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PhpStorm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4810,7 +4810,7 @@ EOF
 	if [ ! -d "/usr/share/goland" ]; then
 		name="goland"
 		wget https://download-cdn.jetbrains.com/go/goland-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/GoLand-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4825,7 +4825,7 @@ EOF
 	if [ ! -d "/usr/share/pycharm" ]; then
 		name="pycharm"
 		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PyCharm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4836,26 +4836,11 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install rubymine
-	if [ ! -d "/usr/share/rubymine" ]; then
-		name="rubymine"
-		wget https://download-cdn.jetbrains.com/ruby/RubyMine-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
-		chmod 755 /usr/share/$name/bin/*
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name/bin;bash rubymine.sh "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
 	# install webstorm
 	if [ ! -d "/usr/share/webstorm" ]; then
 		name="webstorm"
 		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/WebStorm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4870,7 +4855,7 @@ EOF
 	if [ ! -d "/usr/share/idea" ]; then
 		name="idea"
 		wget https://download-cdn.jetbrains.com/idea/ideaIU-2024.1.tar.gz -O /tmp/IDE$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/IntelliJ IDEA-* /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
