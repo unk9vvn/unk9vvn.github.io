@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.7'
+ver='7.8'
 
 
 
@@ -1481,7 +1481,8 @@ EOF
 
 	# install Golang
 	network_golang="
-go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan"
+go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan
+go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
 	go_installer "Network" "Penetration-Testing" "$network_golang"
 
 	# install hiddify
@@ -4167,7 +4168,6 @@ blue_team ()
 
 	# install Golang
 	detect_golang="
-go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls
 go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bin/troll-a"
 	go_installer "Detect" "Blue-Team" "$detect_golang"
 
@@ -4199,15 +4199,6 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		name="opensearch"
 		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
-	# install logstash
-	if [ ! -f "/etc/apt/sources.list.d/elastic-8.x.list" ]; then
-		name="logstash"
-		wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elastic-keyring.gpg
-		echo "deb [signed-by=/usr/share/keyrings/elastic-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.x.list
-		apt-get update && apt-get install logstash
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -4748,18 +4739,14 @@ EOF
 	go_installer "Performing-the-Review" "Security-Audit" "$performing_the_review_golang"
 
 	# install postman
-	if [ ! -d "/usr/share/postman" ]; then
-		name="postman"
-		mkdir -p /usr/share/$name
+	if [ ! -d "/usr/share/Postman" ]; then
+		name="Postman"
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;./postman "\$@"
-EOF
+		ln -fs /usr/share/$name/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
-		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
