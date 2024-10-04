@@ -1481,8 +1481,7 @@ EOF
 
 	# install Golang
 	network_golang="
-go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan
-go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
+go install github.com/s-rah/onionscan@latest;ln -fs ~/go/bin/onionscan /usr/bin/onionscan"
 	go_installer "Network" "Penetration-Testing" "$network_golang"
 
 	# install hiddify
