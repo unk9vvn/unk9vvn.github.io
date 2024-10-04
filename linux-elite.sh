@@ -3428,7 +3428,7 @@ EOF
 	if [ ! -d "/usr/share/frp" ]; then
 		name="frp"
 		wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xzf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/frp_* /usr/share/frp
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/frps /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -4408,7 +4408,7 @@ security_audit ()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs mongoaudit cve-bin-tool sudo-rs ansible-core 
+	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible-core 
 
 	# install Python3 pip
 	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
@@ -4495,7 +4495,8 @@ EOF
 	if [ ! -d "/usr/share/syzkaller" ]; then
 		name="syzkaller"
 		git clone https://github.com/google/syzkaller /usr/share/$name
-		chmod 755 /usr/share/$name/*;cd /usr/share/$name;make
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make
 		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-fuzzer /usr/bin/syz-fuzzer
 		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-stress /usr/bin/syz-stress
 		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
@@ -4623,7 +4624,8 @@ EOF
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
-		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		a2ensite $name.conf;a2enmod rewrite
+		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
@@ -4663,7 +4665,8 @@ EOF
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
-		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		a2ensite $name.conf;a2enmod rewrite
+		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
@@ -4703,7 +4706,8 @@ EOF
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
-		a2ensite $name.conf;a2enmod rewrite;systemctl restart apache2
+		a2ensite $name.conf;a2enmod rewrite
+		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
