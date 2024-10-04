@@ -4088,11 +4088,14 @@ EOF
 	if [ ! -d "/usr/share/opencti" ]; then
 		name="opencti"
 		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.3.4/opencti-release-6.3.4.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
 		pip3 install -r /usr/share/$name/src/python/requirements.txt --break-system-packages
-		cd /usr/share/$name;yarn install;yarn build;yarn serv
+		cd /usr/share/$name
+		yarn install
+		yarn build
+		yarn serv
 		pip3 install -r /usr/share/$name/worker/requirements.txt --break-system-packages
 		cp /usr/share/$name/worker/config.yml.sample /usr/share/$name/worker/config.yml
 		cat > /usr/bin/$name << EOF
