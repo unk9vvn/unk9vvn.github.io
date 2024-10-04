@@ -3566,6 +3566,16 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install redpoint
+	if [ ! -f "/usr/share/nmap/scripts/fox-info.nse" ]; then
+		name="redpoint"
+		git clone https://github.com/digitalbond/Redpoint /tmp/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;mv * /usr/share/nmap/scripts
+		rm -rf /tmp/$name
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# ----------------------------------------Red-Team-ICS-Security-------------------------------------- #"
 	# install Repository Tools
