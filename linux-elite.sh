@@ -1323,6 +1323,15 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install palera1n
+	if [ ! -f "/usr/bin/palera1n" ]; then
+		name="palera1n"
+		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
