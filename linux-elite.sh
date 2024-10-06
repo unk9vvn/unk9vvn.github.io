@@ -1332,19 +1332,6 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
-	# install spoofdpi
-	if [ ! -d "/usr/share/spoofdpi" ]; then
-		name="spoofdpi"
-		mkdir -p /usr/share/$name
-		wget https://cache.saurik.com/impactor/l64/Impactor64_0.9.56.tgz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/spoof-dpi /usr/bin/$name
-		chmod +x /usr/bin/$name
-		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
-	fi
-
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
