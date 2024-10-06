@@ -1303,7 +1303,7 @@ EOF
 	pip_installer "Mobile" "Penetration-Testing" "$mobile_pip"
 
 	# install Nodejs NPM
-	mobile_npm="rms-runtime-mobile-security apk-mitm igf bagbak"
+	mobile_npm="rms-runtime-mobile-security apk-mitm igf bagbak applesign"
 	npm_installer "Mobile" "Penetration-Testing" "$mobile_npm"
 
 	# install Ruby GEM
@@ -1328,6 +1328,19 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		name="palera1n"
 		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install spoofdpi
+	if [ ! -d "/usr/share/spoofdpi" ]; then
+		name="spoofdpi"
+		mkdir -p /usr/share/$name
+		wget https://cache.saurik.com/impactor/l64/Impactor64_0.9.56.tgz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/spoof-dpi /usr/bin/$name
+		chmod +x /usr/bin/$name
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
