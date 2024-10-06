@@ -1332,14 +1332,26 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install ideviceinstaller
+	if [ ! -f "/usr/share/ideviceinstaller" ]; then
+		name="ideviceinstaller"
+		git clone https://github.com/libimobiledevice/ideviceinstaller /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./autogen.sh;make;make install
+		ln -fs /usr/share/$name/ideviceinstaller /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
-		pip3 install django --break-system-packages
 		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$name
 		wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb -O /tmp/wkhtmltox.deb
 		chmod +x /tmp/wkhtmltox.deb;dpkg -i /tmp/wkhtmltox.deb;rm -f /tmp/wkhtmltox.deb
 		chmod 755 /usr/share/$name/*
+		pip3 install django --break-system-packages
 		cd /usr/share/$name;./setup.sh
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -4946,10 +4958,10 @@ main ()
 				fi
 
 				# install init
-				apt install -qy dnsutils apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 
+				apt install -qy dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd 
 
 				# install dependencies
-				apt install -qy python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -4987,13 +4999,13 @@ main ()
 				fi
 
 				# install init
-				apt install -qy apt-utils build-essential mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 
+				apt install -qy apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd 
     
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
 
 				# install dependencies
-				apt install -qy python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
