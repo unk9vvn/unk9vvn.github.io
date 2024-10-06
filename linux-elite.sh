@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='7.8'
+ver='8.0'
 
 
 
@@ -30,7 +30,7 @@ else
 fi
 
 
-logo ()
+logo()
 {
     reset;clear
     printf "$GREEN"   "                            --/osssssssssssso/--                    "
@@ -70,7 +70,7 @@ logo ()
 }
 
 
-menu ()
+menu()
 {
 	# initialize main menu
 	mkdir -p /home/$USERS/.config/menus
@@ -83,7 +83,7 @@ menu ()
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Unk9vvN
+local name=Unk9vvN
 Comment=unk9vvn.github.io
 Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
 EOF
@@ -94,18 +94,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Penetration-Testing
+local name=Penetration-Testing
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
 EOF
 	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 	dir_pentest_index=0
+
 	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_pentest_array[dir_pentest_index]}
+local name=${dir_pentest_array[dir_pentest_index]}
 Comment=Penetration-Testing
 Icon=folder
 EOF
@@ -118,18 +119,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Red-Team
+local name=Red-Team
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/red-team.png
 EOF
 	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 	dir_redteam_index=0
+
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_redteam_array[dir_redteam_index]}
+local name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
 Icon=folder
 EOF
@@ -142,18 +144,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=ICS-Security
+local name=ICS-Security
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/ics-security.png
 EOF
 	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
 	dir_ics_index=0
+
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_ics_array[dir_ics_index]}
+local name=${dir_ics_array[dir_ics_index]}
 Comment=ICS-Security
 Icon=folder
 EOF
@@ -166,18 +169,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Digital-Forensic
+local name=Digital-Forensic
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
 EOF
 	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
 	dir_digital_index=0
+
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_digital_array[dir_digital_index]}
+local name=${dir_digital_array[dir_digital_index]}
 Comment=Digital-Forensic
 Icon=folder
 EOF
@@ -190,18 +194,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Blue-Team
+local name=Blue-Team
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/blue-team.png
 EOF
 	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
 	dir_blueteam_index=0
+
 	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_blueteam_array[dir_blueteam_index]}
+local name=${dir_blueteam_array[dir_blueteam_index]}
 Comment=Blue-Team
 Icon=folder
 EOF
@@ -214,18 +219,19 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit.directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=Security-Audit
+local name=Security-Audit
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/security-audit.png
 EOF
 	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
 	dir_audit_index=0
+
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-Name=${dir_audit_array[dir_audit_index]}
+local name=${dir_audit_array[dir_audit_index]}
 Comment=Security-Audit
 Icon=folder
 EOF
@@ -234,15 +240,16 @@ EOF
 }
 
 
-menu_entry ()
+menu_entry()
 {
 	local sub_category="$1"
 	local category="$2"
-	local tool_name="$3"
+	local tool_local name="$3"
 	local command="$4"
+
 	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool_name}.desktop" << EOF
 [Desktop Entry]
-Name=${tool_name}
+local name=${tool_name}
 Exec=${command}
 Comment=
 Terminal=true
@@ -274,11 +281,12 @@ EOF
 }
 
 
-pip_installer ()
+pip_installer()
 {
 	local sub_category="$1"
 	local category="$2"
 	local pip_array="$3"
+
 	for pip_index in ${pip_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "$exec_shell 'sudo ${pip_index} -h'"
 		pip3 install "$pip_index" --break-system-packages
@@ -287,11 +295,12 @@ pip_installer ()
 }
 
 
-npm_installer ()
+npm_installer()
 {
 	local sub_category="$1"
 	local category="$2"
 	local npm_array="$3"
+
 	for npm_index in ${npm_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "$exec_shell 'sudo ${npm_index} -h'"
 		npm install -g "$npm_index"
@@ -300,11 +309,12 @@ npm_installer ()
 }
 
 
-gem_installer ()
+gem_installer()
 {
 	local sub_category="$1"
 	local category="$2"
 	local gem_array="$3"
+
 	for gem_index in ${gem_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "$exec_shell 'sudo ${gem_index} -h'"
 		gem install "$gem_index"
@@ -313,30 +323,33 @@ gem_installer ()
 }
 
 
-go_installer ()
+go_installer()
 {
 	local sub_category="$1"
 	local category="$2"
 	local commands="$3"
+
 	go_array=()
 	while read -r line; do
 		if [[ $line == *"ln -fs"* ]]; then
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
 			symlink=${symlink%/}
-			binary_name=$(basename "$symlink")
+			binary_local name=$(basename "$symlink")
 			go_array+=("$binary_name")
 		fi
 	done <<< "$commands"
+
 	for go_index in ${go_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${go_index}" "$exec_shell 'sudo ${go_index} -h'"
 		printf "$GREEN"  "[*] Success installing ${go_index}"
 	done
+
 	eval "$commands"
 }
 
 
-penetrating_testing ()
+penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
@@ -429,7 +442,7 @@ go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bi
 
 	# install cloudbunny
 	if [ ! -d "/usr/share/cloudbunny" ]; then
-		name="cloudbunny"
+		local name="cloudbunny"
 		git clone https://github.com/Warflop/CloudBunny /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -444,7 +457,7 @@ EOF
 
 	# install phoneinfoga
 	if [ ! -d "/usr/share/phoneinfoga" ]; then
-		name="phoneinfoga"
+		local name="phoneinfoga"
 		mkdir -p /usr/share/$name
 		wget https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -457,7 +470,7 @@ EOF
 
 	# install postman
 	if [ ! -d "/usr/share/Postman" ]; then
-		name="Postman"
+		local name="Postman"
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
@@ -469,7 +482,7 @@ EOF
 
 	# install bkcrack
 	if [ ! -d "/usr/share/bkcrack" ]; then
-		name="bkcrack"
+		local name="bkcrack"
 		wget https://github.com/kimci86/bkcrack/releases/download/v1.7.0/bkcrack-1.7.0-Linux.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
@@ -481,7 +494,7 @@ EOF
 
 	# install spiderfoot
 	if [ ! -d "/usr/share/spiderfoot" ]; then
-		name="spiderfoot"
+		local name="spiderfoot"
 		git clone https://github.com/smicallef/spiderfoot /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -496,7 +509,7 @@ EOF
 
  	# install crackql
 	if [ ! -d "/usr/share/crackql" ]; then
-		name="crackql"
+		local name="crackql"
 		git clone https://github.com/nicholasaleks/CrackQL /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -511,7 +524,7 @@ EOF
 
   	# install fuxploider
 	if [ ! -d "/usr/share/fuxploider" ]; then
-		name="fuxploider"
+		local name="fuxploider"
 		git clone https://github.com/almandin/fuxploider /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -526,7 +539,7 @@ EOF
 
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
-		name="x8"
+		local name="x8"
 		mkdir -f /usr/share/x8
 		wget https://github.com/Sh1Yo/x8/releases/latest/download/x86_64-linux-x8.gz -O /tmp/$name.gz
 		gzip -d /tmp/$name.gz -C /usr/share/$name;rm -f /tmp/$name.gz
@@ -539,7 +552,7 @@ EOF
 
 	# install graphql-playground
 	if [ ! -d "/usr/share/graphql-playground" ]; then
-		name="graphql-playground"
+		local name="graphql-playground"
 		wget https://github.com/graphql/graphql-playground/releases/download/v1.8.10/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
@@ -548,7 +561,7 @@ EOF
 
 	# install findomain
 	if [ ! -d "/usr/share/findomain" ]; then
-		name="findomain"
+		local name="findomain"
 		wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-linux.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
@@ -560,7 +573,7 @@ EOF
 
 	# install blacklist3r
 	if [ ! -d "/usr/share/blacklist3r" ]; then
-		name="blacklist3r"
+		local name="blacklist3r"
 		mkdir /usr/share/$name
 		wget https://github.com/NotSoSecure/Blacklist3r/releases/download/4.0/AspDotNetWrapper.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -576,7 +589,7 @@ EOF
 
  	# install wafw00f
 	if [ ! -d "/usr/share/wafw00f" ]; then
-		name="wafw00f"
+		local name="wafw00f"
 		git clone https://github.com/EnableSecurity/wafw00f /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python3 setup.py install
@@ -586,7 +599,7 @@ EOF
 
 	# install graphpython
 	if [ ! -d "/usr/share/graphpython" ]; then
-		name="graphpython"
+		local name="graphpython"
 		git clone https://github.com/mlcsec/Graphpython /usr/share/$name 
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;pip install .
@@ -601,7 +614,7 @@ EOF
 
 	# install bypassneo-regeorg
 	if [ ! -d "/usr/share/bypassneo-regeorg" ]; then
-		name="bypassneo-regeorg"
+		local name="bypassneo-regeorg"
 		git clone https://github.com/r00tSe7en/BypassNeo-reGeorg /usr/share/$name 
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -615,7 +628,7 @@ EOF
 
 	# install rustscan
 	if [ ! -f "/usr/bin/rustscan" ]; then
-		name="rustscan"
+		local name="rustscan"
 		wget https://github.com/RustScan/RustScan/releases/download/2.3.0/rustscan_2.3.0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
@@ -624,7 +637,7 @@ EOF
 
  	# install ronin
 	if [ ! -f "/usr/bin/ronin" ]; then
-		name="ronin"
+		local name="ronin"
 		curl -o ronin-install.sh https://raw.githubusercontent.com/ronin-rb/scripts/main/ronin-install.sh && bash ronin-install.sh
 		rm -f ronin
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
@@ -633,7 +646,7 @@ EOF
 
 	# install hashpump
 	if [ ! -d "/usr/share/hashpump" ]; then
-		name="hashpump"
+		local name="hashpump"
 		git clone https://github.com/mheistermann/HashPump-partialhash /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
@@ -643,7 +656,7 @@ EOF
 
 	# install pixload
 	if [ ! -d "/usr/share/pixload" ]; then
-		name="pixload"
+		local name="pixload"
 		git clone https://github.com/sighook/pixload /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make install
@@ -653,7 +666,7 @@ EOF
 
 	# install googlerecaptchabypass
 	if [ ! -d "/usr/share/grb" ]; then
-		name="grb"
+		local name="grb"
 		git clone https://github.com/sarperavci/GoogleRecaptchaBypass /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -668,7 +681,7 @@ EOF
 
 	# install webcopilot
 	if [ ! -d "/usr/share/webcopilot" ]; then
-		name="webcopilot"
+		local name="webcopilot"
 		git clone https://github.com/h4r5h1t/webcopilot /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/webcopilot /usr/bin/$name
@@ -679,7 +692,7 @@ EOF
 
 	# install graphw00f
 	if [ ! -d "/usr/share/graphw00f" ]; then
-		name="graphw00f"
+		local name="graphw00f"
 		git clone https://github.com/dolevf/graphw00f /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -693,7 +706,7 @@ EOF
 
 	# install gel4y
 	if [ ! -d "/usr/share/gel4y" ]; then
-		name="gel4y"
+		local name="gel4y"
 		git clone https://github.com/22XploiterCrew-Team/Gel4y-Mini-Shell-Backdoor /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -707,7 +720,7 @@ EOF
 
 	# install cloakquest3r
 	if [ ! -d "/usr/share/cloakquest3r" ]; then
-		name="cloakquest3r"
+		local name="cloakquest3r"
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -722,7 +735,7 @@ EOF
 
 	# install proxyshell
 	if [ ! -d "/usr/share/proxyshell" ]; then
-		name="proxyshell"
+		local name="proxyshell"
 		git clone https://github.com/horizon3ai/proxyshell /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -737,7 +750,7 @@ EOF
 
 	# install asnlookup
 	if [ ! -d "/usr/share/asnlookup" ]; then
-		name="asnlookup"
+		local name="asnlookup"
 		git clone https://github.com/yassineaboukir/Asnlookup /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -752,7 +765,7 @@ EOF
 
 	# install drupwn
 	if [ ! -d "/usr/share/drupwn" ]; then
-		name="drupwn"
+		local name="drupwn"
 		git clone https://github.com/immunIT/drupwn /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -763,7 +776,7 @@ EOF
 
  	# install aspjinjaobfuscator
 	if [ ! -d "/usr/share/aspjinjaobfuscator" ]; then
-		name="aspjinjaobfuscator"
+		local name="aspjinjaobfuscator"
 		git clone https://github.com/fin3ss3g0d/ASPJinjaObfuscator /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -778,7 +791,7 @@ EOF
 
 	# install waymore
 	if [ ! -d "/usr/share/waymore" ]; then
-		name="waymore"
+		local name="waymore"
 		git clone https://github.com/xnl-h4ck3r/waymore /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -793,7 +806,7 @@ EOF
 
 	# install ysoserial
 	if [ ! -d "/usr/share/ysoserial" ]; then
-		name="ysoserial"
+		local name="ysoserial"
 		mkdir -p /usr/share/$name
 		wget https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar -O /usr/share/$name/ysoserial-all.jar 
 		chmod 755 /usr/share/$name/*
@@ -808,7 +821,7 @@ EOF
 
 	# install ysoserial.net
 	if [ ! -d "/usr/share/ysoserial.net" ]; then
-		name="ysoserial.net"
+		local name="ysoserial.net"
 		mkdir -p /usr/share/$name
 		wget https://github.com/pwntester/ysoserial.net/releases/latest/download/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share;mv -f /usr/share/Release /usr/share/$name;rm -f /tmp/$name.zip
@@ -824,7 +837,7 @@ EOF
 
 	# install akto
 	if [ ! -d "/usr/share/akto" ]; then
-		name="akto"
+		local name="akto"
 		git clone https://github.com/akto-api-security/akto /usr/share/$name 
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -838,7 +851,7 @@ EOF
 
 	# install rsatool
 	if [ ! -d "/usr/share/rsatool" ]; then
-		name="rsatool"
+		local name="rsatool"
 		git clone https://github.com/ius/rsatool /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -852,7 +865,7 @@ EOF
 
 	# install polyglot
 	if [ ! -d "/usr/share/polyglot" ]; then
-		name="polyglot"
+		local name="polyglot"
 		git clone https://github.com/Polydet/polyglot-database /usr/share/$name
 		chmod 755 /usr/share/$name/files/*
 		cat > /usr/bin/$name << EOF
@@ -866,7 +879,7 @@ EOF
 
 	# install rsactftool
 	if [ ! -d "/usr/share/rsactftool" ]; then
-		name="rsactftool"
+		local name="rsactftool"
 		git clone https://github.com/RsaCtfTool/RsaCtfTool /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -880,7 +893,7 @@ EOF
 
 	# install graphqlmap
 	if [ ! -d "/usr/share/graphqlmap" ]; then
-		name="graphqlmap"
+		local name="graphqlmap"
 		git clone https://github.com/swisskyrepo/GraphQLmap /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -891,7 +904,7 @@ EOF
 
 	# install dtdfinder
 	if [ ! -d "/usr/share/dtdfinder" ]; then
-		name="dtdfinder"
+		local name="dtdfinder"
 		mkdir -p /usr/share/$name
 		wget https://github.com/GoSecure/dtd-finder/releases/latest/download/dtd-finder-1.1-all.jar -O /usr/share/$name/dtd-finder-all.jar
 		chmod 755 /usr/share/$name/*
@@ -906,7 +919,7 @@ EOF
 
 	# install docem
 	if [ ! -d "/usr/share/docem" ]; then
-		name="docem"
+		local name="docem"
 		git clone https://github.com/whitel1st/docem /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -921,7 +934,7 @@ EOF
 
 	# install spidersuite
 	if [ ! -d "/usr/share/spidersuite" ]; then
-		name="spidersuite"
+		local name="spidersuite"
 		mkdir -p /usr/share/$name
 		wget https://github.com/3nock/SpiderSuite/releases/download/v1.0.4/SpiderSuite_v1.0.4_linux.AppImage -O /usr/share/$name/SpiderSuite_linux.AppImage
 		chmod 755 /usr/share/$name/*
@@ -936,7 +949,7 @@ EOF
 
 	# install jsa
 	if [ ! -d "/usr/share/jsa" ]; then
-		name="jsa"
+		local name="jsa"
 		git clone https://github.com/w9w/JSA /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -952,7 +965,7 @@ EOF
 
 	# install smuggle
 	if [ ! -d "/usr/share/smuggle" ]; then
-		name="smuggle"
+		local name="smuggle"
 		git clone https://github.com/anshumanpattnaik/http-request-smuggling /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -967,7 +980,7 @@ EOF
 
 	# install pemcrack
 	if [ ! -d "/usr/share/pemcrack" ]; then
-		name="pemcrack"
+		local name="pemcrack"
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;gcc pemcrack.c -o pemcrack -lssl -lcrypto
@@ -979,7 +992,7 @@ EOF
 
 	# install sessionprobe
 	if [ ! -d "/usr/share/sessionprobe" ]; then
-		name="sessionprobe"
+		local name="sessionprobe"
 		mkdir -p /usr/share/$name
 		wget https://github.com/dub-flow/sessionprobe/releases/latest/download/sessionprobe-linux-amd64 -O /usr/share/$name/sessionprobe
 		chmod 755 /usr/share/$name/*
@@ -991,7 +1004,7 @@ EOF
 
 	# install dymerge
 	if [ ! -d "/usr/share/dymerge" ]; then
-		name="dymerge"
+		local name="dymerge"
 		git clone https://github.com/k4m4/dymerge /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1005,7 +1018,7 @@ EOF
 
 	# install spartan
 	if [ ! -d "/usr/share/spartan" ]; then
-		name="spartan"
+		local name="spartan"
 		git clone https://github.com/sensepost/SPartan /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1020,7 +1033,7 @@ EOF
 
 	# install waf-bypass
 	if [ ! -d "/usr/share/waf-bypass" ]; then
-		name="waf-bypass"
+		local name="waf-bypass"
 		git clone https://github.com/nemesida-waf/waf-bypass /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1036,7 +1049,7 @@ EOF
 
 	# install xssloader
 	if [ ! -d "/usr/share/xssloader" ]; then
-		name="xssloader"
+		local name="xssloader"
 		git clone https://github.com/capture0x/XSS-LOADER /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1051,7 +1064,7 @@ EOF
 
 	# install cmseek
 	if [ ! -d "/usr/share/cmseek" ]; then
-		name="cmseek"
+		local name="cmseek"
 		git clone https://github.com/Tuhinshubhra/CMSeeK /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1066,7 +1079,7 @@ EOF
 
 	# install xsstrike
 	if [ ! -d "/usr/share/xsstrike" ]; then
-		name="xsstrike"
+		local name="xsstrike"
 		git clone https://github.com/s0md3v/XSStrike /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1081,7 +1094,7 @@ EOF
 
 	# install w4af
 	if [ ! -d "/usr/share/w4af" ]; then
-		name="w4af"
+		local name="w4af"
 		git clone https://github.com/w4af/w4af /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;pipenv install;npm install
@@ -1096,7 +1109,7 @@ EOF
 
 	# install jwt_tool
 	if [ ! -d "/usr/share/jwt_tool" ]; then
-		name="jwt_tool"
+		local name="jwt_tool"
 		git clone https://github.com/ticarpi/jwt_tool /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1110,7 +1123,7 @@ EOF
 
 	# install tplmap
 	if [ ! -d "/usr/share/tplmap" ]; then
-		name="tplmap"
+		local name="tplmap"
 		git clone https://github.com/epinna/tplmap /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1125,7 +1138,7 @@ EOF
 
 	# install sstimap
 	if [ ! -d "/usr/share/sstimap" ]; then
-		name="sstimap"
+		local name="sstimap"
 		git clone https://github.com/vladko312/SSTImap /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1140,7 +1153,7 @@ EOF
 
 	# install poodle
 	if [ ! -d "/usr/share/poodle" ]; then
-		name="poodle"
+		local name="poodle"
 		git clone https://github.com/mpgn/poodle-PoC /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1154,7 +1167,7 @@ EOF
 
 	# install gopherus
 	if [ ! -d "/usr/share/gopherus" ]; then
-		name="gopherus"
+		local name="gopherus"
 		git clone https://github.com/tarunkant/Gopherus /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1168,7 +1181,7 @@ EOF
 
 	# install hash_extender
 	if [ ! -d "/usr/share/hash_extender" ]; then
-		name="hash_extender"
+		local name="hash_extender"
 		git clone https://github.com/iagox86/hash_extender /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		sed -i "s|-Werror -Wno-deprecated||g" /usr/share/$name/Makefile
@@ -1181,7 +1194,7 @@ EOF
 
 	# install spoofcheck
 	if [ ! -d "/usr/share/spoofcheck" ]; then
-		name="spoofcheck"
+		local name="spoofcheck"
 		git clone https://github.com/BishopFox/spoofcheck /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1196,7 +1209,7 @@ EOF
 
 	# install redhawk
 	if [ ! -d "/usr/share/redhawk" ]; then
-		name="redhawk"
+		local name="redhawk"
 		git clone https://github.com/Tuhinshubhra/RED_HAWK /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1210,7 +1223,7 @@ EOF
 
 	# install iis-shortname-scanner
 	if [ ! -d "/usr/share/iis-shortname-scanner" ]; then
-		name="iis-shortname-scanner"
+		local name="iis-shortname-scanner"
 		mkdir -p /usr/share/$name
 		wget https://github.com/irsdl/IIS-ShortName-Scanner/blob/master/release/iis_shortname_scanner.jar -O /usr/share/$name/iis_shortname_scanner.jar
 		chmod 755 /usr/share/$name/*
@@ -1225,7 +1238,7 @@ EOF
 
 	# install ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
-		name="ngrok"
+		local name="ngrok"
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
 		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/bin/$name
@@ -1235,7 +1248,7 @@ EOF
 
 	# install noip2
 	if [ ! -f "/usr/local/bin/noip2" ]; then
-		name="noip"
+		local name="noip"
 		mkdir -p /usr/share/$name
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$name.tar.gz
 		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -1247,7 +1260,7 @@ EOF
 
 	# install breacher
 	if [ ! -d "/usr/share/breacher" ]; then
-		name="breacher"
+		local name="breacher"
 		git clone https://github.com/s0md3v/Breacher /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1261,7 +1274,7 @@ EOF
 
 	# install swftools
 	if [ ! -d "/usr/share/swftools" ]; then
-		name="swftools"
+		local name="swftools"
 		git clone https://github.com/matthiaskramm/swftools /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		wget https://zlib.net/current/zlib.tar.gz -O /tmp/zlib.tar.gz
@@ -1280,7 +1293,7 @@ EOF
 
 	# install nosqlmap
 	if [ ! -d "/usr/share/nosqlmap" ]; then
-		name="nosqlmap"
+		local name="nosqlmap"
 		git clone https://github.com/codingo/NoSQLMap /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python2 nosqlmap.py install
@@ -1317,7 +1330,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 
 	# install genymotion
 	if [ ! -d "/opt/genymobile/genymotion" ]; then
-		name="genymotion"
+		local name="genymotion"
 		wget https://dl.genymotion.com/releases/genymotion-3.6.0/genymotion-3.6.0-linux_x64.bin -O /tmp/$name.bin
 		chmod 755 /tmp/$name.bin;cd /tmp;./$name.bin -y;rm -f /tmp/$name.bin
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1325,7 +1338,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 
 	# install palera1n
 	if [ ! -f "/usr/bin/palera1n" ]; then
-		name="palera1n"
+		local name="palera1n"
 		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
@@ -1334,7 +1347,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 
 	# install ideviceinstaller
 	if [ ! -f "/usr/share/ideviceinstaller" ]; then
-		name="ideviceinstaller"
+		local name="ideviceinstaller"
 		git clone https://github.com/libimobiledevice/ideviceinstaller /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;make;make install
@@ -1346,7 +1359,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
-		name="mobsf"
+		local name="mobsf"
 		git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF /usr/share/$name
 		wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb -O /tmp/wkhtmltox.deb
 		chmod +x /tmp/wkhtmltox.deb;dpkg -i /tmp/wkhtmltox.deb;rm -f /tmp/wkhtmltox.deb
@@ -1393,7 +1406,7 @@ go install github.com/Rolix44/Kubestroyer@latest;ln -fs ~/go/bin/Kubestroyer /us
 
 	# install cloudfail
 	if [ ! -d "/usr/share/cloudfail" ]; then
-		name="cloudfail"
+		local name="cloudfail"
 		git clone https://github.com/m0rtem/CloudFail /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1408,7 +1421,7 @@ EOF
 
 	# install ccat
 	if [ ! -d "/usr/share/ccat" ]; then
-		name="ccat"
+		local name="ccat"
 		git clone https://github.com/RhinoSecurityLabs/ccat /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python3 setup.py install
@@ -1423,7 +1436,7 @@ EOF
 
 	# install ioxy
 	if [ ! -d "/usr/share/ioxy" ]; then
-		name="ioxy"
+		local name="ioxy"
 		git clone https://github.com/NVISOsecurity/IOXY /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;CGO_CFLAGS="-g -O2 -Wno-return-local-addr" go build -ldflags="-s -w" .
@@ -1435,7 +1448,7 @@ EOF
 
 	# install cloudhunter
 	if [ ! -d "/usr/share/cloudhunter" ]; then
-		name="cloudhunter"
+		local name="cloudhunter"
 		git clone https://github.com/belane/CloudHunter /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1450,7 +1463,7 @@ EOF
 
 	# install gcpbucketbrute
 	if [ ! -d "/usr/share/gcpbucketbrute" ]; then
-		name="gcpbucketbrute"
+		local name="gcpbucketbrute"
 		git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1465,7 +1478,7 @@ EOF
 
 	# install k8sgpt
 	if [ ! -d "/usr/share/k8sgpt" ]; then
-		name="k8sgpt"
+		local name="k8sgpt"
 		wget https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1473,7 +1486,7 @@ EOF
 
 	# install cloudquery
 	if [ ! -d "/usr/share/cloudquery" ]; then
-		name="cloudquery"
+		local name="cloudquery"
 		mkdir -p /usr/share/$name
 		wget https://github.com/cloudquery/cloudquery/releases/latest/download/cloudquery_linux_amd64 -O /usr/share/$name/cloudquery
 		chmod 755 /usr/share/$name/*
@@ -1508,7 +1521,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 
 	# install hiddify
 	if [ ! -d "/usr/share/hiddify" ]; then
-		name="hiddify"
+		local name="hiddify"
 		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
   		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/hiddify" >> /etc/sudoers
@@ -1518,7 +1531,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 
 	# install snmpbrute
 	if [ ! -d "/usr/share/snmpbrute" ]; then
-		name="snmpbrute"
+		local name="snmpbrute"
 		git clone https://github.com/SECFORCE/SNMP-Brute /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1532,7 +1545,7 @@ EOF
 
 	# install ivre
 	if [ ! -d "/usr/share/ivre" ]; then
-		name="ivre"
+		local name="ivre"
 		git clone https://github.com/ivre/ivre /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		python3 /usr/share/$name/setup.py install
@@ -1548,7 +1561,7 @@ EOF
 
 	# install mr.sip
 	if [ ! -d "/usr/share/mr.sip" ]; then
-		name="mr.sip"
+		local name="mr.sip"
 		git clone https://github.com/meliht/Mr.SIP /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1563,7 +1576,7 @@ EOF
 
 	# install multitor
 	if [ ! -d "/usr/share/multitor" ]; then
-		name="multitor"
+		local name="multitor"
 		git clone https://github.com/trimstray/multitor /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./setup.sh install
@@ -1573,7 +1586,7 @@ EOF
 
 	# install sippts
 	if [ ! -d "/usr/share/sippts" ]; then
-		name="sippts"
+		local name="sippts"
 		git clone https://github.com/Pepelux/sippts /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1602,7 +1615,7 @@ EOF
 
 	# install routerscan
 	if [ ! -d "/usr/share/routerscan" ]; then
-		name="routerscan"
+		local name="routerscan"
 		mkdir -p /usr/share/$name
 		wget http://msk1.stascorp.com/routerscan/prerelease.7z -O /usr/share/$name/prerelease.7z
 		chmod 755 /usr/share/$name/*
@@ -1618,7 +1631,7 @@ EOF
 
 	# install pcredz
 	if [ ! -d "/usr/share/pcredz" ]; then
-		name="pcredz"
+		local name="pcredz"
 		mkdir -p /usr/share/$name
 		wget https://github.com/lgandx/PCredz -O /usr/share/$name
 		chmod 755 /usr/share/$name/*
@@ -1630,7 +1643,7 @@ EOF
 
 	# install pret
 	if [ ! -d "/usr/share/pret" ]; then
-		name="pret"
+		local name="pret"
 		git clone https://github.com/RUB-NDS/PRET /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1644,7 +1657,7 @@ EOF
 
 	# install geneva
 	if [ ! -d "/usr/share/geneva" ]; then
-		name="geneva"
+		local name="geneva"
 		git clone https://github.com/Kkevsterrr/geneva /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1659,7 +1672,7 @@ EOF
 
  	# install kraken
 	if [ ! -d "/usr/share/kraken" ]; then
-		name="kraken"
+		local name="kraken"
 		git clone https://github.com/jasonxtn/Kraken /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1674,7 +1687,7 @@ EOF
 
 	# install pwndbg
 	if [ ! -d "/usr/share/pwndbg" ]; then
-		name="pwndbg"
+		local name="pwndbg"
 		wget https://github.com/pwndbg/pwndbg/releases/download/2024.08.29/pwndbg_2024.08.29_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
@@ -1683,7 +1696,7 @@ EOF
 
 	# install ipscan
 	if [ ! -f "/usr/bin/ipscan" ]; then
-		name="ipscan"
+		local name="ipscan"
 		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1691,7 +1704,7 @@ EOF
 
 	# install fetch
 	if [ ! -d "/usr/share/fetch" ]; then
-		name="fetch"
+		local name="fetch"
 		git clone https://github.com/stamparm/fetch-some-proxies /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1705,7 +1718,7 @@ EOF
 
 	# install sietpy3
 	if [ ! -d "/usr/share/sietpy3" ]; then
-		name="sietpy3"
+		local name="sietpy3"
 		git clone https://github.com/Sab0tag3d/SIETpy3 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1719,7 +1732,7 @@ EOF
 
 	# install memcrashed
 	if [ ! -d "/usr/share/memcrashed" ]; then
-		name="memcrashed"
+		local name="memcrashed"
 		git clone https://github.com/649/Memcrashed-DDoS-Exploit /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1734,7 +1747,7 @@ EOF
 
 	# install spoofdpi
 	if [ ! -d "/usr/share/spoofdpi" ]; then
-		name="spoofdpi"
+		local name="spoofdpi"
 		mkdir -p /usr/share/$name
 		wget https://github.com/xvzc/SpoofDPI/releases/latest/download/spoof-dpi-linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -1768,7 +1781,7 @@ EOF
 
 	# install gtscan
 	if [ ! -d "/usr/share/gtscan" ]; then
-		name="gtscan"
+		local name="gtscan"
 		git clone https://github.com/SigPloiter/GTScan /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1783,7 +1796,7 @@ EOF
 
 	# install hlr-lookups
 	if [ ! -d "/usr/share/hlr-lookups" ]; then
-		name="hlr-lookups"
+		local name="hlr-lookups"
 		git clone https://github.com/SigPloiter/HLR-Lookups /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1797,7 +1810,7 @@ EOF
 
 	# install geowifi
 	if [ ! -d "/usr/share/geowifi" ]; then
-		name="geowifi"
+		local name="geowifi"
 		git clone https://github.com/GONZOsint/geowifi /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1834,7 +1847,7 @@ go install github.com/cruise-automation/fwanalyzer@latest;ln -fs ~/go/bin/fwanal
 
 	# install firmwalker
 	if [ ! -d "/usr/share/firmwalker" ]; then
-		name="firmwalker"
+		local name="firmwalker"
 		git clone https://github.com/craigz28/firmwalker /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1848,7 +1861,7 @@ EOF
 
 	# install bytesweep
 	if [ ! -d "/usr/share/bytesweep" ]; then
-		name="bytesweep"
+		local name="bytesweep"
 		git clone https://gitlab.com/bytesweep/bytesweep /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages;pip3 install .
@@ -1858,7 +1871,7 @@ EOF
 
 	# install firmware-analysis-toolkit
 	if [ ! -d "/usr/share/firfirmware-analysis-toolkit" ]; then
-		name="firmware-analysis-toolkit"
+		local name="firmware-analysis-toolkit"
 		git clone https://github.com/attify/firmware-analysis-toolkit /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./setup.sh
@@ -1873,7 +1886,7 @@ EOF
 
 	# install genzai
 	if [ ! -d "/usr/share/genzai" ]; then
-		name="genzai"
+		local name="genzai"
 		mkdir -p /usr/share/$name
 		wget https://github.com/umair9747/Genzai/releases/download/1.0/genzai_linux_amd64 -O /usr/share/$name/$name
 		chmod 755 /usr/share/$name/*
@@ -1887,7 +1900,7 @@ EOF
 }
 
 
-red_team ()
+red_team()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
 	# install Repository Tools
@@ -1918,7 +1931,7 @@ go install github.com/aydinnyunus/PackageSpy@latest;ln -fs ~/go/bin/packagespy /
 
 	# install trape
 	if [ ! -d "/usr/share/trape" ]; then
-		name="trape"
+		local name="trape"
 		git clone https://github.com/jofpin/trape /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1933,7 +1946,7 @@ EOF
 
 	# install dracnmap
 	if [ ! -d "/usr/share/dracnmap" ]; then
-		name="dracnmap"
+		local name="dracnmap"
 		git clone https://github.com/Screetsec/Dracnmap /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -1947,7 +1960,7 @@ EOF
 
 	# install cloakquest3r
 	if [ ! -d "/usr/share/cloakquest3r" ]; then
-		name="cloakquest3r"
+		local name="cloakquest3r"
 		git clone https://github.com/spyboy-productions/CloakQuest3r /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1962,7 +1975,7 @@ EOF
 
 	# install thetimemachine
 	if [ ! -d "/usr/share/thetimemachine" ]; then
-		name="thetimemachine"
+		local name="thetimemachine"
 		git clone https://github.com/anmolksachan/TheTimeMachine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1998,7 +2011,7 @@ EOF
 
 	# install offensivenim
 	if [ ! -d "/usr/share/offensivenim" ]; then
-		name="offensivenim"
+		local name="offensivenim"
 		git clone https://github.com/byt3bl33d3r/OffensiveNim /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2012,7 +2025,7 @@ EOF
 
 	# install goredops
 	if [ ! -d "/usr/share/goredops" ]; then
-		name="goredops"
+		local name="goredops"
 		git clone https://github.com/EvilBytecode/GoRedOps /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2026,7 +2039,7 @@ EOF
 
 	# install offensivedlr
 	if [ ! -d "/usr/share/offensivedlr" ]; then
-		name="offensivedlr"
+		local name="offensivedlr"
 		git clone https://github.com/byt3bl33d3r/OffensiveDLR /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2063,7 +2076,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 
 	# install evilginx
 	if [ ! -d "/usr/share/evilginx" ]; then
-		name="evilginx"
+		local name="evilginx"
 		mkdir /usr/share/$name
 		wget https://github.com/kgretzky/evilginx2/releases/latest/download/evilginx-v3.3.0-linux-64bit.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -2077,7 +2090,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 
 	# install socialfish
 	if [ ! -d "/usr/share/socialfish" ]; then
-		name="socialfish"
+		local name="socialfish"
 		git clone https://github.com/UndeadSec/SocialFish /usr/share/$name
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		chmod 755 /usr/share/$name/*
@@ -2092,7 +2105,7 @@ EOF
 
 	# install embedinhtml
 	if [ ! -d "/usr/share/embedinhtml" ]; then
-		name="embedinhtml"
+		local name="embedinhtml"
 		git clone https://github.com/Arno0x/EmbedInHTML /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2106,7 +2119,7 @@ EOF
 
 	# install badpdf
 	if [ ! -d "/usr/share/badpdf" ]; then
-		name="badpdf"
+		local name="badpdf"
 		git clone https://github.com/deepzec/Bad-Pdf /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2120,7 +2133,7 @@ EOF
 
 	# install pdfdropper
 	if [ ! -d "/usr/share/pdfdropper" ]; then
-		name="pdfdropper"
+		local name="pdfdropper"
 		git clone https://github.com/0x6rss/pdfdropper /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2134,7 +2147,7 @@ EOF
 
 	# install blackeye
 	if [ ! -d "/usr/share/blackeye" ]; then
-		name="blackeye"
+		local name="blackeye"
 		git clone https://github.com/EricksonAtHome/blackeye /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2148,7 +2161,7 @@ EOF
 
 	# install pdfbuilder
 	if [ ! -d "/usr/share/pdfbuilder" ]; then
-		name="pdfbuilder"
+		local name="pdfbuilder"
 		mkdir -p /usr/share/$name
 		wget https://github.com/K3rnel-Dev/pdf-exploit/releases/download/Compilated/PDF-BUILDER.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -2164,7 +2177,7 @@ EOF
 
 	# install credsniper
 	if [ ! -d "/usr/share/credsniper" ]; then
-		name="credsniper"
+		local name="credsniper"
 		git clone https://github.com/ustayready/CredSniper /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
@@ -2180,7 +2193,7 @@ EOF
 
 	# install evilurl
 	if [ ! -d "/usr/share/evilurl" ]; then
-		name="evilurl"
+		local name="evilurl"
 		git clone https://github.com/UndeadSec/EvilURL /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2194,7 +2207,7 @@ EOF
 
 	# install debinject
 	if [ ! -d "/usr/share/debinject" ]; then
-		name="debinject"
+		local name="debinject"
 		git clone https://github.com/UndeadSec/Debinject /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2208,7 +2221,7 @@ EOF
 
 	# install brutal
 	if [ ! -d "/usr/share/brutal" ]; then
-		name="brutal"
+		local name="brutal"
 		git clone https://github.com/Screetsec/Brutal /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2222,7 +2235,7 @@ EOF
 
 	# install demiguise
 	if [ ! -d "/usr/share/demiguise" ]; then
-		name="demiguise"
+		local name="demiguise"
 		git clone https://github.com/nccgroup/demiguise /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2236,7 +2249,7 @@ EOF
 
 	# install dr0p1t
 	if [ ! -d "/usr/share/dr0p1t" ]; then
-		name="dr0p1t"
+		local name="dr0p1t"
 		git clone https://github.com/D4Vinci/Dr0p1t-Framework /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
@@ -2251,7 +2264,7 @@ EOF
 
 	# install evilpdf
 	if [ ! -d "/usr/share/evilpdf" ]; then
-		name="evilpdf"
+		local name="evilpdf"
 		git clone https://github.com/superzerosec/evilpdf /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2266,7 +2279,7 @@ EOF
 
 	# install gophish
 	if [ ! -d "/usr/share/gophish" ]; then
-		name="gophish"
+		local name="gophish"
 		wget https://github.com/gophish/gophish/releases/latest/download/gophish-v0.12.1-linux-64bit.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
@@ -2302,7 +2315,7 @@ EOF
 
 	# install venom
 	if [ ! -d "/usr/share/venom" ]; then
-		name="venom"
+		local name="venom"
 		git clone https://github.com/r00t-3xp10it/venom /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2316,7 +2329,7 @@ EOF
 
 	# install powerlessshell
 	if [ ! -d "/usr/share/powerlessshell" ]; then
-		name="powerlessshell"
+		local name="powerlessshell"
 		git clone https://github.com/Mr-Un1k0d3r/PowerLessShell /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2330,7 +2343,7 @@ EOF
 
 	# install sharpshooter
 	if [ ! -d "/usr/share/sharpshooter" ]; then
-		name="sharpshooter"
+		local name="sharpshooter"
 		git clone https://github.com/mdsecactivebreach/SharpShooter /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2345,7 +2358,7 @@ EOF
 
 	# install donut
 	if [ ! -d "/usr/share/donut" ]; then
-		name="donut"
+		local name="donut"
 		mkdir -p /usr/share/$name
 		wget https://github.com/TheWover/donut/releases/latest/download/donut_v1.0.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -2379,7 +2392,7 @@ EOF
 
 	# install vegile
 	if [ ! -d "/usr/share/vegile" ]; then
-		name="vegile"
+		local name="vegile"
 		git clone https://github.com/Screetsec/Vegile /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Vegile /usr/bin/$name
@@ -2390,7 +2403,7 @@ EOF
 
 	# install smmbackdoorng
 	if [ ! -d "/usr/share/smmbackdoorng" ]; then
-		name="smmbackdoorng"
+		local name="smmbackdoorng"
 		git clone https://github.com/Cr4sh/SmmBackdoorNg /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2404,7 +2417,7 @@ EOF
 
 	# install medusa
 	if [ ! -d "/usr/share/medusa" ]; then
-		name="medusa"
+		local name="medusa"
 		git clone https://github.com/ldpreload/Medusa /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		mkdir -p /usr/share/$name/build;mkdir -p /usr/share/$name/bin
@@ -2438,7 +2451,7 @@ EOF
 
 	# install mimipenguin
 	if [ ! -d "/usr/share/mimipenguin" ]; then
-		name="mimipenguin"
+		local name="mimipenguin"
 		git clone https://github.com/huntergregal/mimipenguin /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2452,7 +2465,7 @@ EOF
 
 	# install godpotato
 	if [ ! -d "/usr/share/godpotato" ]; then
-		name="godpotato"
+		local name="godpotato"
 		mkdir -p /usr/share/$name
 		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET4.exe -O /usr/share/$name/GodPotato-NET4.exe
 		wget https://github.com/BeichenDream/GodPotato/releases/latest/download/GodPotato-NET35.exe -O /usr/share/$name/GodPotato-NET35.exe
@@ -2468,7 +2481,7 @@ EOF
 
 	# install smc
 	if [ ! -d "/usr/share/smc" ]; then
-		name="smc"
+		local name="smc"
 		mkdir -p /usr/share/$name
 		wget https://meltdown.ovh -O /usr/share/$name/spectre-meltdown-checker.sh
 		chmod 755 /usr/share/$name/*
@@ -2483,7 +2496,7 @@ EOF
 
 	# install deadpotato
 	if [ ! -d "/usr/share/deadpotato" ]; then
-		name="deadpotato"
+		local name="deadpotato"
 		mkdir -p /usr/share/$name
 		wget https://github.com/lypd0/DeadPotato/releases/download/1.1/DeadPotato-NET4.exe -O /usr/share/$name
 		chmod 755 /usr/share/$name/*
@@ -2519,7 +2532,7 @@ EOF
 
 	# install aswcrypter
 	if [ ! -d "/usr/share/aswcrypter" ]; then
-		name="aswcrypter"
+		local name="aswcrypter"
 		git clone https://github.com/AbedAlqaderSwedan1/ASWCrypter /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		bash /usr/share/$name/setup.sh
@@ -2534,7 +2547,7 @@ EOF
 
 	# install unicorn
 	if [ ! -d "/usr/share/unicorn" ]; then
-		name="unicorn"
+		local name="unicorn"
 		git clone https://github.com/trustedsec/unicorn /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2548,7 +2561,7 @@ EOF
 
 	# install edr_blocker
 	if [ ! -d "/usr/share/edr_blocker" ]; then
-		name="edr_blocker"
+		local name="edr_blocker"
 		git clone https://github.com/TierZeroSecurity/edr_blocker /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2562,7 +2575,7 @@ EOF
 
 	# install syswhispers3
 	if [ ! -d "/usr/share/syswhispers3" ]; then
-		name="syswhispers3"
+		local name="syswhispers3"
 		git clone https://github.com/klezVirus/SysWhispers3 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2576,7 +2589,7 @@ EOF
 
 	# install scarecrow
 	if [ ! -d "/usr/share/scarecrow" ]; then
-		name="scarecrow"
+		local name="scarecrow"
 		mkdir -p /usr/share/$name
 		wget https://github.com/optiv/ScareCrow/releases/download/v5.1/ScareCrow_5.1_linux_amd64 -O /usr/share/$name
 		chmod 755 /usr/share/$name/*
@@ -2588,7 +2601,7 @@ EOF
 
 	# install syswhispers
 	if [ ! -d "/usr/share/syswhispers" ]; then
-		name="syswhispers"
+		local name="syswhispers"
 		git clone https://github.com/jthuraisamy/SysWhispers /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2603,7 +2616,7 @@ EOF
 
 	# install invoke-dosfuscation
 	if [ ! -d "/usr/share/invoke-dosfuscation" ]; then
-		name="invoke-dosfuscation"
+		local name="invoke-dosfuscation"
 		git clone https://github.com/danielbohannon/Invoke-DOSfuscation /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2617,7 +2630,7 @@ EOF
 
 	# install obfuscatecactustorch
 	if [ ! -d "/usr/share/obfuscatecactustorch" ]; then
-		name="obfuscatecactustorch"
+		local name="obfuscatecactustorch"
 		git clone https://github.com/Arno0x/ObfuscateCactusTorch /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2631,7 +2644,7 @@ EOF
 
 	# install phantom-evasion
 	if [ ! -d "/usr/share/phantom-evasion" ]; then
-		name="phantom-evasion"
+		local name="phantom-evasion"
 		git clone https://github.com/oddcod3/Phantom-Evasion /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2645,7 +2658,7 @@ EOF
 
 	# install spookflare
 	if [ ! -d "/usr/share/spookflare" ]; then
-		name="spookflare"
+		local name="spookflare"
 		git clone https://github.com/hlldz/SpookFlare /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2660,7 +2673,7 @@ EOF
 
 	# install pazuzu
 	if [ ! -d "/usr/share/pazuzu" ]; then
-		name="pazuzu"
+		local name="pazuzu"
 		git clone https://github.com/BorjaMerino/Pazuzu /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2674,7 +2687,7 @@ EOF
 
 	# install invoke-obfuscation
 	if [ ! -d "/usr/share/invoke-obfuscation" ]; then
-		name="invoke-obfuscation"
+		local name="invoke-obfuscation"
 		git clone https://github.com/danielbohannon/Invoke-Obfuscation /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2688,7 +2701,7 @@ EOF
 
 	# install invoke-cradlecrafter
 	if [ ! -d "/usr/share/invoke-cradlecrafter" ]; then
-		name="invoke-cradlecrafter"
+		local name="invoke-cradlecrafter"
 		git clone https://github.com/danielbohannon/Invoke-CradleCrafter /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2724,7 +2737,7 @@ go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/k
 
 	# install kerberoast
 	if [ ! -d "/usr/share/kerberoast" ]; then
-		name="kerberoast"
+		local name="kerberoast"
 		git clone https://github.com/nidem/kerberoast /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2738,7 +2751,7 @@ EOF
 
 	# install ntlmRelaytoews
 	if [ ! -d "/usr/share/ntlmRelaytoews" ]; then
-		name="ntlmRelaytoews"
+		local name="ntlmRelaytoews"
 		git clone https://github.com/Arno0x/NtlmRelayToEWS /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2752,7 +2765,7 @@ EOF
 
 	# install dfscoerce
 	if [ ! -d "/usr/share/dfscoerce" ]; then
-		name="dfscoerce"
+		local name="dfscoerce"
 		git clone https://github.com/Wh04m1001/DFSCoerce /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2766,7 +2779,7 @@ EOF
 
 	# install netripper
 	if [ ! -d "/usr/share/metasploit-framework/modules/post/windows/gather/netripper" ]; then
-		name="netripper"
+		local name="netripper"
 		mkdir -p /usr/share/metasploit-framework/modules/post/windows/gather/$name
 		wget https://github.com/NytroRST/NetRipper/blob/master/Metasploit/netripper.rb -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/netripper.rb
 		wget https://github.com/NytroRST/NetRipper/blob/master/x64/DLL.x64.dll -O /usr/share/metasploit-framework/modules/post/windows/gather/$name/DLL.x64.dll
@@ -2806,7 +2819,7 @@ EOF
 
 	# install adexplorer
 	if [ ! -d "/usr/share/adexplorer" ]; then
-		name="adexplorer"
+		local name="adexplorer"
 		mkdir -p /usr/share/adexplorer
 		wget https://download.sysinternals.com/files/AdExplorer.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -2843,7 +2856,7 @@ EOF
 
 	# install scshell
 	if [ ! -d "/usr/share/scshell" ]; then
-		name="scshell"
+		local name="scshell"
 		git clone https://github.com/Mr-Un1k0d3r/SCShell /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2857,7 +2870,7 @@ EOF
 
 	# install amnesiac
 	if [ ! -d "/usr/share/amnesiac" ]; then
-		name="amnesiac"
+		local name="amnesiac"
 		git clone https://github.com/Leo4j/Amnesiac /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2892,7 +2905,7 @@ EOF
 
 	# install caldera
 	if [ ! -d "/usr/share/caldera" ]; then
-		name="caldera"
+		local name="caldera"
 		git clone https://github.com/mitre/caldera /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2928,7 +2941,7 @@ EOF
 
 	# install phoenixc2
 	if [ ! -d "/usr/share/phoenixc2" ]; then
-		name="phoenixc2"
+		local name="phoenixc2"
 		git clone https://github.com/screamz2k/PhoenixC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;poetry install
@@ -2943,7 +2956,7 @@ EOF
 
 	# install nebula
 	if [ ! -d "/usr/share/nebula" ]; then
-		name="nebula"
+		local name="nebula"
 		git clone https://github.com/gl4ssesbo1/Nebula /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2958,7 +2971,7 @@ EOF
 
 	# install mistica
 	if [ ! -d "/usr/share/mistica" ]; then
-		name="mistica"
+		local name="mistica"
 		git clone https://github.com/IncideDigital/Mistica /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -2972,7 +2985,7 @@ EOF
 
 	# install evilosx
 	if [ ! -d "/usr/share/evilosx" ]; then
-		name="evilosx"
+		local name="evilosx"
 		git clone https://github.com/Marten4n6/EvilOSX /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -2987,7 +3000,7 @@ EOF
 
 	# install eggshell
 	if [ ! -d "/usr/share/eggshell" ]; then
-		name="eggshell"
+		local name="eggshell"
 		git clone https://github.com/lucasjacks0n/EggShell /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3001,7 +3014,7 @@ EOF
 
 	# install sillyrat
 	if [ ! -d "/usr/share/sillyrat" ]; then
-		name="sillyrat"
+		local name="sillyrat"
 		git clone https://github.com/hash3liZer/SillyRAT /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3015,7 +3028,7 @@ EOF
 
 	# install godgenesis
 	if [ ! -d "/usr/share/godgenesis" ]; then
-		name="godgenesis"
+		local name="godgenesis"
 		git clone https://github.com/SaumyajeetDas/GodGenesis /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3030,7 +3043,7 @@ EOF
 
 	# install phonesploit
 	if [ ! -d "/usr/share/phonesploit" ]; then
-		name="phonesploit"
+		local name="phonesploit"
 		git clone https://github.com/AzeemIdrisi/PhoneSploit-Pro /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3045,7 +3058,7 @@ EOF
 
 	# install meliziac2
 	if [ ! -d "/usr/share/meliziac2" ]; then
-		name="meliziac2"
+		local name="meliziac2"
 		git clone https://github.com/demon-i386/MeliziaC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3059,7 +3072,7 @@ EOF
 
 	# install gcr
 	if [ ! -d "/usr/share/gcr" ]; then
-		name="gcr"
+		local name="gcr"
 		git clone https://github.com/MrSaighnal/GCR-Google-Calendar-RAT /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3073,7 +3086,7 @@ EOF
 
 	# isntall meetc2
 	if [ ! -d "/usr/share/meetc2" ]; then
-		name="meetc2"
+		local name="meetc2"
 		git clone https://github.com/iammaguire/MeetC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/meetc /usr/bin/$name
@@ -3084,7 +3097,7 @@ EOF
 
 	# install pingrat
 	if [ ! -d "/usr/share/pingrat" ]; then
-		name="pingrat"
+		local name="pingrat"
 		mkdir -p /usr/share/$name
 		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/client -O /usr/share/$name/client
 		wget https://github.com/umutcamliyurt/PingRAT/releases/latest/download/server -O /usr/share/$name/server
@@ -3098,7 +3111,7 @@ EOF
 
 	# install ligolo-mp
 	if [ ! -d "/usr/share/ligolo-mp" ]; then
-		name="ligolo-mp"
+		local name="ligolo-mp"
 		mkdir -p /usr/share/$name
 		wget https://github.com/ttpreport/ligolo-mp/releases/download/v1.0.4/ligolo-mp_server_1.0.4_linux_amd64 -O /usr/share/$name/ligolos
 		wget https://github.com/ttpreport/ligolo-mp/releases/download/v1.0.4/ligolo-mp_client_1.0.4_linux_amd64 -O /usr/share/$name/ligoloc
@@ -3112,7 +3125,7 @@ EOF
 
 	# install realm
 	if [ ! -d "/usr/share/realm" ]; then
-		name="realm"
+		local name="realm"
 		mkdir -p /usr/share/$name
 		wget https://github.com/spellshift/realm/releases/latest/download/tavern -O /usr/share/$name/tavern
 		wget https://github.com/spellshift/realm/releases/latest/download/imix-x86_64-unknown-linux-musl -O /usr/share/$name/imix
@@ -3125,7 +3138,7 @@ EOF
 
 	# install badrats
 	if [ ! -d "/usr/share/badrats" ]; then
-		name="badrats"
+		local name="badrats"
 		git clone https://gitlab.com/KevinJClark/badrats /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3140,7 +3153,7 @@ EOF
 
 	# install mythic
 	if [ ! -d "/usr/share/mythic" ]; then
-		name="mythic"
+		local name="mythic"
 		git clone https://github.com/its-a-feature/Mythic /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install_docker_kali.sh
@@ -3154,7 +3167,7 @@ EOF
 
 	# install northstarc2
 	if [ ! -d "/usr/share/northstarc2" ]; then
-		name="northstarc2"
+		local name="northstarc2"
 		git clone https://github.com/EnginDemirbilek/NorthStarC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
@@ -3164,7 +3177,7 @@ EOF
 
 	# install blackmamba
 	if [ ! -d "/usr/share/blackmamba" ]; then
-		name="blackmamba"
+		local name="blackmamba"
 		git clone https://github.com/loseys/BlackMamba /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3179,7 +3192,7 @@ EOF
 
 	# install offensivenotion
 	if [ ! -d "/usr/share/offensivenotion" ]; then
-		name="offensivenotion"
+		local name="offensivenotion"
 		mkdir -p /usr/share/$name
 		wget https://github.com/mttaggart/OffensiveNotion/releases/latest/download/offensive_notion_linux_amd64.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -3192,7 +3205,7 @@ EOF
 
 	# install redbloodc2
 	if [ ! -d "/usr/share/redbloodc2" ]; then
-		name="redbloodc2"
+		local name="redbloodc2"
 		git clone https://github.com/kira2040k/RedbloodC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;npm install
@@ -3207,7 +3220,7 @@ EOF
 
 	# install sharpc2
 	if [ ! -d "/usr/share/sharpc2" ]; then
-		name="sharpc2"
+		local name="sharpc2"
 		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;mv -f /usr/share/SharpC2 /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/TeamServer /usr/bin/$name
@@ -3218,7 +3231,7 @@ EOF
 
 	# install emp3r0r
 	if [ ! -d "/usr/share/emp3r0r" ]; then
-		name="emp3r0r"
+		local name="emp3r0r"
 		wget https://github.com/jm33-m0/emp3r0r/releases/download/v1.37.1/emp3r0r-v1.37.1.tar.xz -O /tmp/$name.tar.xz
 		tar -xvf /tmp/$name.tar.xz -C /usr/share;mv -f /usr/share/emp3r0r-build /usr/share/$name;rm -f /tmp/$name.tar.xz
 		chmod 755 /usr/share/$name/*
@@ -3229,7 +3242,7 @@ EOF
 
 	# install chaos
 	if [ ! -d "/usr/share/chaos" ]; then
-		name="chaos"
+		local name="chaos"
 		git clone https://github.com/tiagorlampert/CHAOS /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3243,7 +3256,7 @@ EOF
 
 	# install godoh
 	if [ ! -d "/usr/share/godoh" ]; then
-		name="godoh"
+		local name="godoh"
 		mkdir -p /usr/share/$name
 		wget https://github.com/sensepost/godoh/releases/latest/download/godoh-linux64 -O /usr/share/$name/godoh
 		chmod 755 /usr/share/$name/*
@@ -3255,7 +3268,7 @@ EOF
 
 	# install sliver
 	if [ ! -d "/usr/share/sliver" ]; then
-		name="sliver"
+		local name="sliver"
 		mkdir -p /usr/share/$name
 		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-server_linux -O /usr/share/$name/sliver_server
 		wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-client_linux -O /usr/share/$name/sliver_client
@@ -3268,7 +3281,7 @@ EOF
 
 	# install havoc
 	if [ ! -d "/usr/share/havoc" ]; then
-		name="havoc"
+		local name="havoc"
 		git clone https://github.com/HavocFramework/Havoc /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /user/share/$name/client;make
@@ -3302,7 +3315,7 @@ EOF
 
 	# install ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
-		name="ngrok"
+		local name="ngrok"
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
 		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/bin/$name
@@ -3312,7 +3325,7 @@ EOF
 
 	# install noip2
 	if [ ! -f "/usr/local/bin/noip2" ]; then
-		name="noip"
+		local name="noip"
 		mkdir -p /usr/share/$name
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$name.tar.gz
 		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -3324,7 +3337,7 @@ EOF
 
 	# install dnsexfiltrator
 	if [ ! -d "/usr/share/dnsexfiltrator" ]; then
-		name="dnsexfiltrator"
+		local name="dnsexfiltrator"
 		git clone https://github.com/Arno0x/DNSExfiltrator /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3339,7 +3352,7 @@ EOF
 
 	# install bobthesmuggler
 	if [ ! -d "/usr/share/bobthesmuggler" ]; then
-		name="bobthesmuggler"
+		local name="bobthesmuggler"
 		git clone https://github.com/TheCyb3rAlpha/BobTheSmuggler /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3353,7 +3366,7 @@ EOF
 
 	# install sshsnake
 	if [ ! -d "/usr/share/sshsnake" ]; then
-		name="sshsnake"
+		local name="sshsnake"
 		git clone https://github.com/MegaManSec/SSH-Snake /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3367,7 +3380,7 @@ EOF
 
 	# install reversessh
 	if [ ! -d "/usr/share/reversessh" ]; then
-		name="reversessh"
+		local name="reversessh"
 		mkdir -p /usr/share/$name
 		wget https://github.com/Fahrj/reverse-ssh/releases/latest/download/reverse-sshx64 -O /usr/share/$name/reversessh
 		chmod 755 /usr/share/$name/*
@@ -3382,7 +3395,7 @@ EOF
 
 	# install transfer.sh
 	if [ ! -d "/usr/share/transfer.sh" ]; then
-		name="transfer.sh"
+		local name="transfer.sh"
 		mkdir -p /usr/share/$name
 		wget https://github.com/dutchcoders/transfer.sh/releases/download/v1.6.1/transfersh-v1.6.1-linux-amd64 -O /usr/share/$name/transfer.sh
 		chmod 755 /usr/share/$name/*
@@ -3394,7 +3407,7 @@ EOF
 
 	# install dnslivery
 	if [ ! -d "/usr/share/dnslivery" ]; then
-		name="dnslivery"
+		local name="dnslivery"
 		git clone https://github.com/no0be/DNSlivery /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3409,7 +3422,7 @@ EOF
 
 	# install webdavdelivery
 	if [ ! -d "/usr/share/webdavdelivery" ]; then
-		name="webdavdelivery"
+		local name="webdavdelivery"
 		git clone https://github.com/Arno0x/WebDavDelivery /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3423,7 +3436,7 @@ EOF
 
 	# install wstunnel
 	if [ ! -d "/usr/share/wstunnel" ]; then
-		name="wstunnel"
+		local name="wstunnel"
 		mkdir -p /usr/share/$name
 		wget https://github.com/erebe/wstunnel/releases/download/v10.1.1/wstunnel_10.1.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -3436,7 +3449,7 @@ EOF
 
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
-		name="kubo"
+		local name="kubo"
 		wget https://github.com/ipfs/kubo/releases/download/v0.30.0/kubo_v0.30.0_linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
@@ -3447,7 +3460,7 @@ EOF
 
 	# install frp
 	if [ ! -d "/usr/share/frp" ]; then
-		name="frp"
+		local name="frp"
 		wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xzf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/frp_* /usr/share/frp
 		chmod 755 /usr/share/$name/*
@@ -3459,7 +3472,7 @@ EOF
 
 	# install rathole
 	if [ ! -d "/usr/share/rathole" ]; then
-		name="rathole"
+		local name="rathole"
 		mkdir -p /usr/share/$name
 		wget https://github.com/rapiz1/rathole/releases/latest/download/rathole-x86_64-unknown-linux-gnu.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -3472,7 +3485,7 @@ EOF
 
 	# install hfs
 	if [ ! -d "/usr/share/hfs" ]; then
-		name="hfs"
+		local name="hfs"
 		mkdir -p /usr/share/$name
 		wget https://github.com/rejetto/hfs/releases/download/v0.53.0/hfs-linux-x64-0.53.0.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -3485,7 +3498,7 @@ EOF
 
 	# install goproxy
 	if [ ! -d "/usr/share/goproxy" ]; then
-		name="goproxy"
+		local name="goproxy"
 		mkdir -p /usr/share/$name
 		wget https://github.com/snail007/goproxy/releases/latest/download/proxy-linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -3521,7 +3534,7 @@ EOF
 }
 
 
-ics_security ()
+ics_security()
 {
 	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
 	# install Repository Tools
@@ -3545,7 +3558,7 @@ ics_security ()
 
 	# install s7scan
 	if [ ! -d "/usr/share/s7scan" ]; then
-		name="s7scan"
+		local name="s7scan"
 		git clone https://github.com/klsecservices/s7scan /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3559,7 +3572,7 @@ EOF
 
 	# install modbuspal
 	if [ ! -d "/usr/share/modbuspal" ]; then
-		name="modbuspal"
+		local name="modbuspal"
 		mkdir -p /usr/share/$name
 		wget https://cfhcable.dl.sourceforge.net/project/modbuspal/modbuspal/RC%20version%201.6c/ModbusPal.jar -O /usr/share/$name/ModbusPal.jar
 		chmod 755 /usr/share/$name/*
@@ -3574,7 +3587,7 @@ EOF
 
 	# install isf
 	if [ ! -d "/usr/share/isf" ]; then
-		name="isf"
+		local name="isf"
 		git clone https://github.com/dark-lbp/isf /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3589,7 +3602,7 @@ EOF
 
 	# install redpoint
 	if [ ! -f "/usr/share/nmap/scripts/fox-info.nse" ]; then
-		name="redpoint"
+		local name="redpoint"
 		git clone https://github.com/digitalbond/Redpoint /tmp/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;mv * /usr/share/nmap/scripts
@@ -3664,7 +3677,7 @@ EOF
 }
 
 
-digital_forensic ()
+digital_forensic()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
 	# install Repository Tools
@@ -3688,7 +3701,7 @@ digital_forensic ()
 
 	# install sysmonforlinux
 	if [ ! -d "/usr/share/sysmonforlinux" ]; then
-		name="sysmonforlinux"
+		local name="sysmonforlinux"
 		wget https://github.com/Sysinternals/SysmonForLinux/releases/download/1.3.3.0/sysmonforlinux_1.3.3_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
@@ -3697,7 +3710,7 @@ digital_forensic ()
 
 	# install bindiff
 	if [ ! -d "/usr/share/bindiff" ]; then
-		name="bindiff"
+		local name="bindiff"
 		wget https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
@@ -3728,7 +3741,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install dangerzone
 	if [ ! -d "/usr/share/dangerzone" ]; then
-		name="dangerzone"
+		local name="dangerzone"
 		gpg --keyserver hkps://keys.openpgp.org \
     		--no-default-keyring --keyring ./fpf-apt-tools-archive-keyring.gpg \
     		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
@@ -3741,7 +3754,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install stegocracker
 	if [ ! -d "/usr/share/stegocracker" ]; then
-		name="stegocracker"
+		local name="stegocracker"
 		git clone https://github.com/W1LDN16H7/StegoCracker /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3752,7 +3765,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install openstego
 	if [ ! -d "/usr/share/openstego" ]; then
-		name="openstego"
+		local name="openstego"
 		wget https://github.com/syvaidya/openstego/releases/download/openstego-0.8.6/openstego_0.8.6-1_all.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;apt --fix-broken install -qy;rm -f /tmp/$name.deb
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
@@ -3761,7 +3774,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install stegosaurus
 	if [ ! -d "/usr/share/stegosaurus" ]; then
-		name="stegosaurus"
+		local name="stegosaurus"
 		mkdir -p /usr/share/$name
 		wget https://github.com/AngelKitty/stegosaurus/releases/latest/download/stegosaurus -O /usr/share/$name/stegosaurus
 		chmod 755 /usr/share/$name/*
@@ -3773,7 +3786,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install audiostego
 	if [ ! -d "/usr/share/audiostego" ]; then
-		name="audiostego"
+		local name="audiostego"
 		git clone https://github.com/danielcardeenas/AudioStego /usr/share/$name
 		cd /usr/share/$name;mkdir build;cd build;cmake ..;make
 		chmod 755 /usr/share/$name/*
@@ -3785,7 +3798,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 
 	# install cloacked-pixel
 	if [ ! -d "/usr/share/cloacked-pixel" ]; then
-		name="cloacked-pixel"
+		local name="cloacked-pixel"
 		git clone https://github.com/livz/cloacked-pixel /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3799,7 +3812,7 @@ EOF
 
 	# install trace-forensic-toolkit
 	if [ ! -d "/usr/share/trace" ]; then
-		name="trace"
+		local name="trace"
 		git clone https://github.com/Gadzhovski/TRACE-Forensic-Toolkit /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3814,7 +3827,7 @@ EOF
 
 	# install steganabara
 	if [ ! -d "/usr/share/steganabara" ]; then
-		name="steganabara"
+		local name="steganabara"
 		git clone https://github.com/quangntenemy/Steganabara /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -3828,7 +3841,7 @@ EOF
 
 	# install stegsolve
 	if [ ! -d "/usr/share/stegsolve" ]; then
-		name="stegsolve"
+		local name="stegsolve"
 		mkdir -p /usr/share/$name
 		wget http://www.caesum.com/handbook/Stegsolve.jar -O /usr/share/$name/stegsolve.jar
 		chmod 755 /usr/share/$name/*
@@ -3843,7 +3856,7 @@ EOF
 
 	# install openpuff
 	if [ ! -d "/usr/share/openpuff" ]; then
-		name="openpuff"
+		local name="openpuff"
 		wget https://embeddedsw.net/zip/OpenPuff_release.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
@@ -3858,7 +3871,7 @@ EOF
 
 	# install mp3stego
 	if [ ! -d "/usr/share/mp3stego" ]; then
-		name="mp3stego"
+		local name="mp3stego"
 		git clone https://github.com/fabienpe/MP3Stego /usr/share/$name
 		chmod 755 /usr/share/$name/MP3Stego/*
 		cat > /usr/bin/$name-encode << EOF
@@ -3878,7 +3891,7 @@ EOF
 
 	# install jsteg-slink
 	if [ ! -d "/usr/share/jsteg-slink" ]; then
-		name="jsteg-slink"
+		local name="jsteg-slink"
 		mkdir -p /usr/share/$name
 		wget https://github.com/lukechampine/jsteg/releases/latest/download/jsteg-linux-amd64 -O /usr/share/$name/jsteg
 		chmod +x /usr/bin/jsteg
@@ -3894,7 +3907,7 @@ EOF
 
 	# install ssak
 	if [ ! -d "/usr/share/ssak" ]; then
-		name="ssak"
+		local name="ssak"
 		git clone https://github.com/mmtechnodrone/SSAK /usr/share/$name
 		chmod 755 /usr/share/$name/programs/64/*
 		ln -fs /usr/share/$name/programs/64/cjpeg /usr/bin/cjpeg
@@ -3954,7 +3967,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 
 	# install matano
 	if [ ! -d "/usr/share/matano" ]; then
-		name="matano"
+		local name="matano"
 		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$name.sh
 		chmod +x /tmp/$name.sh;cd /tmp;bash $name.sh;rm -f $name.sh
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
@@ -3963,7 +3976,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 
 	# install apt-hunter
 	if [ ! -d "/usr/share/apt-hunter" ]; then
-		name="apt-hunter"
+		local name="apt-hunter"
 		git clone https://github.com/ahmedkhlief/APT-Hunter /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -3978,7 +3991,7 @@ EOF
 
 	# install pspy
 	if [ ! -d "/usr/share/pspy" ]; then
-		name="pspy"
+		local name="pspy"
 		mkdir -p /usr/share/$name
 		wget https://github.com/DominicBreuker/pspy/releases/latest/download/pspy64 -O /usr/share/$name/pspy64
 		chmod 755 /usr/share/$name/*
@@ -3990,7 +4003,7 @@ EOF
 
  	# install velociraptor
 	if [ ! -d "/usr/share/velociraptor" ]; then
-		name="velociraptor"
+		local name="velociraptor"
 		mkdir -p /usr/share/$name
 		wget https://github.com/Velocidex/velociraptor/releases/download/v0.72/velociraptor-v0.72.0-linux-amd64 -O /usr/share/$name/velociraptor
 		chmod 755 /usr/share/$name/*
@@ -4002,7 +4015,7 @@ EOF
 
 	# install hayabusa
 	if [ ! -d "/usr/share/hayabusa" ]; then
-		name="hayabusa"
+		local name="hayabusa"
 		wget https://github.com/Yamato-Security/hayabusa/releases/download/v2.16.0/hayabusa-2.16.0-linux-intel.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		ln -fs /usr/share/$name/hayabusa-2.16.0-lin-x64-gnu /usr/bin/$name
@@ -4013,7 +4026,7 @@ EOF
 
 	# install aiengine
 	if [ ! -d "/usr/share/aiengine" ]; then
-		name="aiengine"
+		local name="aiengine"
 		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
@@ -4026,7 +4039,7 @@ EOF
 
 	# install tracee
 	if [ ! -d "/usr/share/tracee" ]; then
-		name="tracee"
+		local name="tracee"
 		mkdir -p /usr/share/$name
 		wget https://github.com/aquasecurity/tracee/releases/download/v0.20.0/tracee-x86_64.v0.20.0.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -4037,7 +4050,7 @@ EOF
 
 	# install sysinternalsebpf
 	if [ ! -d "/usr/share/sysinternalsebpf" ]; then
-		name="sysinternalsebpf"
+		local name="sysinternalsebpf"
 		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
@@ -4046,7 +4059,7 @@ EOF
 
  	# install capa
 	if [ ! -d "/usr/share/capa" ]; then
-		name="capa"
+		local name="capa"
 		mkdir -p /usr/share/$name
   		wget https://github.com/mandiant/capa/releases/download/v7.3.0/capa-v7.3.0-linux.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -4078,7 +4091,7 @@ EOF
 
 	# install grr
 	if [ ! -d "/usr/share/grr" ]; then
-		name="grr"
+		local name="grr"
 		wget https://github.com/google/grr/releases/latest/download/grr-server_3.4.7-1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4107,7 +4120,7 @@ EOF
 
 	# install opencti
 	if [ ! -d "/usr/share/opencti" ]; then
-		name="opencti"
+		local name="opencti"
 		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.3.4/opencti-release-6.3.4.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
@@ -4130,7 +4143,7 @@ EOF
 
 	# install rita
 	if [ ! -d "/var/opt/rita" ]; then
-		name="rita"
+		local name="rita"
 		wget https://github.com/activecm/rita/releases/download/v5.0.8/install-rita-zeek-here.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4140,7 +4153,7 @@ EOF
 }
 
 
-blue_team ()
+blue_team()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
 	# install Repository Tools
@@ -4164,7 +4177,7 @@ blue_team ()
 
 	# install jumpserver
 	if [ ! -d "/usr/share/jumpserver" ]; then
-		name="jumpserver"
+		local name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4194,7 +4207,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 
 	# install wazuh
 	if [ ! -f "/etc/apt/sources.list.d/wazuh.list" ]; then
-		name="wazuh"
+		local name="wazuh"
 		# install Indexer
 		cd /tmp;curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh;curl -sO https://packages.wazuh.com/4.7/config.yml
 		sed -i "s|<indexer-node-ip>|$LAN|g" /tmp/config.yml;sed -i "s|wazuh-manager-ip|$LAN|g" /tmp/config.yml;sed -i "s|dashboard-node-ip|$LAN|g" /tmp/config.yml
@@ -4217,7 +4230,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 
 	# install opensearch
 	if [ ! -d "/usr/share/opensearch" ]; then
-		name="opensearch"
+		local name="opensearch"
 		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4225,7 +4238,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 
 	# install falco
 	if [ ! -f "/etc/apt/sources.list.d/falcosecurity.list" ]; then
-		name="falco"
+		local name="falco"
 		curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
 		cat > /etc/apt/sources.list.d/falcosecurity.list << EOF
 deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
@@ -4236,7 +4249,7 @@ EOF
 
 	# install siegma
 	if [ ! -d "/usr/share/siegma" ]; then
-		name="siegma"
+		local name="siegma"
 		git clone https://github.com/3CORESec/SIEGMA /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -4251,7 +4264,7 @@ EOF
 
 	# install ntop
 	if [ ! -d "/usr/share/ntop" ]; then
-		name="ntop"
+		local name="ntop"
 		apt-get install -y software-properties-common wget add-apt-repository universe
 		wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
 		chmod +x /tmp/apt-ntop-stable.deb;apt install /tmp/apt-ntop-stable.deb 
@@ -4260,7 +4273,7 @@ EOF
 
 	# install aiengine
 	if [ ! -d "/usr/share/aiengine" ]; then
-		name="aiengine"
+		local name="aiengine"
 		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
@@ -4272,7 +4285,7 @@ EOF
 
 	# install ossec
 	if [ ! -f "/etc/apt/sources.list.d/atomic.list" ]; then
-		name="ossec"
+		local name="ossec"
 		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt  | sudo apt-key add -
 		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/atomic.list
 		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
@@ -4281,7 +4294,7 @@ EOF
 
 	# install cilium
 	if [ ! -d "/usr/share/cilium" ]; then
-		name="cilium"
+		local name="cilium"
 		mkdir -p /usr/share/$name
 		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -4293,7 +4306,7 @@ EOF
 
 	# install elasticsearch
 	if [ ! -d "/usr/share/elasticsearch" ]; then
-		name="elasticsearch"
+		local name="elasticsearch"
 		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4301,7 +4314,7 @@ EOF
 
 	# install kibana
 	if [ ! -d "/usr/share/kibana" ]; then
-		name="kibana"
+		local name="kibana"
 		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4309,7 +4322,7 @@ EOF
 
 	# install logstash
 	if [ ! -d "/usr/share/logstash" ]; then
-		name="logstash"
+		local name="logstash"
 		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4317,7 +4330,7 @@ EOF
 
 	# install zabbix
 	if [ ! -d "/usr/share/zabbix" ]; then
-		name="zabbix"
+		local name="zabbix"
 		wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
 		apt update;apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent
@@ -4354,7 +4367,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 
 	# install jumpserver
 	if [ ! -d "/usr/share/jumpserver" ]; then
-		name="jumpserver"
+		local name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4382,7 +4395,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 
 	# install honeytrap
 	if [ ! -d "/usr/share/honeytrap" ]; then
-		name="honeytrap"
+		local name="honeytrap"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 docker run -p 8022:8022 honeytrap/honeytrap:latest "\$@"
@@ -4394,7 +4407,7 @@ EOF
 
 	# install tpotce
 	if [ ! -d "/home/${USERS}/tpotce" ]; then
-		name="tpotce"
+		local name="tpotce"
 		bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
 		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4425,7 +4438,7 @@ EOF
 }
 
 
-security_audit ()
+security_audit()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 	# install Repository Tools
@@ -4452,7 +4465,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin
 
 	# install bearer
 	if [ ! -f "/usr/local/bin/bearer" ]; then
-		name="bearer"
+		local name="bearer"
 		wget https://github.com/Bearer/bearer/releases/download/v1.37.0/bearer_1.37.0_linux-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Success installing $name"
@@ -4460,7 +4473,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin
 
 	# install checkstyle
 	if [ ! -d "/usr/share/checkstyle" ]; then
-		name="checkstyle"
+		local name="checkstyle"
 		mkdir -p /usr/share/$name
 		wget https://github.com/checkstyle/checkstyle/releases/latest/download/checkstyle-10.13.0-all.jar -O /usr/share/$name/checkstyle.jar
 		chmod 755 /usr/share/$name/*
@@ -4475,7 +4488,7 @@ EOF
 
 	# install aflplusplus
 	if [ ! -d "/usr/share/afl" ]; then
-		name="afl"
+		local name="afl"
 		git clone https://github.com/AFLplusplus/AFLplusplus /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make distrib;make install
@@ -4485,7 +4498,7 @@ EOF
 
 	# install vuls
 	if [ ! -d "/usr/share/vuls" ]; then
-		name="vuls"
+		local name="vuls"
 		mkdir -p /usr/share/$name
 		wget https://github.com/future-architect/vuls/releases/download/v0.25.4/vuls_0.25.4_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -r /tmp/$name.tar.gz
@@ -4498,7 +4511,7 @@ EOF
 
 	# install vulhub
 	if [ ! -d "/usr/share/vulhub" ]; then
-		name="vulhub"
+		local name="vulhub"
 		mkdir -p /usr/share/$name
 		wget https://github.com/vulhub/vulhub/archive/master.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -4514,7 +4527,7 @@ EOF
 
 	# install syzkaller
 	if [ ! -d "/usr/share/syzkaller" ]; then
-		name="syzkaller"
+		local name="syzkaller"
 		git clone https://github.com/google/syzkaller /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make
@@ -4528,7 +4541,7 @@ EOF
 
 	# install honggfuzz
 	if [ ! -d "/usr/share/honggfuzz" ]; then
-		name="honggfuzz"
+		local name="honggfuzz"
 		git clone https://github.com/google/honggfuzz /usr/share/$name
 		chmod 755 /usr/share/$name/*;cd /usr/share/$name;make
 		ln -fs /usr/share/$name/honggfuzz /usr/bin/$name
@@ -4539,7 +4552,7 @@ EOF
 
 	# install cmder
 	if [ ! -d "/usr/share/cmder" ]; then
-		name="cmder"
+		local name="cmder"
 		mkdir -p /usr/share/$name
 		wget https://github.com/cmderdev/cmder/releases/latest/download/cmder.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
@@ -4555,7 +4568,7 @@ EOF
 
 	# install open-policy-agent
 	if [ ! -d "/usr/share/opa" ]; then
-		name="opa"
+		local name="opa"
 		mkdir -p /usr/share/$name
 		wget https://github.com/open-policy-agent/opa/releases/latest/download/opa_linux_amd64 -O /usr/share/$name/opa
 		chmod 755 /usr/share/$name/*
@@ -4609,7 +4622,7 @@ EOF
 
 	# install selefra
 	if [ ! -d "/usr/share/selefra" ]; then
-		name="selefra"
+		local name="selefra"
 		mkdir -p /usr/share/$name
 		wget https://github.com/selefra/selefra/releases/latest/download/selefra_linux_amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
@@ -4622,7 +4635,7 @@ EOF
 
 	# install wordpress
 	if [ ! -d "/var/www/wordpress" ]; then
-		name="wordpress"
+		local name="wordpress"
 		service apache2 start;service mysql start
 		wget https://wordpress.org/latest.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
@@ -4640,8 +4653,8 @@ EOF
         Require all granted
     </Directory>
 
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/$name_error.log
+    CustomLog \${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
@@ -4649,7 +4662,12 @@ EOF
 		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
+		mysql -f -s -u root -h localhost -e "
+    CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';
+    GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';
+    FLUSH PRIVILEGES;
+    EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
@@ -4662,7 +4680,7 @@ EOF
 
 	# install joomla
 	if [ ! -d "/var/www/joomla" ]; then
-		name="joomla"
+		local name="joomla"
 		service apache2 start;service mysql start
 		mkdir -p /var/www/$name
 		wget https://downloads.joomla.org/cms/joomla5/5-1-2/Joomla_5-1-2-Stable-Full_Package.zip -O /tmp/$name.zip
@@ -4681,8 +4699,8 @@ EOF
         Require all granted
     </Directory>
 
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/$name_error.log
+    CustomLog \${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
@@ -4690,7 +4708,12 @@ EOF
 		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
+		mysql -f -s -u root -h localhost -e "
+    CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';
+    GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';
+    FLUSH PRIVILEGES;
+    EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
@@ -4703,7 +4726,7 @@ EOF
 
 	# install drupal
 	if [ ! -d "/var/www/drupal" ]; then
-		name="drupal"
+		local name="drupal"
 		service apache2 start;service mysql start
 		wget https://www.drupal.org/download-latest/zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /var/www;rm -f /tmp/$name.zip
@@ -4722,8 +4745,8 @@ EOF
         Require all granted
     </Directory>
 
-    ErrorLog ${APACHE_LOG_DIR}/$name_error.log
-    CustomLog ${APACHE_LOG_DIR}/$name_access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/$name_error.log
+    CustomLog \${APACHE_LOG_DIR}/$name_access.log combined
 </VirtualHost>
 EOF
 		cd /etc/apache2/sites-available
@@ -4731,7 +4754,12 @@ EOF
 		systemctl restart apache2
 		echo "127.0.0.1   $name.local" >> /etc/hosts
 		# Initialize MySQL
-		mysql -f -s -u root -h localhost -e "CREATE DATABASE "$name"_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;CREATE USER '"$name"_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON "$name"_db.* TO '"$name"_usr'@'localhost';FLUSH PRIVILEGES;EXIT;"
+		mysql -f -s -u root -h localhost -e "
+    CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';
+    GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';
+    FLUSH PRIVILEGES;
+    EXIT;"
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
@@ -4765,7 +4793,7 @@ EOF
 
 	# install postman
 	if [ ! -d "/usr/share/Postman" ]; then
-		name="Postman"
+		local name="Postman"
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
@@ -4777,7 +4805,7 @@ EOF
 
 	# install graphql-playground
 	if [ ! -d "/usr/share/graphql-playground" ]; then
-		name="graphql-playground"
+		local name="graphql-playground"
 		mkdir -p /usr/share/$name
 		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
@@ -4787,7 +4815,7 @@ EOF
 
 	# install driftctl
 	if [ ! -d "/usr/share/driftctl" ]; then
-		name="driftctl"
+		local name="driftctl"
 		mkdir -p /usr/share/$name
 		wget https://github.com/snyk/driftctl/releases/download/v0.40.0/driftctl_linux_amd64 -O /usr/share/$name/$name
 		chmod 755 /usr/share/$name/*
@@ -4799,7 +4827,7 @@ EOF
 
 	# install clion
 	if [ ! -d "/usr/share/clion" ]; then
-		name="clion"
+		local name="clion"
 		wget https://download-cdn.jetbrains.com/cpp/CLion-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/CLion-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
@@ -4814,7 +4842,7 @@ EOF
 
 	# install phpstorm
 	if [ ! -d "/usr/share/phpstorm" ]; then
-		name="phpstorm"
+		local name="phpstorm"
 		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PhpStorm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
@@ -4829,7 +4857,7 @@ EOF
 
 	# install goland
 	if [ ! -d "/usr/share/goland" ]; then
-		name="goland"
+		local name="goland"
 		wget https://download-cdn.jetbrains.com/go/goland-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/GoLand-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
@@ -4844,7 +4872,7 @@ EOF
 
 	# install pycharm
 	if [ ! -d "/usr/share/pycharm" ]; then
-		name="pycharm"
+		local name="pycharm"
 		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PyCharm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
@@ -4859,7 +4887,7 @@ EOF
 
 	# install webstorm
 	if [ ! -d "/usr/share/webstorm" ]; then
-		name="webstorm"
+		local name="webstorm"
 		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/WebStorm-* /usr/share/$name
 		chmod 755 /usr/share/$name/bin/*
@@ -4874,7 +4902,7 @@ EOF
 
 	# install idea
 	if [ ! -d "/usr/share/idea" ]; then
-		name="idea"
+		local name="idea"
 		wget https://download-cdn.jetbrains.com/idea/ideaIU-2024.1.tar.gz -O /tmp/IDE$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/IntelliJ IDEA-* /usr/share/$name
 		chmod 755 /usr/share/$name/*
@@ -4933,7 +4961,7 @@ EOF
 }
 
 
-main ()
+main()
 {
 	if [ -f /etc/os-release ]; then
 		. /etc/os-release
@@ -5035,7 +5063,7 @@ main ()
 
 	# install linux-elite
 	if [ ! -d "/usr/share/linux-elite" ]; then
-		name="linux-elite"
+		local name="linux-elite"
 		mkdir -p /usr/share/$name
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
@@ -5046,7 +5074,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-Name=$name
+local name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
@@ -5068,7 +5096,7 @@ EOF
 </Menu>
 EOF
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
-		name="linux-elite"
+		local name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
@@ -5078,7 +5106,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-Name=$name
+local name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
