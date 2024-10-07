@@ -540,9 +540,9 @@ EOF
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		local name="x8"
-		mkdir -p /usr/share/$name
+		mkdir -f /usr/share/x8
 		wget https://github.com/Sh1Yo/x8/releases/latest/download/x86_64-linux-x8.gz -O /tmp/$name.gz
-		gzip -d /tmp/$name.gz -d /usr/share/$name;mv /tmp/$name /usr/share/$name;rm -f /tmp/$name.gz
+		gzip -d /tmp/$name.gz -C /usr/share/$name;rm -f /tmp/$name.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -727,6 +727,25 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install singularity
+	if [ ! -d "/usr/share/singularity" ]; then
+		local name="singularity"
+		git clone https://github.com/nccgroup/singularity /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name/cmd/singularity-server
+		go build
+		mkdir -p /usr/share/$name/singularity/html
+		cp singularity-server /usr/share/$name/singularity
+		cp -r ../../html/* /usr/share/$name/html
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name/singularity;sudo ./singularity-server --HTTPServerPort 8080 "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
