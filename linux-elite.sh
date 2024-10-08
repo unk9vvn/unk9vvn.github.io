@@ -5096,7 +5096,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-local name=$name
+name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
@@ -5128,7 +5128,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-local name=$name
+name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
