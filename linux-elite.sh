@@ -83,7 +83,7 @@ menu()
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Unk9vvN
+local name=Unk9vvN
 Comment=unk9vvn.github.io
 Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
 EOF
@@ -94,7 +94,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Penetration-Testing
+local name=Penetration-Testing
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
 EOF
@@ -106,7 +106,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_pentest_array[dir_pentest_index]}
+local name=${dir_pentest_array[dir_pentest_index]}
 Comment=Penetration-Testing
 Icon=folder
 EOF
@@ -119,7 +119,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Red-Team
+local name=Red-Team
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/red-team.png
 EOF
@@ -131,7 +131,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_redteam_array[dir_redteam_index]}
+local name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
 Icon=folder
 EOF
@@ -144,7 +144,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=ICS-Security
+local name=ICS-Security
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/ics-security.png
 EOF
@@ -156,7 +156,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_ics_array[dir_ics_index]}
+local name=${dir_ics_array[dir_ics_index]}
 Comment=ICS-Security
 Icon=folder
 EOF
@@ -169,7 +169,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Digital-Forensic
+local name=Digital-Forensic
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
 EOF
@@ -181,7 +181,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_digital_array[dir_digital_index]}
+local name=${dir_digital_array[dir_digital_index]}
 Comment=Digital-Forensic
 Icon=folder
 EOF
@@ -194,7 +194,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Blue-Team
+local name=Blue-Team
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/blue-team.png
 EOF
@@ -206,7 +206,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_blueteam_array[dir_blueteam_index]}
+local name=${dir_blueteam_array[dir_blueteam_index]}
 Comment=Blue-Team
 Icon=folder
 EOF
@@ -219,7 +219,7 @@ EOF
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit.directory << EOF
 [Desktop Entry]
 Type=Directory
-name=Security-Audit
+local name=Security-Audit
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/security-audit.png
 EOF
@@ -231,7 +231,7 @@ EOF
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
 [Desktop Entry]
 Type=Directory
-name=${dir_audit_array[dir_audit_index]}
+local name=${dir_audit_array[dir_audit_index]}
 Comment=Security-Audit
 Icon=folder
 EOF
@@ -249,7 +249,7 @@ menu_entry()
 
 	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool_name}.desktop" << EOF
 [Desktop Entry]
-name=${tool_name}
+local name=${tool_name}
 Exec=${command}
 Comment=
 Terminal=true
@@ -649,7 +649,8 @@ EOF
 		local name="hashpump"
 		git clone https://github.com/mheistermann/HashPump-partialhash /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;make;make install
+		cd /usr/share/$name
+		make;make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -659,7 +660,8 @@ EOF
 		local name="pixload"
 		git clone https://github.com/sighook/pixload /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;make install
+		cd /usr/share/$name
+		make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name-bmp --help'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
@@ -4163,8 +4165,9 @@ EOF
 	# install rita
 	if [ ! -d "/var/opt/rita" ]; then
 		local name="rita"
-		wget https://github.com/activecm/rita/releases/download/v5.0.8/install-rita-zeek-here.sh -O /tmp/install.sh
+		wget https://github.com/activecm/rita/releases/latest/download/install-rita-zeek-here.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
+		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
@@ -5093,7 +5096,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-name=$name
+local name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
@@ -5125,7 +5128,7 @@ EOF
 		chmod +x /usr/bin/$name
 		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
-name=$name
+local name=$name
 Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
