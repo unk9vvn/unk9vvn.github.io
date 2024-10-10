@@ -3910,6 +3910,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install kdrill
+	if [ ! -d "/usr/share/kdrill" ]; then
+		local name="kdrill"
+		git https://github.com/ExaTrack/Kdrill /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 Kdrill.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install jsteg-slink
 	if [ ! -d "/usr/share/jsteg-slink" ]; then
 		local name="jsteg-slink"
