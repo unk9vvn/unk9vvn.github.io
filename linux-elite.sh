@@ -2608,6 +2608,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install bin2shellcode
+	if [ ! -d "/usr/share/bin2shellcode" ]; then
+		local name="bin2shellcode"
+		git clone https://github.com/fanbyprinciple/bin2shellcode /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 bin2sc.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install scarecrow
 	if [ ! -d "/usr/share/scarecrow" ]; then
 		local name="scarecrow"
@@ -3013,6 +3027,21 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 ms.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install ninja
+	if [ ! -d "/usr/share/ninja" ]; then
+		local name="ninja"
+		git clone https://github.com/ahmedkhlief/Ninja /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh;python3 start_campaign.py
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 Ninja.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
@@ -3925,6 +3954,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install theZoo
+	if [ ! -d "/usr/share/theZoo" ]; then
+		local name="theZoo"
+		git https://github.com/ytisf/theZoo /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 theZoo.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install kdrill
 	if [ ! -d "/usr/share/kdrill" ]; then
 		local name="kdrill"
@@ -4248,7 +4292,7 @@ blue_team()
 	npm_installer "Detect" "Blue-Team" "$detect_npm"
 
 	# install Ruby GEM
-	# detect_gem=""
+	# detect_gem="" 
 	gem_installer "Detect" "Blue-Team" "$detect_gem"
 
 	# install Golang
