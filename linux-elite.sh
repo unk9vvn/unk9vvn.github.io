@@ -2854,6 +2854,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install pwnlook
+	if [ ! -d "/usr/share/pwnlook" ]; then
+		local name="pwnlook"
+		mkdir -p /usr/share/$name
+		wget https://github.com/amjcyber/pwnlook/releases/download/pwnlook/pwnlook.exe -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;wine $name.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 
 	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
 	# install Repository Tools
