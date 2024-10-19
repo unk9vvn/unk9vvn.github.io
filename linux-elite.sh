@@ -2622,6 +2622,21 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install edrsilencer
+	if [ ! -d "/usr/share/edrsilencer" ]; then
+		local name="edrsilencer"
+		mkdir -p /usr/share/$name
+		wget https://github.com/netero1010/EDRSilencer/releases/latest/download/EDRSilencer.exe -O /usr/share/$name/$name.exe
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;wine $name.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install scarecrow
 	if [ ! -d "/usr/share/scarecrow" ]; then
 		local name="scarecrow"
