@@ -353,7 +353,7 @@ penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
+	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil 
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -463,6 +463,19 @@ EOF
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/phoneinfoga /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install cloudbrute
+	if [ ! -d "/usr/share/cloudbrute" ]; then
+		local name="cloudbrute"
+		mkdir -p /usr/share/$name
+		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Success installing $name"
@@ -1400,7 +1413,7 @@ EOF
 
 	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy awscli trivy s3scanner 
+	apt install -qy awscli trivy s3scanner gsutil 
 
 	# install Python3 pip
 	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q"
@@ -1455,6 +1468,33 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install microburst
+	if [ ! -d "/usr/share/microburst" ]; then
+		local name="microburst"
+		git clone https://github.com/NetSPI/MicroBurst /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;pwsh -c "Import-Module ./MicroBurst.psm1; Get-AzureDomainInfo" "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install cloudbrute
+	if [ ! -d "/usr/share/cloudbrute" ]; then
+		local name="cloudbrute"
+		mkdir -p /usr/share/$name
+		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install ioxy
 	if [ ! -d "/usr/share/ioxy" ]; then
 		local name="ioxy"
@@ -1490,7 +1530,7 @@ EOF
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;python3 cloudhunter.py "\$@"
+cd /usr/share/$name;python3 gcpbucketbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
