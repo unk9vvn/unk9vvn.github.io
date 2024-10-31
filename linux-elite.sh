@@ -353,7 +353,7 @@ penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei rainbowcrack hakrawler gobuster davtest ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
+	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -1400,10 +1400,10 @@ EOF
 
 	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy awscli trivy 
+	apt install -qy awscli trivy s3scanner 
 
 	# install Python3 pip
-	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers s3scanner kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q"
+	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# install Nodejs NPM
