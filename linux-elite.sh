@@ -1416,7 +1416,7 @@ EOF
 	apt install -qy awscli trivy s3scanner gsutil 
 
 	# install Python3 pip
-	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q"
+	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# install Nodejs NPM
@@ -1447,6 +1447,21 @@ go install github.com/Rolix44/Kubestroyer@latest;ln -fs ~/go/bin/Kubestroyer /us
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudfail.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install cloudsploit
+	if [ ! -d "/usr/share/cloudsploit" ]; then
+		local name="cloudsploit"
+		git clone https://github.com/aquasecurity/cloudsploit /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;npm install
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;npm index.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
@@ -1531,6 +1546,23 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 gcpbucketbrute.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install purplepanda
+	if [ ! -d "/usr/share/purplepanda" ]; then
+		local name="purplepanda"
+		git clone https://github.com/carlospolop/PurplePanda /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		export PURPLEPANDA_NEO4J_URL="bolt://neo4j@localhost:7687"
+		export PURPLEPANDA_PWD="s3cr3tpassword"
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
