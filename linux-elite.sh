@@ -1502,13 +1502,42 @@ EOF
 		local name="cloudmapper"
 		git clone https://github.com/duo-labs/cloudmapper /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip install -r  /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudmapper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install cloud-service-enum
+	if [ ! -d "/usr/share/cloud-service-enum" ]; then
+		local name="cloud-service-enum"
+		git clone https://github.com/NotSoSecure/cloud-service-enum /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/aws_service_enum/requirements.txt
+		cat > /usr/bin/aws_service_enum << EOF
+#!/bin/bash
+cd /usr/share/$name/aws_service_enum;python3 aws_enum_services.py "\$@"
+EOF
+		chmod +x /usr/bin/aws_service_enum
+		menu_entry "Cloud" "Penetration-Testing" "aws_service_enum" "$exec_shell 'aws_service_enum -h'"
+		pip3 install -r /usr/share/$name/azure_service_enum/requirements.txt
+		cat > /usr/bin/azure_service_enum << EOF
+#!/bin/bash
+cd /usr/share/$name/azure_service_enum;python3 azure_enum_services.py "\$@"
+EOF
+		chmod +x /usr/bin/azure_service_enum
+		menu_entry "Cloud" "Penetration-Testing" "azure_enum_services" "$exec_shell 'azure_enum_services -h'"
+		pip3 install -r /usr/share/$name/gcp_service_enum/requirements.txt
+		cat > /usr/bin/gcp_service_enum << EOF
+#!/bin/bash
+cd /usr/share/$name/gcp_enum_services;python3 gcp_enum_services.py "\$@"
+EOF
+		chmod +x /usr/bin/gcp_service_enum
+		menu_entry "Cloud" "Penetration-Testing" "gcp_enum_services" "$exec_shell 'gcp_enum_services -h'"
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
