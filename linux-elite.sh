@@ -1545,6 +1545,18 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install bucketloot
+	if [ ! -d "/usr/share/bucketloot" ]; then
+		local name="bucketloot"
+		mkdir -p /usr/share/$name
+		wget https://github.com/redhuntlabs/BucketLoot/releases/latest/download/bucketloot-amd64 -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/$name /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install cloudquery
 	if [ ! -d "/usr/share/cloudquery" ]; then
 		local name="cloudquery"
