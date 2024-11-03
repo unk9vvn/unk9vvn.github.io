@@ -1435,6 +1435,7 @@ go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
 go install github.com/BishopFox/cloudfox@latest;ln -fs ~/go/bin/cloudfox /usr/bin/cloudfox
+go install github.com/projectdiscovery/cloudlist/cmd/cloudlist@latest;ln -fs ~/go/bin/cloudlist /usr/bin/cloudlist
 go install github.com/Rolix44/Kubestroyer@latest;ln -fs ~/go/bin/Kubestroyer /usr/bin/Kubestroyer"
 	go_installer "Cloud" "Penetration-Testing" "$cloud_golang"
 
@@ -1491,6 +1492,21 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;pwsh -c "Import-Module ./MicroBurst.psm1; Get-AzureDomainInfo" "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
+	# install cloudmapper
+	if [ ! -d "/usr/share/cloudmapper" ]; then
+		local name="cloudmapper"
+		git clone https://github.com/duo-labs/cloudmapper /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip install -r  /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 cloudmapper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
