@@ -2164,6 +2164,20 @@ EOF
 		printf "$GREEN"  "[*] Success installing $name"
 	fi
 
+	# install executepefrompngvialnk
+	if [ ! -d "/usr/share/executepefrompngvialnk" ]; then
+		local name="executepefrompngvialnk"
+		git clone https://github.com/Maldev-Academy/ExecutePeFromPngViaLNK /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 InsertPeIntoPng.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success installing $name"
+	fi
+
 	# install embedinhtml
 	if [ ! -d "/usr/share/embedinhtml" ]; then
 		local name="embedinhtml"
