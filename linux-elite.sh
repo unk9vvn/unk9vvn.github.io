@@ -244,19 +244,19 @@ menu_entry()
 {
 	local sub_category="$1"
 	local category="$2"
-	local tool_local name="$3"
+	local tool="$3"
 	local command="$4"
 
-	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool_name}.desktop" << EOF
+	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
 [Desktop Entry]
-name=${tool_name}
+name=${tool}
 Exec=${command}
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${tool_name}.menu" << EOF
+	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${tool}.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -271,7 +271,7 @@ EOF
     <Name>Unk9vvN-${category}-${sub_category}</Name>
     <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
     <Include>
-      <Filename>Unk9vvN-${category}-${sub_category}-${tool_name}.desktop</Filename>
+      <Filename>Unk9vvN-${category}-${sub_category}-${tool}.desktop</Filename>
     </Include>
   </Menu>
   </Menu>
