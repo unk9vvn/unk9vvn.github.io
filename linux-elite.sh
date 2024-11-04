@@ -5298,7 +5298,7 @@ main()
 			*) echo "Unsupported OS detected: $ID";exit;;
 		esac
 	else
-		echo "/etc/os-release file not found. Cannot determine the OS."
+		echo "/etc/os-release file not found. Cannot determine the OS.";exit
 	fi
 
 	# install Python2 pip
