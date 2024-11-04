@@ -335,8 +335,8 @@ go_installer()
 			symlink=$(echo "$line" | awk '{print $NF}')
 			symlink=${symlink#/}
 			symlink=${symlink%/}
-			binary_local name=$(basename "$symlink")
-			go_array+=("$binary_name")
+			binary=$(basename "$symlink")
+			go_array+=("$binary")
 		fi
 	done <<< "$commands"
 
