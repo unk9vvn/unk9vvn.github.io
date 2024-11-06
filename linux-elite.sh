@@ -24,7 +24,7 @@ else
 	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
 
 	# init requirements
-	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify software-properties-common
+	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify 
 	USERS=$(users | awk '{print $1}')
 	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 fi
@@ -4517,7 +4517,7 @@ EOF
 	# install ntop
 	if [ ! -d "/usr/share/ntop" ]; then
 		local name="ntop"
-		apt-get install -y software-properties-common wget add-apt-repository universe
+		apt-get install -y wget add-apt-repository universe
 		wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
 		chmod +x /tmp/apt-ntop-stable.deb;apt install /tmp/apt-ntop-stable.deb 
 		printf "$GREEN"  "[*] Success installing $name"
