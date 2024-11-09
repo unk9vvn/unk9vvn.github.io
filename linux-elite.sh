@@ -266,17 +266,17 @@ EOF
   <Menu>
     <Name>Unk9vvN</Name>
     <Directory>Unk9vvN.directory</Directory>
-  <Menu>
-    <Name>Unk9vvN-${category}</Name>
-    <Directory>Unk9vvN-${category}.directory</Directory>
-  <Menu>
-    <Name>Unk9vvN-${category}-${sub_category}</Name>
-    <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
-    <Include>
-      <Filename>Unk9vvN-${category}-${sub_category}-${tool}.desktop</Filename>
-    </Include>
-  </Menu>
-  </Menu>
+    <Menu>
+      <Name>Unk9vvN-${category}</Name>
+      <Directory>Unk9vvN-${category}.directory</Directory>
+      <Menu>
+        <Name>Unk9vvN-${category}-${sub_category}</Name>
+        <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
+        <Include>
+          <Filename>Unk9vvN-${category}-${sub_category}-${tool}.desktop</Filename>
+        </Include>
+      </Menu>
+    </Menu>
   </Menu>
 </Menu>
 EOF
