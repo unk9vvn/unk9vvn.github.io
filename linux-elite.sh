@@ -15,18 +15,20 @@ WHITE='\e[1;37m%s\e[0m\n'
 
 
 
-if [ "$(id -u)" != "0" ];then
-	printf "$RED"		"[X] Please run as ROOT..."
-	printf "$GREEN"		"[*] sudo linux-elite"
+if [ "$(id -u)" != "0" ]; then
+	printf "${RED}[X] Please run as ROOT...\n"
+	printf "${GREEN}[*] sudo linux-elite\n"
 	exit 0
 else
-	# update & upgrade & dist-upgrade
-	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
+	# update & upgrade & clean up packages
+	apt update && apt upgrade -qy && apt dist-upgrade -qy && apt autoremove -qy && apt autoclean
 
-	# init requirements
+	# install required packages
 	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify 
-	USERS=$(users | awk '{print $1}')
-	LAN=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+
+	# get current user and LAN IP address
+	USERS=$(who | awk '{print $1}' | sort -u)
+	LAN=$(hostname -I | awk '{print $1}')
 fi
 
 
