@@ -21,7 +21,7 @@ if [ "$(id -u)" != "0" ]; then
 	exit 0
 else
 	# update & upgrade & clean up packages
-	apt update && apt upgrade -qy && apt dist-upgrade -qy && apt autoremove -qy && apt autoclean
+	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
 
 	# install required packages
 	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify 
@@ -291,8 +291,8 @@ pip_installer()
 
 	for pip_index in ${pip_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${pip_index}" "$exec_shell 'sudo ${pip_index} -h'"
-		pip3 install "$pip_index" --break-system-packages
-		printf "$GREEN"  "[*] Success installing ${pip_index}"
+		pip3 install "${pip_index}" --break-system-packages
+		printf "$GREEN"  "[*] Success Installed ${pip_index}"
 	done
 }
 
@@ -305,8 +305,8 @@ npm_installer()
 
 	for npm_index in ${npm_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${npm_index}" "$exec_shell 'sudo ${npm_index} -h'"
-		npm install -g "$npm_index"
-		printf "$GREEN"  "[*] Success installing ${npm_index}"
+		npm install -g "${npm_index}"
+		printf "$GREEN"  "[*] Success Installed ${npm_index}"
 	done
 }
 
@@ -319,8 +319,8 @@ gem_installer()
 
 	for gem_index in ${gem_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${gem_index}" "$exec_shell 'sudo ${gem_index} -h'"
-		gem install "$gem_index"
-		printf "$GREEN"  "[*] Success installing ${gem_index}"
+		gem install "${gem_index}"
+		printf "$GREEN"  "[*] Success Installed ${gem_index}"
 	done
 }
 
@@ -344,7 +344,7 @@ go_installer()
 
 	for go_index in ${go_array[@]}; do
 		menu_entry "${sub_category}" "${category}" "${go_index}" "$exec_shell 'sudo ${go_index} -h'"
-		printf "$GREEN"  "[*] Success installing ${go_index}"
+		printf "$GREEN"  "[*] Success Installed ${go_index}"
 	done
 
 	eval "$commands"
@@ -453,7 +453,7 @@ cd /usr/share/$name;python3 cloudbunny.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install phoneinfoga
@@ -466,7 +466,7 @@ EOF
 		ln -fs /usr/share/$name/phoneinfoga /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudbrute
@@ -479,7 +479,7 @@ EOF
 		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install postman
@@ -491,7 +491,7 @@ EOF
 		ln -fs /usr/share/$name/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bkcrack
@@ -503,7 +503,7 @@ EOF
 		ln -fs /usr/share/$name/bkcrack /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spiderfoot
@@ -518,7 +518,7 @@ cd /usr/share/$name;python3 ./sf.py -l 127.0.0.1:5001 "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install crackql
@@ -533,7 +533,7 @@ cd /usr/share/$name;python3 CrackQL.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
   	# install fuxploider
@@ -548,7 +548,7 @@ cd /usr/share/$name;python3 fuxploider.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install x8
@@ -561,7 +561,7 @@ EOF
 		ln -fs /usr/share/$name/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install graphql-playground
@@ -570,7 +570,7 @@ EOF
 		wget https://github.com/graphql/graphql-playground/releases/download/v1.8.10/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install findomain
@@ -582,7 +582,7 @@ EOF
 		ln -fs /usr/share/$name/findomain /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install blacklist3r
@@ -598,7 +598,7 @@ cd /usr/share/$name;mono AspDotNetWrapper.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install wafw00f
@@ -608,7 +608,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python3 setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install graphpython
@@ -623,7 +623,7 @@ cd /usr/share/$name;python3 Graphpython.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bypassneo-regeorg
@@ -637,7 +637,7 @@ cd /usr/share/$name;python3 BypassNeoASPX.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install rustscan
@@ -646,7 +646,7 @@ EOF
 		wget https://github.com/RustScan/RustScan/releases/download/2.3.0/rustscan_2.3.0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install ronin
@@ -655,7 +655,7 @@ EOF
 		curl -o ronin-install.sh https://raw.githubusercontent.com/ronin-rb/scripts/main/ronin-install.sh && bash ronin-install.sh
 		rm -f ronin
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install hashpump
@@ -666,7 +666,7 @@ EOF
 		cd /usr/share/$name
 		make;make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pixload
@@ -677,7 +677,7 @@ EOF
 		cd /usr/share/$name
 		make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name-bmp --help'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install googlerecaptchabypass
@@ -692,7 +692,7 @@ cd /usr/share/$name;python3 test.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install webcopilot
@@ -703,7 +703,7 @@ EOF
 		ln -fs /usr/share/$name/webcopilot /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install graphw00f
@@ -717,7 +717,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install gel4y
@@ -731,7 +731,7 @@ cd /usr/share/$name;php gel4y.php "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloakquest3r
@@ -746,7 +746,7 @@ cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install singularity
@@ -765,7 +765,7 @@ cd /usr/share/$name/singularity;sudo ./singularity-server --HTTPServerPort 8080 
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install proxyshell
@@ -780,7 +780,7 @@ cd /usr/share/$name;python3 exchange_proxyshell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install asnlookup
@@ -795,7 +795,7 @@ cd /usr/share/$name;python3 asnlookup.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install drupwn
@@ -806,7 +806,7 @@ EOF
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install aspjinjaobfuscator
@@ -821,7 +821,7 @@ cd /usr/share/$name;python3 asp-jinja-obfuscator.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install waymore
@@ -836,7 +836,7 @@ cd /usr/share/$name;python3 waymore.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ysoserial
@@ -851,7 +851,7 @@ cd /usr/share/$name;java -jar ysoserial-all.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ysoserial.net
@@ -867,7 +867,7 @@ cd /usr/share/$name;mono ysoserial.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install akto
@@ -881,7 +881,7 @@ cd /usr/share/$name;docker-compose up -d "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install rsatool
@@ -895,7 +895,7 @@ cd /usr/share/$name;python3 rsatool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install polyglot
@@ -909,7 +909,7 @@ cd /usr/share/$name/files;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install rsactftool
@@ -923,7 +923,7 @@ cd /usr/share/$name;python3 RsaCtfTool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install graphqlmap
@@ -934,7 +934,7 @@ EOF
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dtdfinder
@@ -949,7 +949,7 @@ cd /usr/share/$name;java -jar dtd-finder-all.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install docem
@@ -964,7 +964,7 @@ cd /usr/share/$name;python3 docem.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spidersuite
@@ -979,7 +979,7 @@ cd /usr/share/$name;./SpiderSuite_linux.AppImage "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install jsa
@@ -995,7 +995,7 @@ cd /usr/share/$name;python3 jsa.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install smuggle
@@ -1010,7 +1010,7 @@ cd /usr/share/$name;python3 smuggle.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pemcrack
@@ -1022,7 +1022,7 @@ EOF
 		ln -fs /usr/share/$name/pemcrack /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sessionprobe
@@ -1034,7 +1034,7 @@ EOF
 		ln -fs /usr/share/$name/sessionprobe /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dymerge
@@ -1048,7 +1048,7 @@ cd /usr/share/$name;python2 dymerge.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spartan
@@ -1063,7 +1063,7 @@ cd /usr/share/$name;python2 SPartan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install waf-bypass
@@ -1079,7 +1079,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install xssloader
@@ -1094,7 +1094,7 @@ cd /usr/share/$name;python3 payloader.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cmseek
@@ -1109,7 +1109,7 @@ cd /usr/share/$name;python3 cmseek.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install xsstrike
@@ -1124,7 +1124,7 @@ cd /usr/share/$name;python3 xsstrike.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install w4af
@@ -1139,7 +1139,7 @@ cd /usr/share/$name;pipenv shell;./w4af_console "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install jwt_tool
@@ -1153,7 +1153,7 @@ cd /usr/share/$name;python3 jwt_tool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install tplmap
@@ -1168,7 +1168,7 @@ cd /usr/share/$name;python3 tplmap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sstimap
@@ -1183,7 +1183,7 @@ cd /usr/share/$name;python3 sstimap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install poodle
@@ -1197,7 +1197,7 @@ cd /usr/share/$name;python3 poodle-exploit.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install gopherus
@@ -1211,7 +1211,7 @@ cd /usr/share/$name;python2 gopherus.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install hash_extender
@@ -1224,7 +1224,7 @@ EOF
 		ln -fs /usr/share/$name/hash_extender /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spoofcheck
@@ -1239,7 +1239,7 @@ cd /usr/share/$name;python2 spoofcheck.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install redhawk
@@ -1253,7 +1253,7 @@ cd /usr/share/$name;php rhawk.php "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install iis-shortname-scanner
@@ -1268,7 +1268,7 @@ cd /usr/share/$name;java -jar iis_shortname_scanner.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ngrok
@@ -1278,7 +1278,7 @@ EOF
 		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install noip2
@@ -1290,7 +1290,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install breacher
@@ -1304,7 +1304,7 @@ cd /usr/share/$name;python3 breacher.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install swftools
@@ -1323,7 +1323,7 @@ EOF
 		menu_entry "Web" "Penetration-Testing" "mtasc" "$exec_shell 'mtasc -h'"
 		menu_entry "Web" "Penetration-Testing" "swfdump" "$exec_shell 'swfdump -h'"
 		menu_entry "Web" "Penetration-Testing" "swfcombine" "$exec_shell 'swfcombine -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install nosqlmap
@@ -1338,7 +1338,7 @@ cd /usr/share/$name;python2 nosqlmap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -1368,7 +1368,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		local name="genymotion"
 		wget https://dl.genymotion.com/releases/genymotion-3.6.0/genymotion-3.6.0-linux_x64.bin -O /tmp/$name.bin
 		chmod 755 /tmp/$name.bin;cd /tmp;./$name.bin -y;rm -f /tmp/$name.bin
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install palera1n
@@ -1377,7 +1377,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ideviceinstaller
@@ -1389,7 +1389,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		ln -fs /usr/share/$name/ideviceinstaller /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install mobsf
@@ -1408,7 +1408,7 @@ sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -1452,7 +1452,7 @@ cd /usr/share/$name;python3 cloudfail.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudsploit
@@ -1467,7 +1467,7 @@ cd /usr/share/$name;npm index.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ccat
@@ -1482,7 +1482,7 @@ cd /usr/share/$name;python3 ccat.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install microburst
@@ -1496,7 +1496,7 @@ cd /usr/share/$name;pwsh -c "Import-Module ./MicroBurst.psm1; Get-AzureDomainInf
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudmapper
@@ -1511,7 +1511,7 @@ cd /usr/share/$name;python3 cloudmapper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloud-service-enum
@@ -1540,7 +1540,7 @@ cd /usr/share/$name/gcp_enum_services;python3 gcp_enum_services.py "\$@"
 EOF
 		chmod +x /usr/bin/gcp_service_enum
 		menu_entry "Cloud" "Penetration-Testing" "gcp_enum_services" "$exec_shell 'gcp_enum_services -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudbrute
@@ -1553,7 +1553,7 @@ EOF
 		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ioxy
@@ -1565,7 +1565,7 @@ EOF
 		ln -fs /usr/share/$name/ioxy /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudhunter
@@ -1580,7 +1580,7 @@ cd /usr/share/$name;python3 cloudhunter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install gcpbucketbrute
@@ -1595,7 +1595,7 @@ cd /usr/share/$name;python3 gcpbucketbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install purplepanda
@@ -1612,7 +1612,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install k8sgpt
@@ -1620,7 +1620,7 @@ EOF
 		local name="k8sgpt"
 		wget https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bucketloot
@@ -1632,7 +1632,7 @@ EOF
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloudquery
@@ -1644,7 +1644,7 @@ EOF
 		ln -fs /usr/share/$name/cloudquery /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -1677,7 +1677,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
   		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/hiddify" >> /etc/sudoers
   		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/Hiddify-Cli" >> /etc/sudoers
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install snmpbrute
@@ -1691,7 +1691,7 @@ cd /usr/share/$name;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ivre
@@ -1707,7 +1707,7 @@ cd /usr/share/$name/bin;python3 ivre.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install mr.sip
@@ -1722,7 +1722,7 @@ cd /usr/share/$name;python3 mr.sip.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install multitor
@@ -1732,7 +1732,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./setup.sh install
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sippts
@@ -1761,7 +1761,7 @@ EOF
 		menu_entry "Network" "Penetration-Testing" "sipsniff" "$exec_shell 'sipsniff -h'"
 		menu_entry "Network" "Penetration-Testing" "siptshark" "$exec_shell 'siptshark -h'"
 		menu_entry "Network" "Penetration-Testing" "wssend" "$exec_shell 'wssend -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install routerscan
@@ -1777,7 +1777,7 @@ cd /usr/share/$name;wine RouterScan.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pcredz
@@ -1789,7 +1789,7 @@ EOF
 		ln -fs /usr/share/$name/Pcredz /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pret
@@ -1803,7 +1803,7 @@ cd /usr/share/$name;python3 pret.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install geneva
@@ -1818,7 +1818,7 @@ cd /usr/share/$name;python3 engine.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install kraken
@@ -1833,7 +1833,7 @@ cd /usr/share/$name;python3 kraken.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pwndbg
@@ -1842,7 +1842,7 @@ EOF
 		wget https://github.com/pwndbg/pwndbg/releases/download/2024.08.29/pwndbg_2024.08.29_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ipscan
@@ -1850,7 +1850,7 @@ EOF
 		local name="ipscan"
 		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install fetch
@@ -1864,7 +1864,7 @@ cd /usr/share/$name;python3 fetch.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sietpy3
@@ -1878,7 +1878,7 @@ cd /usr/share/$name;python3 siet.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install memcrashed
@@ -1893,7 +1893,7 @@ cd /usr/share/$name;python3 Memcrashed.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spoofdpi
@@ -1906,7 +1906,7 @@ EOF
 		ln -fs /usr/share/$name/spoof-dpi /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -1942,7 +1942,7 @@ cd /usr/share/$name;python3 GTScan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install hlr-lookups
@@ -1956,7 +1956,7 @@ cd /usr/share/$name;python2 hlr-lookups.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install geowifi
@@ -1971,7 +1971,7 @@ cd /usr/share/$name;python3 geowifi.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2007,7 +2007,7 @@ cd /usr/share/$name;./firmwalker.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bytesweep
@@ -2017,7 +2017,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages;pip3 install .
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install firmware-analysis-toolkit
@@ -2032,7 +2032,7 @@ cd /usr/share/$name;python3 fat.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install genzai
@@ -2044,7 +2044,7 @@ EOF
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	exit
@@ -2092,7 +2092,7 @@ cd /usr/share/$name;python3 trape.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dracnmap
@@ -2106,7 +2106,7 @@ cd /usr/share/$name;./Dracnmap.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloakquest3r
@@ -2121,7 +2121,7 @@ cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install thetimemachine
@@ -2136,7 +2136,7 @@ cd /usr/share/$name;python3 thetimemachine.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2171,7 +2171,7 @@ cd /usr/share/$name/src;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install goredops
@@ -2185,7 +2185,7 @@ cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install offensivedlr
@@ -2199,7 +2199,7 @@ cd /usr/share/$name;pwsh -c \"dir\" "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2236,7 +2236,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 		ln -fs /usr/share/$name/evilginx /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install socialfish
@@ -2251,7 +2251,7 @@ cd /usr/share/$name;python3 SocialFish.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install executepefrompngvialnk
@@ -2265,7 +2265,7 @@ cd /usr/share/$name;python3 InsertPeIntoPng.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install embedinhtml
@@ -2279,7 +2279,7 @@ cd /usr/share/$name;python2 embedInHTML.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install badpdf
@@ -2293,7 +2293,7 @@ cd /usr/share/$name;python2 badpdf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pdfdropper
@@ -2307,7 +2307,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install blackeye
@@ -2321,7 +2321,7 @@ cd /usr/share/$name;./blackeye.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pdfbuilder
@@ -2337,7 +2337,7 @@ cd /usr/share/$name;mono PDF-BUILDER.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install credsniper
@@ -2353,7 +2353,7 @@ cd /usr/share/$name;python3 credsniper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install evilurl
@@ -2367,7 +2367,7 @@ cd /usr/share/$name;python3 evilurl.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install debinject
@@ -2381,7 +2381,7 @@ cd /usr/share/$name;python2 debinject.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install brutal
@@ -2395,7 +2395,7 @@ cd /usr/share/$name;./Brutal.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install demiguise
@@ -2409,7 +2409,7 @@ cd /usr/share/$name;python3 demiguise.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dr0p1t
@@ -2424,7 +2424,7 @@ cd /usr/share/$name;python3 Dr0p1t.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install evilpdf
@@ -2439,7 +2439,7 @@ cd /usr/share/$name;python2 evilpdf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install gophish
@@ -2454,7 +2454,7 @@ cd /usr/share/$name;./gophish "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2489,7 +2489,7 @@ cd /usr/share/$name;./venom.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Execution" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install powerlessshell
@@ -2503,7 +2503,7 @@ cd /usr/share/$name;python2 PowerLessShell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sharpshooter
@@ -2518,7 +2518,7 @@ cd /usr/share/$name;python2 SharpShooter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install donut
@@ -2531,7 +2531,7 @@ EOF
 		ln -fs /usr/share/$name/donut /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2563,7 +2563,7 @@ EOF
 		ln -fs /usr/share/$name/Vegile /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install smmbackdoorng
@@ -2577,7 +2577,7 @@ cd /usr/share/$name;python2 smm_backdoor.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install medusa
@@ -2590,7 +2590,7 @@ EOF
 		ln -fs /usr/share/$name/rkload /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2625,7 +2625,7 @@ cd /usr/share/$name;python3 mimipenguin.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install godpotato
@@ -2641,7 +2641,7 @@ cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install smc
@@ -2656,7 +2656,7 @@ cd /usr/share/$name;bash spectre-meltdown-checker.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install deadpotato
@@ -2671,7 +2671,7 @@ cd /usr/share/$name;mono DeadPotato-NET4.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2707,7 +2707,7 @@ cd /usr/share/$name;bash ASWCrypter.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install unicorn
@@ -2721,7 +2721,7 @@ cd /usr/share/$name;python3 unicorn.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install edr_blocker
@@ -2735,7 +2735,7 @@ cd /usr/share/$name;python3 edr_blocker.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install syswhispers3
@@ -2749,7 +2749,7 @@ cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bin2shellcode
@@ -2763,7 +2763,7 @@ cd /usr/share/$name;python3 bin2sc.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install edrsilencer
@@ -2778,7 +2778,7 @@ cd /usr/share/$name;wine $name.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install scarecrow
@@ -2790,7 +2790,7 @@ EOF
 		ln -fs /usr/share/$name/scarecrow /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install syswhispers
@@ -2805,7 +2805,7 @@ cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install invoke-dosfuscation
@@ -2819,7 +2819,7 @@ cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-DOSfuscation.psd1; Invoke-DO
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install obfuscatecactustorch
@@ -2833,7 +2833,7 @@ cd /usr/share/$name;python2 obfuscateCactusTorch.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install phantom-evasion
@@ -2847,7 +2847,7 @@ cd /usr/share/$name;python3 phantom-evasion.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install spookflare
@@ -2862,7 +2862,7 @@ cd /usr/share/$name;python2 spookflare.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pazuzu
@@ -2876,7 +2876,7 @@ cd /usr/share/$name;python2 pazuzu.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install invoke-obfuscation
@@ -2890,7 +2890,7 @@ cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-Obfuscation.psd1; Invoke-Obf
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install invoke-cradlecrafter
@@ -2904,7 +2904,7 @@ cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-CradleCrafter.psd1; Invoke-C
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -2940,7 +2940,7 @@ cd /usr/share/$name;python3 kerberoast.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ntlmRelaytoews
@@ -2954,7 +2954,7 @@ cd /usr/share/$name;python2 ntlmRelayToEWS.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dfscoerce
@@ -2968,7 +2968,7 @@ cd /usr/share/$name;python3 dfscoerce.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install netripper
@@ -2987,7 +2987,7 @@ cd /usr/share/metasploit-framework/modules/post/windows/gather/$name;wine NetRip
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3024,7 +3024,7 @@ cd /usr/share/$name;wine ADExplorer.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pwnlook
@@ -3039,7 +3039,7 @@ cd /usr/share/$name;wine $name.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3074,7 +3074,7 @@ cd /usr/share/$name;wine SCShell.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install amnesiac
@@ -3088,7 +3088,7 @@ cd /usr/share/$name;pwsh -c "Import-Module ./Amnesiac.ps1; Amnesiac" "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing  $name"
+		printf "$GREEN"  "[*] Success Installed  $name"
 	fi
 
 
@@ -3124,7 +3124,7 @@ cd /usr/share/$name;python3 server.py --insecure "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Collection" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3160,7 +3160,7 @@ cd /usr/share/$name;poetry run phserver "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install nebula
@@ -3175,7 +3175,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install mistica
@@ -3189,7 +3189,7 @@ cd /usr/share/$name;python3 ms.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ninja
@@ -3204,7 +3204,7 @@ cd /usr/share/$name;python3 Ninja.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install evilosx
@@ -3219,7 +3219,7 @@ cd /usr/share/$name;python3 start.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install eggshell
@@ -3233,7 +3233,7 @@ cd /usr/share/$name;python2 eggshell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sillyrat
@@ -3247,7 +3247,7 @@ cd /usr/share/$name;python3 server.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install godgenesis
@@ -3262,7 +3262,7 @@ cd /usr/share/$name;python3 c2c.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install phonesploit
@@ -3277,7 +3277,7 @@ cd /usr/share/$name;python3 phonesploitpro.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install meliziac2
@@ -3291,7 +3291,7 @@ cd /usr/share/$name;python3 c2.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install gcr
@@ -3305,7 +3305,7 @@ cd /usr/share/$name;python3 gcr.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# isntall meetc2
@@ -3316,7 +3316,7 @@ EOF
 		ln -fs /usr/share/$name/meetc /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pingrat
@@ -3330,7 +3330,7 @@ EOF
 		chmod +x /usr/bin/$name-client;chmod +x /usr/bin/$name-server
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name-client -h'"
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name-server -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ligolo-mp
@@ -3344,7 +3344,7 @@ EOF
 		ln -fs /usr/share/$name/ligolos /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install realm
@@ -3357,7 +3357,7 @@ EOF
 		chmod +x /usr/bin/imix;chmod +x /usr/bin/tavern
 		menu_entry "Command-and-Control" "Red-Team" "Imix" "$exec_shell 'imix'"
 		menu_entry "Command-and-Control" "Red-Team" "tavern" "$exec_shell 'tavern'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install badrats
@@ -3372,7 +3372,7 @@ cd /usr/share/$name;python3 badrat_server.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install mythic
@@ -3386,7 +3386,7 @@ EOF
 		chmod +x /usr/bin/$name-cli;chmod +x /usr/bin/$name-server
 		menu_entry "Command-and-Control" "Red-Team" "$name-cli" "$exec_shell 'sudo $name-cli'"
 		menu_entry "Command-and-Control" "Red-Team" "$name-server" "$exec_shell 'sudo $name-server'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install northstarc2
@@ -3396,7 +3396,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install blackmamba
@@ -3411,7 +3411,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install offensivenotion
@@ -3424,7 +3424,7 @@ EOF
 		ln -fs /usr/share/$name/offensive_notion /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install redbloodc2
@@ -3439,7 +3439,7 @@ cd /usr/share/$name;node server.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sharpc2
@@ -3450,7 +3450,7 @@ EOF
 		ln -fs /usr/share/$name/TeamServer /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install emp3r0r
@@ -3461,7 +3461,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./emp3r0r --install
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install chaos
@@ -3475,7 +3475,7 @@ cd /usr/share/$name;PORT=8080 SQLITE_DATABASE=chaos go run cmd/chaos/main.go "\$
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install godoh
@@ -3487,7 +3487,7 @@ EOF
 		ln -fs /usr/share/$name/godoh /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sliver
@@ -3500,7 +3500,7 @@ EOF
 		ln -fs /usr/share/$name/sliver_server /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install havoc
@@ -3513,7 +3513,7 @@ EOF
 		ln -fs /user/share/$name/teamserver/teamserver /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3544,7 +3544,7 @@ EOF
 		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install noip2
@@ -3556,7 +3556,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dnsexfiltrator
@@ -3571,7 +3571,7 @@ cd /usr/share/$name;python2 dnsexfiltrator.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bobthesmuggler
@@ -3585,7 +3585,7 @@ cd /usr/share/$name;python3 BobTheSmuggler.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sshsnake
@@ -3599,7 +3599,7 @@ cd /usr/share/$name;bash Snake.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install reversessh
@@ -3614,7 +3614,7 @@ cd /usr/share/$name;./reversessh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install transfer.sh
@@ -3626,7 +3626,7 @@ EOF
 		ln -fs /usr/share/$name/transfersh /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install dnslivery
@@ -3641,7 +3641,7 @@ cd /usr/share/$name;python3 dnslivery.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install webdavdelivery
@@ -3655,7 +3655,7 @@ cd /usr/share/$name;python3 webDavDelivery.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install wstunnel
@@ -3668,7 +3668,7 @@ EOF
 		ln -fs /usr/share/$name/wstunnel /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install kubo
@@ -3679,7 +3679,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install frp
@@ -3691,7 +3691,7 @@ EOF
 		ln -fs /usr/share/$name/frps /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install rathole
@@ -3704,7 +3704,7 @@ EOF
 		ln -fs /usr/share/$name/rathole /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install hfs
@@ -3717,7 +3717,7 @@ EOF
 		ln -fs /usr/share/$name/hfs /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install goproxy
@@ -3730,7 +3730,7 @@ EOF
 		ln -fs /usr/share/$name/proxy /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3791,7 +3791,7 @@ cd /usr/share/$name;python2 s7scan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install modbuspal
@@ -3806,7 +3806,7 @@ cd /usr/share/$name;java -jar ModbusPal.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install isf
@@ -3821,7 +3821,7 @@ cd /usr/share/$name;python2 isf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install redpoint
@@ -3831,7 +3831,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;mv * /usr/share/nmap/scripts
 		rm -rf /tmp/$name
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3929,7 +3929,7 @@ digital_forensic()
 		wget https://github.com/Sysinternals/SysmonForLinux/releases/download/1.3.3.0/sysmonforlinux_1.3.3_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install bindiff
@@ -3938,7 +3938,7 @@ digital_forensic()
 		wget https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -3984,7 +3984,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cd /usr/share/$name;python3 setup.py install;bash install.sh 
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stego" "$exec_shell 'stego -h'"
-		printf "$GREEN"  "[*] Success installing StegoCracker"
+		printf "$GREEN"  "[*] Success Installed StegoCracker"
 	fi
 
 	# install openstego
@@ -3993,7 +3993,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		wget https://github.com/syvaidya/openstego/releases/download/openstego-0.8.6/openstego_0.8.6-1_all.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;apt --fix-broken install -qy;rm -f /tmp/$name.deb
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install stegosaurus
@@ -4005,7 +4005,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		ln -fs /usr/share/$name/stegosaurus /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install audiostego
@@ -4017,7 +4017,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		ln -fs /usr/share/$name/build/hideme /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cloacked-pixel
@@ -4031,7 +4031,7 @@ cd /usr/share/$name;python2 lsb.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install trace-forensic-toolkit
@@ -4046,7 +4046,7 @@ cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install steganabara
@@ -4060,7 +4060,7 @@ cd /usr/share/$name;./run "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install stegsolve
@@ -4075,7 +4075,7 @@ cd /usr/share/$name;java -jar stegsolve.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install openpuff
@@ -4090,7 +4090,7 @@ cd /usr/share/$name;wine OpenPuff.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install mp3stego
@@ -4110,7 +4110,7 @@ cd /usr/share/$name/MP3Stego;wine Decode.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name-decode
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-decode" "$exec_shell '$name-decode'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install theZoo
@@ -4125,7 +4125,7 @@ cd /usr/share/$name;python3 theZoo.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install kdrill
@@ -4139,7 +4139,7 @@ cd /usr/share/$name;python3 Kdrill.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install jsteg-slink
@@ -4155,7 +4155,7 @@ EOF
 		chmod +x /usr/bin/slink
 		menu_entry "Malware-Analysis" "Digital-Forensic" "Slink" "$exec_shell 'sudo slink -h'"
 		chmod 755 /usr/share/jsteg-slink/*
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ssak
@@ -4193,7 +4193,7 @@ EOF
 		ln -fs /usr/share/$name/programs/64/stegdetect /usr/bin/stegdetect
 		chmod +x /usr/bin/stegdetect
 		menu_entry "Malware-Analysis" "Digital-Forensic" "stegdetect" "$exec_shell 'sudo stegdetect -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4224,7 +4224,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$name.sh
 		chmod +x /tmp/$name.sh;cd /tmp;bash $name.sh;rm -f $name.sh
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install apt-hunter
@@ -4239,7 +4239,7 @@ cd /usr/share/$name;python3 APT-Hunter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pspy
@@ -4251,7 +4251,7 @@ EOF
 		ln -fs /usr/share/$name/pspy64 /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install velociraptor
@@ -4263,7 +4263,7 @@ EOF
 		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install hayabusa
@@ -4274,7 +4274,7 @@ EOF
 		ln -fs /usr/share/$name/hayabusa-2.16.0-lin-x64-gnu /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install aiengine
@@ -4287,7 +4287,7 @@ EOF
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install tracee
@@ -4298,7 +4298,7 @@ EOF
 		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/dist/tracee /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install sysinternalsebpf
@@ -4307,7 +4307,7 @@ EOF
 		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
  	# install capa
@@ -4318,7 +4318,7 @@ EOF
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		ln -fs /usr/share/$name/capa /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4347,7 +4347,7 @@ EOF
 		local name="grr"
 		wget https://github.com/google/grr/releases/latest/download/grr-server_3.4.7-1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4391,7 +4391,7 @@ sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install rita
@@ -4400,7 +4400,7 @@ EOF
 		wget https://github.com/activecm/rita/releases/latest/download/install-rita-zeek-here.sh -O /tmp/install.sh
 		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	exit
@@ -4434,7 +4434,7 @@ blue_team()
 		local name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4479,7 +4479,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 		echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
 		apt-get update;apt-get install -y wazuh-agent
-		printf "$GREEN"  "[*] Success installing $name https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
+		printf "$GREEN"  "[*] Success Installed $name https://$LAN -> USER:PASS = admin:$ADMIN_PASSWORD"
 	fi
 
 	# install opensearch
@@ -4487,7 +4487,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		local name="opensearch"
 		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install falco
@@ -4498,7 +4498,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
 EOF
 		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y $name
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install siegma
@@ -4513,7 +4513,7 @@ EOF
 		chmod +x /usr/bin/$name
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ntop
@@ -4522,7 +4522,7 @@ EOF
 		apt-get install -y wget add-apt-repository universe
 		wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
 		chmod +x /tmp/apt-ntop-stable.deb;apt install /tmp/apt-ntop-stable.deb 
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install aiengine
@@ -4534,7 +4534,7 @@ EOF
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install ossec
@@ -4543,7 +4543,7 @@ EOF
 		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt  | sudo apt-key add -
 		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/atomic.list
 		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cilium
@@ -4555,7 +4555,7 @@ EOF
 		ln -fs /usr/share/$name/cilium /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install elasticsearch
@@ -4563,7 +4563,7 @@ EOF
 		local name="elasticsearch"
 		wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install kibana
@@ -4571,7 +4571,7 @@ EOF
 		local name="kibana"
 		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install logstash
@@ -4579,7 +4579,7 @@ EOF
 		local name="logstash"
 		wget https://artifacts.elastic.co/downloads/logstash/logstash-8.12.2-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install zabbix
@@ -4594,7 +4594,7 @@ EOF
 		sed -i "s|DBPassword=password|DBPassword=unk12341234|g" /etc/zabbix/zabbix_server.conf
 		systemctl restart zabbix-server zabbix-agent apache2
 		systemctl enable zabbix-server zabbix-agent apache2
-		printf "$GREEN"  "[*] Success installing Zabbix -> http://$LAN/zabbix"
+		printf "$GREEN"  "[*] Success Installed Zabbix -> http://$LAN/zabbix"
 	fi
 
 
@@ -4623,7 +4623,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 	if [ ! -d "/usr/share/jumpserver" ]; then
 		local name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4656,7 +4656,7 @@ docker run -p 8022:8022 honeytrap/honeytrap:latest "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install tpotce
@@ -4664,7 +4664,7 @@ EOF
 		local name="tpotce"
 		bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
 		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4722,7 +4722,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin
 		local name="bearer"
 		wget https://github.com/Bearer/bearer/releases/download/v1.37.0/bearer_1.37.0_linux-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install checkstyle
@@ -4737,7 +4737,7 @@ cd /usr/share/$name;java -jar checkstyle.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install aflplusplus
@@ -4747,7 +4747,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make distrib;make install
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name-cc" "$exec_shell '$name-cc -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install vuls
@@ -4760,7 +4760,7 @@ EOF
 		ln -fs /usr/share/$name/vuls /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install vulhub
@@ -4776,7 +4776,7 @@ cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install syzkaller
@@ -4790,7 +4790,7 @@ EOF
 		ln -fs /usr/share/$name/syzkaller/bin/linux_amd64/syz-executor /usr/bin/syz-executor
 		chmod +x /usr/bin/syz-fuzzer;chmod +x /usr/bin/syz-stress;chmod +x /usr/bin/syz-executor
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "syz-fuzzer" "$exec_shell 'syz-fuzzer -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install honggfuzz
@@ -4801,7 +4801,7 @@ EOF
 		ln -fs /usr/share/$name/honggfuzz /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install cmder
@@ -4817,7 +4817,7 @@ cd /usr/share/$name;wine Cmder.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install open-policy-agent
@@ -4829,7 +4829,7 @@ EOF
 		ln -fs /usr/share/$name/opa /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -4884,7 +4884,7 @@ EOF
 		ln -fs /usr/share/$name/selefra /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install wordpress
@@ -4929,7 +4929,7 @@ firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
   		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install joomla
@@ -4975,7 +4975,7 @@ firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
     		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install drupal
@@ -5021,7 +5021,7 @@ firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
     		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -5054,7 +5054,7 @@ EOF
 		ln -fs /usr/share/$name/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install graphql-playground
@@ -5064,7 +5064,7 @@ EOF
 		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install driftctl
@@ -5076,7 +5076,7 @@ EOF
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install clion
@@ -5091,7 +5091,7 @@ cd /usr/share/$name/bin;bash clion.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install phpstorm
@@ -5106,7 +5106,7 @@ cd /usr/share/$name/bin;bash phpstorm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install goland
@@ -5121,7 +5121,7 @@ cd /usr/share/$name/bin;bash goland.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install pycharm
@@ -5136,7 +5136,7 @@ cd /usr/share/$name/bin;bash pycharm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install webstorm
@@ -5151,7 +5151,7 @@ cd /usr/share/$name/bin;bash webstorm.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 	# install idea
@@ -5166,7 +5166,7 @@ cd /usr/share/$name/bin;bash idea.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Performing-the-Review" "Security-Audit" "$name" "/usr/bin/$name"
-		printf "$GREEN"  "[*] Success installing $name"
+		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
 
@@ -5243,7 +5243,7 @@ main()
 				apt install -qy dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix gimp remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd 
 
 				# install dependencies
-				apt install -qy libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy libgs9-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
