@@ -355,10 +355,10 @@ penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil 
+	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools 
 
 	# install Python3 pip
-	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
@@ -1227,21 +1227,6 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
-	# install spoofcheck
-	if [ ! -d "/usr/share/spoofcheck" ]; then
-		local name="spoofcheck"
-		git clone https://github.com/BishopFox/spoofcheck /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;python2 spoofcheck.py "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Success Installed $name"
-	fi
-
 	# install redhawk
 	if [ ! -d "/usr/share/redhawk" ]; then
 		local name="redhawk"
@@ -1650,10 +1635,10 @@ EOF
 
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 	# install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntools sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above 
+	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntools sslstrip sherlock parsero routersploit tcpxtract slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
 
 	# install Python3 pip
-	network_pip="networkx ropper mitmproxy mikrot8over mitm6 pymultitor scapy slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
+	network_pip="networkx ropper mitmproxy mikrot8over mitm6 pymultitor scapy smbclientng slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
 	pip_installer "Network" "Penetration-Testing" "$network_pip"
 
 	# install Nodejs NPM
