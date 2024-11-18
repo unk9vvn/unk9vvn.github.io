@@ -5311,7 +5311,7 @@ main()
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/${name}.desktop" << EOF
 [Desktop Entry]
 name=$name
 Exec=$exec_shell "sudo $name"
@@ -5320,7 +5320,7 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$name.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${name}.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -5343,7 +5343,7 @@ EOF
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/$name.desktop" << EOF
+		cat > "/home/$USERS/.local/share/applications/Unk9vvN/${name}.desktop" << EOF
 [Desktop Entry]
 name=$name
 Exec=$exec_shell "sudo $name"
@@ -5352,7 +5352,7 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-$name.menu" << EOF
+		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${name}.menu" << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
