@@ -521,6 +521,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install wpxstrike
+	if [ ! -d "/usr/share/wpxstrike" ]; then
+		local name="wpxstrike"
+		git clone https://github.com/nowak0x01/WPXStrike /usr/share/$name
+		chmod 755 /usr/share/$name/*
+cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;./WPXStrike.js "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
  	# install crackql
 	if [ ! -d "/usr/share/crackql" ]; then
 		local name="crackql"
