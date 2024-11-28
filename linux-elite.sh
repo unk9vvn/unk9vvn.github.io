@@ -535,6 +535,17 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install kubo
+	if [ ! -d "/usr/share/kubo" ]; then
+		local name="kubo"
+		wget https://github.com/ipfs/kubo/releases/download/v0.32.1/kubo_v0.32.1_linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;./install.sh
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
  	# install crackql
 	if [ ! -d "/usr/share/crackql" ]; then
 		local name="crackql"
@@ -3688,7 +3699,7 @@ EOF
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		local name="kubo"
-		wget https://github.com/ipfs/kubo/releases/download/v0.30.0/kubo_v0.30.0_linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/ipfs/kubo/releases/download/v0.32.1/kubo_v0.32.1_linux-amd64.tar.gz -O /tmp/$name.tar.gz
 		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
