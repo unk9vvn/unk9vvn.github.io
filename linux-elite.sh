@@ -1285,12 +1285,11 @@ EOF
 	# install iis-shortname-scanner
 	if [ ! -d "/usr/share/iis-shortname-scanner" ]; then
 		name="iis-shortname-scanner"
-		mkdir -p /usr/share/$name
-		wget https://github.com/irsdl/IIS-ShortName-Scanner/blob/master/release/iis_shortname_scanner.jar -O /usr/share/$name/iis_shortname_scanner.jar
-		chmod 755 /usr/share/$name/*
+		git clone https://github.com/irsdl/IIS-ShortName-Scanner /usr/share/$name
+		chmod 755 /usr/share/$name/release/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;java -jar iis_shortname_scanner.jar "\$@"
+cd /usr/share/$name/release;java -jar iis_shortname_scanner.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
