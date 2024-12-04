@@ -6,24 +6,6 @@
 <br>
 </div>
 
-# Cybersecurity Roadmaps
-## Scope
-- Offensive Security
-  - Penetration Testing
-  - Red Team
-  - ICS Security
-- Defensive Security
-  - Digital Forensic
-  - Blue Team
-  - Security Audit
-
-### Map Reference
-<https://unk9vvn.github.io/cybersecurity-roadmaps>
-
-# Cheat Sheet & Checklist
-
-<https://unk9vvn.github.io/#cheat-sheet>
-
 # Tools Installer
 ## Features
 - Easy installation of all cyber security tools online.
