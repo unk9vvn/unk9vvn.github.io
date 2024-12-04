@@ -7,7 +7,7 @@
 </div>
 
 # Cybersecurity Roadmaps
-## Features
+## Scope
 - Penetration Testing
   - Web
   - Mobile
@@ -56,6 +56,7 @@
   - Preparing the Audit Report
   - Issuing the Review Report
 
+## Map Reference
 <https://unk9vvn.github.io/cybersecurity-roadmaps>
 
 # Cheat Sheet & Checklist
