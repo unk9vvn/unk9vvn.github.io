@@ -6,6 +6,62 @@
 <br>
 </div>
 
+# Cybersecurity Roadmaps
+## Features
+- Penetration Testing
+  - Web
+  - Mobile
+  - Cloud
+  - Network
+  - Wireless
+  - IoT
+- Red Team
+  - Reconnaissance
+  - Resource Development
+  - Initial Access
+  - Execution
+  - Persistence
+  - Privilege Escalation
+  - Defense Evasion
+  - Credential Access
+  - Discovery
+  - Lateral Movement
+  - Collection
+  - Command and Control
+  - Exfiltration
+  - Impact
+- ICS Security
+  - Penetration Testing
+  - Red Team
+  - Digital Forensic
+  - Blue Team
+- Digital Forensic
+  - Reverse Engineering
+  - Malware Analysis
+  - Threat Hunting
+  - Incident Response
+  - Threat Intelligence
+- Blue Team
+  - Harden
+  - Detect
+  - Isolate
+  - Deceive
+  - Evict
+  - Restore
+- Security Audit
+  - Preliminary Audit Assessment
+  - Planning and Preparation
+  - Establishing Audit Objectives
+  - Performing the Review
+  - Preparing the Audit Report
+  - Issuing the Review Report
+
+<https://unk9vvn.github.io/cybersecurity-roadmaps>
+
+# Cheat Sheet & Checklist
+
+<https://unk9vvn.github.io/#cheat-sheet>
+
 # Tools Installer
 ## Features
 - Easy installation of all cyber security tools online.
@@ -30,8 +86,6 @@ sudo linux-elite
 ```
 ...
 ```
-## Cybersecurity Roadmaps
-<https://unk9vvn.github.io/cybersecurity-roadmaps>
 
 [![Website](https://img.shields.io/badge/Website-000000?style=flat&logo=google-chrome&logoColor=white)](https://unk9vvn.com)
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/unk9vvn)
