@@ -8,55 +8,16 @@
 
 # Cybersecurity Roadmaps
 ## Scope
-- Penetration Testing
-  - Web
-  - Mobile
-  - Cloud
-  - Network
-  - Wireless
-  - IoT
-- Red Team
-  - Reconnaissance
-  - Resource Development
-  - Initial Access
-  - Execution
-  - Persistence
-  - Privilege Escalation
-  - Defense Evasion
-  - Credential Access
-  - Discovery
-  - Lateral Movement
-  - Collection
-  - Command and Control
-  - Exfiltration
-  - Impact
-- ICS Security
+- Offensive Security
   - Penetration Testing
   - Red Team
+  - ICS Security
+- Defensive Security
   - Digital Forensic
   - Blue Team
-- Digital Forensic
-  - Reverse Engineering
-  - Malware Analysis
-  - Threat Hunting
-  - Incident Response
-  - Threat Intelligence
-- Blue Team
-  - Harden
-  - Detect
-  - Isolate
-  - Deceive
-  - Evict
-  - Restore
-- Security Audit
-  - Preliminary Audit Assessment
-  - Planning and Preparation
-  - Establishing Audit Objectives
-  - Performing the Review
-  - Preparing the Audit Report
-  - Issuing the Review Report
+  - Security Audit
 
-## Map Reference
+### Map Reference
 <https://unk9vvn.github.io/cybersecurity-roadmaps>
 
 # Cheat Sheet & Checklist
