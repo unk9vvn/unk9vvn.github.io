@@ -380,6 +380,7 @@ go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
 go install github.com/shivangx01b/CorsMe@latest;ln -fs ~/go/bin/CorsMe /usr/bin/corsme
 go install github.com/pwnesia/dnstake/cmd/dnstake@latest;ln -fs ~/go/bin/dnstake /usr/bin/dnstake
+go install github.com/projectdiscovery/uncover/cmd/uncover@latest;ln -fs ~/go/bin/uncover /usr/bin/uncover
 go install github.com/projectdiscovery/dnsprobe@latest;ln -fs ~/go/bin/dnsprobe /usr/bin/dnsprobe
 go install github.com/ryandamour/crlfmap@latest;ln -fs ~/go/bin/crlfmap /usr/bin/crlfmap
 go install github.com/hahwul/dalfox/v2@latest;ln -fs ~/go/bin/dalfox /usr/bin/dalfox
