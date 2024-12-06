@@ -1582,6 +1582,15 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+ 	# install rclone
+	if [ ! -f "/usr/bin/rclone" ]; then
+		name="rclone"
+		wget https://downloads.rclone.org/v1.68.2/rclone-v1.68.2-linux-amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
 	# install ioxy
 	if [ ! -d "/usr/share/ioxy" ]; then
 		name="ioxy"
