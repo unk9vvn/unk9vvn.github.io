@@ -375,6 +375,7 @@ go install github.com/Macmod/godap/v2@latest;ln -fs ~/go/bin/godap /usr/bin/goda
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bin/httprobe
 go install github.com/tomnomnom/meg@latest;ln -fs ~/go/bin/meg /usr/bin/meg
+go install github.com/projectdiscovery/katana/cmd/katana@latest;ln -fs ~/go/bin/katana /usr/bin/katana
 go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cariddi /usr/bin/cariddi
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
