@@ -4554,12 +4554,27 @@ EOF
 		name="siegma"
 		git clone https://github.com/3CORESec/SIEGMA /usr/share/$name
 		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
+ 	# install cve2capec
+	if [ ! -d "/usr/share/cve2capec" ]; then
+		name="cve2capec"
+		git clone https://github.com/Galeax/CVE2CAPEC /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 capec2technique.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
