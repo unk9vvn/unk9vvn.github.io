@@ -460,6 +460,17 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+ 	# install ghauri
+	if [ ! -d "/usr/share/ghauri" ]; then
+		name="ghauri"
+		git clone https://github.com/r0oth3x49/ghauri /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cd /usr/share/$name;python3 setup.py install
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
 	# install phoneinfoga
 	if [ ! -d "/usr/share/phoneinfoga" ]; then
 		name="phoneinfoga"
