@@ -107,8 +107,8 @@ Icon=$IMAGES_PATH/penetration-testing.png
 Type=Directory
 EOF
 
-	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 	dir_pentest_index=0
+	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 
 	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
@@ -133,8 +133,8 @@ Icon=$IMAGES_PATH/red-team.png
 Type=Directory
 EOF
 
-	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 	dir_redteam_index=0
+	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
@@ -159,8 +159,8 @@ Icon=$IMAGES_PATH/ics-security.png
 Type=Directory
 EOF
 
-	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
 	dir_ics_index=0
+	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
 
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
@@ -185,8 +185,8 @@ Icon=$IMAGES_PATH/digital-forensic.png
 Type=Directory
 EOF
 
-	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
 	dir_digital_index=0
+	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
 
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
@@ -211,8 +211,8 @@ Icon=$IMAGES_PATH/blue-team.png
 Type=Directory
 EOF
 
-	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
 	dir_blueteam_index=0
+	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
 
 	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
@@ -237,8 +237,8 @@ Icon=$IMAGES_PATH/security-audit.png
 Type=Directory
 EOF
 
-	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
 	dir_audit_index=0
+	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
 
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
