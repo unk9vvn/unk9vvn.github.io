@@ -137,8 +137,8 @@ EOF
 	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-${dir_redteam_array[dir_redteam_index]}.directory << EOF
+		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Red-Team-${dir_redteam_array[dir_redteam_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
