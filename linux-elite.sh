@@ -82,12 +82,19 @@ menu()
 	mkdir -p /home/$USERS/.local/share/desktop-directories
 	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
+    xmlstarlet ed \
+        --subnode "/Menu" --type elem -n "Menu" -v "" \
+        --subnode "/Menu/Menu[last()]" --type elem -n "Name" -v "Unk9vvN" \
+        --subnode "/Menu/Menu[last()]" --type elem -n "Directory" -v "Unk9vvN.directory" \
+    "/home/$USERS/.config/menus/xfce-applications.menu"
+
+    echo "پوشه $folder_name اضافه شد."
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
 [Desktop Entry]
-Type=Directory
-name=Unk9vvN
+Name=Unk9vvN
 Comment=unk9vvn.github.io
 Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
+Type=Directory
 EOF
 
 	# initialize penetration testing menu
@@ -95,10 +102,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=Penetration-Testing
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/penetration-testing.png
+Type=Directory
 EOF
 	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 	dir_pentest_index=0
@@ -107,10 +114,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_pentest_array[dir_pentest_index]}
 Comment=Penetration-Testing
 Icon=folder
+Type=Directory
 EOF
 		dir_pentest_index=$((dir_pentest_index + 1))
 	done
@@ -120,10 +127,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=Red-Team
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/red-team.png
+Type=Directory
 EOF
 	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 	dir_redteam_index=0
@@ -132,10 +139,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
 Icon=folder
+Type=Directory
 EOF
 		dir_redteam_index=$((dir_redteam_index + 1))
 	done
@@ -145,10 +152,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=ICS-Security
 Comment=Offensive-Security
 Icon=/home/$USERS/.local/images/ics-security.png
+Type=Directory
 EOF
 	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
 	dir_ics_index=0
@@ -157,10 +164,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_ics_array[dir_ics_index]}
 Comment=ICS-Security
 Icon=folder
+Type=Directory
 EOF
 		dir_ics_index=$((dir_ics_index + 1))
 	done
@@ -170,10 +177,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=Digital-Forensic
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/digital-forensic.png
+Type=Directory
 EOF
 	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
 	dir_digital_index=0
@@ -182,10 +189,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_digital_array[dir_digital_index]}
 Comment=Digital-Forensic
 Icon=folder
+Type=Directory
 EOF
 		dir_digital_index=$((dir_digital_index + 1))
 	done
@@ -195,10 +202,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=Blue-Team
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/blue-team.png
+Type=Directory
 EOF
 	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
 	dir_blueteam_index=0
@@ -207,10 +214,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_blueteam_array[dir_blueteam_index]}
 Comment=Blue-Team
 Icon=folder
+Type=Directory
 EOF
 		dir_blueteam_index=$((dir_blueteam_index + 1))
 	done
@@ -220,10 +227,10 @@ EOF
 	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit
 	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit.directory << EOF
 [Desktop Entry]
-Type=Directory
 name=Security-Audit
 Comment=Defensive-Security
 Icon=/home/$USERS/.local/images/security-audit.png
+Type=Directory
 EOF
 	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
 	dir_audit_index=0
@@ -232,10 +239,10 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
 [Desktop Entry]
-Type=Directory
 name=${dir_audit_array[dir_audit_index]}
 Comment=Security-Audit
 Icon=folder
+Type=Directory
 EOF
 		dir_audit_index=$((dir_audit_index + 1))
 	done
