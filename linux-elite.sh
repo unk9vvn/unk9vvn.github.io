@@ -112,7 +112,7 @@ EOF
 
 	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing-${dir_pentest_array[dir_pentest_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_pentest_array[dir_pentest_index]}
 Comment=Penetration-Testing
@@ -138,7 +138,7 @@ EOF
 
 	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
+		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-${dir_redteam_array[dir_redteam_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
@@ -164,7 +164,7 @@ EOF
 
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security-${dir_ics_array[dir_ics_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_ics_array[dir_ics_index]}
 Comment=ICS-Security
@@ -190,7 +190,7 @@ EOF
 
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic-${dir_digital_array[dir_digital_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_digital_array[dir_digital_index]}
 Comment=Digital-Forensic
@@ -216,7 +216,7 @@ EOF
 
 	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team-${dir_blueteam_array[dir_blueteam_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_blueteam_array[dir_blueteam_index]}
 Comment=Blue-Team
@@ -242,7 +242,7 @@ EOF
 
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
 		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit-${dir_audit_array[dir_audit_index]}.directory << EOF
 [Desktop Entry]
 Name=${dir_audit_array[dir_audit_index]}
 Comment=Security-Audit
@@ -261,7 +261,7 @@ menu_entry()
 	local tool="$3"
 	local command="$4"
 
-	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
+	cat > $APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop << EOF
 [Desktop Entry]
 Name=${tool}
 Exec=${command}
@@ -270,7 +270,7 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${category}-${sub_category}-${tool}.menu" << EOF
+	cat > $CONFIG_MENU_PATH/xfce-applications.menu << EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
