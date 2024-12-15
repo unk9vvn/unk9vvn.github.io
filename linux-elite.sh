@@ -5466,25 +5466,25 @@ main
 logo
 
 
-select opt in "Penetrating Testing" "Red Team" "ICS Security" "Digital Forensic" "Blue Team" "Security Audit" Exit
+select opt in "Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" Exit
 do
 	case $opt in
-		"Penetrating Testing")
+		"Penetrating-Testing")
 			printf "$GREEN"  "[*] Running Penetrating-Testing..."
 			penetrating_testing;;
-		"Red Team")
+		"Red-Team")
 			printf "$GREEN"  "[*] Running Red-Team..."
 			red_team;;
-		"ICS Security")
+		"ICS-Security")
 			printf "$GREEN"  "[*] Running ICS-Security..."
 			ics_security;;
-		"Digital Forensic")
+		"Digital-Forensic")
 			printf "$GREEN"  "[*] Running Digital-Forensic..."
 			digital_forensic;;
-		"Blue Team")
+		"Blue-Team")
 			printf "$GREEN"  "[*] Running Blue-Team..."
 			blue_team;;
-		"Security Audit")
+		"Security-Audit")
 			printf "$GREEN"  "[*] Running Security-Audit..."
 			security_audit;;
 		"Exit")
