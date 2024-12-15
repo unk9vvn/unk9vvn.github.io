@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='10.0'
+ver='11.0'
 
 
 
@@ -74,7 +74,7 @@ logo()
 
 menu()
 {
-    BASE_PATH="/home/$USERS/"
+    BASE_PATH="/home/$USERS"
     CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
     IMAGES_PATH="$BASE_PATH/.local/share/images"
     APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
