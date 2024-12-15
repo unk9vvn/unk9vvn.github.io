@@ -74,47 +74,47 @@ logo()
 
 menu()
 {
-	# initialize main menu
-	mkdir -p /home/$USERS/.config/menus
-	mkdir -p /home/$USERS/.config/menus/applications-merged
-	mkdir -p /home/$USERS/.local/images
-	mkdir -p /home/$USERS/.local/share/applications
-	mkdir -p /home/$USERS/.local/share/desktop-directories
-	curl -s -o /home/$USERS/.local/images/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN
-    xmlstarlet ed \
-        --subnode "/Menu" --type elem -n "Menu" -v "" \
-        --subnode "/Menu/Menu[last()]" --type elem -n "Name" -v "Unk9vvN" \
-        --subnode "/Menu/Menu[last()]" --type elem -n "Directory" -v "Unk9vvN.directory" \
-    "/home/$USERS/.config/menus/xfce-applications.menu"
+    BASE_PATH="/home/$USERS/"
+    CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
+    IMAGES_PATH="$BASE_PATH/.local/share/images"
+    APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
+    DESKTOP_DIRECTORIES_PATH="$BASE_PATH/.local/share/desktop-directories"
 
-    echo "پوشه $folder_name اضافه شد."
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN.directory << EOF
+    mkdir -p "$CONFIG_MENU_PATH"
+    mkdir -p "$IMAGES_PATH"
+    mkdir -p "$APPLICATIONS_PATH"
+    mkdir -p "$DESKTOP_DIRECTORIES_PATH"
+
+	# init unk9vvn menu
+	curl -s -o $IMAGES_PATH/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory << EOF
 [Desktop Entry]
 Name=Unk9vvN
 Comment=unk9vvn.github.io
-Icon=/home/$USERS/.local/images/unk9vvn-logo.jpg
+Icon=$IMAGES_PATH/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
-	# initialize penetration testing menu
-	curl -s -o /home/$USERS/.local/images/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing.directory << EOF
+	# init penetration testing menu
+	curl -s -o $IMAGES_PATH/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing.directory << EOF
 [Desktop Entry]
-name=Penetration-Testing
+Name=Penetration-Testing
 Comment=Offensive-Security
-Icon=/home/$USERS/.local/images/penetration-testing.png
+Icon=$IMAGES_PATH/penetration-testing.png
 Type=Directory
 EOF
+
 	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
 	dir_pentest_index=0
 
 	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
+		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing-"${dir_pentest_array[dir_pentest_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_pentest_array[dir_pentest_index]}
+Name=${dir_pentest_array[dir_pentest_index]}
 Comment=Penetration-Testing
 Icon=folder
 Type=Directory
@@ -122,16 +122,17 @@ EOF
 		dir_pentest_index=$((dir_pentest_index + 1))
 	done
 
-	# initialize red team menu
-	curl -s -o /home/$USERS/.local/images/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team.directory << EOF
+	# init red team menu
+	curl -s -o $IMAGES_PATH/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Red-Team
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Red-Team.directory << EOF
 [Desktop Entry]
-name=Red-Team
+Name=Red-Team
 Comment=Offensive-Security
-Icon=/home/$USERS/.local/images/red-team.png
+Icon=$IMAGES_PATH/red-team.png
 Type=Directory
 EOF
+
 	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
 	dir_redteam_index=0
 
@@ -139,7 +140,7 @@ EOF
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
 		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Red-Team-"${dir_redteam_array[dir_redteam_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_redteam_array[dir_redteam_index]}
+Name=${dir_redteam_array[dir_redteam_index]}
 Comment=Red-Team
 Icon=folder
 Type=Directory
@@ -147,24 +148,25 @@ EOF
 		dir_redteam_index=$((dir_redteam_index + 1))
 	done
 
-	# initialize ics security menu
-	curl -s -o /home/$USERS/.local/images/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security.directory << EOF
+	# init ics security menu
+	curl -s -o $IMAGES_PATH/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/ICS-Security
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security.directory << EOF
 [Desktop Entry]
-name=ICS-Security
+Name=ICS-Security
 Comment=Offensive-Security
-Icon=/home/$USERS/.local/images/ics-security.png
+Icon=$IMAGES_PATH/ics-security.png
 Type=Directory
 EOF
+
 	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
 	dir_ics_index=0
 
 	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
 		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security-"${dir_ics_array[dir_ics_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_ics_array[dir_ics_index]}
+Name=${dir_ics_array[dir_ics_index]}
 Comment=ICS-Security
 Icon=folder
 Type=Directory
@@ -172,24 +174,25 @@ EOF
 		dir_ics_index=$((dir_ics_index + 1))
 	done
 
-	# initialize digital forensic menu
-	curl -s -o /home/$USERS/.local/images/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic.directory << EOF
+	# init digital forensic menu
+	curl -s -o $IMAGES_PATH/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic.directory << EOF
 [Desktop Entry]
-name=Digital-Forensic
+Name=Digital-Forensic
 Comment=Defensive-Security
-Icon=/home/$USERS/.local/images/digital-forensic.png
+Icon=$IMAGES_PATH/digital-forensic.png
 Type=Directory
 EOF
+
 	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
 	dir_digital_index=0
 
 	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
+		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic-"${dir_digital_array[dir_digital_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_digital_array[dir_digital_index]}
+Name=${dir_digital_array[dir_digital_index]}
 Comment=Digital-Forensic
 Icon=folder
 Type=Directory
@@ -197,24 +200,25 @@ EOF
 		dir_digital_index=$((dir_digital_index + 1))
 	done
 
-	# initialize blue team menu
-	curl -s -o /home/$USERS/.local/images/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team.directory << EOF
+	# init blue team menu
+	curl -s -o $IMAGES_PATH/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team.directory << EOF
 [Desktop Entry]
-name=Blue-Team
+Name=Blue-Team
 Comment=Defensive-Security
-Icon=/home/$USERS/.local/images/blue-team.png
+Icon=$IMAGES_PATH/blue-team.png
 Type=Directory
 EOF
+
 	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
 	dir_blueteam_index=0
 
 	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
+		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team-"${dir_blueteam_array[dir_blueteam_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_blueteam_array[dir_blueteam_index]}
+Name=${dir_blueteam_array[dir_blueteam_index]}
 Comment=Blue-Team
 Icon=folder
 Type=Directory
@@ -222,24 +226,25 @@ EOF
 		dir_blueteam_index=$((dir_blueteam_index + 1))
 	done
 
-	# initialize security audit menu
-	curl -s -o /home/$USERS/.local/images/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
-	mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit
-	cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit.directory << EOF
+	# init security audit menu
+	curl -s -o $IMAGES_PATH/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
+	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit
+	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit.directory << EOF
 [Desktop Entry]
-name=Security-Audit
+Name=Security-Audit
 Comment=Defensive-Security
-Icon=/home/$USERS/.local/images/security-audit.png
+Icon=$IMAGES_PATH/security-audit.png
 Type=Directory
 EOF
+
 	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
 	dir_audit_index=0
 
 	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
-		cat > /home/$USERS/.local/share/desktop-directories/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
+		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
+		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit-"${dir_audit_array[dir_audit_index]}".directory << EOF
 [Desktop Entry]
-name=${dir_audit_array[dir_audit_index]}
+Name=${dir_audit_array[dir_audit_index]}
 Comment=Security-Audit
 Icon=folder
 Type=Directory
@@ -258,7 +263,7 @@ menu_entry()
 
 	cat > "/home/$USERS/.local/share/applications/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
 [Desktop Entry]
-name=${tool}
+Name=${tool}
 Exec=${command}
 Comment=
 Terminal=true
