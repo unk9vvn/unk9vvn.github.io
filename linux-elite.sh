@@ -1111,7 +1111,7 @@ EOF
 		name="spartan"
 		git clone https://github.com/sensepost/SPartan /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SPartan.py "\$@"
