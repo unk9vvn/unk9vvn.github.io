@@ -146,7 +146,8 @@ EOF
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
 		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"}
+		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+}
 
 
 menu()
