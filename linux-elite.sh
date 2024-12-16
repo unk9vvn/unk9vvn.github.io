@@ -131,8 +131,9 @@ EOF
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+	
     # Include submenu items in the layout
     for ITEM in "${SUB_MENU_ITEM[@]}"; do
         xmlstarlet ed \
@@ -145,8 +146,8 @@ EOF
     xmlstarlet ed \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
 
 
