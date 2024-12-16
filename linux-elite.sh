@@ -88,10 +88,10 @@ create_menu()
     curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
 
     # Create the main menu folder
-    mkdir -p $APPLICATIONS_PATH/Unk9vvN/$SUB_MENU
+    mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU"
 
     # Create the .directory file for the main menu
-    cat > $DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory << EOF
+    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}".directory << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
 Comment=Offensive-Security
@@ -109,8 +109,8 @@ EOF
 
     # Create submenus
     for ITEM in "${SUB_MENU_ITEM[@]}"; do
-        mkdir -p $APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM
-        cat > $DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}.directory << EOF
+        mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM"
+        cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}".directory << EOF
 [Desktop Entry]
 Name=${ITEM}
 Comment=${SUB_MENU}
