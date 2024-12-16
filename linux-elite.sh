@@ -24,12 +24,19 @@ else
 	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
 
 	# install required packages
-	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify 
+	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify xmlstarlet 
 
 	# get current user and LAN IP address
 	USERS=$(who | awk '{print $1}' | sort -u)
 	LAN=$(hostname -I | awk '{print $1}')
 fi
+
+
+BASE_PATH="/home/$USERS"
+CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
+IMAGES_PATH="$BASE_PATH/.local/share/images"
+APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
+DESKTOP_DIRECTORIES_PATH="$BASE_PATH/.local/share/desktop-directories"
 
 
 logo()
@@ -72,14 +79,75 @@ logo()
 }
 
 
+create_menu()
+{
+    local SUB_MENU="$1"
+    local SUB_MENU_ITEM=("$2")
+
+    # Download the main icon
+    curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
+
+    # Create the main menu folder
+    mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU"
+
+    # Create the .directory file for the main menu
+    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
+[Desktop Entry]
+Name=${SUB_MENU}
+Comment=Offensive-Security
+Icon=$IMAGES_PATH/${SUB_MENU}.png
+Type=Directory
+EOF
+
+    # Add the main menu to the XML file
+    xmlstarlet ed \
+        -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
+        -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Name" -v "$SUB_MENU" \
+        -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}.directory" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
+    # Create submenus
+    for ITEM in "${SUB_MENU_ITEM[@]}"; do
+        mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM"
+        cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}.directory" << EOF
+[Desktop Entry]
+Name=${ITEM}
+Comment=${SUB_MENU}
+Icon=folder
+Type=Directory
+EOF
+
+        xmlstarlet ed \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    done
+
+    # Add Layout to the menu
+    xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
+        -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
+    # Include submenu items in the layout
+    for ITEM in "${SUB_MENU_ITEM[@]}"; do
+        xmlstarlet ed \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    done
+
+    # Add Merge to the layout
+    xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+}
+
+
 menu()
 {
-    BASE_PATH="/home/$USERS"
-    CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
-    IMAGES_PATH="$BASE_PATH/.local/share/images"
-    APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
-    DESKTOP_DIRECTORIES_PATH="$BASE_PATH/.local/share/desktop-directories"
-
     mkdir -p "$CONFIG_MENU_PATH"
     mkdir -p "$IMAGES_PATH"
     mkdir -p "$APPLICATIONS_PATH"
@@ -96,161 +164,29 @@ Icon=$IMAGES_PATH/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
+	xmlstarlet ed \
+		-a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
+		-s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
+		-s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
 	# init penetration testing menu
-	curl -s -o $IMAGES_PATH/penetration-testing.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/penetration-testing.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing.directory << EOF
-[Desktop Entry]
-Name=Penetration-Testing
-Comment=Offensive-Security
-Icon=$IMAGES_PATH/penetration-testing.png
-Type=Directory
-EOF
-
-	dir_pentest_index=0
-	dir_pentest_array=("Web" "Mobile" "Cloud" "Network" "Wireless" "IoT")
-
-	while [ $dir_pentest_index -lt ${#dir_pentest_array[@]} ]; do
-		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Penetration-Testing/${dir_pentest_array[dir_pentest_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Penetration-Testing-${dir_pentest_array[dir_pentest_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_pentest_array[dir_pentest_index]}
-Comment=Penetration-Testing
-Icon=folder
-Type=Directory
-EOF
-		dir_pentest_index=$((dir_pentest_index + 1))
-	done
+	create_menu "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
 
 	# init red team menu
-	curl -s -o $IMAGES_PATH/red-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/red-team.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Red-Team
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Red-Team.directory << EOF
-[Desktop Entry]
-Name=Red-Team
-Comment=Offensive-Security
-Icon=$IMAGES_PATH/red-team.png
-Type=Directory
-EOF
-
-	dir_redteam_index=0
-	dir_redteam_array=("Reconnaissance" "Resource-Development" "Initial-Access" "Execution" "Persistence" "Privilege-Escalation" "Defense-Evasion" "Credential-Access" "Discovery" "Lateral-Movement" "Collection" "Command-and-Control" "Exfiltration" "Impact")
-
-	while [ $dir_redteam_index -lt ${#dir_redteam_array[@]} ]; do
-		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Red-Team/${dir_redteam_array[dir_redteam_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Red-Team-${dir_redteam_array[dir_redteam_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_redteam_array[dir_redteam_index]}
-Comment=Red-Team
-Icon=folder
-Type=Directory
-EOF
-		dir_redteam_index=$((dir_redteam_index + 1))
-	done
+	create_menu "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
 
 	# init ics security menu
-	curl -s -o $IMAGES_PATH/ics-security.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/ics-security.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/ICS-Security
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security.directory << EOF
-[Desktop Entry]
-Name=ICS-Security
-Comment=Offensive-Security
-Icon=$IMAGES_PATH/ics-security.png
-Type=Directory
-EOF
-
-	dir_ics_index=0
-	dir_ics_array=("Penetration-Testing" "Red-Team" "Digital-Forensic" "Blue-Team")
-
-	while [ $dir_ics_index -lt ${#dir_ics_array[@]} ]; do
-		mkdir -p /home/$USERS/.local/share/applications/Unk9vvN/ICS-Security/${dir_ics_array[dir_ics_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-ICS-Security-${dir_ics_array[dir_ics_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_ics_array[dir_ics_index]}
-Comment=ICS-Security
-Icon=folder
-Type=Directory
-EOF
-		dir_ics_index=$((dir_ics_index + 1))
-	done
+	create_menu "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
 
 	# init digital forensic menu
-	curl -s -o $IMAGES_PATH/digital-forensic.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/digital-forensic.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic.directory << EOF
-[Desktop Entry]
-Name=Digital-Forensic
-Comment=Defensive-Security
-Icon=$IMAGES_PATH/digital-forensic.png
-Type=Directory
-EOF
-
-	dir_digital_index=0
-	dir_digital_array=("Reverse-Engineering" "Malware-Analysis" "Threat-Hunting" "Incident-Response" "Threat-Intelligence")
-
-	while [ $dir_digital_index -lt ${#dir_ics_array[@]} ]; do
-		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Digital-Forensic/${dir_digital_array[dir_digital_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Digital-Forensic-${dir_digital_array[dir_digital_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_digital_array[dir_digital_index]}
-Comment=Digital-Forensic
-Icon=folder
-Type=Directory
-EOF
-		dir_digital_index=$((dir_digital_index + 1))
-	done
+	create_menu "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
 
 	# init blue team menu
-	curl -s -o $IMAGES_PATH/blue-team.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/blue-team.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team.directory << EOF
-[Desktop Entry]
-Name=Blue-Team
-Comment=Defensive-Security
-Icon=$IMAGES_PATH/blue-team.png
-Type=Directory
-EOF
-
-	dir_blueteam_index=0
-	dir_blueteam_array=("Harden" "Detect" "Isolate" "Deceive" "Evict")
-
-	while [ $dir_blueteam_index -lt ${#dir_blueteam_array[@]} ]; do
-		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Blue-Team/${dir_blueteam_array[dir_blueteam_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Blue-Team-${dir_blueteam_array[dir_blueteam_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_blueteam_array[dir_blueteam_index]}
-Comment=Blue-Team
-Icon=folder
-Type=Directory
-EOF
-		dir_blueteam_index=$((dir_blueteam_index + 1))
-	done
+	create_menu "Blue-Team" "Harden Detect Isolate Deceive Evict"
 
 	# init security audit menu
-	curl -s -o $IMAGES_PATH/security-audit.png https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/security-audit.png
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit.directory << EOF
-[Desktop Entry]
-Name=Security-Audit
-Comment=Defensive-Security
-Icon=$IMAGES_PATH/security-audit.png
-Type=Directory
-EOF
-
-	dir_audit_index=0
-	dir_audit_array=("Preliminary-Audit-Assessment" "Planning-and-Preparation" "Establishing-Audit-Objectives" "Performing-the-Review" "Preparing-the-Audit-Report" "Issuing-the-Review-Report")
-
-	while [ $dir_audit_index -lt ${#dir_audit_array[@]} ]; do
-		mkdir -p $APPLICATIONS_PATH/Unk9vvN/Security-Audit/${dir_audit_array[dir_audit_index]}
-		cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN-Security-Audit-${dir_audit_array[dir_audit_index]}.directory << EOF
-[Desktop Entry]
-Name=${dir_audit_array[dir_audit_index]}
-Comment=Security-Audit
-Icon=folder
-Type=Directory
-EOF
-		dir_audit_index=$((dir_audit_index + 1))
-	done
+	create_menu "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
 }
 
 
@@ -270,28 +206,19 @@ Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-	cat > $CONFIG_MENU_PATH/xfce-applications.menu << EOF
-<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
-"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
-<Menu>
-  <Name>Applications</Name>
-  <Menu>
-    <Name>Unk9vvN</Name>
-    <Directory>Unk9vvN.directory</Directory>
-    <Menu>
-      <Name>Unk9vvN-${category}</Name>
-      <Directory>Unk9vvN-${category}.directory</Directory>
-      <Menu>
-        <Name>Unk9vvN-${category}-${sub_category}</Name>
-        <Directory>Unk9vvN-${category}-${sub_category}.directory</Directory>
-        <Include>
-          <Filename>Unk9vvN-${category}-${sub_category}-${tool}.desktop</Filename>
-        </Include>
-      </Menu>
-    </Menu>
-  </Menu>
-</Menu>
-EOF
+
+	xmlstarlet ed \
+		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Include" -v "" \
+		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
+	xmlstarlet ed \
+		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Layout" -v "" \
+		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
+		-i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge" -t attr -n "type" -v "menus" \
+		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
+		-i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
 
 
