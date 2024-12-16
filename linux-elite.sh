@@ -104,7 +104,8 @@ EOF
         -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Name" -v "$SUB_MENU" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}.directory" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
     # Create submenus
     for ITEM in "${SUB_MENU_ITEM[@]}"; do
@@ -121,29 +122,31 @@ EOF
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-    done
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+	done
 
     # Add Layout to the menu
     xmlstarlet ed \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     # Include submenu items in the layout
     for ITEM in "${SUB_MENU_ITEM[@]}"; do
         xmlstarlet ed \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-    done
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+	done
 
     # Add Merge to the layout
     xmlstarlet ed \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-}
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"}
 
 
 menu()
@@ -168,7 +171,8 @@ EOF
 		-a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
 		-s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
 		-s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
 	# init penetration testing menu
 	create_menu "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
@@ -192,7 +196,7 @@ EOF
 
 menu_entry()
 {
-    local sub_category="$1"
+	local sub_category="$1"
     local category="$2"
     local tool="$3"
     local command="$4"
@@ -217,16 +221,17 @@ EOF
         -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge" -t attr -n "type" -v "menus" \
         -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
 
 
 installer()
 {
     local sub_category="$1"
-    local category="$2"
-    local package_array=("${!3}")  # Correctly pass array by reference
-    local install_command="$4"
+	local category="$2"
+	local package_array=("${!3}")  # Correctly pass array by reference
+	local install_command="$4"
     local help_command="$5"
 
     for package in "${package_array[@]}"; do
@@ -5400,7 +5405,8 @@ EOF
         -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
         -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
@@ -5431,7 +5437,8 @@ EOF
         -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
         -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 		bash /usr/share/$name/$name.sh
 	fi
 }
