@@ -153,10 +153,10 @@ EOF
 
 menu()
 {
-    mkdir -p "$CONFIG_MENU_PATH"
-    mkdir -p "$IMAGES_PATH"
-    mkdir -p "$APPLICATIONS_PATH"
-    mkdir -p "$DESKTOP_DIRECTORIES_PATH"
+    mkdir -p $CONFIG_MENU_PATH
+    mkdir -p $IMAGES_PATH
+    mkdir -p $APPLICATIONS_PATH
+    mkdir -p $DESKTOP_DIRECTORIES_PATH
 
     cat > $CONFIG_MENU_PATH/xfce-applications.menu << EOF
 <?xml version="1.0" ?>
