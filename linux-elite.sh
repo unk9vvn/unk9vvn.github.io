@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='11.0'
+ver='12.0'
 
 
 
@@ -27,7 +27,7 @@ else
 	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify xmlstarlet 
 
 	# get current user and LAN IP address
-	USERS=$(who | awk '{print $1}' | sort -u)
+	USERS=$(users | awk '{print $1}')
 	LAN=$(hostname -I | awk '{print $1}')
 fi
 
