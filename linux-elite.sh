@@ -91,7 +91,7 @@ create_menu()
     mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU"
 
     # Create the .directory file for the main menu
-    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
+    cat > $DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
 Comment=Offensive-Security
@@ -192,12 +192,13 @@ EOF
 
 menu_entry()
 {
-	local sub_category="$1"
-	local category="$2"
-	local tool="$3"
-	local command="$4"
+    local sub_category="$1"
+    local category="$2"
+    local tool="$3"
+    local command="$4"
 
-	cat > $APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop << EOF
+    # Create the .desktop file for the tool
+    cat > $APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop << EOF
 [Desktop Entry]
 Name=${tool}
 Exec=${command}
@@ -207,92 +208,103 @@ Icon=gnome-panel-launcher
 Type=Application
 EOF
 
-	xmlstarlet ed \
-		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Include" -v "" \
-		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    # Add Include and Layout to the menu XML file
+    xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Include" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Layout" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge" -t attr -n "type" -v "menus" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+}
 
-	xmlstarlet ed \
-		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Layout" -v "" \
-		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
-		-i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge" -t attr -n "type" -v "menus" \
-		-s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
-		-i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
+installer()
+{
+    local sub_category="$1"
+    local category="$2"
+    local package_array=("${!3}")  # Correctly pass array by reference
+    local install_command="$4"
+    local help_command="$5"
+
+    for package in "${package_array[@]}"; do
+        # Add the menu entry for the package
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${help_command} -h'"
+
+        # Run the installation command for the specific package manager
+        $install_command "${package}"
+
+        # Print success message
+        printf "$GREEN" "[*] Successfully Installed ${package}\n"
+    done
 }
 
 
 pip_installer()
 {
-	local sub_category="$1"
-	local category="$2"
-	local pip_array="$3"
+    local sub_category="$1"
+    local category="$2"
+    local pip_array=("${!3}")  # Correctly pass array by reference
 
-	for pip_index in ${pip_array[@]}; do
-		menu_entry "${sub_category}" "${category}" "${pip_index}" "$exec_shell 'sudo ${pip_index} -h'"
-		pip3 install "${pip_index}" --break-system-packages
-		printf "$GREEN"  "[*] Success Installed ${pip_index}"
-	done
+    # Call generic installer function with pip-specific command
+    installer "${sub_category}" "${category}" pip_array[@] "pip3 install --break-system-packages" "pip3"
 }
 
 
 npm_installer()
 {
-	local sub_category="$1"
-	local category="$2"
-	local npm_array="$3"
+    local sub_category="$1"
+    local category="$2"
+    local npm_array=("${!3}")  # Correctly pass array by reference
 
-	for npm_index in ${npm_array[@]}; do
-		menu_entry "${sub_category}" "${category}" "${npm_index}" "$exec_shell 'sudo ${npm_index} -h'"
-		npm install -g "${npm_index}"
-		printf "$GREEN"  "[*] Success Installed ${npm_index}"
-	done
+    # Call generic installer function with npm-specific command
+    installer "${sub_category}" "${category}" npm_array[@] "npm install -g" "npm"
 }
 
 
 gem_installer()
 {
-	local sub_category="$1"
-	local category="$2"
-	local gem_array="$3"
+    local sub_category="$1"
+    local category="$2"
+    local gem_array=("${!3}")  # Correctly pass array by reference
 
-	for gem_index in ${gem_array[@]}; do
-		menu_entry "${sub_category}" "${category}" "${gem_index}" "$exec_shell 'sudo ${gem_index} -h'"
-		gem install "${gem_index}"
-		printf "$GREEN"  "[*] Success Installed ${gem_index}"
-	done
+    # Call generic installer function with gem-specific command
+    installer "${sub_category}" "${category}" gem_array[@] "gem install" "gem"
 }
 
 
 go_installer()
 {
-	local sub_category="$1"
-	local category="$2"
-	local commands="$3"
+    local sub_category="$1"
+    local category="$2"
+    local commands="$3"
 
-	go_array=()
-	while read -r line; do
-		if [[ $line == *"ln -fs"* ]]; then
-			symlink=$(echo "$line" | awk '{print $NF}')
-			symlink=${symlink#/}
-			symlink=${symlink%/}
-			binary=$(basename "$symlink")
-			go_array+=("$binary")
-		fi
-	done <<< "$commands"
+    # Extract binaries from go commands and create an array
+    go_array=()
+    while read -r line; do
+        if [[ $line == *"ln -fs"* ]]; then
+            symlink=$(echo "$line" | awk '{print $NF}')
+            symlink=${symlink#/}
+            symlink=${symlink%/}
+            binary=$(basename "$symlink")
+            go_array+=("$binary")
+        fi
+    done <<< "$commands"
 
-	for go_index in ${go_array[@]}; do
-		menu_entry "${sub_category}" "${category}" "${go_index}" "$exec_shell 'sudo ${go_index} -h'"
-		printf "$GREEN"  "[*] Success Installed ${go_index}"
-	done
+    # Call generic installer function with go-specific command
+    installer "${sub_category}" "${category}" go_array[@] "eval" "$commands"
 
-	eval "$commands"
+    # Execute the go commands
+    eval "$commands"
 }
 
 
 penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools 
 
@@ -1321,6 +1333,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------Mobile-Penetration-Testing------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
 
@@ -1391,6 +1404,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy awscli trivy s3scanner gsutil 
 
@@ -1636,6 +1650,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntools sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
 
@@ -1898,6 +1913,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------Wireless-Penetration-Testing------------------------------------ #"
+
 	# install Repository Tools
 	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph pskracker 
 
@@ -1963,6 +1979,7 @@ EOF
 
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy arduino gnuradio blue-hydra e2tools mtools
 
@@ -2041,6 +2058,7 @@ EOF
 red_team()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
 
@@ -2128,6 +2146,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------Resource-Development-Red-Team----------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy sharpshooter 
 
@@ -2191,6 +2210,7 @@ EOF
 
 
 	printf "$YELLOW"  "# --------------------------------------Initial-Access-Red-team-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
 
@@ -2446,6 +2466,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------------Execution-Red-Team---------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy shellnoob
 
@@ -2523,6 +2544,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ----------------------------------------Persistence-Red-Team--------------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -2582,6 +2604,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------Privilege-Escalation-Red-Team----------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy linux-exploit-suggester peass oscanner 
 
@@ -2663,6 +2686,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode upx-ucl 
 
@@ -2896,6 +2920,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------Credential-Access-Red-Team------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy pdfcrack fcrackzip rarcrack 
 
@@ -2979,6 +3004,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------------Discovery-Red-Team---------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy bloodhound 
 
@@ -3031,6 +3057,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy pptpd kerberoast isr-evilgrade 
 
@@ -3080,6 +3107,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ----------------------------------------Collection-Red-Team---------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy tigervnc-viewer 
 
@@ -3116,6 +3144,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------Command-and-Control-Red-Team----------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
 
@@ -3505,6 +3534,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ---------------------------------------Exfiltration-Red-Team--------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxify privoxy 
 
@@ -3722,6 +3752,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------------Impact-Red-Team------------------------------------------ #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -3748,6 +3779,7 @@ EOF
 ics_security()
 {
 	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -3823,6 +3855,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ----------------------------------------Red-Team-ICS-Security-------------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -3844,6 +3877,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------------Digital-Forensic-ICS-Security---------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -3865,6 +3899,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ---------------------------------------Blue-Team-ICS-Security-------------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -3891,6 +3926,7 @@ EOF
 digital_forensic()
 {
 	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy ghidra foremost qpdf kafkacat gdb pspy llvm zydis-tools
 
@@ -3930,6 +3966,7 @@ digital_forensic()
 
 
 	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic bpftool pev readpe 
 
@@ -4185,6 +4222,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3
 
@@ -4310,6 +4348,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy thehive 
 
@@ -4339,6 +4378,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
+
 	# install Repository Tools
 	apt install -qy opentaxii 
 
@@ -4397,6 +4437,7 @@ EOF
 blue_team()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible-core 
 
@@ -4426,6 +4467,7 @@ blue_team()
 
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus stenographer 
 
@@ -4601,6 +4643,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -------------------------------------------Isolate-Blue-Team--------------------------------------- #"
+
 	# install Repository Tools
 	apt install -qy openvpn wireguard 
 
@@ -4630,6 +4673,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 
 
 	printf "$YELLOW"  "# -------------------------------------------Deceive-Blue-Team--------------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -4671,6 +4715,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -------------------------------------------Evict-Blue-Team----------------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -4697,6 +4742,7 @@ EOF
 security_audit()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
+
 	# install Repository Tools
 	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible-core 
 
@@ -4836,6 +4882,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------Planning-and-Preparation-Security-Audit------------------------------ #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -4857,6 +4904,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ----------------------------Establishing-Audit-Objectives-Security-Audit--------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -5028,6 +5076,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -------------------------------Performing-the-Review-Security-Audit-------------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -5173,6 +5222,7 @@ EOF
 
 
 	printf "$YELLOW"  "# -----------------------------Preparing-the-Audit-Report-Security-Audit----------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -5194,6 +5244,7 @@ EOF
 
 
 	printf "$YELLOW"  "# ------------------------------Issuing-the-Review-Report-Security-Audit----------------------------- #"
+
 	# install Repository Tools
 	# apt install -qy 
 
@@ -5309,7 +5360,7 @@ main()
 	pip2 install setuptools env pipenv wheel requests colorama 
 
 	# install Python3 pip
-	pip3 install setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp --break-system-packages
+	pip3 install --break-system-packages setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp 
 
 	# install nodejs NPM
 	# npm install -g 
@@ -5328,29 +5379,28 @@ main()
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/${name}.desktop" << EOF
+
+		# Create the .desktop file for the tool
+		cat > $APPLICATIONS_PATH/Unk9vvN/${name}.desktop << EOF
 [Desktop Entry]
-name=$name
-Exec=$exec_shell "sudo $name"
+Name=${name}
+Exec=${exec_shell} "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${name}.menu" << EOF
-<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
-"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
-<Menu>
-  <Name>Applications</Name>
-  <Menu>
-    <Name>Unk9vvN</Name>
-    <Directory>Unk9vvN.directory</Directory>
-    <Include>
-      <Filename>Unk9vvN-$name.desktop</Filename>
-    </Include>
-  </Menu>
-</Menu>
-EOF
+
+    # Add Include and Layout to the menu XML file
+    xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
@@ -5360,29 +5410,28 @@ EOF
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		cat > "/home/$USERS/.local/share/applications/Unk9vvN/${name}.desktop" << EOF
+
+		# Create the .desktop file for the tool
+		cat > $APPLICATIONS_PATH/Unk9vvN/${name}.desktop << EOF
 [Desktop Entry]
-name=$name
-Exec=$exec_shell "sudo $name"
+Name=${name}
+Exec=${exec_shell} "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
 Type=Application
 EOF
-		cat > "/home/$USERS/.config/menus/applications-merged/Unk9vvN-${name}.menu" << EOF
-<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
-"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
-<Menu>
-  <Name>Applications</Name>
-  <Menu>
-    <Name>Unk9vvN</Name>
-    <Directory>Unk9vvN.directory</Directory>
-    <Include>
-      <Filename>Unk9vvN-$name.desktop</Filename>
-    </Include>
-  </Menu>
-</Menu>
-EOF
+
+    # Add Include and Layout to the menu XML file
+    xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
+        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 		bash /usr/share/$name/$name.sh
 	fi
 }
