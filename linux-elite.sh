@@ -156,6 +156,50 @@ menu()
     mkdir -p "$APPLICATIONS_PATH"
     mkdir -p "$DESKTOP_DIRECTORIES_PATH"
 
+    cat > $CONFIG_MENU_PATH/xfce-applications.menu << EOF
+<?xml version="1.0" ?>
+<!DOCTYPE Menu
+  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
+  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
+<Menu>
+        <Name>Xfce</Name>
+        <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
+        <DefaultLayout inline="false"/>
+        <Layout>
+                <Merge type="menus"/>
+                <Filename>xfce4-run.desktop</Filename>
+                <Separator/>
+                <Filename>xfce4-terminal-emulator.desktop</Filename>
+                <Filename>xfce4-file-manager.desktop</Filename>
+                <Filename>xfce4-mail-reader.desktop</Filename>
+                <Filename>xfce4-web-browser.desktop</Filename>
+                <Separator/>
+                <Menuname>Settings</Menuname>
+                <Menuname>Usual Applications</Menuname>
+                <Separator/>
+                <Menuname>Information Gathering</Menuname>
+                <Menuname>Vulnerability Analysis</Menuname>
+                <Menuname>Web Application Analysis</Menuname>
+                <Menuname>Database Assessment</Menuname>
+                <Menuname>Password Attacks</Menuname>
+                <Menuname>Wireless Attacks</Menuname>
+                <Menuname>Reverse Engineering</Menuname>
+                <Menuname>Exploit Frameworks</Menuname>
+                <Menuname>Sniffing - Spoofing</Menuname>
+                <Menuname>Maintaining Access</Menuname>
+                <Menuname>Forensic Tools</Menuname>
+                <Menuname>Reporting Tools</Menuname>
+                <Menuname>Social Engineering Tools</Menuname>
+                <Menuname>System Services</Menuname>
+                <Menuname>Kali and OffSec Links</Menuname>
+                <Separator/>
+                <Filename>xfce4-about.desktop</Filename>
+                <Filename>xfce4-session-logout.desktop</Filename>
+                <Merge type="files"/>
+        </Layout>
+</Menu>
+EOF
+
 	# init unk9vvn menu
 	curl -s -o $IMAGES_PATH/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
 	mkdir -p $APPLICATIONS_PATH/Unk9vvN
