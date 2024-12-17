@@ -82,7 +82,8 @@ logo()
 create_menu()
 {
     local SUB_MENU="$1"
-    local SUB_MENU_ITEM=("$2")
+    shift # Remove the first argument (SUB_MENU) from $@
+    local SUB_MENU_ITEMS=("$@") # Treat remaining arguments as an array
 
     # Download the main icon
     curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
@@ -91,7 +92,7 @@ create_menu()
     mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU"
 
     # Create the .directory file for the main menu
-    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}".directory << EOF
+    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
 Comment=Offensive-Security
@@ -108,9 +109,9 @@ EOF
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
     # Create submenus
-    for ITEM in "${SUB_MENU_ITEM[@]}"; do
+    for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM"
-        cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}".directory << EOF
+        cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}.directory" << EOF
 [Desktop Entry]
 Name=${ITEM}
 Comment=${SUB_MENU}
@@ -120,11 +121,11 @@ EOF
 
         xmlstarlet ed \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${ITEM}" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-	done
+    done
 
     # Add Layout to the menu
     xmlstarlet ed \
@@ -133,14 +134,14 @@ EOF
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-	
+
     # Include submenu items in the layout
-    for ITEM in "${SUB_MENU_ITEM[@]}"; do
+    for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         xmlstarlet ed \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${ITEM}" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-	done
+    done
 
     # Add Merge to the layout
     xmlstarlet ed \
@@ -153,59 +154,59 @@ EOF
 
 menu()
 {
-    mkdir -p $CONFIG_MENU_PATH
-    mkdir -p $IMAGES_PATH
-    mkdir -p $APPLICATIONS_PATH
-    mkdir -p $DESKTOP_DIRECTORIES_PATH
+    mkdir -p "$CONFIG_MENU_PATH"
+    mkdir -p "$IMAGES_PATH"
+    mkdir -p "$APPLICATIONS_PATH"
+    mkdir -p "$DESKTOP_DIRECTORIES_PATH"
 
-    cat > $CONFIG_MENU_PATH/xfce-applications.menu << EOF
+    cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
   PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
   'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
 <Menu>
-        <Name>Xfce</Name>
-        <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
-        <DefaultLayout inline="false"/>
-        <Layout>
-                <Merge type="menus"/>
-                <Filename>xfce4-run.desktop</Filename>
-                <Separator/>
-                <Filename>xfce4-terminal-emulator.desktop</Filename>
-                <Filename>xfce4-file-manager.desktop</Filename>
-                <Filename>xfce4-mail-reader.desktop</Filename>
-                <Filename>xfce4-web-browser.desktop</Filename>
-                <Separator/>
-                <Menuname>Settings</Menuname>
-                <Menuname>Usual Applications</Menuname>
-                <Separator/>
-                <Menuname>Information Gathering</Menuname>
-                <Menuname>Vulnerability Analysis</Menuname>
-                <Menuname>Web Application Analysis</Menuname>
-                <Menuname>Database Assessment</Menuname>
-                <Menuname>Password Attacks</Menuname>
-                <Menuname>Wireless Attacks</Menuname>
-                <Menuname>Reverse Engineering</Menuname>
-                <Menuname>Exploit Frameworks</Menuname>
-                <Menuname>Sniffing - Spoofing</Menuname>
-                <Menuname>Maintaining Access</Menuname>
-                <Menuname>Forensic Tools</Menuname>
-                <Menuname>Reporting Tools</Menuname>
-                <Menuname>Social Engineering Tools</Menuname>
-                <Menuname>System Services</Menuname>
-                <Menuname>Kali and OffSec Links</Menuname>
-                <Separator/>
-                <Filename>xfce4-about.desktop</Filename>
-                <Filename>xfce4-session-logout.desktop</Filename>
-                <Merge type="files"/>
-        </Layout>
+    <Name>Xfce</Name>
+    <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
+    <DefaultLayout inline="false"/>
+    <Layout>
+        <Merge type="menus"/>
+        <Filename>xfce4-run.desktop</Filename>
+        <Separator/>
+        <Filename>xfce4-terminal-emulator.desktop</Filename>
+        <Filename>xfce4-file-manager.desktop</Filename>
+        <Filename>xfce4-mail-reader.desktop</Filename>
+        <Filename>xfce4-web-browser.desktop</Filename>
+        <Separator/>
+        <Menuname>Settings</Menuname>
+        <Menuname>Usual Applications</Menuname>
+        <Separator/>
+        <Menuname>Information Gathering</Menuname>
+        <Menuname>Vulnerability Analysis</Menuname>
+        <Menuname>Web Application Analysis</Menuname>
+        <Menuname>Database Assessment</Menuname>
+        <Menuname>Password Attacks</Menuname>
+        <Menuname>Wireless Attacks</Menuname>
+        <Menuname>Reverse Engineering</Menuname>
+        <Menuname>Exploit Frameworks</Menuname>
+        <Menuname>Sniffing - Spoofing</Menuname>
+        <Menuname>Maintaining Access</Menuname>
+        <Menuname>Forensic Tools</Menuname>
+        <Menuname>Reporting Tools</Menuname>
+        <Menuname>Social Engineering Tools</Menuname>
+        <Menuname>System Services</Menuname>
+        <Menuname>Kali and OffSec Links</Menuname>
+        <Separator/>
+        <Filename>xfce4-about.desktop</Filename>
+        <Filename>xfce4-session-logout.desktop</Filename>
+        <Merge type="files"/>
+    </Layout>
 </Menu>
 EOF
 
-	# init unk9vvn menu
-	curl -s -o $IMAGES_PATH/unk9vvn-logo.jpg https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-	mkdir -p $APPLICATIONS_PATH/Unk9vvN
-	cat > $DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory << EOF
+    # Initialize Unk9vvN menu
+    curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
+    mkdir -p "$APPLICATIONS_PATH/Unk9vvN"
+    cat > "$DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory" << EOF
 [Desktop Entry]
 Name=Unk9vvN
 Comment=unk9vvn.github.io
@@ -213,30 +214,20 @@ Icon=$IMAGES_PATH/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
-	xmlstarlet ed \
-		-a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
-		-s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
-		-s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
-		"$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    xmlstarlet ed \
+        -a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
+        -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
+        -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
-	# init penetration testing menu
-	create_menu "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
-
-	# init red team menu
-	create_menu "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
-
-	# init ics security menu
-	create_menu "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
-
-	# init digital forensic menu
-	create_menu "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
-
-	# init blue team menu
-	create_menu "Blue-Team" "Harden Detect Isolate Deceive Evict"
-
-	# init security audit menu
-	create_menu "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
+    # Initialize additional menus
+    create_menu "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
+    create_menu "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
+    create_menu "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
+    create_menu "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
+    create_menu "Blue-Team" "Harden Detect Isolate Deceive Evict"
+    create_menu "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
 }
 
 
