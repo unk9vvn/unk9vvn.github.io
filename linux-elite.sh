@@ -233,7 +233,7 @@ EOF
 
 menu_entry()
 {
-	local sub_category="$1"
+    local sub_category="$1"
     local category="$2"
     local tool="$3"
     local command="$4"
@@ -259,16 +259,16 @@ EOF
         -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
 
 
 installer()
 {
     local sub_category="$1"
-	local category="$2"
-	local package_array=("${!3}")  # Correctly pass array by reference
-	local install_command="$4"
+    local category="$2"
+    local package_array=("${!3}")  # Correctly pass array by reference
+    local install_command="$4"
     local help_command="$5"
 
     for package in "${package_array[@]}"; do
