@@ -558,6 +558,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install assets-from-spf
+	if [ ! -d "/usr/share/assets-from-spf" ]; then
+		name="assets-from-spf"
+		git clone https://github.com/0xbharath/assets-from-spf /usr/share/$name
+		chmod 755 /usr/share/$name/*
+cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 assets_from_spf.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		name="kubo"
