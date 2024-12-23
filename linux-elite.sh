@@ -372,6 +372,7 @@ go install github.com/projectdiscovery/katana/cmd/katana@latest;ln -fs ~/go/bin/
 go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cariddi /usr/bin/cariddi
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
+go install github.com/mhmdiaa/chronos@latest;ln -fs ~/go/bin/chronos /usr/bin/chronos
 go install github.com/shivangx01b/CorsMe@latest;ln -fs ~/go/bin/CorsMe /usr/bin/corsme
 go install github.com/pwnesia/dnstake/cmd/dnstake@latest;ln -fs ~/go/bin/dnstake /usr/bin/dnstake
 go install github.com/projectdiscovery/uncover/cmd/uncover@latest;ln -fs ~/go/bin/uncover /usr/bin/uncover
