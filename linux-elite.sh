@@ -563,9 +563,10 @@ EOF
 		name="assets-from-spf"
 		git clone https://github.com/0xbharath/assets-from-spf /usr/share/$name
 		chmod 755 /usr/share/$name/*
+        pip2 install ipwhois click
 cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;python3 assets_from_spf.py "\$@"
+cd /usr/share/$name;python2 assets_from_spf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
