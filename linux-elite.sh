@@ -4587,6 +4587,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install bluespawn
+	if [ ! -d "/usr/share/bluespawn" ]; then
+		name="bluespawn"
+		mkdir -p /usr/share/$name
+		wget https://github.com/ION28/BLUESPAWN/releases/download/v0.5.1-alpha/BLUESPAWN-client-x64.exe -O /usr/share/$name/BLUESPAWN.exe
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;wine BLUESPAWN.exe "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
  	# install cve2capec
 	if [ ! -d "/usr/share/cve2capec" ]; then
 		name="cve2capec"
