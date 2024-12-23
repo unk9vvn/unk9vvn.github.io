@@ -4115,6 +4115,21 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install xorj
+	if [ ! -d "/usr/share/xorj" ]; then
+		name="xorj"
+        mkdir -p $name
+		wget https://github.com/ae27ff/XorJ/releases/download/v1.5.2-beta/XorJ-1.5.2-SNAPSHOT.jar /usr/share/$name/XorJ-1.5.2-SNAPSHOT.jar
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;java -jar XorJ-1.5.2-SNAPSHOT.jar "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
 	# install steganabara
 	if [ ! -d "/usr/share/steganabara" ]; then
 		name="steganabara"
@@ -5438,10 +5453,10 @@ EOF
 		chmod +x /usr/bin/$name
 
 		# Create the .desktop file for the tool
-		cat > $APPLICATIONS_PATH/Unk9vvN/${name}.desktop << EOF
+		cat > $APPLICATIONS_PATH/Unk9vvN/$name.desktop << EOF
 [Desktop Entry]
-Name=${name}
-Exec=${exec_shell} "sudo $name"
+Name=$name
+Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
@@ -5470,10 +5485,10 @@ EOF
 		chmod +x /usr/bin/$name
 
 		# Create the .desktop file for the tool
-		cat > $APPLICATIONS_PATH/Unk9vvN/${name}.desktop << EOF
+		cat > $APPLICATIONS_PATH/Unk9vvN/$name.desktop << EOF
 [Desktop Entry]
-Name=${name}
-Exec=${exec_shell} "sudo $name"
+Name=$name
+Exec=$exec_shell "sudo $name"
 Comment=unk9vvn.github.io
 Terminal=true
 Icon=gnome-panel-launcher
