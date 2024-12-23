@@ -544,6 +544,20 @@ EOF
 		printf "$GREEN"  "[*] Success Installed $name"
 	fi
 
+	# install corstest
+	if [ ! -d "/usr/share/corstest" ]; then
+		name="corstest"
+		git clone https://github.com/RUB-NDS/CORStest /usr/share/$name
+		chmod 755 /usr/share/$name/*
+cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 corstest.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Success Installed $name"
+	fi
+
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		name="kubo"
