@@ -83,7 +83,7 @@ create_menu()
 {
     local SUB_MENU="$1"
     shift # Remove the first argument (SUB_MENU) from $@
-    local SUB_MENU_ITEMS=("$@") # Treat remaining arguments as an array
+    local SUB_MENU_ITEMS=($@) # Convert space-separated string to array
 
     # Download the main icon
     curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
@@ -95,7 +95,7 @@ create_menu()
     cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
-Comment=Offensive-Security
+Comment=unk9vvn.github.io
 Icon=$IMAGES_PATH/${SUB_MENU}.png
 Type=Directory
 EOF
@@ -108,9 +108,11 @@ EOF
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
-    # Create submenus
+    # Create separate submenu for each item
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM"
+        
+        # Create directory file for each submenu
         cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}.directory" << EOF
 [Desktop Entry]
 Name=${ITEM}
@@ -119,15 +121,21 @@ Icon=folder
 Type=Directory
 EOF
 
+        # Add each submenu separately to the XML
         xmlstarlet ed \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${ITEM}" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Layout" -v "" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout" -t elem -n "Merge" -v "" \
+            -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout/Merge" -t attr -n "type" -v "menus" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout" -t elem -n "Merge" -v "" \
+            -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout/Merge[last()]" -t attr -n "type" -v "files" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     done
 
-    # Add Layout to the menu
+    # Add Layout to the main menu
     xmlstarlet ed \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
@@ -135,15 +143,15 @@ EOF
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
-    # Include submenu items in the layout
+    # Include each submenu item in the layout
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         xmlstarlet ed \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${ITEM}" \
+            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     done
 
-    # Add Merge to the layout
+    # Add final Merge to the layout
     xmlstarlet ed \
         -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
