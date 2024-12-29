@@ -27,7 +27,7 @@ else
 	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify xmlstarlet 
 
 	# get current user and LAN IP address
-	USERS=$(users | awk '{print $1}')
+	USERS=$(cd /home;ls | awk '{print $1}')
 	LAN=$(hostname -I | awk '{print $1}')
 fi
 
