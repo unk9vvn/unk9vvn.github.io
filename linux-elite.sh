@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='3.0'
+ver='3.2'
 
 
 
@@ -234,6 +234,12 @@ EOF
     create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
     create_menu "Offensive-Security" "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
     create_menu "Offensive-Security" "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
+
+	xmlstarlet ed \
+        -s "/Menu/Menu/Menu[Name='ICS-Security']/Layout" -t elem -n "Separator" -v "" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		
     create_menu "Defensive-Security" "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
     create_menu "Defensive-Security" "Blue-Team" "Harden Detect Isolate Deceive Evict"
     create_menu "Defensive-Security" "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
