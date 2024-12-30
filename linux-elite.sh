@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='12.0'
+ver='3.0'
 
 
 
@@ -280,7 +280,7 @@ pip_installer()
     # Iterate over the space-separated packages in the string
     for package in $pip_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo pip3 -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
 
         # Run the pip installation command
         pip3 install --break-system-packages "${package}"
@@ -300,7 +300,7 @@ npm_installer()
     # Iterate over the space-separated packages in the string
     for package in $npm_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo npm -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
 
         # Run the npm installation command
         npm install -g "${package}"
@@ -320,7 +320,7 @@ gem_installer()
     # Iterate over the space-separated packages in the string
     for package in $gem_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo gem -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
 
         # Run the gem installation command
         gem install "${package}"
@@ -347,7 +347,7 @@ go_installer()
             binary=$(basename "$symlink")
 
             # Add a menu entry for the binary
-            menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell 'sudo eval -h'"
+            menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell 'sudo ${binary} -h'"
 
             # Print a success message for the binary
             printf "$GREEN" "[*] Successfully Added ${binary}\n"
