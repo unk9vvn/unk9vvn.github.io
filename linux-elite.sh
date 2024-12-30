@@ -127,11 +127,6 @@ EOF
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
             -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Layout" -v "" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout" -t elem -n "Merge" -v "" \
-            -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout/Merge" -t attr -n "type" -v "menus" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout" -t elem -n "Merge" -v "" \
-            -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]/Layout/Merge[last()]" -t attr -n "type" -v "files" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     done
@@ -211,6 +206,7 @@ menu()
     </Layout>
 </Menu>
 EOF
+	chmod +x $CONFIG_MENU_PATH/xfce-applications.menu
 
     # Initialize Unk9vvN menu
     curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
