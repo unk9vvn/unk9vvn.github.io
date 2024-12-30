@@ -5499,7 +5499,7 @@ EOF
 		chmod +x /usr/bin/$name
 
 		# Create the .desktop file for the tool
-		cat > $APPLICATIONS_PATH/Unk9vvN/$name.desktop << EOF
+		cat > "$APPLICATIONS_PATH/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
 Name=$name
 Exec=$exec_shell "sudo $name"
@@ -5531,7 +5531,7 @@ EOF
 		chmod +x /usr/bin/$name
 
 		# Create the .desktop file for the tool
-		cat > $APPLICATIONS_PATH/Unk9vvN/$name.desktop << EOF
+		cat > "$APPLICATIONS_PATH/Unk9vvN/$name.desktop" << EOF
 [Desktop Entry]
 Name=$name
 Exec=$exec_shell "sudo $name"
