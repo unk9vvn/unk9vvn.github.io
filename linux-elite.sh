@@ -247,7 +247,7 @@ menu_entry()
     local command="$4"
 
     # Create the .desktop file for the tool
-    cat > $APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop << EOF
+    cat > "$APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
 [Desktop Entry]
 Name=${tool}
 Exec=${command}
@@ -271,35 +271,23 @@ EOF
 }
 
 
-installer()
-{
-    local sub_category="$1"
-    local category="$2"
-    local package_array=("${!3}")  # Correctly pass array by reference
-    local install_command="$4"
-    local help_command="$5"
-
-    for package in "${package_array[@]}"; do
-        # Add the menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${help_command} -h'"
-
-        # Run the installation command for the specific package manager
-        $install_command "${package}"
-
-        # Print success message
-        printf "$GREEN" "[*] Successfully Installed ${package}\n"
-    done
-}
-
-
 pip_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local pip_array=("${!3}")  # Correctly pass array by reference
+    local pip_string="$3"  # Receive the list of packages as a string
 
-    # Call generic installer function with pip-specific command
-    installer "${sub_category}" "${category}" pip_array[@] "pip3 install --break-system-packages" "pip3"
+    # Iterate over the space-separated packages in the string
+    for package in $pip_string; do
+        # Add a menu entry for the package
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo pip3 -h'"
+
+        # Run the pip installation command
+        pip3 install --break-system-packages "${package}"
+
+        # Print a success message
+        printf "$GREEN" "[*] Successfully Installed ${package}\n"
+    done
 }
 
 
@@ -307,10 +295,19 @@ npm_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local npm_array=("${!3}")  # Correctly pass array by reference
+    local npm_string="$3"  # Receive the list of packages as a string
 
-    # Call generic installer function with npm-specific command
-    installer "${sub_category}" "${category}" npm_array[@] "npm install -g" "npm"
+    # Iterate over the space-separated packages in the string
+    for package in $npm_string; do
+        # Add a menu entry for the package
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo npm -h'"
+
+        # Run the npm installation command
+        npm install -g "${package}"
+
+        # Print a success message
+        printf "$GREEN" "[*] Successfully Installed ${package}\n"
+    done
 }
 
 
@@ -318,10 +315,19 @@ gem_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local gem_array=("${!3}")  # Correctly pass array by reference
+    local gem_string="$3"  # Receive the list of packages as a string
 
-    # Call generic installer function with gem-specific command
-    installer "${sub_category}" "${category}" gem_array[@] "gem install" "gem"
+    # Iterate over the space-separated packages in the string
+    for package in $gem_string; do
+        # Add a menu entry for the package
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo gem -h'"
+
+        # Run the gem installation command
+        gem install "${package}"
+
+        # Print a success message
+        printf "$GREEN" "[*] Successfully Installed ${package}\n"
+    done
 }
 
 
@@ -329,25 +335,27 @@ go_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local commands="$3"
+    local commands="$3"  # Receive the Go commands as a multi-line string
 
-    # Extract binaries from go commands and create an array
-    go_array=()
-    while read -r line; do
+    # Extract binaries from the Go commands and execute each command
+    while IFS= read -r line; do
+        # Parse the Go binary name if a symbolic link is present
         if [[ $line == *"ln -fs"* ]]; then
             symlink=$(echo "$line" | awk '{print $NF}')
             symlink=${symlink#/}
             symlink=${symlink%/}
             binary=$(basename "$symlink")
-            go_array+=("$binary")
+
+            # Add a menu entry for the binary
+            menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell 'sudo eval -h'"
+
+            # Print a success message for the binary
+            printf "$GREEN" "[*] Successfully Added ${binary}\n"
         fi
+
+        # Execute the Go installation or linking command
+        eval "$line"
     done <<< "$commands"
-
-    # Call generic installer function with go-specific command
-    installer "${sub_category}" "${category}" go_array[@] "eval" "$commands"
-
-    # Execute the go commands
-    eval "$commands"
 }
 
 
