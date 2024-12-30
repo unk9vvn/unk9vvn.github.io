@@ -486,7 +486,7 @@ EOF
 		name="phoneinfoga"
 		mkdir -p /usr/share/$name
 		wget https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/phoneinfoga /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -499,7 +499,7 @@ EOF
 		name="cloudbrute"
 		mkdir -p /usr/share/$name
 		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -510,10 +510,11 @@ EOF
 	# install postman
 	if [ ! -d "/usr/share/Postman" ]; then
 		name="Postman"
+		mkdir -p /usr/share/$name
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/$name /usr/bin/postman
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/app/*
+		ln -fs /usr/share/$name/app/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -522,8 +523,9 @@ EOF
 	# install bkcrack
 	if [ ! -d "/usr/share/bkcrack" ]; then
 		name="bkcrack"
+		mkdir -p /usr/share/$name
 		wget https://github.com/kimci86/bkcrack/releases/download/v1.7.0/bkcrack-1.7.0-Linux.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/bkcrack /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -592,8 +594,9 @@ EOF
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		name="kubo"
+		mkdir -p /usr/share/$name
 		wget https://github.com/ipfs/kubo/releases/download/v0.32.1/kubo_v0.32.1_linux-amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh;ipfs init
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
@@ -1352,8 +1355,9 @@ EOF
 	# install ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
 		name="ngrok"
+		mkdir -p /usr/share/$name
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
-		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -1628,7 +1632,7 @@ EOF
 		name="cloudbrute"
 		mkdir -p /usr/share/$name
 		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -1991,7 +1995,7 @@ EOF
 		name="spoofdpi"
 		mkdir -p /usr/share/$name
 		wget https://github.com/xvzc/SpoofDPI/releases/latest/download/spoof-dpi-linux-amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/spoof-dpi /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -2622,7 +2626,7 @@ EOF
 		name="donut"
 		mkdir -p /usr/share/$name
 		wget https://github.com/TheWover/donut/releases/latest/download/donut_v1.0.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/donut /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -3549,8 +3553,9 @@ EOF
 	# install sharpc2
 	if [ ! -d "/usr/share/sharpc2" ]; then
 		name="sharpc2"
+		mkdir -p /usr/share/$name
 		wget https://github.com/rasta-mouse/SharpC2/releases/latest/download/teamserver-linux.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;mv -f /usr/share/SharpC2 /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/TeamServer /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
@@ -3560,8 +3565,9 @@ EOF
 	# install emp3r0r
 	if [ ! -d "/usr/share/emp3r0r" ]; then
 		name="emp3r0r"
+		mkdir -p /usr/share/$name
 		wget https://github.com/jm33-m0/emp3r0r/releases/download/v1.37.1/emp3r0r-v1.37.1.tar.xz -O /tmp/$name.tar.xz
-		tar -xvf /tmp/$name.tar.xz -C /usr/share;mv -f /usr/share/emp3r0r-build /usr/share/$name;rm -f /tmp/$name.tar.xz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./emp3r0r --install
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
@@ -3645,8 +3651,9 @@ EOF
 	# install ngrok
 	if [ ! -f "/usr/bin/ngrok" ]; then
 		name="ngrok"
+		mkdir -p /usr/share/$name
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
-		tar -xvf /tmp/$name.tgz -C /usr/bin;rm -f /tmp/$name.tgz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -3768,7 +3775,7 @@ EOF
 		name="wstunnel"
 		mkdir -p /usr/share/$name
 		wget https://github.com/erebe/wstunnel/releases/download/v10.1.1/wstunnel_10.1.1_linux_amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/wstunnel /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -3779,8 +3786,9 @@ EOF
 	# install kubo
 	if [ ! -d "/usr/share/kubo" ]; then
 		name="kubo"
+		mkdir -p /usr/share/$name
 		wget https://github.com/ipfs/kubo/releases/download/v0.32.1/kubo_v0.32.1_linux-amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh;ipfs init
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
@@ -3830,7 +3838,7 @@ EOF
 		name="goproxy"
 		mkdir -p /usr/share/$name
 		wget https://github.com/snail007/goproxy/releases/latest/download/proxy-linux-amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/proxy /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -4423,7 +4431,7 @@ EOF
 		name="tracee"
 		mkdir -p /usr/share/$name
 		wget https://github.com/aquasecurity/tracee/releases/download/v0.20.0/tracee-x86_64.v0.20.0.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/dist/tracee /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -4504,8 +4512,9 @@ EOF
 	# install opencti
 	if [ ! -d "/usr/share/opencti" ]; then
 		name="opencti"
+		mkdir -p /usr/share/$name
 		wget https://github.com/OpenCTI-Platform/opencti/releases/download/6.3.4/opencti-release-6.3.4.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cp /usr/share/$name/config/default.json /usr/share/$name/config/production.json
 		pip3 install -r /usr/share/$name/src/python/requirements.txt --break-system-packages
@@ -4713,7 +4722,7 @@ EOF
 		name="cilium"
 		mkdir -p /usr/share/$name
 		wget https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/cilium /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
@@ -4921,7 +4930,7 @@ EOF
 		name="vuls"
 		mkdir -p /usr/share/$name
 		wget https://github.com/future-architect/vuls/releases/download/v0.25.4/vuls_0.25.4_linux_amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -r /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/vuls /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -5047,7 +5056,7 @@ EOF
 		name="selefra"
 		mkdir -p /usr/share/$name
 		wget https://github.com/selefra/selefra/releases/latest/download/selefra_linux_amd64.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/selefra /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -5217,8 +5226,9 @@ EOF
 	# install postman
 	if [ ! -d "/usr/share/Postman" ]; then
 		name="Postman"
+		mkdir -p /usr/share/$name
 		wget https://dl.pstmn.io/download/latest/linux_64 -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Postman /usr/bin/postman
 		chmod +x /usr/bin/$name
@@ -5251,8 +5261,9 @@ EOF
 	# install clion
 	if [ ! -d "/usr/share/clion" ]; then
 		name="clion"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/cpp/CLion-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/CLion-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -5266,8 +5277,9 @@ EOF
 	# install phpstorm
 	if [ ! -d "/usr/share/phpstorm" ]; then
 		name="phpstorm"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/webide/PhpStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PhpStorm-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -5281,8 +5293,9 @@ EOF
 	# install goland
 	if [ ! -d "/usr/share/goland" ]; then
 		name="goland"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/go/goland-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/GoLand-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -5296,8 +5309,9 @@ EOF
 	# install pycharm
 	if [ ! -d "/usr/share/pycharm" ]; then
 		name="pycharm"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/python/pycharm-professional-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/PyCharm-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -5311,8 +5325,9 @@ EOF
 	# install webstorm
 	if [ ! -d "/usr/share/webstorm" ]; then
 		name="webstorm"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/webstorm/WebStorm-2024.1.tar.gz -O /tmp/$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/WebStorm-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/bin/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
@@ -5326,8 +5341,9 @@ EOF
 	# install idea
 	if [ ! -d "/usr/share/idea" ]; then
 		name="idea"
+		mkdir -p /usr/share/$name
 		wget https://download-cdn.jetbrains.com/idea/ideaIU-2024.1.tar.gz -O /tmp/IDE$name.tar.gz
-		tar -xvf /tmp/$name.tar.gz -C /usr/share;rm -f /tmp/$name.tar.gz;mv /usr/share/IntelliJ IDEA-* /usr/share/$name
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
