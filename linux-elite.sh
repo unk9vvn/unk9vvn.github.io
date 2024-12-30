@@ -230,12 +230,6 @@ EOF
     create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
     create_menu "Offensive-Security" "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
     create_menu "Offensive-Security" "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
-
-	xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='ICS-Security']/Layout" -t elem -n "Separator" -v "" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-		
     create_menu "Defensive-Security" "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
     create_menu "Defensive-Security" "Blue-Team" "Harden Detect Isolate Deceive Evict"
     create_menu "Defensive-Security" "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
@@ -262,13 +256,26 @@ EOF
 
     # Add Include and Layout to the menu XML file
     xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Include" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']" -t elem -n "Layout" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge" -t attr -n "type" -v "menus" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN-${category}-${sub_category}']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        --subnode "/Menu" \
+        --type elem -n "Menu" -v "" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Name" -v "Unk9vvN-${category}-${sub_category}" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Directory" -v "Unk9vvN-${category}-${sub_category}.directory" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Include" -v "" \
+        --subnode "/Menu/Menu[last()]/Include" \
+        --type elem -n "Filename" -v "${tool}.desktop" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Layout" -v "" \
+        --subnode "/Menu/Menu[last()]/Layout" \
+        --type elem -n "Merge" -v "" \
+        --insert "/Menu/Menu[last()]/Layout/Merge" \
+        --type attr -n "type" -v "menus" \
+        --subnode "/Menu/Menu[last()]/Layout" \
+        --type elem -n "Merge" -v "" \
+        --insert "/Menu/Menu[last()]/Layout/Merge[last()]" \
+        --type attr -n "type" -v "files" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
@@ -367,7 +374,7 @@ penetrating_testing()
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack pnscan hakrawler gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
+	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -1747,7 +1754,7 @@ EOF
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntool spnscan sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
+	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntools sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
 
 	# install Python3 pip
 	network_pip="networkx ropper mitmproxy mikrot8over mitm6 pymultitor scapy smbclientng slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
