@@ -81,7 +81,8 @@ logo()
 
 create_menu()
 {
-    local SUB_MENU="$1"
+	local TOPIC_MENU="$1"
+    local SUB_MENU="$2"
     shift # Remove the first argument (SUB_MENU) from $@
     local SUB_MENU_ITEMS=($@) # Convert space-separated string to array
 
@@ -95,7 +96,7 @@ create_menu()
     cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
-Comment=unk9vvn.github.io
+Comment=${TOPIC_MENU}
 Icon=$IMAGES_PATH/${SUB_MENU}.png
 Type=Directory
 EOF
@@ -230,12 +231,12 @@ EOF
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
     # Initialize additional menus
-    create_menu "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
-    create_menu "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
-    create_menu "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
-    create_menu "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
-    create_menu "Blue-Team" "Harden Detect Isolate Deceive Evict"
-    create_menu "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
+    create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
+    create_menu "Offensive-Security" "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
+    create_menu "Offensive-Security" "ICS-Security" "Penetration-Testing Red-Team Digital-Forensic Blue-Team"
+    create_menu "Defensive-Security" "Digital-Forensic" "Reverse-Engineering Malware-Analysis Threat-Hunting Incident-Response Threat-Intelligence"
+    create_menu "Defensive-Security" "Blue-Team" "Harden Detect Isolate Deceive Evict"
+    create_menu "Defensive-Security" "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
 }
 
 
