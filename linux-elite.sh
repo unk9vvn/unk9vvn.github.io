@@ -649,7 +649,7 @@ EOF
 	if [ ! -d "/usr/share/crossdomain-exploitation-framework" ]; then
 		name="crossdomain-exploitation-framework"
 		git clone https://github.com/sethsec/crossdomain-exploitation-framework /usr/share/$name
-		chmod 755 /usr/share/$name/*
+		chmod 755 /usr/share/$name/*;chmod 755 /usr/share/$name/actionscript-templates/*
 		cd /usr/share/$name;python2 SWF-server
 		cat > /usr/bin/swf-server << EOF
 #!/bin/bash
