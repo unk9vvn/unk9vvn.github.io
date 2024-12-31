@@ -643,6 +643,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install crossdomain-exploitation-framework
+	if [ ! -d "/usr/share/crossdomain-exploitation-framework" ]; then
+		name="crossdomain-exploitation-framework"
+		git clone https://github.com/sethsec/crossdomain-exploitation-framework /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;python2 SWF-server
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python2 SWF-server "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		name="x8"
