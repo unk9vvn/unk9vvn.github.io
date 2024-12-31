@@ -651,11 +651,11 @@ EOF
 		git clone https://github.com/sethsec/crossdomain-exploitation-framework /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python2 SWF-server
-		cat > /usr/bin/$name << EOF
+		cat > /usr/bin/swf-server << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SWF-server "\$@"
 EOF
-		chmod +x /usr/bin/$name
+		chmod +x /usr/bin/swf-server
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
