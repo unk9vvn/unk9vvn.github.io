@@ -1395,7 +1395,7 @@ EOF
 		name="noip"
 		mkdir -p /usr/share/$name
 		wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz -O /tmp/$name.tar.gz
-		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		tar --strip-components=1 -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
