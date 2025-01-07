@@ -1419,16 +1419,11 @@ EOF
 	# install swftools
 	if [ ! -d "/usr/share/swftools" ]; then
 		name="swftools"
-		git clone https://github.com/matthiaskramm/swftools /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		wget https://zlib.net/current/zlib.tar.gz -O /tmp/zlib.tar.gz
-		tar -xvf /tmp/zlib.tar.gz -C /usr/share/$name;rm -f /tmp/zlib.tar.gz
-		cd /usr/share/$name/zlib-*;./configure
-		cd /usr/share/$name;./configure
-		cd /usr/share/$name/lib;make
-		cd /usr/share/$name/src;make;make install
-		wget https://snapshot.debian.org/archive/debian/20130611T160143Z/pool/main/m/mtasc/mtasc_1.14-3_amd64.deb -O /tmp/mtasc_amd64.deb
-		chmod +x /tmp/mtasc_amd64.deb;dpkg -i /tmp/mtasc_amd64.deb;rm -f /tmp/mtasc_amd64.deb
+		wget http://mirrors.kernel.org/ubuntu/pool/main/libj/libjpeg8-empty/libjpeg8_8c-2ubuntu11_amd64.deb -O /tmp/libjpeg8_8c-2ubuntu11_amd64.deb
+		chmod +x /tmp/libjpeg8_8c-2ubuntu11_amd64.deb;dpkg -i /tmp/libjpeg8_8c-2ubuntu11_amd64.deb
+		wget https://launchpad.net/ubuntu/+archive/primary/+files/swftools_0.9.2+git20130725-4.1_amd64.deb -O /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
+		chmod +x /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb;dpkg -i /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
+		rm -r /tmp/libjpeg8_8c-2ubuntu11_amd64.deb;rm -r /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
 		menu_entry "Web" "Penetration-Testing" "mtasc" "$exec_shell 'mtasc -h'"
 		menu_entry "Web" "Penetration-Testing" "swfdump" "$exec_shell 'swfdump -h'"
 		menu_entry "Web" "Penetration-Testing" "swfcombine" "$exec_shell 'swfcombine -h'"
