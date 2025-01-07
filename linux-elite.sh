@@ -1419,14 +1419,23 @@ EOF
 	# install swftools
 	if [ ! -d "/usr/share/swftools" ]; then
 		name="swftools"
-		wget http://mirrors.kernel.org/ubuntu/pool/main/libj/libjpeg8-empty/libjpeg8_8c-2ubuntu11_amd64.deb -O /tmp/libjpeg8_8c-2ubuntu11_amd64.deb
-		chmod +x /tmp/libjpeg8_8c-2ubuntu11_amd64.deb;dpkg -i /tmp/libjpeg8_8c-2ubuntu11_amd64.deb
-		wget https://launchpad.net/ubuntu/+archive/primary/+files/swftools_0.9.2+git20130725-4.1_amd64.deb -O /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
-		chmod +x /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb;dpkg -i /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
-		rm -r /tmp/libjpeg8_8c-2ubuntu11_amd64.deb;rm -r /tmp/swftools_0.9.2+git20130725-4.1_amd64.deb
+		wget http://mirrors.kernel.org/ubuntu/pool/main/libj/libjpeg8-empty/libjpeg8_8c-2ubuntu11_amd64.deb -O /tmp/libjpeg8.deb
+		chmod +x /tmp/libjpeg8.deb;dpkg -i /tmp/libjpeg8.deb;rm -r /tmp/libjpeg8.deb
+		wget https://launchpad.net/ubuntu/+archive/primary/+files/swftools_0.9.2+git20130725-4.1_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -r /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "mtasc" "$exec_shell 'mtasc -h'"
 		menu_entry "Web" "Penetration-Testing" "swfdump" "$exec_shell 'swfdump -h'"
 		menu_entry "Web" "Penetration-Testing" "swfcombine" "$exec_shell 'swfcombine -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install flex-sdk
+	if [ ! -d "/opt/flex-sdk" ]; then
+		name="flex-sdk"
+  		wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O /tmp/$name.zip
+    		unzip /tmp/$name.zip -d /opt/$name;rm -f /tmp/$name.zip
+		echo "export PATH=\$PATH:/opt/$name/bin" >> ~/.bashrc;source ~/.bashrc
+		menu_entry "Web" "Penetration-Testing" "mxmlc" "$exec_shell 'mxmlc -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
