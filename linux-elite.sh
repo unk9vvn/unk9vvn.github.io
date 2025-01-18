@@ -1425,6 +1425,8 @@ EOF
     		chmod +x /tmp/libjpeg-turbo8.deb;dpkg -i /tmp/libjpeg-turbo8.deb;rm -r /tmp/libjpeg-turbo8.deb
 		wget http://mirrors.kernel.org/ubuntu/pool/main/libj/libjpeg8-empty/libjpeg8_8c-2ubuntu11_amd64.deb -O /tmp/libjpeg8.deb
 		chmod +x /tmp/libjpeg8.deb;dpkg -i /tmp/libjpeg8.deb;rm -r /tmp/libjpeg8.deb
+  		wget https://archive.debian.org/debian/pool/main/m/mtasc/mtasc_1.14-3_amd64.deb -O /tmp/mtasc.deb
+    		chmod +x /tmp/mtasc.deb;dpkg -i /tmp/mtasc.deb;rm -r /tmp/mtasc.deb
 		wget https://launchpad.net/ubuntu/+archive/primary/+files/swftools_0.9.2+git20130725-4.1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -r /tmp/$name.deb
 		menu_entry "Web" "Penetration-Testing" "mtasc" "$exec_shell 'mtasc -h'"
