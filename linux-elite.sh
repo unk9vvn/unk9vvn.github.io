@@ -4095,6 +4095,15 @@ digital_forensic()
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install jpexs-decompiler
+	if [ ! -f "/usr/bin/ffdec" ]; then
+		name="ffdec"
+		wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version22.0.2/ffdec_22.0.2.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #"
 
