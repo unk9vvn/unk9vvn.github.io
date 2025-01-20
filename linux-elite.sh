@@ -4483,6 +4483,17 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install memprocfs
+	if [ ! -d "/usr/share/memprocfs" ]; then
+		name="memprocfs"
+		mkdir -p /usr/share/$name
+		wget https://github.com/ufrisk/MemProcFS/releases/download/v5.14/MemProcFS_files_and_binaries_v5.14.1-linux_x64-20250119.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/memprocfs /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install sysinternalsebpf
 	if [ ! -d "/usr/share/sysinternalsebpf" ]; then
 		name="sysinternalsebpf"
