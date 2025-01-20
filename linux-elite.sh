@@ -81,7 +81,7 @@ logo()
 
 create_menu()
 {
-	local TOPIC_MENU="$1"
+    local TOPIC_MENU="$1"
     local SUB_MENU="$2"
     shift # Remove the first argument (SUB_MENU) from $@
     local SUB_MENU_ITEMS=($@) # Convert space-separated string to array
@@ -163,8 +163,8 @@ menu()
     mkdir -p "$APPLICATIONS_PATH"
     mkdir -p "$DESKTOP_DIRECTORIES_PATH"
 
-	if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
-		cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
+    if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
+        cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
   PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
@@ -207,8 +207,8 @@ menu()
     </Layout>
 </Menu>
 EOF
-		chmod +x $CONFIG_MENU_PATH/xfce-applications.menu
-	fi
+        chmod +x $CONFIG_MENU_PATH/xfce-applications.menu
+    fi
 
     # Initialize Unk9vvN menu
     curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
