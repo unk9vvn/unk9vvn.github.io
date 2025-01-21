@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='3.2'
+ver='3.5'
 
 
 
@@ -3460,6 +3460,15 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/meetc /usr/bin/$name
 		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# isntall ahmyth
+	if [ ! -f "/usr/bin/ahmyth" ]; then
+		name="ahmyth"
+		wget https://github.com/Morsmalleo/AhMyth/releases/download/v1.0-beta.5a/AhMyth-Setup_amd64.deb -O /tmp/$name.deb
+		chmod +X /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
