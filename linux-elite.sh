@@ -4113,7 +4113,7 @@ digital_forensic()
 	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic bpftool pev readpe 
 
 	# install Python3 pip
-	malware_analysis_pip="stegcracker dnschef-ng stego-lsb stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
+	malware_analysis_pip="stegcracker dnschef-ng stego-lsb ghidriff stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
 	pip_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_pip"
 
 	# install Nodejs NPM
