@@ -5591,17 +5591,17 @@ Icon=gnome-panel-launcher
 Type=Application
 EOF
 
-    # Add Include and Layout to the menu XML file
-    xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		# Add Include and Layout to the menu XML file
+		xmlstarlet ed \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
@@ -5623,17 +5623,17 @@ Icon=gnome-panel-launcher
 Type=Application
 EOF
 
-    # Add Include and Layout to the menu XML file
-    xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
-        -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		# Add Include and Layout to the menu XML file
+		xmlstarlet ed \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
+		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
+		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 		bash /usr/share/$name/$name.sh
 	fi
 }
