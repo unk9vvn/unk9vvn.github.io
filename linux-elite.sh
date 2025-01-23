@@ -4887,14 +4887,40 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 	go_installer "Deceive" "Blue-Team" "$deceive_golang"
 
 	# install honeytrap
-	if [ ! -d "/usr/share/honeytrap" ]; then
+	if [ ! -f "/usr/bin/honeytrap" ]; then
 		name="honeytrap"
+		docker pull honeytrap/honeytrap
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 docker run -p 8022:8022 honeytrap/honeytrap:latest "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install cowrie
+	if [ ! -f "/usr/bin/cowrie" ]; then
+		name="thug"
+		docker pull cowrie/cowrie
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+docker run -p 2222:2222 cowrie/cowrie:latest "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install sshesame
+	if [ ! -d "/usr/share/sshesame" ]; then
+		name="sshesame"
+		mkdir -p /usr/share/$name
+		wget https://github.com/jaksi/sshesame/releases/latest/download/sshesame-linux-amd64 -O /usr/share/$name/sshesame
+		chmod +x /usr/share/$name/sshesame
+		ln -fs /usr/share/$name/sshesame /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
