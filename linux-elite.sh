@@ -4806,7 +4806,7 @@ EOF
 	# install kibana
 	if [ ! -d "/usr/share/kibana" ]; then
 		name="kibana"
-		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.12.2-amd64.deb -O /tmp/$name.deb
+		wget https://artifacts.elastic.co/downloads/kibana/kibana-8.17.1-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
@@ -4861,6 +4861,40 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 	if [ ! -d "/usr/share/jumpserver" ]; then
 		name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install guacamole
+	if [ ! -d "/usr/share/guacamole" ]; then
+		name="guacamole"
+        # server agent
+        wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/source/guacamole-server-1.5.5.tar.gz -O /tmp/$name-server.tar.gz
+        tar --strip-components=1 -xvf /tmp/$name-server.tar.gz -C /usr/share/$name-server;rm -f /tmp/$name-server.tar.gz
+		chmod 755 /usr/share/$name-server/*
+        cd /usr/share/$name-server;./configure --with-init-dir=/etc/init.d
+        make;make install;ldconfig
+        systemctl enable guacd;systemctl start guacd;systemctl restart tomcat9
+        # user agent
+        wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/binary/guacamole-1.5.5.war -O /var/lib/tomcat9/webapps/$name.war
+        mkdir -p /etc/guacamole;mkdir -p /usr/share/tomcat9/.guacamole
+        cat > /etc/guacamole/guacamole.properties << EOF
+guacd-hostname: localhost
+guacd-port: 4822
+user-mapping: /etc/guacamole/user-mapping.xml
+EOF
+        ln -s /etc/guacamole/guacamole.properties /usr/share/tomcat9/.guacamole/
+        cat > /etc/guacamole/user-mapping.xml << EOF
+<user-mapping>
+    <authorize username="admin" password="password">
+        <connection name="MyServer">
+            <protocol>rdp</protocol>
+            <param name="hostname">$LAN</param>
+            <param name="port">3389</param>
+        </connection>
+    </authorize>
+</user-mapping>
+EOF
+        systemctl restart guacd;systemctl restart tomcat9
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
@@ -5519,10 +5553,10 @@ main()
 				fi
 
 				# install dependencies
-				apt install -qy libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php 
+				apt install -qy libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
 
 				# install init
-				apt install -qy dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap
+				apt install -qy dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -5560,10 +5594,10 @@ main()
 				fi
 
 				# install dependencies
-				apt install -qy libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php
+				apt install -qy libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
 
 				# install init
-				apt install -qy apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap
+				apt install -qy apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
     
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
