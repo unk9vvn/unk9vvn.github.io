@@ -4624,7 +4624,7 @@ blue_team()
 	pip_installer "Harden" "Blue-Team" "$harden_pip"
 
 	# install Nodejs NPM
-	# harden_npm=""
+	harden_npm="fleetctl"
 	npm_installer "Harden" "Blue-Team" "$harden_npm"
 
 	# install Ruby GEM
@@ -4723,6 +4723,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install dettect
+	if [ ! -d "/usr/share/dettect" ]; then
+		name="dettect"
+		git clone https://github.com/rabobank-cdc/DeTTECT /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 dettect.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install bluespawn
 	if [ ! -d "/usr/share/bluespawn" ]; then
 		name="bluespawn"
@@ -4769,6 +4784,18 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install hubble
+	if [ ! -d "/usr/share/hubble" ]; then
+		name="hubble"
+		wget https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/hubble /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
