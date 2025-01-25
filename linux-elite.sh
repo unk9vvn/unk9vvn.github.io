@@ -4731,9 +4731,11 @@ EOF
 		chmod 755 /etc/apache2/mods-enabled/security2.conf
 		cat > /usr/bin/$name-enable << EOF
 sed -i "s|SecRuleEngine DetectionOnly|SecRuleEngine On|g" /etc/modsecurity/modsecurity.conf
+sudo service apache2 start
 EOF
 		cat > /usr/bin/$name-disable << EOF
 sed -i "s|SecRuleEngine On|SecRuleEngine DetectionOnly|g" /etc/modsecurity/modsecurity.conf
+sudo service apache2 stop
 EOF
 		chmod +x /usr/bin/$name-disable;chmod +x /usr/bin/$name-enable
 		printf "$GREEN"  "[*] Successfully Installed $name"
