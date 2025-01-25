@@ -4738,6 +4738,8 @@ sed -i "s|SecRuleEngine On|SecRuleEngine DetectionOnly|g" /etc/modsecurity/modse
 sudo service apache2 stop
 EOF
 		chmod +x /usr/bin/$name-disable;chmod +x /usr/bin/$name-enable
+		menu_entry "Detect" "Blue-Team" "$name-enable" "$exec_shell '$name-enable -h'"
+		menu_entry "Detect" "Blue-Team" "$name-disable" "$exec_shell '$name-disable -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
