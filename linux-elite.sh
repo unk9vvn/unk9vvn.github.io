@@ -4865,6 +4865,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install shuffle
+	if [ ! -d "/usr/share/shuffle" ]; then
+		name="shuffle"
+		git clone https://github.com/Shuffle/Shuffle /usr/share/$name
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+service docker start
+cd /usr/share/$name;docker-compose up -d
+firefox --new-tab http://127.0.0.1:3001
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install elasticsearch
 	if [ ! -d "/usr/share/elasticsearch" ]; then
 		name="elasticsearch"
