@@ -4708,6 +4708,37 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install modsecurity
+	if [ ! -d "/usr/share/modsecurity-crs" ]; then
+		name="modsecurity"
+		git clone https://github.com/SpiderLabs/owasp-modsecurity-crs /usr/share/$name-crs
+		cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
+		mv /usr/share/$name-crs/crs-setup.conf.example /usr/share/$name-crs/crs-setup.conf
+		cat > /etc/apache2/mods-enabled/security2.conf << EOF
+<IfModule security2_module>
+        # Default Debian dir for modsecurity's persistent data
+        SecDataDir /var/cache/modsecurity
+        # Include all the *.conf files in /etc/modsecurity.
+        # Keeping your local configuration in that directory
+        # will allow for an easy upgrade of THIS file and
+        # make your life easier
+        IncludeOptional /etc/modsecurity/*.conf
+        # Include OWASP ModSecurity CRS rules if installed
+        IncludeOptional /usr/share/modsecurity-crs/*.conf
+        IncludeOptional /usr/share/modsecurity-crs/rules/*.conf
+</IfModule>
+EOF
+		chmod 755 /etc/apache2/mods-enabled/security2.conf
+		cat > /usr/bin/$name-enable << EOF
+sed -i "s|SecRuleEngine DetectionOnly|SecRuleEngine On|g" /etc/modsecurity/modsecurity.conf
+EOF
+		cat > /usr/bin/$name-disable << EOF
+sed -i "s|SecRuleEngine On|SecRuleEngine DetectionOnly|g" /etc/modsecurity/modsecurity.conf
+EOF
+		chmod +x /usr/bin/$name-disable;chmod +x /usr/bin/$name-enable
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install siegma
 	if [ ! -d "/usr/share/siegma" ]; then
 		name="siegma"
@@ -5621,7 +5652,7 @@ main()
 				fi
 
 				# install dependencies
-				apt install -qy libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
+				apt install -qy libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
 
 				# install init
 				apt install -qy apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
