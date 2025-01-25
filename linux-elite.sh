@@ -4449,7 +4449,7 @@ EOF
 	if [ ! -d "/usr/share/velociraptor" ]; then
 		name="velociraptor"
 		mkdir -p /usr/share/$name
-		wget https://github.com/Velocidex/velociraptor/releases/download/v0.72/velociraptor-v0.72.0-linux-amd64 -O /usr/share/$name/velociraptor
+		wget https://github.com/Velocidex/velociraptor/releases/download/v0.73/velociraptor-v0.73.1-linux-amd64 -O /usr/share/$name/velociraptor
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
 		chmod +x /usr/bin/$name
@@ -4693,6 +4693,14 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 	if [ ! -d "/usr/share/opensearch" ]; then
 		name="opensearch"
 		wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.11.1/opensearch-2.11.1-linux-x64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install osquery
+	if [ ! -d "/usr/share/osquery" ]; then
+		name="osquery"
+		wget https://github.com/osquery/osquery/releases/download/5.15.0/osquery-dbgsym_5.15.0-1.linux_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
