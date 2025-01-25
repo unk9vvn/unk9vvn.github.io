@@ -4553,6 +4553,14 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install cortex
+	if [ ! -d "/usr/share/cortex" ]; then
+		name="cortex"
+		wget https://github.com/TheHive-Project/Cortex/releases/download/3.1.8/cortex_3.1.8-1_all.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 
