@@ -4485,7 +4485,7 @@ EOF
 	if [ ! -d "/usr/share/tracee" ]; then
 		name="tracee"
 		mkdir -p /usr/share/$name
-		wget https://github.com/aquasecurity/tracee/releases/download/v0.20.0/tracee-x86_64.v0.20.0.tar.gz -O /tmp/$name.tar.gz
+		wget https://github.com/aquasecurity/tracee/releases/download/v0.22.5/tracee-x86_64.v0.22.5.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/dist/tracee /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
