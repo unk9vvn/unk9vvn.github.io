@@ -4600,18 +4600,63 @@ EOF
 		cp /usr/share/$name/worker/config.yml.sample /usr/share/$name/worker/config.yml
 		cat > /usr/bin/$name << EOF
 cd /usr/share/$name/worker;python3 worker.py > /dev/null &
-sleep 5;firefox --new-tab "http://127.0.0.1:4000" > /dev/null &
+sleep 5;firefox "http://127.0.0.1:4000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
-	# install rita
-	if [ ! -d "/var/opt/rita" ]; then
-		name="rita"
-		wget https://github.com/activecm/rita/releases/latest/download/install-rita-zeek-here.sh -O /tmp/install.sh
-		chmod +x /tmp/install.sh;bash /tmp/install.sh;rm -f /tmp/install.sh
+	# install misp
+	if [ ! -d "/var/www/misp" ]; then
+		name="misp"
+		git clone https://github.com/MISP/MISP /var/www/$name
+		# Configure MariaDB
+		mysql -u root -e "CREATE DATABASE misp;"
+		mysql -u root -e "GRANT ALL PRIVILEGES ON misp.* TO 'unk9misp'@'localhost' IDENTIFIED BY '00980098';"
+		mysql -u root -e "FLUSH PRIVILEGES;"
+		# Configure Apache
+		cp /var/www/$name/INSTALL/apache/misp.conf /etc/apache2/sites-available/misp.conf
+		a2ensite misp.conf
+		a2enmod rewrite
+		systemctl restart apache2
+		# Configure PHP
+		sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/7.4/apache2/php.ini
+		sed -i 's/memory_limit = 128M/memory_limit = 2048M/' /etc/php/7.4/apache2/php.ini
+		sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /etc/php/7.4/apache2/php.ini
+		sed -i 's/post_max_size = 8M/post_max_size = 100M/' /etc/php/7.4/apache2/php.ini
+		# Install and configure Redis
+		systemctl enable redis-serverکsystemctl start redis-server
+		# Configure MISP
+		cp /var/www/$name/INSTALL/initial_admin_password.txt /var/www/$name/app/Config
+		chown -R www-data:www-data /var/www/$name;chmod -R 755 /var/www/$name
+		cat > /etc/apache2/sites-available/$name.conf << EOF
+<VirtualHost *:80>
+    ServerAdmin admin@$name.local
+    DocumentRoot /var/www/$name
+    ServerName $name.local
+    ServerAlias www.$name.local
+
+    <Directory /var/www/$name>
+        Options FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog \${APACHE_LOG_DIR}/$name_error.log
+    CustomLog \${APACHE_LOG_DIR}/$name_access.log combined
+</VirtualHost>
+EOF
+		cd /etc/apache2/sites-available
+		a2ensite $name.conf;a2enmod rewrite
+		systemctl restart apache2
+		echo "127.0.0.1   $name.local" >> /etc/hosts
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+sudo service apache2 start;sudo service mysql start
+firefox $name.local > /dev/null &
+EOF
+		chmod +x /usr/bin/$name
 		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
@@ -4881,7 +4926,7 @@ EOF
 #!/bin/bash
 service docker start
 cd /usr/share/$name;docker-compose up -d
-firefox --new-tab http://127.0.0.1:3001
+firefox http://127.0.0.1:3001 > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
