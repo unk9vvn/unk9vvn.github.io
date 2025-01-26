@@ -4692,7 +4692,7 @@ blue_team()
 	if [ ! -d "/usr/share/jumpserver" ]; then
 		name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
