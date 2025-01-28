@@ -5799,6 +5799,7 @@ EOF
 		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
 		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
 		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		printf "$GREEN"  "[*] Successfully Installed $name"
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
@@ -5831,6 +5832,7 @@ EOF
 		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
 		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
 		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+		printf "$GREEN"  "[*] Successfully Updating $name"
 		bash /usr/share/$name/$name.sh
 	fi
 }
