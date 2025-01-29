@@ -417,6 +417,7 @@ go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getj
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
 go install github.com/trickest/mksub@latest;ln -fs ~/go/bin/mksub /usr/bin/mksub
 go install github.com/nullt3r/udpx/cmd/udpx@latest;ln -fs ~/go/bin/udpx /usr/bin/udpx
+go install github.com/PentestPad/subzy@latest;ln -fs ~/go/bin/subzy /usr/bin/subzy
 go install github.com/trickest/dsieve@latest;ln -fs ~/go/bin/dsieve /usr/bin/dsieve
 go install github.com/gwen001/github-subdomains@latest;ln -fs ~/go/bin/github-subdomains /usr/bin/github-subdomains
 go install github.com/d3mondev/puredns/v2@latest;ln -fs ~/go/bin/puredns /usr/bin/puredns
