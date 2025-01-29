@@ -1381,14 +1381,11 @@ EOF
 	fi
 
 	# install ngrok
-	if [ ! -f "/usr/bin/ngrok" ]; then
+	if [ ! -f "/usr/local/bin/ngrok" ]; then
 		name="ngrok"
-		mkdir -p /usr/share/$name
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
-		tar -xvzf /tmp/$name.tgz -C /usr/share/$name;rm -f /tmp/$name.tgz
-		chmod 755 /usr/share/$name/*
-  		ln -fs /usr/share/$name/ngrok /usr/bin/$name
-		chmod +x /usr/bin/$name
+		tar -xvzf /tmp/$name.tgz -C /usr/local/bin;rm -f /tmp/$name.tgz
+		chmod +x /usr/local/bin/ngrok
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
@@ -3696,12 +3693,11 @@ EOF
 	go_installer "Exfiltration" "Red-Team" "$exfiltration_golang"
 
 	# install ngrok
-	if [ ! -f "/usr/bin/ngrok" ]; then
+	if [ ! -f "/usr/local/bin/ngrok" ]; then
 		name="ngrok"
-		mkdir -p /usr/share/$name
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
-		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
-		chmod +x /usr/bin/$name
+		tar -xvzf /tmp/$name.tgz -C /usr/local/bin;rm -f /tmp/$name.tgz
+		chmod +x /usr/local/bin/ngrok
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
