@@ -83,7 +83,8 @@ create_menu()
 {
     local TOPIC_MENU="$1"
     local SUB_MENU="$2"
-    local SUB_MENU_ITEMS=("$3") # Convert space-separated string to array
+    shift 2
+    local SUB_MENU_ITEMS=($@)
 
     # Download the main icon
     curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
