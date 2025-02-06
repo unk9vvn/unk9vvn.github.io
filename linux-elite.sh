@@ -4667,7 +4667,7 @@ blue_team()
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible-core 
+	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible ansible-core 
 
 	# install Python3 pip
 	# harden_pip=""
@@ -5151,7 +5151,7 @@ security_audit()
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 
 	# install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible-core 
+	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible ansible-core 
 
 	# install Python3 pip
 	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
