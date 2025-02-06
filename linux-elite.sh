@@ -4670,7 +4670,7 @@ blue_team()
 	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible ansible-core 
 
 	# install Python3 pip
-	# harden_pip=""
+	harden_pip="kernel-hardening-checker"
 	pip_installer "Harden" "Blue-Team" "$harden_pip"
 
 	# install Nodejs NPM
