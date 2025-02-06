@@ -4685,10 +4685,10 @@ blue_team()
 	# harden_golang=""
 	go_installer "Harden" "Blue-Team" "$harden_golang"
 
-	# install jumpserver
-	if [ ! -d "/usr/share/jumpserver" ]; then
-		name="jumpserver"
-		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+	# install chef
+	if [ ! -d "/usr/bin/chef" ]; then
+		name="chef"
+		curl -L https://omnitruck.chef.io/install.sh | bash
 		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
@@ -4992,10 +4992,11 @@ EOF
 go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/casbin"
 	go_installer "Isolate" "Blue-Team" "$isolate_golang"
 
-	# install jumpserver
+ 	# install jumpserver
 	if [ ! -d "/usr/share/jumpserver" ]; then
 		name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
