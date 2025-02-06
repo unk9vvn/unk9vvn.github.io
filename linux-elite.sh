@@ -4712,6 +4712,18 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install harbian-audit
+	if [ ! -d "/usr/share/harbian-audit" ]; then
+		name="harbian-audit"
+		git clone https://github.com/hardenedlinux/harbian-audit /usr/share/$name
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name/bin;bash hardening.sh
+EOF
+  		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 
