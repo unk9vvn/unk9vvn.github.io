@@ -5031,26 +5031,36 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install iamlive
+	if [ ! -d "/usr/share/iamlive" ]; then
+		name="iamlive"
+		wget https://github.com/iann0036/iamlive/releases/download/v1.1.15/iamlive-v1.1.15-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+  		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install guacamole
 	if [ ! -d "/usr/share/guacamole" ]; then
 		name="guacamole"
-        # server agent
-        wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/source/guacamole-server-1.5.5.tar.gz -O /tmp/$name-server.tar.gz
-        tar --strip-components=1 -xvf /tmp/$name-server.tar.gz -C /usr/share/$name-server;rm -f /tmp/$name-server.tar.gz
+		# server agent
+		wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/source/guacamole-server-1.5.5.tar.gz -O /tmp/$name-server.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name-server.tar.gz -C /usr/share/$name-server;rm -f /tmp/$name-server.tar.gz
 		chmod 755 /usr/share/$name-server/*
-        cd /usr/share/$name-server;./configure --with-init-dir=/etc/init.d
-        make;make install;ldconfig
-        systemctl enable guacd;systemctl start guacd;systemctl restart tomcat9
-        # user agent
-        wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/binary/guacamole-1.5.5.war -O /var/lib/tomcat9/webapps/$name.war
-        mkdir -p /etc/guacamole;mkdir -p /usr/share/tomcat9/.guacamole
-        cat > /etc/guacamole/guacamole.properties << EOF
+		cd /usr/share/$name-server;./configure --with-init-dir=/etc/init.d
+		make;make install;ldconfig
+		systemctl enable guacd;systemctl start guacd;systemctl restart tomcat9
+		# user agent
+		wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/binary/guacamole-1.5.5.war -O /var/lib/tomcat9/webapps/$name.war
+		mkdir -p /etc/guacamole;mkdir -p /usr/share/tomcat9/.guacamole
+		cat > /etc/guacamole/guacamole.properties << EOF
 guacd-hostname: localhost
 guacd-port: 4822
 user-mapping: /etc/guacamole/user-mapping.xml
 EOF
-        ln -s /etc/guacamole/guacamole.properties /usr/share/tomcat9/.guacamole/
-        cat > /etc/guacamole/user-mapping.xml << EOF
+		ln -s /etc/guacamole/guacamole.properties /usr/share/tomcat9/.guacamole/
+		cat > /etc/guacamole/user-mapping.xml << EOF
 <user-mapping>
     <authorize username="admin" password="password">
         <connection name="MyServer">
@@ -5061,7 +5071,7 @@ EOF
     </authorize>
 </user-mapping>
 EOF
-        systemctl restart guacd;systemctl restart tomcat9
+		systemctl restart guacd;systemctl restart tomcat9
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
