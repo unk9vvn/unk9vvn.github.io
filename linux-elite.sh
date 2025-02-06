@@ -4387,7 +4387,7 @@ EOF
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3 arkime 
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -4728,7 +4728,7 @@ EOF
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer arkime cyberchef snort rspamd prometheus stenographer 
+	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer cyberchef snort rspamd prometheus stenographer 
 
 	# install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma ja3"
