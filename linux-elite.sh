@@ -5511,7 +5511,19 @@ EOF
 	if [ ! -d "/usr/share/driftctl" ]; then
 		name="driftctl"
 		mkdir -p /usr/share/$name
-		wget https://github.com/snyk/driftctl/releases/download/v0.40.0/driftctl_linux_amd64 -O /usr/share/$name/$name
+		wget https://github.com/snyk/driftctl/releases/latest/download/driftctl_linux_amd64 -O /usr/share/$name/$name
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/$name /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install clairctl
+	if [ ! -d "/usr/share/clairctl" ]; then
+		name="clairctl"
+		mkdir -p /usr/share/$name
+		wget https://github.com/jgsqware/clairctl/releases/latest/download/clairctl-linux-amd64 -O /usr/share/$name/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
