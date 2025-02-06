@@ -4686,9 +4686,27 @@ blue_team()
 	go_installer "Harden" "Blue-Team" "$harden_golang"
 
 	# install chef
-	if [ ! -d "/usr/bin/chef" ]; then
+	if [ ! -d "/usr/share/chef-os-hardening" ]; then
 		name="chef"
 		curl -L https://omnitruck.chef.io/install.sh | bash
+  		mkdir -p /usr/share/chef-os-hardening/cookbooks
+    		chown -R "$(whoami)":"$(whoami)" /usr/share/chef-os-hardening/cookbooks
+      		cd /usr/share/chef-os-hardening/cookbooks
+		knife cookbook site install chef-os-hardening
+  		chef gem install berkshelf
+  		cat <<'EOF' | sudo tee /usr/share/chef-os-hardening/cookbooks/Berksfile > /dev/null
+source 'https://supermarket.chef.io'
+cookbook 'chef-os-hardening', '~> 4.0.0'
+EOF
+  		berks install --path /usr/share/chef-os-hardening/cookbooks/Berksfile
+  		cat <<'EOF' | sudo tee /usr/share/chef-os-hardening/node.json > /dev/null
+{
+  "run_list": [
+    "recipe[chef-os-hardening]"
+  ]
+}
+EOF
+		chef-client -z -j /usr/share/chef-os-hardening/node.json
 		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
