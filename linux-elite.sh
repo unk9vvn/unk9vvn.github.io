@@ -4707,6 +4707,7 @@ EOF
 }
 EOF
 		chef-client -z -j /usr/share/chef-os-hardening/node.json
+  		ansible-galaxy collection install ansible_hardening.hardening
 		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
