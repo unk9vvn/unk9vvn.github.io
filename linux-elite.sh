@@ -4847,21 +4847,6 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
- 	# install siegma
-	if [ ! -d "/usr/share/siegma" ]; then
-		name="siegma"
-		git clone https://github.com/3CORESec/SIEGMA /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-		cat > /usr/bin/$name << EOF
-#!/bin/bash
-cd /usr/share/$name;python3 siegma.py "\$@"
-EOF
-		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
-		printf "$GREEN"  "[*] Successfully Installed $name"
-	fi
-
 	# install ndpi
 	if [ ! -d "/usr/share/ndpi" ]; then
 		name="ndpi"
