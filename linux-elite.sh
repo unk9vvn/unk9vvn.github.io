@@ -4847,16 +4847,29 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
-	# install dettect
-	if [ ! -d "/usr/share/dettect" ]; then
-		name="dettect"
-		git clone https://github.com/rabobank-cdc/DeTTECT /usr/share/$name
+ 	# install siegma
+	if [ ! -d "/usr/share/siegma" ]; then
+		name="siegma"
+		git clone https://github.com/3CORESec/SIEGMA /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;python3 dettect.py "\$@"
+cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install ndpi
+	if [ ! -d "/usr/share/ndpi" ]; then
+		name="ndpi"
+		git clone https://github.com/ntop/nDPI /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;make;make install
+  		cd /usr/share/$name/example;make
+		ln -fs /usr/share/$name/ndpiReader /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -5742,10 +5755,10 @@ main()
 				fi
 
 				# install dependencies
-				apt install -qy libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
+				apt install -qy libtool libpcap-dev libnetfilter libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
 
 				# install init
-				apt install -qy dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
+				apt install -qy pkg-config dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -5783,10 +5796,10 @@ main()
 				fi
 
 				# install dependencies
-				apt install -qy libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
+				apt install -qy libtool libpcap-dev libnetfilter libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
 
 				# install init
-				apt install -qy apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
+				apt install -qy pkg-config apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
     
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
