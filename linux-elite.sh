@@ -4558,6 +4558,17 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install catalyst
+	if [ ! -d "/usr/share/catalyst" ]; then
+		name="catalyst"
+  		mkdir -p /usr/share/$name
+		wget https://github.com/SecurityBrewery/catalyst/releases/download/v0.14.1/catalyst_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/catalyst /usr/bin/$name
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 
