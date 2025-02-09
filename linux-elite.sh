@@ -4430,6 +4430,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install kuiper
+	if [ ! -d "/usr/share/kuiper" ]; then
+		name="kuiper"
+		git clone https://github.com/DFIRKuiper/Kuiper /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;docker-compose pull
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;docker-compose up -d "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install pspy
 	if [ ! -d "/usr/share/pspy" ]; then
 		name="pspy"
