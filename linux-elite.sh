@@ -4584,6 +4584,17 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install uac
+	if [ ! -d "/usr/share/uac" ]; then
+		name="uac"
+  		mkdir -p /usr/share/$name
+		wget https://github.com/tclahr/uac/releases/download/v3.0.0/uac-3.0.0.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/uac /usr/bin/$name
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #"
 
