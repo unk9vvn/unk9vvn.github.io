@@ -2166,6 +2166,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install icspector
+	if [ ! -d "/usr/share/icspector" ]; then
+		name="icspector"
+		git clone https://github.com/microsoft/ics-forensics-tools /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name/src;python3 driver.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install genzai
 	if [ ! -d "/usr/share/genzai" ]; then
 		name="genzai"
@@ -4035,6 +4050,21 @@ EOF
 	# install Golang
 	# digital_forensic_golang=""
 	go_installer "Digital-Forensic" "ICS-Security" "$digital_forensic_golang"
+
+ 	# install icspector
+	if [ ! -d "/usr/share/icspector" ]; then
+		name="icspector"
+		git clone https://github.com/microsoft/ics-forensics-tools /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name/src;python3 driver.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Digital-Forensic" "ICS-Security" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
 
 
 	printf "$YELLOW"  "# ---------------------------------------Blue-Team-ICS-Security-------------------------------------- #"
