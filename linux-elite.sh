@@ -4779,6 +4779,17 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install chain-bench
+	if [ ! -d "/usr/share/chain-bench" ]; then
+  		name="chain-bench"
+		wget https://github.com/aquasecurity/chain-bench/releases/download/v0.1.10/chain-bench_0.1.10_Linux-64bit.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		ln -fs /usr/share/$name/chain-bench /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install harbian-audit
 	if [ ! -d "/usr/share/harbian-audit" ]; then
 		name="harbian-audit"
