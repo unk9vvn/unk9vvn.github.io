@@ -1589,6 +1589,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install cloud_enum
+	if [ ! -d "/usr/share/cloud_enum" ]; then
+		name="cloud_enum"
+		git clone https://github.com/initstring/cloud_enum /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 cloud_enum.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install ccat
 	if [ ! -d "/usr/share/ccat" ]; then
 		name="ccat"
