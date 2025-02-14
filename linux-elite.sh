@@ -392,6 +392,7 @@ penetrating_testing()
 
 	# install Golang
 	web_golang="
+go install github.com/dwisiswant0/go-dork@latest;ln -fs ~/go/bin/go-dork /usr/bin/go-dork
 go install github.com/Macmod/godap/v2@latest;ln -fs ~/go/bin/godap /usr/bin/godap
 go install github.com/tomnomnom/waybackurls@latest;ln -fs ~/go/bin/waybackurls /usr/bin/waybackurls
 go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bin/httprobe
@@ -441,7 +442,7 @@ go install github.com/mlcsec/headi@latest;ln -fs ~/go/bin/headi /usr/bin/headi
 go install github.com/takshal/freq@latest;ln -fs ~/go/bin/freq /usr/bin/freq
 go install github.com/hakluke/hakrevdns@latest;ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
 go install github.com/hakluke/haktldextract@latest;ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
-go install github.com/Emoe/kxss@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
+go install github.com/Emoe/@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
 go install github.com/Josue87/gotator@latest;ln -fs ~/go/bin/gotator /usr/bin/gotator
 go install github.com/trap-bytes/gourlex@latest;ln -fs ~/go/bin/gourlex /usr/bin/gourlex
 go install github.com/musana/fuzzuli@latest;ln -fs ~/go/bin/fuzzuli /usr/bin/fuzzuli
@@ -3767,6 +3768,34 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 BobTheSmuggler.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install smuggler
+	if [ ! -d "/usr/share/smuggler" ]; then
+		name="smuggler"
+		git clone https://github.com/TheCyb3rAlpha/BobTheSmuggler /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 smuggler.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+  	# install lfisuite
+	if [ ! -d "/usr/share/lfisuite" ]; then
+		name="lfisuite"
+		git clone https://github.com/D35m0nd142/LFISuite /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python2 lfisuite.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
