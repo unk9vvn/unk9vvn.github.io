@@ -713,6 +713,18 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install urldedupe
+	if [ ! -d "/usr/share/urldedupe" ]; then
+		name="urldedupe"
+		git clone https://github.com/ameenmaali/urldedupe /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;cmake CMakeLists.txt;make
+		ln -fs /usr/share/$name/urldedupe /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install snmp-shell
 	if [ ! -d "/usr/share/snmp-shell" ]; then
 		name="snmp-shell"
