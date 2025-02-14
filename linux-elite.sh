@@ -379,7 +379,7 @@ penetrating_testing()
 	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
 
 	# install Python3 pip
-	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot xnLinkFinder droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
+	web_pip="pyjwt arjun py-altdns pymultitor autosubtakeover kube-hunter bbot droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive modelscan pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
@@ -400,6 +400,7 @@ go install github.com/tomnomnom/meg@latest;ln -fs ~/go/bin/meg /usr/bin/meg
 go install github.com/projectdiscovery/katana/cmd/katana@latest;ln -fs ~/go/bin/katana /usr/bin/katana
 go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cariddi /usr/bin/cariddi
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
+go install github.com/1hehaq/recx@latest;ln -fs ~/go/bin/recx /usr/bin/recx
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
 go install github.com/mhmdiaa/chronos@latest;ln -fs ~/go/bin/chronos /usr/bin/chronos
 go install github.com/shivangx01b/CorsMe@latest;ln -fs ~/go/bin/CorsMe /usr/bin/corsme
@@ -458,6 +459,7 @@ go install github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest;ln -fs ~
 go install github.com/projectdiscovery/notify/cmd/notify@latest;ln -fs ~/go/bin/notify /usr/bin/notify
 go install github.com/detectify/page-fetch@latest;ln -fs ~/go/bin/page-fetch /usr/bin/pagefetch
 go install github.com/dwisiswant0/ipfuscator@latest;ln -fs ~/go/bin/ipfuscator /usr/bin/ipfuscator
+go install github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest;ln -fs ~/go/bin/urlfinder /usr/bin/urlfinder
 go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx /usr/bin/tlsx
 go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/ua /usr/bin/ua
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
@@ -553,11 +555,33 @@ EOF
 		git clone https://github.com/smicallef/spiderfoot /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-cat > /usr/bin/$name << EOF
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 ./sf.py -l 127.0.0.1:5001 "\$@"
 EOF
 		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install custombsqli
+	if [ ! -d "/usr/share/custombsqli" ]; then
+		name="custombsqli"
+		git clone https://github.com/coffinxp/customBsqli /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 lostsec.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+  	# install oty
+	if [ ! -f "/usr/bin/oty" ]; then
+		name="oty"
+		pip3 install git+https://github.com/1hehaq/oty
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
@@ -567,7 +591,7 @@ EOF
 		name="wpxstrike"
 		git clone https://github.com/nowak0x01/WPXStrike /usr/share/$name
 		chmod 755 /usr/share/$name/*
-cat > /usr/bin/$name << EOF
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;./WPXStrike.js "\$@"
 EOF
@@ -581,9 +605,23 @@ EOF
 		name="corstest"
 		git clone https://github.com/RUB-NDS/CORStest /usr/share/$name
 		chmod 755 /usr/share/$name/*
-cat > /usr/bin/$name << EOF
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 corstest.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install loxs
+	if [ ! -d "/usr/share/loxs" ]; then
+		name="loxs"
+		git clone https://github.com/coffinxp/loxs /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 loxs.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
@@ -595,8 +633,8 @@ EOF
 		name="assets-from-spf"
 		git clone https://github.com/0xbharath/assets-from-spf /usr/share/$name
 		chmod 755 /usr/share/$name/*
-        pip2 install ipwhois click
-cat > /usr/bin/$name << EOF
+		pip2 install ipwhois click
+		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 assets_from_spf.py "\$@"
 EOF
@@ -706,6 +744,18 @@ EOF
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/findomain /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install aquatone
+	if [ ! -d "/usr/share/aquatone" ]; then
+		name="aquatone"
+		wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/aquatone /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
@@ -959,6 +1009,21 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 waymore.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install linkfinder
+	if [ ! -d "/usr/share/linkfinder" ]; then
+		name="linkfinder"
+		git clone https://github.com/GerbenJavado/LinkFinder /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 linkfinder.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
