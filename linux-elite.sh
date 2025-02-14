@@ -1588,6 +1588,15 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install ipsw
+	if [ ! -f "/usr/share/ipsw" ]; then
+		name="ipsw"
+		wget https://github.com/blacktop/ipsw/releases/download/v3.1.569/ipsw_3.1.569_linux_x86_64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install mobsf
 	if [ ! -d "/usr/share/mobsf" ]; then
 		name="mobsf"
