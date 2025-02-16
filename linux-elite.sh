@@ -511,19 +511,6 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
-	# install cloudbrute
-	if [ ! -d "/usr/share/cloudbrute" ]; then
-		name="cloudbrute"
-		mkdir -p /usr/share/$name
-		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
-		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
-		printf "$GREEN"  "[*] Successfully Installed $name"
-	fi
-
 	# install postman
 	if [ ! -d "/usr/share/Postman" ]; then
 		name="Postman"
@@ -1621,7 +1608,7 @@ EOF
 	printf "$YELLOW"  "# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy awscli trivy s3scanner gsutil 
+	apt install -qy awscli trivy s3scanner gsutil cloudbrute 
 
 	# install Python3 pip
 	cloud_pip="sceptre aclpwn cloudshovel cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
@@ -1763,19 +1750,6 @@ cd /usr/share/$name/gcp_enum_services;python3 gcp_enum_services.py "\$@"
 EOF
 		chmod +x /usr/bin/gcp_service_enum
 		menu_entry "Cloud" "Penetration-Testing" "gcp_enum_services" "$exec_shell 'gcp_enum_services -h'"
-		printf "$GREEN"  "[*] Successfully Installed $name"
-	fi
-
-	# install cloudbrute
-	if [ ! -d "/usr/share/cloudbrute" ]; then
-		name="cloudbrute"
-		mkdir -p /usr/share/$name
-		wget https://github.com/0xsha/CloudBrute/releases/download/v1.0.7/cloudbrute_1.0.7_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/CloudBrute /usr/bin/$name
-		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
