@@ -2045,9 +2045,18 @@ EOF
 	fi
 
 	# install pwndbg
-	if [ ! -d "/usr/share/pwndbg" ]; then
+	if [ ! -d "/usr/bin/pwndbg" ]; then
 		name="pwndbg"
 		wget https://github.com/pwndbg/pwndbg/releases/download/2024.08.29/pwndbg_2024.08.29_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install sniffnet
+	if [ ! -d "/usr/bin/sniffnet" ]; then
+		name="sniffnet"
+		wget https://github.com/GyulyVGC/sniffnet/releases/download/v1.3.2/Sniffnet_LinuxDEB_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
