@@ -4269,6 +4269,7 @@ digital_forensic()
 
 	# install Golang
 	malware_analysis_golang="
+go install github.com/alphasoc/flightsim/v2@latest;ln -fs ~/go/bin/flightsim /usr/bin/flightsim
 go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 	go_installer "Malware-Analysis" "Digital-Forensic" "$malware_analysis_golang"
 
