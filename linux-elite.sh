@@ -603,6 +603,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install subdomainizer
+	if [ ! -d "/usr/share/subdomainizer" ]; then
+		name="subdomainizer"
+		git clone https://github.com/nsonaniya2010/SubDomainizer /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 SubDomainizer.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install loxs
 	if [ ! -d "/usr/share/loxs" ]; then
 		name="loxs"
