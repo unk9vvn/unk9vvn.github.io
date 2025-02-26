@@ -4619,7 +4619,7 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
- 	# install pspy
+ 	# install vmclarity
 	if [ ! -d "/usr/share/vmclarity" ]; then
 		name="vmclarity"
 		mkdir -p /usr/share/$name
