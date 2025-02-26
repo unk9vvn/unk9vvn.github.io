@@ -4619,6 +4619,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install pspy
+	if [ ! -d "/usr/share/vmclarity" ]; then
+		name="vmclarity"
+		mkdir -p /usr/share/$name
+		wget https://github.com/openclarity/vmclarity/releases/download/v0.7.2/vmclarity-cli-v0.7.2-linux-amd64.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/vmclarity-cli /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install velociraptor
 	if [ ! -d "/usr/share/velociraptor" ]; then
 		name="velociraptor"
