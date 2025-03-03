@@ -401,6 +401,7 @@ go install github.com/projectdiscovery/katana/cmd/katana@latest;ln -fs ~/go/bin/
 go install github.com/j3ssie/osmedeus@latest;ln -fs ~/go/bin/osmedeus /usr/bin/osmedeus
 go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cariddi /usr/bin/cariddi
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
+go install github.com/aquasecurity/tfsec/cmd/tfsec@latest;ln -fs ~/go/bin/tfsec /usr/bin/tfsec
 go install github.com/1hehaq/recx@latest;ln -fs ~/go/bin/recx /usr/bin/recx
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
 go install github.com/mhmdiaa/chronos@latest;ln -fs ~/go/bin/chronos /usr/bin/chronos
