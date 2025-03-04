@@ -690,6 +690,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install doser.go
+	if [ ! -d "/usr/share/doser.go" ]; then
+		name="doser.go"
+		mkdir -p /usr/share/$name
+		git clone https://github.com/Quitten/doser.go -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;go build doser.go
+		ln -fs /usr/share/$name/doser /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
   	# install crossdomain-exploitation-framework
 	if [ ! -d "/usr/share/crossdomain-exploitation-framework" ]; then
 		name="crossdomain-exploitation-framework"
@@ -2009,9 +2022,22 @@ EOF
 	if [ ! -d "/usr/share/pcredz" ]; then
 		name="pcredz"
 		mkdir -p /usr/share/$name
-		wget https://github.com/lgandx/PCredz -O /usr/share/$name
+		git clone https://github.com/lgandx/PCredz -O /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Pcredz /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+ 	# install doser.go
+	if [ ! -d "/usr/share/doser.go" ]; then
+		name="doser.go"
+		mkdir -p /usr/share/$name
+		git clone https://github.com/Quitten/doser.go -O /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;go build doser.go
+		ln -fs /usr/share/$name/doser /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
