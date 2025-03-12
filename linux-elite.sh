@@ -1696,6 +1696,18 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install azurehound
+	if [ ! -d "/usr/share/azurehound" ]; then
+		name="azurehound"
+		wget https://github.com/SpecterOps/AzureHound/releases/latest/download/azurehound-linux-amd64.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/azurehound /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install cloud_enum
 	if [ ! -d "/usr/share/cloud_enum" ]; then
 		name="cloud_enum"
