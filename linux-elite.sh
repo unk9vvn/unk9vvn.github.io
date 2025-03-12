@@ -2156,6 +2156,20 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install libc-database
+	if [ ! -d "/usr/share/libc-database" ]; then
+		name="libc-database"
+		git clone https://github.com/niklasb/libc-database /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;ls "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install spoofdpi
 	if [ ! -d "/usr/share/spoofdpi" ]; then
 		name="spoofdpi"
