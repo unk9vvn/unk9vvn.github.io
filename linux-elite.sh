@@ -1708,6 +1708,15 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install grype
+	if [ ! -d "/usr/bin/grype" ]; then
+		name="grype"
+		wget https://github.com/anchore/grype/releases/download/v0.89.0/grype_0.89.0_linux_amd64.deb -O /tmp/$name.deb
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install cloud_enum
 	if [ ! -d "/usr/share/cloud_enum" ]; then
 		name="cloud_enum"
