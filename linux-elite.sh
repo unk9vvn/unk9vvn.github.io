@@ -3289,6 +3289,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install hack-browser-data
+	if [ ! -d "/usr/share/hack-browser-data" ]; then
+		name="hack-browser-data"
+		mkdir -p /usr/share/$name
+		wget https://github.com/moonD4rk/HackBrowserData/releases/latest/download/hack-browser-data-linux-64bit.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+  		chmod 755 /usr/share/$name/*
+  		ln -fs /usr/share/$name/hack-browser-data /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install ntlmRelaytoews
 	if [ ! -d "/usr/share/ntlmRelaytoews" ]; then
 		name="ntlmRelaytoews"
