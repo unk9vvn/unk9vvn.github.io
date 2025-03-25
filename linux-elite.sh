@@ -1133,6 +1133,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install kiterunner
+	if [ ! -d "/usr/share/kiterunner" ]; then
+		name="kiterunner"
+		mkdir -p /usr/share/$name
+		wget https://github.com/assetnote/kiterunner/releases/download/v1.0.2/kiterunner_1.0.2_linux_amd64.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/kr /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install rsactftool
 	if [ ! -d "/usr/share/rsactftool" ]; then
 		name="rsactftool"
