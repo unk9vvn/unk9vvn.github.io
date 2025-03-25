@@ -656,7 +656,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh;ipfs init
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
@@ -4027,6 +4027,19 @@ EOF
 		wget https://github.com/dutchcoders/transfer.sh/releases/download/v1.6.1/transfersh-v1.6.1-linux-amd64 -O /usr/share/$name/transfer.sh
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/transfersh /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install natpass
+	if [ ! -d "/usr/share/natpass" ]; then
+		name="natpass"
+		mkdir -p /usr/share/$name
+		wget https://github.com/Sir-MmD/NATPass/releases/latest/download/natpass_linux_amd64.tar -O /tmp/$name.tar
+		tar --strip-components=1 -xvf /tmp/$name.tar -C /usr/share/$name;rm -f /tmp/$name.tar
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/natpass /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
