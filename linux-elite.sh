@@ -1,5 +1,5 @@
 #!/bin/bash
-ver='4.2'
+ver='4.5'
 
 
 
@@ -417,6 +417,7 @@ go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jslui
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
+go install github.com/KathanP19/cf-hero@latest;ln -fs ~/go/bin/cf-hero /usr/bin/cf-hero
 go install github.com/bountysecurity/gbounty/cmd/gbounty@latest;ln -fs ~/go/bin/gbounty /usr/bin/gbounty
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
@@ -1120,6 +1121,17 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install subdominator
+	if [ ! -d "/usr/share/subdominator" ]; then
+		name="subdominator"
+		git clone https://github.com/RevoltSecurities/Subdominator /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cd /usr/share/$name;python3 setup.py install
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+ 
 	# install polyglot
 	if [ ! -d "/usr/share/polyglot" ]; then
 		name="polyglot"
