@@ -1359,6 +1359,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install favicon-hashtrick
+	if [ ! -d "/usr/share/favicon-hashtrick" ]; then
+		name="favicon-hashtrick"
+		git clone https://github.com/gwen001/favicon-hashtrick /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 favicon-hashtrick.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install xsstrike
 	if [ ! -d "/usr/share/xsstrike" ]; then
 		name="xsstrike"
