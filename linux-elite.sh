@@ -957,6 +957,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install blackbird
+	if [ ! -d "/usr/share/blackbird" ]; then
+		name="blackbird"
+		git clone https://github.com/p1ngul1n0/blackbird /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 blackbird.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install singularity
 	if [ ! -d "/usr/share/singularity" ]; then
 		name="singularity"
