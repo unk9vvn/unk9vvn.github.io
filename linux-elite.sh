@@ -4884,6 +4884,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install fastfinder
+	if [ ! -d "/usr/share/fastfinder" ]; then
+		name="fastfinder"
+		mkdir -p /usr/share/$name
+		wget https://github.com/codeyourweb/fastfinder/releases/download/2.0.0/fastfinder_v2.0.0-linux.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/fastfinder /usr/bin/$name
+  		chmod +x /usr/bin/$name
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install cortex
 	if [ ! -d "/usr/share/cortex" ]; then
 		name="cortex"
@@ -4899,6 +4912,7 @@ EOF
 		wget https://github.com/SecurityBrewery/catalyst/releases/download/v0.14.1/catalyst_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/catalyst /usr/bin/$name
+  		chmod +x /usr/bin/$name
   		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
