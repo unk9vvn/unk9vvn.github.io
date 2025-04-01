@@ -5109,7 +5109,7 @@ EOF
 	printf "$YELLOW"  "# -------------------------------------------Detect-Blue-Team---------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer cyberchef snort rspamd prometheus stenographer 
+	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer cyberchef snort rspamd prometheus stenographer cacti 
 
 	# install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma ja3"
