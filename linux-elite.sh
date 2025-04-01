@@ -1476,6 +1476,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install ghostrecon
+	if [ ! -d "/usr/share/ghostrecon" ]; then
+		name="ghostrecon"
+		git clone https://github.com/KawaCoder/GhostRecon /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;./install.sh
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;./Grecon "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install hash_extender
 	if [ ! -d "/usr/share/hash_extender" ]; then
 		name="hash_extender"
