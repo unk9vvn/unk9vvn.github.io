@@ -4708,7 +4708,8 @@ EOF
 
 	# install Golang
 	threat_hunting_golang="
-go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
+go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls
+go install github.com/datadog/stratus-red-team/v2/cmd/stratus@latest;ln -fs ~/go/bin/cycletls /usr/bin/cycletls"
 	go_installer "Threat-Hunting" "Digital-Forensic" "$threat_hunting_golang"
 
 	# install matano
@@ -4846,7 +4847,7 @@ EOF
 	if [ ! -d "/usr/share/capa" ]; then
 		name="capa"
 		mkdir -p /usr/share/$name
-  		wget https://github.com/mandiant/capa/releases/download/v7.3.0/capa-v7.3.0-linux.zip -O /tmp/$name.zip
+  		wget https://github.com/mandiant/capa/releases/download/v9.1.0/capa-v9.1.0-linux.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		ln -fs /usr/share/$name/capa /usr/bin/$name
 		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
