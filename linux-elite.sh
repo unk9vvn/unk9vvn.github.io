@@ -3465,7 +3465,7 @@ EOF
 	printf "$YELLOW"  "# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy pptpd kerberoast isr-evilgrade 
+	apt install -qy pptpd kerberoast isr-evilgrade evil-winrm 
 
 	# install Python3 pip
 	lateral_movement_pip="coercer krbjack"
@@ -3476,7 +3476,7 @@ EOF
 	npm_installer "Lateral-Movement" "Red-Team" "$lateral_movement_npm"
 
 	# install Ruby GEM
-	lateral_movement_gem="evil-winrm"
+	# lateral_movement_gem=""
 	gem_installer "Lateral-Movement" "Red-Team" "$lateral_movement_gem"
 
 	# install Golang
