@@ -406,6 +406,7 @@ go install github.com/1hehaq/recx@latest;ln -fs ~/go/bin/recx /usr/bin/recx
 go install github.com/yasserjanah/FacebookChecker@latest;ln -fs ~/go/bin/FacebookChecker /usr/bin/facebookchecker
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
 go install github.com/mhmdiaa/chronos@latest;ln -fs ~/go/bin/chronos /usr/bin/chronos
+go install github.com/edoardottt/csprecon/cmd/csprecon@latest;ln -fs ~/go/bin/csprecon /usr/bin/csprecon
 go install github.com/shivangx01b/CorsMe@latest;ln -fs ~/go/bin/CorsMe /usr/bin/corsme
 go install github.com/pwnesia/dnstake/cmd/dnstake@latest;ln -fs ~/go/bin/dnstake /usr/bin/dnstake
 go install github.com/projectdiscovery/uncover/cmd/uncover@latest;ln -fs ~/go/bin/uncover /usr/bin/uncover
