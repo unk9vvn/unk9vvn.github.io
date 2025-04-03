@@ -403,6 +403,7 @@ go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cari
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/aquasecurity/tfsec/cmd/tfsec@latest;ln -fs ~/go/bin/tfsec /usr/bin/tfsec
 go install github.com/1hehaq/recx@latest;ln -fs ~/go/bin/recx /usr/bin/recx
+go install github.com/tomnomnom/qsreplace@latest;ln -fs ~/go/bin/qsreplace /usr/bin/qsreplace
 go install github.com/yasserjanah/FacebookChecker@latest;ln -fs ~/go/bin/FacebookChecker /usr/bin/facebookchecker
 go install github.com/karust/unjsfuck@latest;ln -fs ~/go/bin/unjsfuck /usr/bin/unjsfuck
 go install github.com/mhmdiaa/chronos@latest;ln -fs ~/go/bin/chronos /usr/bin/chronos
