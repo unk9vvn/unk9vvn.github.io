@@ -729,7 +729,7 @@ EOF
 		name="x8"
 		mkdir -p /usr/share/x8
 		wget https://github.com/Sh1Yo/x8/releases/latest/download/x86_64-linux-x8.gz -O /tmp/$name.gz
-		gzip -d /tmp/$name.gz -d /usr/share/$name;mv /tmp/$name /usr/share/$name;rm -f /tmp/$name.gz
+		gunzip -c /tmp/$name.gz > /usr/share/$name/$name;rm -f /tmp/$name.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
