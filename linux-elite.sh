@@ -399,6 +399,7 @@ go install github.com/tomnomnom/httprobe@latest;ln -fs ~/go/bin/httprobe /usr/bi
 go install github.com/tomnomnom/meg@latest;ln -fs ~/go/bin/meg /usr/bin/meg
 go install github.com/projectdiscovery/katana/cmd/katana@latest;ln -fs ~/go/bin/katana /usr/bin/katana
 go install github.com/j3ssie/osmedeus@latest;ln -fs ~/go/bin/osmedeus /usr/bin/osmedeus
+go install github.com/rverton/webanalyze/cmd/webanalyze@latest;ln -fs ~/go/bin/webanalyze /usr/bin/webanalyze
 go install github.com/edoardottt/cariddi/cmd/cariddi@latest;ln -fs ~/go/bin/cariddi /usr/bin/cariddi
 go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/aquasecurity/tfsec/cmd/tfsec@latest;ln -fs ~/go/bin/tfsec /usr/bin/tfsec
