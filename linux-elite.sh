@@ -3472,7 +3472,7 @@ EOF
 	apt install -qy pptpd kerberoast isr-evilgrade evil-winrm 
 
 	# install Python3 pip
-	lateral_movement_pip="coercer krbjack"
+	lateral_movement_pip="coercer krbjack pivotnacci"
 	pip_installer "Lateral-Movement" "Red-Team" "$lateral_movement_pip"
 
 	# install Nodejs NPM
