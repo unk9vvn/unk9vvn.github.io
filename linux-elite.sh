@@ -856,8 +856,9 @@ EOF
 	# install rustscan
 	if [ ! -f "/usr/bin/rustscan" ]; then
 		name="rustscan"
-		wget https://github.com/RustScan/RustScan/releases/download/2.3.0/rustscan_2.3.0_amd64.deb -O /tmp/$name.deb
-		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		wget https://github.com/bee-san/RustScan/releases/download/2.4.1/rustscan.deb.zip -O /tmp/$name.zip
+		unzip /tmp/$name.zip -d /tmp;rm -f /tmp/$name.zip
+		chmod +x /tmp/rustscan_2.4.1-1_amd64.deb;dpkg -i /tmp/rustscan_2.4.1-1_amd64.deb;rm -f /tmp/rustscan_2.4.1-1_amd64.deb;rm -f /tmp/rustscan.tmp0-stripped
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
