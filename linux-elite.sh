@@ -376,7 +376,7 @@ penetrating_testing()
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit googler inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
+	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns uro pymultitor autosubtakeover kube-hunter jsbeautifier bbot droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -6149,10 +6149,7 @@ main()
 					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
 					apt update
 				fi
-
-				# install dependencies
-				apt install -qy libtool libpcap-dev libnetfilter libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
-
+    
 				# install init
 				apt install -qy gnome-terminal pkg-config fl-cow dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
 
@@ -6190,10 +6187,7 @@ main()
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
 					apt-get -y --allow-unauthenticated install kali-archive-keyring;apt update
 				fi
-
-				# install dependencies
-				apt install -qy libtool libpcap-dev libnetfilter libapache2-modsecurity libapache2-mod-security2 libzzip-0-13 libgs-common libtool-bin libplist-dev libimobiledevice-dev libzip-dev python3-dev python3-pip python3-poetry python3-scapy php-common php-xml php-curl php-gd php-imagick php-cli php-dev php-imap php-mbstring php-intl php-mysql php-zip php-json php-bcmath php-fpm php-soap php-xmlrpc libapache2-mod-php libcairo2-dev libjpeg-turbo8-dev libpng-dev libossp-uuid-dev libavcodec-dev libavformat-dev libswscale-dev libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
-
+    
 				# install init
 				apt install -qy gnome-terminal pkg-config fl-cow apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
     
@@ -6215,10 +6209,10 @@ main()
 	fi
 
 	# install Python2 pip
-	pip2 install setuptools env pipenv wheel requests colorama 
+	pip2 install setuptools wheel requests colorama 
 
 	# install Python3 pip
-	pip3 install --break-system-packages setuptools env pipenv wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp 
+	pip3 install --break-system-packages setuptools wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp 
 
 	# install nodejs NPM
 	# npm install -g 
