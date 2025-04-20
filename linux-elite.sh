@@ -5053,7 +5053,7 @@ EOF
 		cd /etc/apache2/sites-available
 		a2ensite $name.conf;a2enmod rewrite
 		systemctl restart apache2
-		echo "127.0.0.1   $name.local" >> /etc/hosts
+		echo "127.0.0.1    $name.local" | tee -a /etc/hosts
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 sudo service apache2 start;sudo service mysql start
@@ -5811,7 +5811,7 @@ EOF
 		systemctl restart apache2
 		# hosts
 		if ! grep -q "$name.local" /etc/hosts; then
-			echo "127.0.0.1   $name.local" >> /etc/hosts
+			echo "127.0.0.1    $name.local" | tee -a /etc/hosts
 		fi
 		# Drop user and database
 		mysql -f -s -u root -h localhost -e "DROP DATABASE IF EXISTS ${name}_db;DROP USER IF EXISTS '${name}_usr'@'localhost';CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';FLUSH PRIVILEGES;"
@@ -5855,7 +5855,7 @@ EOF
 		systemctl restart apache2
 		# hosts
 		if ! grep -q "$name.local" /etc/hosts; then
-			echo "127.0.0.1   $name.local" >> /etc/hosts
+			echo "127.0.0.1    $name.local" | tee -a /etc/hosts
 		fi
     		# Drop user and database
 		mysql -f -s -u root -h localhost -e "DROP DATABASE IF EXISTS ${name}_db;DROP USER IF EXISTS '${name}_usr'@'localhost';CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';FLUSH PRIVILEGES;"
@@ -5899,7 +5899,7 @@ EOF
 		systemctl restart apache2
 		# hosts
 		if ! grep -q "$name.local" /etc/hosts; then
-			echo "127.0.0.1   $name.local" >> /etc/hosts
+			echo "127.0.0.1    $name.local" | tee -a /etc/hosts
 		fi
 		# Initialize MySQL
 		mysql -f -s -u root -h localhost -e "DROP DATABASE IF EXISTS ${name}_db;DROP USER IF EXISTS '${name}_usr'@'localhost';CREATE DATABASE ${name}_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;CREATE USER '${name}_usr'@'localhost' IDENTIFIED BY '00980098';GRANT ALL PRIVILEGES ON ${name}_db.* TO '${name}_usr'@'localhost';FLUSH PRIVILEGES;"
