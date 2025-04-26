@@ -1718,7 +1718,7 @@ EOF
 	apt install -qy awscli trivy s3scanner gsutil cloudbrute 
 
 	# install Python3 pip
-	cloud_pip="sceptre aclpwn cloudshovel cloudshovel powerpwn ggshield pacu whispers  kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
+	cloud_pip="sceptre aclpwn cloudshovel cloudshovel powerpwn ggshield pacu whispers kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# install Nodejs NPM
