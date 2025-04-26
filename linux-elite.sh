@@ -1732,6 +1732,7 @@ EOF
 	# install Golang
 	cloud_golang="
 go install github.com/koenrh/s3enum@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enum
+go install github.com/datadog/stratus-red-team/v2/cmd/stratus@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enum
 go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
 go install github.com/mlcsec/clovery@latest;ln -fs ~/go/bin/clovery /usr/bin/clovery
 go install github.com/aquasecurity/tfsec/cmd/tfsec@latest;ln -fs ~/go/bin/tfsec /usr/bin/tfsec
