@@ -383,10 +383,10 @@ penetrating_testing()
 	pip_installer "Web" "Penetration-Testing" "$web_pip"
 
 	# install Nodejs NPM
-	web_npm="jwt-cracker graphql padding-oracle-attacker js-deobfuscator uglify-js javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor crlfi infoooze hardhat is-website-vulnerable solgraph"
+	web_npm="jwt-cracker graphql padding-oracle-attacker whonow js-deobfuscator uglify-js javascript-obfuscator serialize-javascript http-proxy-to-socks node-serialize igf electron-packager redos serialize-to-js dompurify nodesub multitor crlfi infoooze hardhat is-website-vulnerable solgraph"
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
-	# install Ruby GEM
+ # install Ruby GEM
 	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear"
 	gem_installer "Web" "Penetration-Testing" "$web_gem"
 
