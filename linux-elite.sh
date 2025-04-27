@@ -4729,7 +4729,7 @@ EOF
 	printf "$YELLOW"  "# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3 arkime bpftrace 
+	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3 arkime bpftrace auditd audispd-plugins 
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -5590,7 +5590,7 @@ security_audit()
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
 
 	# install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible ansible-core 
+	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible ansible-core auditd audispd-plugins 
 
 	# install Python3 pip
 	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
