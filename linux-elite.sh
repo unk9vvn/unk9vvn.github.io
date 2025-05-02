@@ -1,7 +1,5 @@
 #!/bin/bash
-ver='4.5'
-
-
+ver='4.6'
 
 
 RED='\e[1;31m%s\e[0m\n'
@@ -13,25 +11,44 @@ CYAN='\e[1;36m%s\e[0m\n'
 WHITE='\e[1;37m%s\e[0m\n'
 
 
-
-
+# Check if the script is run as root
 if [ "$(id -u)" != "0" ]; then
-	printf "${RED}[X] Please run as ROOT...\n"
-	printf "${GREEN}[*] sudo linux-elite\n"
-	exit 0
+    echo -e "${RED}[X] Please run as ROOT...\n"
+    echo -e "${GREEN}[*] sudo linux-elite\n${RESET}"
+    exit 0
 else
-	# update & upgrade & clean up packages
-	apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
+    # Required packages
+    REQUIRED_PACKAGES=(
+        wget curl git net-tools gnupg
+        apt-transport-https alacarte locate
+        debsig-verify xmlstarlet)
 
-	# install required packages
-	apt install -qy wget curl git net-tools gnupg apt-transport-https alacarte locate debsig-verify xmlstarlet 
+    # Check if apt cache is older than 7 days
+    APT_CACHE="/var/lib/apt/periodic/update-success-stamp"
+    if [ ! -f "$APT_CACHE" ] || [ "$(find "$APT_CACHE" -mtime +6 2>/dev/null)" ]; then
+        echo -e "${GREEN}[*] System not updated in the last 7 days. Updating now...${RESET}"
+        apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
+    else
+        echo -e "${GREEN}[*] System is up-to-date (within 7 days). Skipping update.${RESET}"
+    fi
 
-	# get current user and LAN IP address
-	USERS=$(cd /home;ls | awk '{print $1}')
-	LAN=$(hostname -I | awk '{print $1}')
+    # Install missing packages only
+    echo -e "${GREEN}[*] Checking and installing required packages...${RESET}"
+    for pkg in "${REQUIRED_PACKAGES[@]}"; do
+        if ! dpkg -s "$pkg" &>/dev/null; then
+            echo -e "${GREEN}[+] Installing missing package: $pkg${RESET}"
+            apt install -qy "$pkg"
+        else
+            echo -e "${GREEN}[-] Package already installed: $pkg${RESET}"
+        fi
+    done
 fi
 
+# Get USER and LAN IP
+USERS=$(cd /home;ls | awk '{print $1}')
+LAN=$(hostname -I | awk '{print $1}')
 
+# Global variables
 BASE_PATH="/home/$USERS"
 CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
 IMAGES_PATH="$BASE_PATH/.local/share/images"
@@ -158,12 +175,22 @@ EOF
 
 menu()
 {
-    mkdir -p "$CONFIG_MENU_PATH"
     mkdir -p "$IMAGES_PATH"
+    mkdir -p "$CONFIG_MENU_PATH"
     mkdir -p "$APPLICATIONS_PATH"
     mkdir -p "$DESKTOP_DIRECTORIES_PATH"
 
+    # Initialize Unk9vvN menu
     if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
+        curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
+        cat > "$DESKTOP_DIRECTORIES_PATH/alacarte-made.directory" << EOF
+[Desktop Entry]
+Name=Unk9vvN
+Comment=unk9vvn.github.io
+Icon=$IMAGES_PATH/unk9vvn-logo.jpg
+Type=Directory
+EOF
+
         cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
@@ -211,26 +238,8 @@ menu()
         </Layout>
 </Menu>
 EOF
-        chmod +x $CONFIG_MENU_PATH/xfce-applications.menu
+        chmod 664 $CONFIG_MENU_PATH/xfce-applications.menu
     fi
-
-    # Initialize Unk9vvN menu
-    curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
-    mkdir -p "$APPLICATIONS_PATH/Unk9vvN"
-    cat > "$DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory" << EOF
-[Desktop Entry]
-Name=Unk9vvN
-Comment=unk9vvn.github.io
-Icon=$IMAGES_PATH/unk9vvn-logo.jpg
-Type=Directory
-EOF
-
-    xmlstarlet ed \
-        -a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
-        -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
-        -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
     # Initialize additional menus
     create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
@@ -484,7 +493,7 @@ penetrating_testing()
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy tor dirsearch nuclei s3scanner rainbowcrack hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
+	apt install -qy tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader dirsearch nuclei s3scanner rainbowcrack hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns uro pymultitor autosubtakeover kube-hunter jsbeautifier bbot droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -2095,7 +2104,7 @@ EOF
 	printf "$YELLOW"  "# -----------------------------------Network-Penetration-Testing------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy cme amap bettercap dsniff arpwatch python3-pwntools netexec sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
+	apt install -qy tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader cme amap bettercap dsniff arpwatch python3-pwntools netexec sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
 
 	# install Python3 pip
 	network_pip="networkx ropper mitmproxy mikrot8over mitm6 pymultitor scapy smbclientng slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
@@ -6251,16 +6260,41 @@ main()
 				fi
 
 				# microsoft repo added
-				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
-					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-					wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
-					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
-					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+					sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+					rm -f packages.microsoft.gpg
+					echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
 					apt update
 				fi
-    
-				# install init
-				apt install -qy gnome-terminal pkg-config fl-cow dnsutils apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full pypy3-venv python2 g++ nodejs npm rustup clang nim golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose xxd mono-complete mono-devel tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
+
+				# Development tools and programming languages
+				apt install -qy \
+				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
+				    mingw-w64 rustup golang qtchooser default-jdk \
+				    nodejs npm python3 python3-full python2 pypy3-venv \
+				    dotnet-sdk-6.0 nim mono-complete mono-devel rlwrap
+
+				# Virtualization and container tools
+				apt install -qy \
+				    docker.io docker-compose open-vm-tools
+
+				# Web servers and database engines
+				apt install -qy \
+				    apache2 mariadb-server php tomcat9
+
+				# Multimedia and file analysis tools
+				apt install -qy \
+				    imagemagick exiftool exiv2 pngcrush ffmpeg \
+				    zipalign xxd
+
+				# Desktop utilities and general tools
+				apt install -qy \
+				    gnome-terminal apt-utils \
+				    htop nload bleachbit remmina \
+				    filezilla thunderbird code cmatrix \
+				    wine winetricks winbind \
+				    p7zip p7zip-full rar zip
 
 				# install Python2 pip
 				if [ ! -f "/usr/local/bin/pip2" ]; then
@@ -6282,11 +6316,11 @@ main()
 				fi
 
 				# microsoft repo added
-				if [ ! -f "/etc/apt/sources.list.d/microsoft-prod.list" ]; then
-					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-					wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
-					chmod +x /tmp/packages-microsoft-prod.deb;dpkg -i /tmp/packages-microsoft-prod.deb;rm -f /tmp/packages-microsoft-prod.deb
-					echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+				if [ ! -f "/etc/apt/sources.list.d/vscode.list" ]; then
+					wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+					sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+					rm -f packages.microsoft.gpg
+					echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
 					apt update
 				fi
 
@@ -6294,11 +6328,37 @@ main()
 				if [ ! -f "/etc/apt/sources.list.d/kali.list" ]; then
 					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
-					apt-get -y --allow-unauthenticated install kali-archive-keyring;apt update
+					apt-get -y --allow-unauthenticated install kali-archive-keyring
+                    apt update
 				fi
     
-				# install init
-				apt install -qy gnome-terminal pkg-config fl-cow apt-utils build-essential pkg-config mingw-w64 automake autoconf cmake swfmill default-jdk apache2 mariadb-server php python3 python3-full python2 pypy3-venv g++ nodejs npm clang golang golang-go nasm qtchooser jq ffmpeg docker.io gcc docker-compose mono-complete xxd mono-devel p7zip tor obfs4proxy polipo proxychains p7zip p7zip-full zipalign wine winetricks winbind rar cmatrix remmina htop nload vlc bleachbit filezilla thunderbird code dotnet-sdk-6.0 open-vm-tools pngcrush imagemagick exiftool exiv2 usbmuxd snmp snmp-mibs-downloader rlwrap tomcat9 
+				# Development tools and programming languages
+				apt install -qy \
+				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
+				    mingw-w64 rustup golang qtchooser default-jdk \
+				    nodejs npm python3 python3-full python2 pypy3-venv \
+				    dotnet-sdk-6.0 nim mono-complete mono-devel rlwrap
+
+				# Virtualization and container tools
+				apt install -qy \
+				    docker.io docker-compose open-vm-tools
+
+				# Web servers and database engines
+				apt install -qy \
+				    apache2 mariadb-server php tomcat9
+
+				# Multimedia and file analysis tools
+				apt install -qy \
+				    imagemagick exiftool exiv2 pngcrush ffmpeg \
+				    zipalign xxd
+
+				# Desktop utilities and general tools
+				apt install -qy \
+				    gnome-terminal apt-utils \
+				    htop nload bleachbit remmina \
+				    filezilla thunderbird code cmatrix \
+				    wine winetricks winbind \
+				    p7zip p7zip-full rar zip
     
 				# install snap
 				snap install powershell --classic;snap install rustup --classic
@@ -6317,18 +6377,6 @@ main()
 		echo "/etc/os-release file not found. Cannot determine the OS.";exit
 	fi
 
-	# install Python2 pip
-	pip2 install setuptools wheel requests colorama 
-
-	# install Python3 pip
-	pip3 install --break-system-packages setuptools wheel colorama pysnmp termcolor pypdf2 cprint pycryptodomex requests gmpy2 win_unicode_console python-nmap python-whois capstone dnslib couchdb poetry python-magic py7zr pyminizip anytree pypsrp 
-
-	# install nodejs NPM
-	# npm install -g 
-
-	# install ruby GEM
-	# gem install 
-
 	# install linux-elite
 	if [ ! -d "/usr/share/linux-elite" ]; then
 		name="linux-elite"
@@ -6340,29 +6388,6 @@ main()
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-
-		# Create the .desktop file for the tool
-		cat > "$APPLICATIONS_PATH/Unk9vvN/$name.desktop" << EOF
-[Desktop Entry]
-Name=$name
-Exec=$exec_shell "sudo $name"
-Comment=unk9vvn.github.io
-Terminal=true
-Icon=gnome-panel-launcher
-Type=Application
-EOF
-
-		# Add Include and Layout to the menu XML file
-		xmlstarlet ed \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
 		name="linux-elite"
@@ -6373,29 +6398,6 @@ EOF
 cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-
-		# Create the .desktop file for the tool
-		cat > "$APPLICATIONS_PATH/Unk9vvN/$name.desktop" << EOF
-[Desktop Entry]
-Name=$name
-Exec=$exec_shell "sudo $name"
-Comment=unk9vvn.github.io
-Terminal=true
-Icon=gnome-panel-launcher
-Type=Application
-EOF
-
-		# Add Include and Layout to the menu XML file
-		xmlstarlet ed \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Include" -v "" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']" -t elem -n "Layout" -v "" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge" -t attr -n "type" -v "menus" \
-		   -s "/Menu/Menu/Menu[Name='Unk9vvN']/Layout" -t elem -n "Merge" -v "" \
-		   -i "/Menu/Menu/Menu[Name='Unk9vvN']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-		   "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-		   mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 		printf "$GREEN"  "[*] Successfully Updating $name"
 		bash /usr/share/$name/$name.sh
 	fi
