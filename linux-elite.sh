@@ -241,6 +241,24 @@ EOF
         chmod 664 $CONFIG_MENU_PATH/xfce-applications.menu
     fi
 
+    # Initialize Unk9vvN menu
+    curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
+    mkdir -p "$APPLICATIONS_PATH/Unk9vvN"
+    cat > "$DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory" << EOF
+[Desktop Entry]
+Name=Unk9vvN
+Comment=unk9vvn.github.io
+Icon=$IMAGES_PATH/unk9vvn-logo.jpg
+Type=Directory
+EOF
+
+    xmlstarlet ed \
+        -a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
+        -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
+        -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
+        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+
     # Initialize additional menus
     create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
     create_menu "Offensive-Security" "Red-Team" "Reconnaissance Resource-Development Initial-Access Execution Persistence Privilege-Escalation Defense-Evasion Credential-Access Discovery Lateral-Movement Collection Command-and-Control Exfiltration Impact"
@@ -257,43 +275,9 @@ menu_entry()
     local category="$2"
     local tool="$3"
     local command="$4"
-    
-    # Find the latest desktop file number
-    local latest_num=0
-    # Check for existing desktop files with pattern alacarte-made-*.desktop
-    for file in "$APPLICATIONS_PATH"/alacarte-made*.desktop; do
-        if [ -f "$file" ]; then
-            # Get the filename without path
-            local file_name=$(basename "$file")
-            
-            # Check if it's the base file without numbers
-            if [ "$file_name" = "alacarte-made.desktop" ]; then
-                # If we find the base file, set latest_num to 0
-                # so next will be alacarte-made-1.desktop
-                continue
-            fi
-            
-            # Extract the number part from filename (if it has one)
-            if [[ "$file_name" =~ ^alacarte-made-([0-9]+)\.desktop$ ]]; then
-                local num=${BASH_REMATCH[1]}
-                
-                # Convert to integer for proper numeric comparison
-                num=$((10#$num))
-                if [ $num -gt $latest_num ]; then
-                    latest_num=$num
-                fi
-            fi
-        fi
-    done
-    
-    # Set counter to one more than the latest found
-    local DESKTOP_COUNTER=$((latest_num + 1))
-    
-    # Generate the desktop file name with the next number
-    local desktop_filename="alacarte-made-${DESKTOP_COUNTER}.desktop"
-    
+
     # Create the .desktop file for the tool
-    cat > "$APPLICATIONS_PATH/${desktop_filename}" << EOF
+    cat > "$APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
 [Desktop Entry]
 Name=${tool}
 Exec=${command}
@@ -303,100 +287,30 @@ Icon=gnome-panel-launcher
 Type=Application
 EOF
 
-    # Check if the alacarte-made menu already exists
-    if ! xmlstarlet sel -t -v "/Menu/Menu[Name='alacarte-made']" "$CONFIG_MENU_PATH/xfce-applications.menu" > /dev/null 2>&1; then
-        # Create main alacarte-made menu if it doesn't exist
-        xmlstarlet ed \
-            --subnode "/Menu" \
-            --type elem -n "Menu" -v "" \
-            --subnode "/Menu/Menu[last()]" \
-            --type elem -n "Name" -v "alacarte-made" \
-            --subnode "/Menu/Menu[last()]" \
-            --type elem -n "Directory" -v "alacarte-made.directory" \
-            --subnode "/Menu/Menu[last()]" \
-            --type elem -n "DefaultLayout" -v "" \
-            --insert "/Menu/Menu[last()]/DefaultLayout" \
-            --type attr -n "inline" -v "false" \
-            --subnode "/Menu/Menu[last()]" \
-            --type elem -n "Layout" -v "" \
-            --subnode "/Menu/Menu[last()]/Layout" \
-            --type elem -n "Merge" -v "" \
-            --insert "/Menu/Menu[last()]/Layout/Merge" \
-            --type attr -n "type" -v "menus" \
-            --subnode "/Menu/Menu[last()]/Layout" \
-            --type elem -n "Merge" -v "" \
-            --insert "/Menu/Menu[last()]/Layout/Merge[last()]" \
-            --type attr -n "type" -v "files" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-    fi
-    
-    # Check if alacarte-made-1 submenu exists
-    if ! xmlstarlet sel -t -v "/Menu/Menu[Name='alacarte-made']/Menu[Name='alacarte-made-1']" "$CONFIG_MENU_PATH/xfce-applications.menu" > /dev/null 2>&1; then
-        # Create alacarte-made-1 submenu if it doesn't exist
-        xmlstarlet ed \
-            --subnode "/Menu/Menu[Name='alacarte-made']" \
-            --type elem -n "Menu" -v "" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]" \
-            --type elem -n "Name" -v "alacarte-made-1" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]" \
-            --type elem -n "Directory" -v "alacarte-made-1.directory" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]" \
-            --type elem -n "Include" -v "" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]" \
-            --type elem -n "Layout" -v "" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]/Layout" \
-            --type elem -n "Merge" -v "" \
-            --insert "/Menu/Menu[Name='alacarte-made']/Menu[last()]/Layout/Merge" \
-            --type attr -n "type" -v "menus" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]/Layout" \
-            --type elem -n "Filename" -v "alacarte-made.desktop" \
-            --subnode "/Menu/Menu[Name='alacarte-made']/Menu[last()]/Layout" \
-            --type elem -n "Merge" -v "" \
-            --insert "/Menu/Menu[Name='alacarte-made']/Menu[last()]/Layout/Merge[last()]" \
-            --type attr -n "type" -v "files" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-    fi
-    
-    # Add new desktop file to alacarte-made-1 submenu
+    # Add Include and Layout to the menu XML file
     xmlstarlet ed \
-        --subnode "/Menu/Menu[Name='alacarte-made']/Menu[Name='alacarte-made-1']/Include" \
-        --type elem -n "Filename" -v "${desktop_filename}" \
+        --subnode "/Menu" \
+        --type elem -n "Menu" -v "" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Name" -v "Unk9vvN-${category}-${sub_category}" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Directory" -v "Unk9vvN-${category}-${sub_category}.directory" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Include" -v "" \
+        --subnode "/Menu/Menu[last()]/Include" \
+        --type elem -n "Filename" -v "${tool}.desktop" \
+        --subnode "/Menu/Menu[last()]" \
+        --type elem -n "Layout" -v "" \
+        --subnode "/Menu/Menu[last()]/Layout" \
+        --type elem -n "Merge" -v "" \
+        --insert "/Menu/Menu[last()]/Layout/Merge" \
+        --type attr -n "type" -v "menus" \
+        --subnode "/Menu/Menu[last()]/Layout" \
+        --type elem -n "Merge" -v "" \
+        --insert "/Menu/Menu[last()]/Layout/Merge[last()]" \
+        --type attr -n "type" -v "files" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
-    
-    # Create directory files if they don't exist
-    if [ ! -f "$CONFIG_DIRECTORIES_PATH/alacarte-made.directory" ]; then
-        cat > "$CONFIG_DIRECTORIES_PATH/alacarte-made.directory" << EOF
-[Desktop Entry]
-Name=alacarte-made
-Type=Directory
-Icon=folder
-EOF
-    fi
-    
-    if [ ! -f "$CONFIG_DIRECTORIES_PATH/alacarte-made-1.directory" ]; then
-        cat > "$CONFIG_DIRECTORIES_PATH/alacarte-made-1.directory" << EOF
-[Desktop Entry]
-Name=alacarte-made-1
-Type=Directory
-Icon=folder
-EOF
-    fi
-    
-    # Create base desktop file if it doesn't exist
-    if [ ! -f "$APPLICATIONS_PATH/alacarte-made.desktop" ]; then
-        cat > "$APPLICATIONS_PATH/alacarte-made.desktop" << EOF
-[Desktop Entry]
-Name=alacarte-made
-Exec=true
-Comment=
-Terminal=false
-Icon=gnome-panel-launcher
-Type=Application
-EOF
-    fi
 }
 
 
