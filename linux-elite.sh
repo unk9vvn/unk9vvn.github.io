@@ -44,7 +44,8 @@ else
     done
 fi
 
-# Get USER and LAN IP
+# Get USER and LAN IP and GOPROXY
+export GOPROXY="https://goproxy.cn,direct"
 USERS=$(cd /home;ls | awk '{print $1}')
 LAN=$(hostname -I | awk '{print $1}')
 
