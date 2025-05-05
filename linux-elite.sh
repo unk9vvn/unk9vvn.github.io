@@ -141,34 +141,36 @@ Type=Directory
 EOF
 
         # Add each submenu separately to the XML
+        # Ensure we're using consistent naming here
         xmlstarlet ed \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Include" -v "" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     done
 
     # Add Layout to the main menu
     xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
-        -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
+        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
+        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 
     # Include each submenu item in the layout
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         xmlstarlet ed \
-            -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
             "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     done
 
     # Add final Merge to the layout
     xmlstarlet ed \
-        -s "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
+        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
+        -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
@@ -183,16 +185,12 @@ menu()
 
     # Initialize Unk9vvN menu
     if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
-        curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-        cat > "$DESKTOP_DIRECTORIES_PATH/alacarte-made.directory" << EOF
-[Desktop Entry]
-Name=Unk9vvN
-Comment=unk9vvn.github.io
-Icon=$IMAGES_PATH/unk9vvn-logo.jpg
-Type=Directory
-EOF
-
-        cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
+        # اگر فایل منو وجود ندارد، آن را از فایل پیش‌فرض سیستم کپی کنیم
+        if [ -f "/etc/xdg/menus/xfce-applications.menu" ]; then
+            cp "/etc/xdg/menus/xfce-applications.menu" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        else
+            # اگر فایل پیش‌فرض هم وجود ندارد، یک فایل منو ساده ایجاد کنیم
+            cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
   PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
@@ -201,10 +199,6 @@ EOF
         <Name>Xfce</Name>
         <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
         <DefaultLayout inline="false"/>
-        <Menu>
-                <Name>alacarte-made</Name>
-                <Directory>alacarte-made.directory</Directory>
-        </Menu>
         <Layout>
                 <Merge type="menus"/>
                 <Filename>xfce4-run.desktop</Filename>
@@ -217,27 +211,21 @@ EOF
                 <Menuname>Settings</Menuname>
                 <Menuname>Usual Applications</Menuname>
                 <Separator/>
-                <Menuname>Information Gathering</Menuname>
-                <Menuname>Vulnerability Analysis</Menuname>
-                <Menuname>Web Application Analysis</Menuname>
-                <Menuname>Database Assessment</Menuname>
-                <Menuname>Password Attacks</Menuname>
-                <Menuname>Wireless Attacks</Menuname>
-                <Menuname>Reverse Engineering</Menuname>
-                <Menuname>Exploit Frameworks</Menuname>
-                <Menuname>Sniffing - Spoofing</Menuname>
-                <Menuname>Maintaining Access</Menuname>
-                <Menuname>Forensic Tools</Menuname>
-                <Menuname>Reporting Tools</Menuname>
-                <Menuname>Social Engineering Tools</Menuname>
-                <Menuname>System Services</Menuname>
-                <Menuname>Kali and OffSec Links</Menuname>
-                <Separator/>
                 <Filename>xfce4-about.desktop</Filename>
                 <Filename>xfce4-session-logout.desktop</Filename>
                 <Merge type="files"/>
         </Layout>
 </Menu>
+EOF
+        fi
+        
+        curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
+        cat > "$DESKTOP_DIRECTORIES_PATH/alacarte-made.directory" << EOF
+[Desktop Entry]
+Name=Unk9vvN
+Comment=unk9vvn.github.io
+Icon=$IMAGES_PATH/unk9vvn-logo.jpg
+Type=Directory
 EOF
         chmod 664 $CONFIG_MENU_PATH/xfce-applications.menu
     fi
@@ -253,12 +241,23 @@ Icon=$IMAGES_PATH/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
-    xmlstarlet ed \
-        -a "/Menu/DefaultLayout" -t elem -n "Menu" -v "" \
-        -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
-        -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    # اضافه کردن منوی Unk9vvN به فایل منو
+    if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+        xmlstarlet ed \
+            -s "/Menu" -t elem -n "Menu" -v "" \
+            -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
+            -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    fi
+
+    # اضافه کردن منوی Unk9vvN به قسمت Layout فایل منو
+    if ! xmlstarlet sel -Q -t -v "/Menu/Layout/Menuname[text()='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+        xmlstarlet ed \
+            -s "/Menu/Layout" -t elem -n "Menuname" -v "Unk9vvN" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    fi
 
     # Initialize additional menus
     create_menu "Offensive-Security" "Penetration-Testing" "Web Mobile Cloud Network Wireless IoT"
@@ -289,9 +288,9 @@ Type=Application
 EOF
 
     # Find the correct menu path for this subcategory
-    local menu_path="/Menu/Menu/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
+    local menu_path="/Menu/Menu[Name='Unk9vvN']/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
     
-    # Check if Include element exists, create if not
+    # Check if Include element exists in the correct path
     if ! xmlstarlet sel -Q -t -v "${menu_path}/Include" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "${menu_path}" -t elem -n "Include" -v "" \
@@ -299,11 +298,13 @@ EOF
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     fi
 
-    # Add the tool to the existing Include section
-    xmlstarlet ed \
-        -s "${menu_path}/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    # Add the tool to the existing Include section if it doesn't already exist
+    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include/Filename[text()='${tool}.desktop']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+        xmlstarlet ed \
+            -s "${menu_path}/Include" -t elem -n "Filename" -v "${tool}.desktop" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    fi
 }
 
 
