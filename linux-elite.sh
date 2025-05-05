@@ -199,6 +199,10 @@ menu()
         <Name>Xfce</Name>
         <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
         <DefaultLayout inline="false"/>
+        <Menu>
+                <Name>alacarte-made</Name>
+                <Directory>alacarte-made.directory</Directory>
+        </Menu>
         <Layout>
                 <Merge type="menus"/>
                 <Filename>xfce4-run.desktop</Filename>
@@ -211,6 +215,22 @@ menu()
                 <Menuname>Settings</Menuname>
                 <Menuname>Usual Applications</Menuname>
                 <Separator/>
+                <Menuname>Information Gathering</Menuname>
+                <Menuname>Vulnerability Analysis</Menuname>
+                <Menuname>Web Application Analysis</Menuname>
+                <Menuname>Database Assessment</Menuname>
+                <Menuname>Password Attacks</Menuname>
+                <Menuname>Wireless Attacks</Menuname>
+                <Menuname>Reverse Engineering</Menuname>
+                <Menuname>Exploit Frameworks</Menuname>
+                <Menuname>Sniffing - Spoofing</Menuname>
+                <Menuname>Maintaining Access</Menuname>
+                <Menuname>Forensic Tools</Menuname>
+                <Menuname>Reporting Tools</Menuname>
+                <Menuname>Social Engineering Tools</Menuname>
+                <Menuname>System Services</Menuname>
+                <Menuname>Kali and OffSec Links</Menuname>
+                <Separator/>
                 <Filename>xfce4-about.desktop</Filename>
                 <Filename>xfce4-session-logout.desktop</Filename>
                 <Merge type="files"/>
@@ -219,14 +239,6 @@ menu()
 EOF
         fi
         
-        curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg
-        cat > "$DESKTOP_DIRECTORIES_PATH/alacarte-made.directory" << EOF
-[Desktop Entry]
-Name=Unk9vvN
-Comment=unk9vvn.github.io
-Icon=$IMAGES_PATH/unk9vvn-logo.jpg
-Type=Directory
-EOF
         chmod 664 $CONFIG_MENU_PATH/xfce-applications.menu
     fi
 
