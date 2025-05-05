@@ -288,28 +288,20 @@ Icon=gnome-panel-launcher
 Type=Application
 EOF
 
-    # Add Include and Layout to the menu XML file
+    # Find the correct menu path for this subcategory
+    local menu_path="/Menu/Menu/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
+    
+    # Check if Include element exists, create if not
+    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+        xmlstarlet ed \
+            -s "${menu_path}" -t elem -n "Include" -v "" \
+            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+    fi
+
+    # Add the tool to the existing Include section
     xmlstarlet ed \
-        --subnode "/Menu" \
-        --type elem -n "Menu" -v "" \
-        --subnode "/Menu/Menu[last()]" \
-        --type elem -n "Name" -v "Unk9vvN-${category}-${sub_category}" \
-        --subnode "/Menu/Menu[last()]" \
-        --type elem -n "Directory" -v "Unk9vvN-${category}-${sub_category}.directory" \
-        --subnode "/Menu/Menu[last()]" \
-        --type elem -n "Include" -v "" \
-        --subnode "/Menu/Menu[last()]/Include" \
-        --type elem -n "Filename" -v "${tool}.desktop" \
-        --subnode "/Menu/Menu[last()]" \
-        --type elem -n "Layout" -v "" \
-        --subnode "/Menu/Menu[last()]/Layout" \
-        --type elem -n "Merge" -v "" \
-        --insert "/Menu/Menu[last()]/Layout/Merge" \
-        --type attr -n "type" -v "menus" \
-        --subnode "/Menu/Menu[last()]/Layout" \
-        --type elem -n "Merge" -v "" \
-        --insert "/Menu/Menu[last()]/Layout/Merge[last()]" \
-        --type attr -n "type" -v "files" \
+        -s "${menu_path}/Include" -t elem -n "Filename" -v "${tool}.desktop" \
         "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
