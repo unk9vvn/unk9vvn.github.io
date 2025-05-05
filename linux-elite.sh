@@ -185,12 +185,12 @@ menu()
 
     # Initialize Unk9vvN menu
     if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
-        # اگر فایل منو وجود ندارد، آن را از فایل پیش‌فرض سیستم کپی کنیم
-        if [ -f "/etc/xdg/menus/xfce-applications.menu" ]; then
+	# If the menu file does not exist, copy it from the system default file
+	if [ -f "/etc/xdg/menus/xfce-applications.menu" ]; then
             cp "/etc/xdg/menus/xfce-applications.menu" "$CONFIG_MENU_PATH/xfce-applications.menu"
         else
-            # اگر فایل پیش‌فرض هم وجود ندارد، یک فایل منو ساده ایجاد کنیم
-            cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
+	    # If the default file doesn't exist, create a simple menu file
+	    cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
   PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
@@ -253,7 +253,7 @@ Icon=$IMAGES_PATH/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
-    # اضافه کردن منوی Unk9vvN به فایل منو
+    # Add Unk9vvN menu to menu file
     if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "/Menu" -t elem -n "Menu" -v "" \
@@ -263,7 +263,7 @@ EOF
             mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
     fi
 
-    # اضافه کردن منوی Unk9vvN به قسمت Layout فایل منو
+    # Add the Unk9vvN menu to the Layout section of the menu file
     if ! xmlstarlet sel -Q -t -v "/Menu/Layout/Menuname[text()='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "/Menu/Layout" -t elem -n "Menuname" -v "Unk9vvN" \
