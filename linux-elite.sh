@@ -6249,7 +6249,7 @@ main()
 					curl -fsSL https://archive.kali.org/archive-key.asc | tee /etc/apt/trusted.gpg.d/kali-archive-keyring.asc
 					echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" | tee /etc/apt/sources.list.d/kali.list
 					apt-get -y --allow-unauthenticated install kali-archive-keyring
-                    apt update
+					apt update
 				fi
     
 				# Development tools and programming languages
