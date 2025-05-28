@@ -1,2 +1,0 @@
-# Reflected Cross Site Scripting
-

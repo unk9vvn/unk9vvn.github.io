@@ -1,2 +1,0 @@
-# Stored Cross Site Scripting
-

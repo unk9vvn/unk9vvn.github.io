@@ -1,2 +1,0 @@
-# Defenses Against Application Misuse
-

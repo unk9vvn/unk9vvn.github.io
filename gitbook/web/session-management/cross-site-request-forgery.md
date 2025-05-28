@@ -1,2 +1,0 @@
-# Cross Site Request Forgery
-
