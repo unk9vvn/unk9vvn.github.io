@@ -16,7 +16,7 @@
 _Create Script_
 
 ```bash
-sudo nano sc-brute-force.sh
+sudo nano sc-user-enum.sh
 ```
 
 ```bash
@@ -118,7 +118,7 @@ fi
 _Run Script_
 
 ```bash
-sudo chmod +x sc-brute-force.sh;sudo ./sc-brute-force.sh $WEBSITE/login \
+sudo chmod +x sc-user-enum.sh;sudo ./sc-user-enum.sh $WEBSITE/login \
 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt \
 /usr/share/seclists/Passwords/xato-net-10-million-passwords-1000000.txt
 ```
@@ -130,7 +130,7 @@ sudo chmod +x sc-brute-force.sh;sudo ./sc-brute-force.sh $WEBSITE/login \
 _Create Script_
 
 ```bash
-sudo nano em-brute-force.sh
+sudo nano em-user-enum.sh
 ```
 
 ```bash
@@ -234,7 +234,7 @@ fi
 _Run Script_
 
 ```bash
-sudo chmod +x em-brute-force.sh;sudo ./em-brute-force.sh $WEBSITE/login \
+sudo chmod +x em-user-enum.sh;sudo ./em-user-enum.sh $WEBSITE/login \
 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt \
 /usr/share/seclists/Passwords/xato-net-10-million-passwords-1000000.txt
 ```
@@ -246,7 +246,7 @@ sudo chmod +x em-brute-force.sh;sudo ./em-brute-force.sh $WEBSITE/login \
 _Create Script_
 
 ```bash
-sudo nano nu-brute-force.sh
+sudo nano nu-user-enum.sh
 ```
 
 ```bash
@@ -347,6 +347,16 @@ fi
 _Run Script_
 
 ```bash
-sudo chmod +x nu-brute-force.sh;sudo ./nu-brute-force.sh $WEBSITE/login \
+sudo chmod +x nu-user-enum.sh;sudo ./nu-user-enum.sh $WEBSITE/login \
 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
+```
+
+### **URL Redirections**
+
+#### [FFUF](https://github.com/ffuf/ffuf)
+
+Create Script
+
+```
+sudo nano nu-user-enum.sh
 ```
