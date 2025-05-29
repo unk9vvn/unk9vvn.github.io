@@ -355,8 +355,8 @@ sudo chmod +x nu-user-enum.sh;sudo ./nu-user-enum.sh $WEBSITE/login \
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-Create Script
+_Create Script_
 
-```
+```bash
 sudo nano nu-user-enum.sh
 ```
