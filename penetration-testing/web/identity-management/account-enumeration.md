@@ -74,7 +74,7 @@ if [ -z "$PASSWORD_FIELD" ]; then PASSWORD_FIELD="password"; fi
 COOKIES=$(curl -s -I "$URL" | grep -i "set-cookie:" | sed 's/set-cookie: //gi' | sed 's/\r$//' | tr '\n' '; ' | sed 's/; $//')
 
 # Prepare payload data for fuzzing
-DATA="${USERNAME_FIELD}=FUZZ&${PASSWORD_FIELD}=FUZZ2"
+DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 
 # Build headers string - Fixed approach
 HEADERS=""
@@ -96,7 +96,7 @@ if [[ "$METHOD" == "get" ]]; then
     # For GET: append parameters to URL
     FFUF_URL="${FULL_ACTION}?${DATA}"    
     ffuf -u "$FFUF_URL" \
-         -w "$USERLIST:FUZZ" \
+         -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -X GET \
          -ac -c -r \
@@ -105,7 +105,7 @@ if [[ "$METHOD" == "get" ]]; then
 else
     # For POST and others: send data with -d    
     ffuf -u "$FULL_ACTION" \
-         -w "$USERLIST:FUZZ" \
+         -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -X POST \
          -d "$DATA" \
