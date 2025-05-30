@@ -254,7 +254,7 @@ sudo nano nu-user-enum.sh
 
 # Check if URL is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <domain.com/login> <userlist.txt> <passlist.txt>"
+    echo "Usage: $0 <domain.com/login> <userlist.txt>"
     exit 1
 fi
 
@@ -349,14 +349,4 @@ _Run Script_
 ```bash
 sudo chmod +x nu-user-enum.sh;sudo ./nu-user-enum.sh $WEBSITE/login \
 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
-```
-
-### **URL Redirections**
-
-#### [FFUF](https://github.com/ffuf/ffuf)
-
-_Create Script_
-
-```bash
-sudo nano nu-user-enum.sh
 ```
