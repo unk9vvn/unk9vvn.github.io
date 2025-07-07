@@ -7,7 +7,7 @@
 
 ## Cheat Sheet
 
-### Status Code
+### Register & Weak Username
 
 [**Katana** ](https://github.com/projectdiscovery/katana)**&** [**cURL**](https://curl.se/) **&** [**WayBackURL**](https://github.com/tomnomnom/waybackurls)**​**
 
@@ -215,7 +215,6 @@ LAST_NAME="smith"
 analyze_username "$USERNAME" "$FIRST_NAME" "$LAST_NAME"
 
 echo -e "${GREEN}[✔] Done!${NC}"
-
 ```
 
 _Run Script_
