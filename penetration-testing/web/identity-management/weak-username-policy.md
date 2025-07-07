@@ -108,7 +108,6 @@ fi
 _Run Script_
 
 ```bash
-sudo chmod +x sc-user-enum.sh;sudo ./sc-user-enum.sh $WEBSITE/login \
-/usr/share/seclists/Usernames/xato-net-10-million-usernames.txt \
-/usr/share/seclists/Passwords/xato-net-10-million-passwords-1000000.txt
+sudo chmod +x sc-weak-username.sh;sudo ./sc-weak-username.sh $WEBSITE/login \
+/usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
 ```
