@@ -1,14 +1,14 @@
 #!/bin/bash
-ver='4.6'
+ver="4.6"
 
 
-RED='\e[1;31m%s\e[0m\n'
-GREEN='\e[1;32m%s\e[0m\n'
-YELLOW='\e[1;33m%s\e[0m\n'
-BLUE='\e[1;34m%s\e[0m\n'
-MAGENTO='\e[1;35m%s\e[0m\n'
-CYAN='\e[1;36m%s\e[0m\n'
-WHITE='\e[1;37m%s\e[0m\n'
+RED="\e[1;31m%s\e[0m\n"
+GREEN="\e[1;32m%s\e[0m\n"
+YELLOW="\e[1;33m%s\e[0m\n"
+BLUE="\e[1;34m%s\e[0m\n"
+MAGENTO="\e[1;35m%s\e[0m\n"
+CYAN="\e[1;36m%s\e[0m\n"
+WHITE="\e[1;37m%s\e[0m\n"
 
 
 # Check if the script is run as root
