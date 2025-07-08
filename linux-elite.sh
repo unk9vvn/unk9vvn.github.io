@@ -2565,6 +2565,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install linkedin2username
+	if [ ! -d "/usr/share/linkedin2username" ]; then
+		name="linkedin2username"
+		git clone https://github.com/initstring/linkedin2username /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 linkedin2username.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install thetimemachine
 	if [ ! -d "/usr/share/thetimemachine" ]; then
 		name="thetimemachine"
