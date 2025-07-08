@@ -96,7 +96,7 @@ logo()
     printf "\n\n"
 }
 
-
+# menu creator
 create_menu()
 {
     local TOPIC_MENU="$1"
@@ -175,7 +175,7 @@ EOF
         mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
 }
 
-
+# main menu
 menu()
 {
     mkdir -p "$IMAGES_PATH"
@@ -280,7 +280,7 @@ EOF
     create_menu "Defensive-Security" "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
 }
 
-
+# desktop menu
 menu_entry()
 {
     local sub_category="$1"
@@ -319,7 +319,7 @@ EOF
     fi
 }
 
-
+# pip3 installer
 pip_installer()
 {
     local sub_category="$1"
@@ -339,7 +339,7 @@ pip_installer()
     done
 }
 
-
+# npm installer
 npm_installer()
 {
     local sub_category="$1"
@@ -359,7 +359,7 @@ npm_installer()
     done
 }
 
-
+# gem installer
 gem_installer()
 {
     local sub_category="$1"
@@ -379,7 +379,7 @@ gem_installer()
     done
 }
 
-
+# go installer
 go_installer()
 {
     local sub_category="$1"
@@ -407,7 +407,7 @@ go_installer()
     done <<< "$commands"
 }
 
-
+# penetration testing tools
 penetrating_testing()
 {
 	printf "$YELLOW"  "# --------------------------------------Web-Penetration-Testing-------------------------------------- #"
@@ -2490,7 +2490,7 @@ EOF
 	exit
 }
 
-
+# ted team tools
 red_team()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
@@ -4292,7 +4292,7 @@ EOF
 	exit
 }
 
-
+# ics security tools
 ics_security()
 {
 	printf "$YELLOW"  "# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #"
@@ -5120,7 +5120,7 @@ EOF
 	exit
 }
 
-
+# blue team tools
 blue_team()
 {
 	printf "$YELLOW"  "# -------------------------------------------Harden-Blue-Team---------------------------------------- #"
@@ -5636,7 +5636,7 @@ EOF
 	exit
 }
 
-
+# security audit tools
 security_audit()
 {
 	printf "$YELLOW"  "# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #"
@@ -6178,7 +6178,7 @@ EOF
 	exit
 }
 
-
+# main menu
 main()
 {
 	if [ -f /etc/os-release ]; then
@@ -6343,7 +6343,7 @@ menu
 main
 logo
 
-
+# menu entity
 select opt in "Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic" "Blue-Team" "Security-Audit" Exit
 do
 	case $opt in
