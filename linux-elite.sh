@@ -2714,6 +2714,20 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install zphisher
+	if [ ! -d "/usr/share/zphisher" ]; then
+		name="zphisher"
+		git clone https://github.com/htr-tech/zphisher /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;bash zphisher.sh "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install executepefrompngvialnk
 	if [ ! -d "/usr/share/executepefrompngvialnk" ]; then
 		name="executepefrompngvialnk"
