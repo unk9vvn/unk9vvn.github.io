@@ -3815,6 +3815,19 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# isntall keyway
+	if [ ! -d "/usr/share/keyway" ]; then
+		name="keyway"
+  		mkdir -p /usr/share/$name
+		wget https://github.com/keywa7/keywa7/releases/download/keyway1.0/server
+		wget https://github.com/keywa7/keywa7/releases/download/keyway1.0/agent
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/server /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# isntall ahmyth
 	if [ ! -f "/usr/bin/ahmyth" ]; then
 		name="ahmyth"
