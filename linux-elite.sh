@@ -665,6 +665,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install sharpyshell
+	if [ ! -d "/usr/share/sharpyshell" ]; then
+		name="sharpyshell"
+		git clone https://github.com/antonioCoco/SharPyShell /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 SharPyShell.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+ 
  	# install loxs
 	if [ ! -d "/usr/share/loxs" ]; then
 		name="loxs"
