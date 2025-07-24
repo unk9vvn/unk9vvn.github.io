@@ -878,6 +878,16 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install whatwaf
+	if [ ! -d "/usr/share/whatwaf" ]; then
+		name="wafw00f"
+		git clone https://github.com/Ekultek/WhatWaf /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;python3 setup.py install
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install graphpython
 	if [ ! -d "/usr/share/graphpython" ]; then
 		name="graphpython"
