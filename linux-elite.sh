@@ -1166,7 +1166,7 @@ EOF
 	if [ ! -d "/usr/share/ysoserial.net" ]; then
 		name="ysoserial.net"
 		mkdir -p /usr/share/$name
-		wget https://github.com/pwntester/ysoserial.net/releases/latest/download/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/$name.zip
+		wget https://github.com/pwntester/ysoserial.net/releases/download/v1.36/ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share;mv -f /usr/share/Release /usr/share/$name;rm -f /tmp/$name.zip
 		chmod 755 /usr/share/$name/*
 		cat > /usr/bin/$name << EOF
