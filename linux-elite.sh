@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="4.6"
+ver="4.7"
 
 
 # Color definitions
