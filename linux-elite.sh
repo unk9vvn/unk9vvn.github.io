@@ -6260,7 +6260,7 @@ main()
 				# Development tools and programming languages
 				apt install -qy \
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
-				    mingw-w64 rustup golang qtchooser default-jdk \
+				    mingw-w64 rustup golang qtchooser default-jdk golang \
 				    nodejs npm python3 python3-full python2 pypy3-venv \
 				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
@@ -6324,7 +6324,7 @@ main()
 				# Development tools and programming languages
 				apt install -qy \
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
-				    mingw-w64 rustup golang qtchooser default-jdk \
+				    mingw-w64 rustup golang qtchooser default-jdk golang \
 				    nodejs npm python3 python3-full python2 pypy3-venv \
 				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
