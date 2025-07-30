@@ -6244,7 +6244,7 @@ main()
 
 				# debian repo added
 				if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
+					echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" | tee -a /etc/apt/sources.list
 					apt update
 				fi
 
@@ -6262,7 +6262,7 @@ main()
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
 				    mingw-w64 rustup golang qtchooser default-jdk \
 				    nodejs npm python3 python3-full python2 pypy3-venv \
-				    dotnet-sdk-6.0 nim mono-complete mono-devel rlwrap
+				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
 				# Virtualization and container tools
 				apt install -qy \
@@ -6299,7 +6299,7 @@ main()
 
 				# debian repo added
 				if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-					echo "deb http://deb.debian.org/debian buster main" | tee -a /etc/apt/sources.list
+					echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" | tee -a /etc/apt/sources.list
 					apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 0E98404D386FA1D9 DCC9EFBF77E11517
 					apt update
 				fi
@@ -6326,7 +6326,7 @@ main()
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
 				    mingw-w64 rustup golang qtchooser default-jdk \
 				    nodejs npm python3 python3-full python2 pypy3-venv \
-				    dotnet-sdk-6.0 nim mono-complete mono-devel rlwrap
+				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
 				# Virtualization and container tools
 				apt install -qy \
