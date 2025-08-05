@@ -44,8 +44,7 @@ fi
 for i in wget msfconsole beef-xss bettercap netdiscover; do
   if ! command -v "$i" &>/dev/null; then
     color_print RED "[X] $i NOT installed!"
-  else
-    color_print GREEN "[✓] $i found."
+    apt install -y $i
   fi
 done
 
