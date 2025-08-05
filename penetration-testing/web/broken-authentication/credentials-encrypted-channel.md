@@ -38,7 +38,7 @@ color_print() {
 pkill -f 'ngrok|ruby|msfconsole|apache2'
 
 # --- Tool Check ---
-for i in wget curl openssl metasploit-framework imagemagick apache2 jq bettercap arp-scan rar python3 python3-pip; do
+for i in wget curl jq rar openssl metasploit-framework imagemagick apache2 bettercap arp-scan python3 python3-pip; do
     if ! command -v "$i" &>/dev/null; then
         color_print RED "[X] $i NOT installed!"
         apt install -y $i
