@@ -38,14 +38,15 @@ color_print() {
 pkill -f 'ngrok|ruby|msfconsole|apache2'
 
 # --- Tool Check ---
-for i in wget openssl metasploit-framework apache2 bettercap arp-scan rar python3 python3-pip; do
-  if ! command -v "$i" &>/dev/null; then
-    color_print RED "[X] $i NOT installed!"
-    apt install -y $i
-  fi
+for i in wget curl openssl metasploit-framework imagemagick apache2 jq bettercap arp-scan rar python3 python3-pip; do
+    if ! command -v "$i" &>/dev/null; then
+        color_print RED "[X] $i NOT installed!"
+        apt install -y $i
+    fi
 
-  if ! command -v "pyinstaller" &>/dev/null; then
-    pip3 install pyinstaller --break-system-packages
+    if ! command -v "pyinstaller" &>/dev/null; then
+        pip3 install pyinstaller --break-system-packages
+    fi
 done
 
 # --- Detect interface + LAN IP ---
