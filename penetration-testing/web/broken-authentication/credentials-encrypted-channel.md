@@ -116,7 +116,7 @@ cd /usr/share/beef-xss && ./beef -x &>/dev/null &
 # --- Discover clients with netdiscover ---
 color_print CYAN "[*] Scanning network ($IFACE) using arp-scan..."
 LIVE_HOSTS=$(mktemp)
-arp-scan --interface="$IFACE" --localnet --plain > "$LIVE_HOSTS"
+arp-scan --interface="$IFACE" --localnet --ignoredups --plain > "$LIVE_HOSTS"
 
 # Filter IPs (remove gateway IP)
 IPS=$(awk '{print $1}' "$LIVE_HOSTS" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v "$LAN" | paste -sd ',' -)
