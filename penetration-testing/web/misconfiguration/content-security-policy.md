@@ -158,7 +158,6 @@ RESET='\e[0m'
 # Check for ROOT
 if [[ "$(id -u)" -ne 0 ]]; then
     printf "${RED}[X] Please run as ROOT...\n"
-    printf "${GREEN}[*] sudo ./beef-csp-bypass.sh\n"
     exit 1
 fi
 
