@@ -14,7 +14,7 @@
 _Create Script_
 
 ```bash
-sudo nano mitm-beef-bettercap.sh
+sudo nano mitm-bettercap.sh
 ```
 
 ```bash
@@ -137,5 +137,5 @@ net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
 _Run & Execute_
 
 ```bash
-sudo chmod +x mitm-beef-bettercap.sh;sudo ./mitm-beef-bettercap.sh
+sudo chmod +x mitm-bettercap.sh;sudo ./mitm-bettercap.sh
 ```
