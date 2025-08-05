@@ -115,7 +115,7 @@ cd /usr/share/beef-xss && ./beef -x &>/dev/null &
 
 # --- Discover clients with netdiscover ---
 color_print CYAN "[*] Scanning for live hosts on network ($IFACE)..."
-LIVE_HOSTS=$(mktemp)
+LIVE_HOSTS="/tmp/hosts.txt"
 timeout 30s netdiscover -P > "$LIVE_HOSTS"
 
 color_print GREEN "[*] Live Clients Detected:"
