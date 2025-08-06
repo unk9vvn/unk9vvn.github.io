@@ -9,7 +9,7 @@
 
 ### Man In The Middle
 
-#### [BeEF ](https://beefproject.com/)& [Bettercap](https://www.bettercap.org/)
+#### [Bettercap](https://www.bettercap.org/)
 
 _Create Script_
 
