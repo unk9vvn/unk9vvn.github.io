@@ -133,7 +133,6 @@ except:
     pass
 
 sys.exit(0)
-
 EOF
 
 cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
