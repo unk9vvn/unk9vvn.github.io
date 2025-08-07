@@ -7,6 +7,20 @@
 
 ## Cheat Sheet
 
+### Scan Vulns
+
+#### [testssl.sh](https://github.com/testssl/testssl.sh)
+
+```bash
+testssl $WEBSITE
+```
+
+#### [SSLyze](https://github.com/nabla-c0d3/sslyze)
+
+```bash
+sslyze --regular $WEBSITE
+```
+
 ### Man In The Middle
 
 #### [Bettercap](https://www.bettercap.org/)
