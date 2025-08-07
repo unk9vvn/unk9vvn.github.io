@@ -9,6 +9,14 @@
 
 ### Scan Vulns
 
+#### [cURL](https://curl.se/)
+
+```bash
+curl -vk --tlsv1.1 https://$WEBSITE; \
+curl -vk --tlsv1.2 https://$WEBSITE; \
+curl -vk --tlsv1.3 https://$WEBSITE;
+```
+
 #### [testssl.sh](https://github.com/testssl/testssl.sh)
 
 ```bash
