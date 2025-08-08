@@ -45,7 +45,6 @@ Referer: http://localhost
 Accept-Encoding: gzip, deflate, br
 Cookie: PHPSESSID=05462b92721e76e0788c8c15d69b539
 Connection: keep-alive
-
 ```
 
 #### Cookie Header
