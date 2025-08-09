@@ -75,7 +75,7 @@ msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;e
 MSF_PID=$!
 
 # Wait for certificate files (max 30s)
-for i in {1..30}; do
+for i in {1..5}; do
     CERT_CRT=$(find "$HOME/.msf4/loot" -type f -name "*.crt" | head -1)
     CERT_KEY=$(find "$HOME/.msf4/loot" -type f -name "*.key" | head -1)
     [[ -n "$CERT_CRT" && -n "$CERT_KEY" ]] && break
