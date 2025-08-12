@@ -140,7 +140,6 @@ try:
     os.remove(path)
 except FileNotFoundError:
     pass
-
 EOF
 
 cd "$BUILD_DIR"
