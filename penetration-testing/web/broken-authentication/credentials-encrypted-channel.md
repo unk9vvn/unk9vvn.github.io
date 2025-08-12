@@ -92,6 +92,7 @@ color_print GREEN "[*] Local IP: $LAN"
 # ========================
 color_print YELLOW "[*] Cleaning old files..."
 rm -rf "$MITM_DIR" "$BUILD_DIR"
+rm -f /var/www/html/*
 mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
 # ========================
