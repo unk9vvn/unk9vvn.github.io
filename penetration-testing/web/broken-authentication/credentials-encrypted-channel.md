@@ -81,8 +81,8 @@ mkdir -p "$MITM_DIR" "$BUILD_DIR"
 # --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-CA_CERT_CER="$MITM_DIR/bettercap-ca.crt"
-openssl x509 -in "/root/.bettercap-ca.cert.pem" -out $CA_CERT_CER
+CA_CERT_CER="$MITM_DIR/bettercap-ca.cer"
+openssl x509 -in "/root/.bettercap-ca.cert.pem" -outform DER -out "$CA_CERT_CER"
 
 # ========================
 # --- DOWNLOAD AND CREATE ICON ---
