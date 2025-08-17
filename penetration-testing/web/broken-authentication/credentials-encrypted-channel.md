@@ -28,7 +28,7 @@ testssl $WEBSITE
 #### [SSLyze](https://github.com/nabla-c0d3/sslyze)
 
 ```bash
-sslyze --regular $WEBSITE
+sslyze $WEBSITE
 ```
 
 ### Man In The Middle
