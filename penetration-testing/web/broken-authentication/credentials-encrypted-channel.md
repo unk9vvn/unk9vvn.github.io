@@ -81,17 +81,6 @@ wine pyinstaller --version &>/dev/null || {
 }
 
 # ========================
-# --- RCEDIT INSTALLATION ---
-# ========================
-if [ ! -d "/usr/share/rcedit" ]; then
-    color_print YELLOW "[!] Installing rcedit in Wine..."
-    mkdir -p /usr/share/rcedit
-    wget -q -O /usr/share/rcedit/rcedit.exe https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe
-    echo -e '#!/bin/bash\ncd /usr/share/rcedit; wine rcedit.exe "$@"' > /usr/bin/rcedit
-    chmod +x /usr/bin/rcedit
-fi
-
-# ========================
 # --- CLEANUP OLD FILES ---
 # ========================
 color_print YELLOW "[*] Cleaning old files..."
