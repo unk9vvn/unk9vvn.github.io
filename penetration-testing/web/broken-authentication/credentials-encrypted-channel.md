@@ -12,9 +12,11 @@
 #### [cURL](https://curl.se/)
 
 ```bash
-curl -vk --tlsv1.1 https://$WEBSITE; \
-curl -vk --tlsv1.2 https://$WEBSITE; \
-curl -vk --tlsv1.3 https://$WEBSITE;
+curl -vk --sslv2 --head https://$WEBSITE; \
+curl -vk --sslv3 --head https://$WEBSITE; \
+curl -vk --tlsv1.1 --head https://$WEBSITE; \
+curl -vk --tlsv1.2 --head https://$WEBSITE; \
+curl -vk --tlsv1.3 --head https://$WEBSITE;
 ```
 
 #### [testssl.sh](https://github.com/testssl/testssl.sh)
