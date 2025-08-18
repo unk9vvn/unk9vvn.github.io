@@ -187,8 +187,6 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
     grep -v -E "^($LAN|$GATEWAY)$" | sort -u | tr '\n' ',' | sed 's/,$//')
 
-FILTERS=$(echo "$TARGETS" | tr ',' '\n' | sed 's/^/host /' | paste -sd " or " -)
-
 # ========================
 # --- GENERATE CROSS-BROWSER JS ---
 # ========================
