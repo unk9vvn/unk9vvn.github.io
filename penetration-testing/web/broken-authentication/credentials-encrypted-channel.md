@@ -238,7 +238,6 @@ arp.spoof on
 set events.stream.output /tmp/mitm.log
 set events.stream.http.request.dump true
 set events.stream.http.response.dump true
-events.stream on
 EOF
 chmod +x "$MITM_DIR/cert_injector.cap"
 
