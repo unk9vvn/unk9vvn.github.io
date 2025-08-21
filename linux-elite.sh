@@ -3161,6 +3161,16 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install linwinpwn
+	if [ ! -d "/usr/share/linwinpwn" ]; then
+		name="linwinpwn"
+		git clone https://github.com/lefayjey/linWinPwn /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		cd /usr/share/$name;./install.sh
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install deadpotato
 	if [ ! -d "/usr/share/deadpotato" ]; then
 		name="deadpotato"
