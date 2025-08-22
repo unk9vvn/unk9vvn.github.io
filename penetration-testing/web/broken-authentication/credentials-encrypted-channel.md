@@ -289,3 +289,9 @@ iptables -t nat -F
 iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
 ```
+
+_Run Script_
+
+```bash
+sudo chmod +x mitm-bettercap.sh;sudo ./mitm-bettercap.sh
+```
