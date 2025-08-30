@@ -7,7 +7,13 @@
 
 ## Cheat Sheet
 
-### Error Message <a href="#error-message" id="error-message"></a>
+#### Nmap Scan
+
+```bash
+sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
+```
+
+### Status Code <a href="#error-message" id="error-message"></a>
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
@@ -24,7 +30,6 @@ sudo nano default-bruteforce.sh
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 UA_LIST="/usr/share/seclists/Fuzzing/User-Agents/user-agents-whatismybrowserdotcom-mid.txt"
-FAIL_REGEX="(?i)invalid|failed|unauthorized|access denied|incorrect|wrong|try again|نام کاربری|رمز عبور|گذرواژه|اطلاعات اشتباه|ورود ناموفق"
 
 # INPUT CHECK
 if [ $# -lt 1 ]; then
@@ -131,8 +136,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$UA_LIST:UA" \
          -X GET \
          -ac -c -r \
-         -mc 200,301,302 \
-         -fr "$FAIL_REGEX" \
+         -mc 200 \
          -H "User-Agent: UA" \
          "${HEADERS[@]}"
 else
@@ -143,8 +147,7 @@ else
          -X POST \
          -d "$DATA" \
          -ac -c -r \
-         -mc 200,301,302 \
-         -fr "$FAIL_REGEX" \
+         -mc 200 \
          -H "User-Agent: UA" \
          "${HEADERS[@]}"
 fi
