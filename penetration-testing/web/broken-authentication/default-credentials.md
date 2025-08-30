@@ -136,7 +136,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$UA_LIST:UA" \
          -X GET \
          -ac -c -r \
-         -mc 200 \
+         -mc 200,301,302 \
          -H "User-Agent: UA" \
          "${HEADERS[@]}"
 else
@@ -147,7 +147,7 @@ else
          -X POST \
          -d "$DATA" \
          -ac -c -r \
-         -mc 200 \
+         -mc 200,301,302 \
          -H "User-Agent: UA" \
          "${HEADERS[@]}"
 fi
