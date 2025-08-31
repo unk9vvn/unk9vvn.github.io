@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Determine the version and type of running web server to enable further discovery of any known vulnerabilities._
+* [ ] Determine the version and type of running web server to enable further discovery of any known vulnerabilities.
 
 ## Cheat Sheet
 
@@ -42,37 +42,37 @@ nmap -sS -sV --mtu 5000 --script http-methods $WEBSITE
 
 #### [Censys](https://search.censys.io/)
 
-_Server Header_
+Server Header
 
 ```bash
 services.http.response.headers.server: "nginx"
 ```
 
-_SSL Certificate SHA-1 Fingerprint_
+SSL Certificate SHA-1 Fingerprint
 
 ```bash
 services.tls.certificates.leaf_data.fingerprint_sha1: $HASH
 ```
 
-_SSL Certificate SHA-256 Fingerprint_
+SSL Certificate SHA-256 Fingerprint
 
 ```bash
 services.tls.certificates.leaf_data.fingerprint_sha256: $HASH
 ```
 
-_Common Name (CN) in SSL Certificate_
+Common Name (CN) in SSL Certificate
 
 ```bash
 services.tls.certificates.leaf_data.subject.common_name: "$WEBSITE"
 ```
 
-_Operating System_
+Operating System
 
 ```bash
 services.http.response.headers: (key: "OS" and value.headers: "Linux")
 ```
 
-_Powered By Header_
+Powered By Header
 
 ```bash
 services.http.response.headers.x_powered_by: "PHP/7.4.9"
