@@ -8,43 +8,43 @@
 
 ### [Google](https://www.exploit-db.com/google-hacking-database) <a href="#google-hacking" id="google-hacking"></a>
 
-#### _Subdomains Gathering_&#x20;
+#### Subdomains Gathering&#x20;
 
 ```bash
 site:$WEBSITE
 ```
 
-#### _Negative Search_
+#### Negative Search
 
 ```bash
 -www -shop -share -ir -mfa site:$WEBSITE 
 ```
 
-#### _File Upload Endpoints_
+#### File Upload Endpoints
 
 ```bash
 "admin" site:$WEBSITE 
 ```
 
-#### _Http Title_
+#### Http Title
 
 ```bash
 intitle:"Login" site:$WEBSITE
 ```
 
-#### _All http Title_
+#### All http Title
 
 ```bash
 allintitle:"Login" site:$WEBSITE
 ```
 
-#### _Http Text_
+#### Http Text
 
 ```bash
 intext:"Login" site:$WEBSITE
 ```
 
-#### _File Type_
+#### File Type
 
 {% code fullWidth="false" %}
 ```bash
@@ -65,7 +65,7 @@ site:$WEBSITE
 ```
 {% endcode %}
 
-#### _Extension_
+#### Extension
 
 ```bash
 ext:log | 
@@ -89,7 +89,7 @@ ext:daf
 site:$WEBSITE
 ```
 
-#### _Sensitive Documents_
+#### Sensitive Documents
 
 ```bash
 ext:txt | 
@@ -104,13 +104,13 @@ ext:docx
 site:$WEBSITE
 ```
 
-#### _Sensitive JS_
+#### Sensitive JS
 
 ```bash
 intitle:"index of" inurl:"/js/" ("config.js" | "credentials.js" | "secrets.js" | "keys.js" | "password.js" | "api_keys.js" | "auth_tokens.js" | "access_tokens.js" | "sessions.js" | "authorization.js" | "encryption.js" | "certificates.js" | "ssl_keys.js" | "passphrases.js" | "policies.js" | "permissions.js" | "privileges.js" | "hashes.js" | "salts.js" | "nonces.js" | "signatures.js" | "digests.js" | "tokens.js" | "cookies.js" | "topsecr3tdonotlook.js") site:$WEBSITE
 ```
 
-#### _Backup Files_
+#### Backup Files
 
 ```bash
 intitle:index.of "backup" OR "bkp" OR "bak" | 
@@ -118,7 +118,7 @@ intitle:index.of id_rsa OR id_dsa filetype:key
 site:$WEBSITE
 ```
 
-#### _URI_
+#### URI
 
 ```bash
 inurl:conf | 
@@ -137,7 +137,7 @@ inurl:php
 site:$WEBSITE
 ```
 
-#### _API  Endpoints_
+#### API  Endpoints
 
 ```bash
 inurl:api | 
@@ -148,7 +148,7 @@ site:*/v3
 site:$WEBSITE
 ```
 
-#### _High % inurl keywords_
+#### High % Inurl Keywords
 
 ```bash
 inurl:conf | 
@@ -164,7 +164,7 @@ inurl:php
 site:$WEBSITE
 ```
 
-#### _Server Errors_
+#### Server Errors
 
 ```bash
 inurl:"error" | 
@@ -185,7 +185,7 @@ inurl:error.log OR inurl:debug.log filetype:log
 site:$WEBSITE
 ```
 
-#### _XSS Parameters_
+#### XSS Parameters
 
 ```bash
 inurl:q= | 
@@ -198,7 +198,7 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _Open Redirect Parameters_
+#### Open Redirect Parameters
 
 ```bash
 inurl:url= | 
@@ -214,7 +214,7 @@ inurl:http
 site:$WEBSITE
 ```
 
-#### _SQLi Parameters_
+#### SQLi Parameters
 
 ```bash
 inurl:id= | 
@@ -228,7 +228,7 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _SSRF Parameters_
+#### SSRF Parameters
 
 ```bash
 inurl:http | 
@@ -243,7 +243,7 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _LFI Parameters_
+#### LFI Parameters
 
 ```bash
 inurl:include | 
@@ -259,7 +259,7 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _RCE Parameters_
+#### RCE Parameters
 
 ```bash
 inurl:cmd | 
@@ -274,7 +274,7 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _API Docs_
+#### API Docs
 
 ```bash
 inurl:apidocs | 
@@ -284,7 +284,7 @@ inurl:api-explorer
 site:$WEBSITE
 ```
 
-#### _Login Pages_
+#### Login Pages
 
 ```bash
 inurl:login | 
@@ -295,7 +295,7 @@ inurl:secure
 site:$WEBSITE
 ```
 
-#### _Test Environments_
+#### Environments
 
 ```bash
 inurl:test | 
@@ -312,7 +312,7 @@ inurl:demo
 site:$WEBSITE
 ```
 
-#### _Sensitive Parameters_
+#### Sensitive Parameters
 
 ```bash
 inurl:email= | 
@@ -325,19 +325,19 @@ inurl:&
 site:$WEBSITE
 ```
 
-#### _Cached Site_
+#### Cached Site
 
 ```bash
 cache:"$WEBSITE"
 ```
 
-#### _Link to a Specific URL_
+#### Link to a Specific URL
 
 ```bash
 link:$WEBSITE
 ```
 
-#### _Bug Bounty Reports_
+#### Bug Bounty Reports
 
 ```bash
 "submit vulnerability report" | 
@@ -346,7 +346,7 @@ link:$WEBSITE
 site:$WEBSITE
 ```
 
-#### _Adobe Experience Manager_&#x20;
+#### Adobe Experience Manager&#x20;
 
 ```bash
 inurl:/content/usergenerated | 
@@ -360,19 +360,19 @@ inurl:/crx/de
 site:$WEBSITE
 ```
 
-#### _WordPress_
+#### WordPress
 
 ```bash
 inurl:/wp-admin/admin-ajax.php site:$WEBSITE
 ```
 
-#### _Drupal_
+#### Drupal
 
 ```bash
 intext:"Powered by" & intext:Drupal & inurl:user site:$WEBSITE
 ```
 
-#### _Joomla_
+#### Joomla
 
 ```bash
 site:*/joomla/login site:$WEBSITE
@@ -380,43 +380,43 @@ site:*/joomla/login site:$WEBSITE
 
 ### [Duckduckgo](https://duckduckgo.com/)
 
-#### _Subdomains_
+#### Subdomains
 
 ```bash
 site:$WEBSITE
 ```
 
-#### _Http Title_
+#### Http Title
 
 ```bash
 intitle:"Login" site:$WEBSITE
 ```
 
-#### _All Http Title_
+#### All Http Title
 
 ```bash
 allintitle:"Login" site:$WEBSITE
 ```
 
-#### _Http Text_&#x20;
+#### Http Text&#x20;
 
 ```bash
 intext:"Login" site:$WEBSITE
 ```
 
-#### _File Type_
+#### File Type
 
 ```bash
 filetype:pdf OR filetype:csv OR filetype:xls site:$WEBSITE
 ```
 
-#### _Extension_&#x20;
+#### Extension&#x20;
 
 ```bash
 ext:daf OR ext:bak OR ext:zip OR ext:log site:$WEBSITE
 ```
 
-#### _URI_
+#### URI
 
 ```bash
 inurl:login | 
@@ -427,19 +427,19 @@ inurl:portal
 site:$WEBSITE
 ```
 
-#### _Cached Site_
+#### Cached Site
 
 ```bash
 cache:$WEBSITE
 ```
 
-#### _Link to a Specific URL_
+#### Link to a Specific URL
 
 ```bash
 link:$WEBSITE
 ```
 
-#### _Information Site_
+#### Information Site
 
 ```bash
 info:$WEBSITE
@@ -447,181 +447,181 @@ info:$WEBSITE
 
 ### [Shodan](https://www.shodan.io/) <a href="#shodan" id="shodan"></a>
 
-#### _City_
+#### City
 
 ```bash
 city:"Tehran"
 ```
 
-#### _Country_
+#### Country
 
 ```bash
 country:"IR"
 ```
 
-#### _Geo_
+#### GEO
 
 ```bash
 geo:"56.913055,118.250862"
 ```
 
-#### _Vuln_
+#### Vulns
 
 ```bash
 vuln:"CVE-2019-19781"
 ```
 
-#### _Hostname_
+#### Hostname
 
 ```bash
 'server:"aws" hostname:"$WEBSITE"'
 ```
 
-#### _Net_
+#### Net
 
 ```bash
 net:"210.214.0.0/16"
 ```
 
-#### _HTTP Title_
+#### Http Title
 
 ```bash
 http.title:"Login"
 ```
 
-#### _Organization_
+#### Organization
 
 ```bash
 org:"United States Department"
 ```
 
-#### _Autonomous System Number_
+#### Autonomous System Number
 
 ```bash
 asn:"AS29068"
 ```
 
-#### _Operating System_
+#### Operating System
 
 ```bash
 os:"windows server 2022"
 ```
 
-#### _Port_
+#### Port
 
 ```bash
 port:"21"
 ```
 
-#### _SSL/TLS Certificates_
+#### SSL/TLS Certificates
 
 ```bash
 ssl.cert.issuer.cn:"$WEBSITE" ssl.cert.subject.cn:"$WEBSITE"
 ```
 
-#### _Before/After_
+#### Before/After
 
 ```bash
 product:"apache" after:"01/01/2020" before:"01/01/2024"
 ```
 
-#### _Device Type_
+#### Device Type
 
 ```bash
 device:"webcam"
 ```
 
-#### _Product_
+#### Product
 
 ```bash
 product:"MySQL"
 ```
 
-#### _Server_
+#### Server
 
 ```bash
 server:"nginx"
 ```
 
-#### _SSH Fingerprint_
+#### SSH Fingerprint
 
 ```bash
 dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0
 ```
 
-#### _PEM Certificates_
+#### PEM Certificates
 
 ```bash
 http.title:"Index of /" http.html:".pem"
 ```
 
-#### _Industrial Control Systems_
+#### Industrial Control Systems
 
 ```bash
 'port:"502" port:"102"'
 ```
 
-#### _Exchange 2013 / 2016_
+#### Exchange 2013 / 2016
 
 ```bash
 "X-AspNet-Version" http.title:"Outlook" -"x-owa-version"
 ```
 
-#### _SMB (Samba) File Shares_
+#### SMB (Samba) File Shares
 
 ```bash
 "Authentication: disabled" port:445
 ```
 
-#### _Specifically domain controllers_
+#### Specifically Domain Controllers
 
 ```bash
 "Authentication: disabled" NETLOGON SYSVOL -unix port:445
 ```
 
-#### _FTP Servers with Anonymous Login_
+#### FTP Servers with Anonymous Login
 
 ```bash
 "220" "230 Login successful." port:21
 ```
 
-#### _D-Link Webcams_
+#### D-Link Webcams
 
 ```bash
 d-Link Internet Camera, 200 OK
 ```
 
-#### _Android IP Webcam Server_
+#### Android IP Webcam Server
 
 ```bash
 Server:"IP Webcam Server" "200 OK"
 ```
 
-#### _Security DVRs_
+#### Security DVRs
 
 ```bash
 html:"DVR_H264 ActiveX"
 ```
 
-#### _HP Printers_
+#### HP Printers
 
 ```bash
 "Serial Number:" "Built:" "Server: HP HTTP"
 ```
 
-#### _Chromecast / Smart TVs_
+#### Chromecast / Smart TVs
 
 ```bash
 "Chromecast:" port:8008
 ```
 
-#### _Ethereum Miners_
+#### Ethereum Miners
 
 ```bash
 “ETH” “speed” “Total”
 ```
 
-#### _Misconfigured WordPress_
+#### Misconfigured WordPress
 
 ```bash
 http.html:"* The wp-config.php creation script uses this file"
@@ -629,49 +629,49 @@ http.html:"* The wp-config.php creation script uses this file"
 
 ### [GitHub](https://github.com/explore) <a href="#github" id="github"></a>
 
-#### _WebServers Configuration File_
+#### WebServers Configuration File
 
 ```bash
 path:**/WebServer.xml
 ```
 
-#### _.bash\_history Commands_
+#### .bash\_history Commands
 
 ```bash
 path:**/.bash_history
 ```
 
-#### _/etc/passwd File_
+#### /etc/passwd File
 
 ```bash
 path:**/passwd path:etc
 ```
 
-#### _Password in config.php_
+#### Password in config.php
 
 ```bash
 path:**/config.php dbpasswd
 ```
 
-#### _Shodan API Key in Python Script_
+#### Shodan API Key in Python Script
 
 ```bash
 shodan_api_key language:python
 ```
 
-#### _/etc/shadow File_
+#### /etc/shadow File
 
 ```bash
 path:**/shadow path:etc
 ```
 
-#### _wp-config.php File_
+#### wp-config.php File
 
 ```bash
 path:**/wp-config.php
 ```
 
-#### _MySQL Dump File_
+#### MySQL Dump File
 
 ```bash
 path:*.sql mysql dump
@@ -679,211 +679,211 @@ path:*.sql mysql dump
 
 ### [Censys](https://search.censys.io/) <a href="#censys" id="censys"></a>
 
-#### _City_
+#### City
 
 ```bash
 location.city: "Tehran"
 ```
 
-#### _Country_
+#### Country
 
 ```bash
 location.country: "Iran"
 ```
 
-#### _GEO_
+#### GEO
 
 ```bash
 location.coordinates.latitude: 38.8951 and location.coordinates.longitude: -77.0364
 ```
 
-#### _Vulns_
+#### Vulns
 
 ```bash
 vulnerabilities.cve.keyword: "CVE-2021-34527"
 ```
 
-#### _Hostname_
+#### Hostname
 
 ```bash
 name: "$WEBSITE"
 ```
 
-#### _NET_
+#### NET
 
 ```bash
 ip: [1.1.1.1 to 1.1.255.255]
 ```
 
-#### _Http Title_
+#### Http Title
 
 ```bash
 services.http.response.html_title: "Login Page" 
 ```
 
-#### _Organization_
+#### Organization
 
 ```bash
 autonomous_system.name: "Google"
 ```
 
-#### _Autonomous System Number_
+#### Autonomous System Number
 
 ```bash
 autonomous_system.asn: 13335
 ```
 
-#### _Operating System_
+#### Operating System
 
 ```bash
 operating_system.product: "Windows"
 ```
 
-#### _Port_
+#### Port
 
 ```bash
 services.port=`80`
 ```
 
-#### _SSL/TLS Certificates_
+#### SSL/TLS Certificates
 
 ```bash
 services.tls.certificate.parsed.subject.common_name: "$WEBSITE"
 ```
 
-#### _Before/After_
+#### Before/After
 
 ```bash
 services.software.product: "apache" AND services.observed_at: [2020-01-01 TO 2024-01-01]
 ```
 
-#### _Device Type_
+#### Device Type
 
 ```bash
 labels: device
 ```
 
-#### _Product_
+#### Product
 
 ```bash
 services.software.vendor=`Apache`
 ```
 
-#### _Server_
+#### Server
 
 ```bash
 services.http.response.headers.server: "nginx"
 ```
 
-#### _SSH Fingerprint_
+#### SSH Fingerprint
 
 ```bash
 services.ssh.v2.fingerprint_sha256: "dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0"
 ```
 
-#### _PEM Certificates_
+#### PEM Certificates
 
 ```bash
 services: (http.response.html_title: "Index of /" and http.response.body: ".pem")
 ```
 
-#### _Industrial Control Systems_
+#### Industrial Control Systems
 
 ```bash
 labels: ics
 ```
 
-#### _Exchange 2013 / 2016_
+#### Exchange 2013 / 2016
 
 ```bash
 services: (http.response.headers: (key: "X-AspNet-Version" and value.headers: "*") and http.response.html_title: "Outlook" and not http.response.headers: (key: "x-owa-version" and value.headers: "*"))
 ```
 
-#### _SMB (Samba) File Shares_
+#### SMB (Samba) File Shares
 
 ```bash
 services: (service_name: SMB and banner: "shared_folder")
 ```
 
-#### _Specifically domain controllers_
+#### Specifically Domain Controllers
 
 ```bash
 "Authentication: disabled" and services: (service_name: NETLOGON and service_name: SYSVOL) and not operating_system.product: "unix" and services.port: 445
 ```
 
-#### _FTP Servers with Anonymous Login_
+#### FTP Servers with Anonymous Login
 
 ```bash
 services.ftp.status_code: 230
 ```
 
-#### _Webcams_
+#### Webcams
 
 ```bash
 services.http.response.headers: (key: "Server" and value.headers: "Webcam")
 ```
 
-#### _Android IP Webcam Server_
+#### Android IP Webcam Server
 
 ```bash
 services.http.response.html_title: "IP Webcam"
 ```
 
-#### _Security DVRs_
+#### Security DVRs
 
 ```bash
 services.http.response.html_title: "Security DVR"
 ```
 
-#### _Printers_
+#### Printers
 
 ```bash
 services.http.response.headers: (key: "Server" and value.headers: "Printer")
 ```
 
-#### _Chromecast / Smart TVs_
+#### Chromecast / Smart TVs
 
 ```bash
 services.http.response.headers: (key: "Server" and value.headers: {"Chromecast", "Smart TV"})
 ```
 
-#### _Ethereum Miners_
+#### Ethereum Miners
 
 ```bash
 services.http.response.html_title: "Ethereum Miner"
 ```
 
-#### _Misconfigured WordPress_
+#### Misconfigured WordPress
 
 ```bash
 services: (http.response.html_title: "WordPress" and http.response.headers: (key: "Favicon" and value.headers: "c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"))
 ```
 
-#### _Services on Ports 22-25_
+#### Services on Ports 22-25
 
 ```bash
 services.port: {22,23,24,25}
 ```
 
-#### _Elasticsearch Service on Port 443_
+#### Elasticsearch Service on Port 443
 
 ```bash
 (services.service_name=`ELASTICSEARCH`) and service.port=`443`
 ```
 
-#### _Login Page with Specific Banner Hash in Iran_
+#### Login Page with Specific Banner Hash in Iran
 
 ```bash
 ((services.banner_hashes=`sha256:4d3efcb4c2cc2cdb96dddf455977c3291f4b0f6a8a290bfc15e460d917703226`) and labels=`login-page`) and location.country=`Iran` 
 ```
 
-#### _OWA Login Page_
+#### OWA Login Page
 
 ```bash
 same_service(services.http.response.favicons.name: */owa/auth/* and services.http.response.html_title={"Outlook Web App", "Outlook"}) 
 ```
 
-#### _Exchange Server in Iran_
+#### Exchange Server in Iran
 
 ```bash
 (services.software.product=`Exchange Server`) and location.country=`Iran` 
@@ -891,241 +891,241 @@ same_service(services.http.response.favicons.name: */owa/auth/* and services.htt
 
 ### [Zoomeye](https://www.zoomeye.hk/) <a href="#zoomeye" id="zoomeye"></a>
 
-#### _GEO_
+#### GEO
 
 ```bash
 geo:"35.6892,51.3890"
 ```
 
-#### _Vuln_
+#### Vuln
 
 ```bash
 vuln:"CVE-2021-34527"
 ```
 
-#### _Net_
+#### Net
 
 ```bash
 net:"192.168.0.0/24"
 ```
 
-#### _Http Title_
+#### Http Title
 
 ```bash
 port:80 AND title:"Login Page"
 ```
 
-#### _Organization_
+#### Organization
 
 ```bash
 organization:"Google"
 ```
 
-_SSL/TLS Certificates_
+SSL/TLS Certificates
 
 ```bash
 ssl.cert.subject.cn:"$WEBSITE"
 ```
 
-_Before/After_
+Before/After
 
 ```bash
 product:"apache" after:"2020-01-01" before:"2024-01-01"
 ```
 
-_Product_
+Product
 
 ```bash
 product:"Apache"
 ```
 
-_Server_
+Server
 
 ```bash
 server:"nginx"
 ```
 
-_SSH Fingerprint_
+SSH Fingerprint
 
 ```bash
 dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0
 ```
 
-_PEM Certificates_
+PEM Certificates
 
 ```bash
 http.title:"Index of /" http.html:".pem"
 ```
 
-_Industrial Control Systems_
+Industrial Control Systems
 
 ```bash
 ics:"SCADA"
 ```
 
-_Exchange 2013 / 2016_
+Exchange 2013 / 2016
 
 ```bash
 "X-AspNet-Version" http.title:"Outlook" -"x-owa-version"
 ```
 
-_SMB (Samba) File Shares_
+SMB (Samba) File Shares
 
 ```bash
 "Authentication: disabled" port:445
 ```
 
-_Specifically domain controllers_
+Specifically Domain Controllers
 
 ```bash
 smb.share:"SYSVOL" OR smb.share:"NETLOGON"
 ```
 
-_FTP Servers with Anonymous Login_
+FTP Servers with Anonymous Login
 
 ```bash
 port:21 ,ftp.anonymous:"true"
 ```
 
-_D-Link Webcams_
+D-Link Webcams
 
 ```bash
 title:"d-Link Internet Camera" AND http.status_code:"200"
 ```
 
-_Android IP Webcam Server_
+Android IP Webcam Server
 
 ```bash
 Server:"IP Webcam Server" "200 OK"
 ```
 
-_Security DVRs_
+Security DVRs
 
 ```bash
 port:80 AND "DVR_H264 ActiveX"
 ```
 
-_HP Printers_
+HP Printers
 
 ```bash
 "Serial Number:" "Built:" "Server: HP HTTP"
 ```
 
-_Chromecast / Smart TVs_
+Chromecast / Smart TVs
 
 ```bash
 product:"Chromecast" OR product:"Smart TV"
 ```
 
-_Ethereum Miners_
+Ethereum Miners
 
 ```bash
-“ETH” “speed” “Total”
+"ETH" "speed" "Total"
 ```
 
-_Misconfigured WordPress_
+Misconfigured WordPress
 
 ```bash
 http.title:"WordPress" AND http.favicon.hash:"c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"
 ```
 
-_Web Application_
+Web Application
 
 ```bash
 webapp:wordpress
 ```
 
-_Version_
+Version
 
 ```bash
 ver: 2.1
 ```
 
-_ProFTPD Server_
+ProFTPD Server
 
 ```bash
 app: ProFTPD
 ```
 
-_Device Type_
+Device Type
 
 ```bash
 device: router
 ```
 
-_Operating System_
+Operating System
 
 ```bash
 os: windows
 ```
 
-_Service_
+Service
 
 ```bash
 service: http
 ```
 
-_IP_
+IP
 
 ```bash
 ip: 192.168.1.1
 ```
 
-_Devices in 192.168.1.1/24 Network Range_
+Devices in 192.168.1.1/24 Network Range
 
 ```bash
 cidr: 192.168.1.1/24 
 ```
 
-_Hostname_
+Hostname
 
 ```bash
 hostname: $WEBSITE
 ```
 
-_Port_
+Port
 
 ```bash
 port: 80
 ```
 
-_City_
+City
 
 ```bash
 city: tehran
 ```
 
-_Country_
+Country
 
 ```bash
 country: iran
 ```
 
-_Autonomous System Number_
+Autonomous System Number
 
 ```bash
 asn:8978
 ```
 
-_Header_
+Header
 
 ```bash
 header: server
 ```
 
-_Found 'hello' in Description'_
+Found 'hello' in Description'
 
 ```bash
 desc: hello
 ```
 
-_Title_
+Title
 
 ```bash
 title: $WEBSITE
 ```
 
-_Site_
+Site
 
 ```bash
 site: $WEBSITE
