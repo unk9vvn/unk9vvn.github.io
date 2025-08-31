@@ -921,211 +921,211 @@ port:80 AND title:"Login Page"
 organization:"Google"
 ```
 
-SSL/TLS Certificates
+#### SSL/TLS Certificates
 
 ```bash
 ssl.cert.subject.cn:"$WEBSITE"
 ```
 
-Before/After
+#### Before/After
 
 ```bash
 product:"apache" after:"2020-01-01" before:"2024-01-01"
 ```
 
-Product
+#### Product
 
 ```bash
 product:"Apache"
 ```
 
-Server
+#### Server
 
 ```bash
 server:"nginx"
 ```
 
-SSH Fingerprint
+#### SSH Fingerprint
 
 ```bash
 dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0
 ```
 
-PEM Certificates
+#### PEM Certificates
 
 ```bash
 http.title:"Index of /" http.html:".pem"
 ```
 
-Industrial Control Systems
+#### Industrial Control Systems
 
 ```bash
 ics:"SCADA"
 ```
 
-Exchange 2013 / 2016
+#### Exchange 2013 / 2016
 
 ```bash
 "X-AspNet-Version" http.title:"Outlook" -"x-owa-version"
 ```
 
-SMB (Samba) File Shares
+#### SMB (Samba) File Shares
 
 ```bash
 "Authentication: disabled" port:445
 ```
 
-Specifically Domain Controllers
+#### Specifically Domain Controllers
 
 ```bash
 smb.share:"SYSVOL" OR smb.share:"NETLOGON"
 ```
 
-FTP Servers with Anonymous Login
+#### FTP Servers with Anonymous Login
 
 ```bash
 port:21 ,ftp.anonymous:"true"
 ```
 
-D-Link Webcams
+#### D-Link Webcams
 
 ```bash
 title:"d-Link Internet Camera" AND http.status_code:"200"
 ```
 
-Android IP Webcam Server
+#### Android IP Webcam Server
 
 ```bash
 Server:"IP Webcam Server" "200 OK"
 ```
 
-Security DVRs
+#### Security DVRs
 
 ```bash
 port:80 AND "DVR_H264 ActiveX"
 ```
 
-HP Printers
+#### HP Printers
 
 ```bash
 "Serial Number:" "Built:" "Server: HP HTTP"
 ```
 
-Chromecast / Smart TVs
+#### Chromecast / Smart TVs
 
 ```bash
 product:"Chromecast" OR product:"Smart TV"
 ```
 
-Ethereum Miners
+#### Ethereum Miners
 
 ```bash
 "ETH" "speed" "Total"
 ```
 
-Misconfigured WordPress
+#### Misconfigured WordPress
 
 ```bash
 http.title:"WordPress" AND http.favicon.hash:"c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"
 ```
 
-Web Application
+#### Web Application
 
 ```bash
 webapp:wordpress
 ```
 
-Version
+#### Version
 
 ```bash
 ver: 2.1
 ```
 
-ProFTPD Server
+#### ProFTPD Server
 
 ```bash
 app: ProFTPD
 ```
 
-Device Type
+#### Device Type
 
 ```bash
 device: router
 ```
 
-Operating System
+#### Operating System
 
 ```bash
 os: windows
 ```
 
-Service
+#### Service
 
 ```bash
 service: http
 ```
 
-IP
+#### IP
 
 ```bash
 ip: 192.168.1.1
 ```
 
-Devices in 192.168.1.1/24 Network Range
+#### Devices in 192.168.1.1/24 Network Range
 
 ```bash
 cidr: 192.168.1.1/24 
 ```
 
-Hostname
+#### Hostname
 
 ```bash
 hostname: $WEBSITE
 ```
 
-Port
+#### Port
 
 ```bash
 port: 80
 ```
 
-City
+#### City
 
 ```bash
 city: tehran
 ```
 
-Country
+#### Country
 
 ```bash
 country: iran
 ```
 
-Autonomous System Number
+#### Autonomous System Number
 
 ```bash
-asn:8978
+asn: 8978
 ```
 
-Header
+#### Header
 
 ```bash
 header: server
 ```
 
-Found 'hello' in Description'
+#### Found 'hello' in Description'
 
 ```bash
 desc: hello
 ```
 
-Title
+#### Title
 
 ```bash
 title: $WEBSITE
 ```
 
-Site
+#### Site
 
 ```bash
 site: $WEBSITE
