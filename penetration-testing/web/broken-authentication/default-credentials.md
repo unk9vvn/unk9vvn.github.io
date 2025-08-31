@@ -7,6 +7,12 @@
 
 ## Cheat Sheet
 
+### Vendor Default Credentials
+
+#### Default Creds
+
+{% embed url="https://github.com/ihebski/DefaultCreds-cheat-sheet/blob/main/DefaultCreds-Cheat-Sheet.csv" %}
+
 #### Nmap Scan
 
 ```bash
