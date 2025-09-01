@@ -13,6 +13,10 @@
 
 {% embed url="https://github.com/ihebski/DefaultCreds-cheat-sheet/blob/main/DefaultCreds-Cheat-Sheet.csv" %}
 
+{% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
+
+{% embed url="https://cirt.net/passwords" %}
+
 #### Nmap Scan
 
 ```bash
