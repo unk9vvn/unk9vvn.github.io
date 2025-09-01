@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Enumerate the applications within scope that exist on a web server._
+* [ ] Enumerate the applications within scope that exist on a web server.
 
 ## Cheat Sheet
 
@@ -40,12 +40,17 @@ urlfinder -d $WEBSITE
 
 #### [Amass](https://github.com/owasp-amass/amass)
 
-_Passive Scan_
+{% hint style="info" %}
+Passive Scan
+{% endhint %}
 
-<pre class="language-bash"><code class="lang-bash"><strong>amass enum -passive -d $WEBSITE
-</strong></code></pre>
+```bash
+amass enum -passive -d $WEBSITE
+```
 
-_Active Scan_
+{% hint style="info" %}
+Active Scan
+{% endhint %}
 
 ```bash
 amass enum -active \
@@ -64,10 +69,11 @@ amass intel -active -asn $ASN
 
 #### [OpenSSL](https://github.com/openssl/openssl)
 
-<pre class="language-go"><code class="lang-go"><strong>echo | \
-</strong><strong>openssl s_client -showcerts -servername $WEBSITE -connect $IP:443 2>/dev/null | \
-</strong><strong>openssl x509 -inform pem -noout -text
-</strong></code></pre>
+```bash
+echo | \
+openssl s_client -showcerts -servername $WEBSITE -connect $IP:443 2>/dev/null | \
+openssl x509 -inform pem -noout -text
+```
 
 #### [AssetFinder](https://github.com/tomnomnom/assetfinder) & [HttpX](https://github.com/projectdiscovery/httpx)
 
