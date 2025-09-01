@@ -2,8 +2,8 @@
 
 ## Check List <a href="#check-list" id="check-list"></a>
 
-* [ ] _Identify hidden or obfuscated paths and functionality through the analysis of metadata files._
-* [ ] _Extract and map other information that could lead to better understanding of the systems at hand._
+* [ ] Identify hidden or obfuscated paths and functionality through the analysis of metadata files.
+* [ ] Extract and map other information that could lead to better understanding of the systems at hand.
 
 ## Cheat Sheet <a href="#cheat-sheet" id="cheat-sheet"></a>
 
