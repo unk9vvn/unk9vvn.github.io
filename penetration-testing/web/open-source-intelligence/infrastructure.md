@@ -2,14 +2,14 @@
 
 ## Check List
 
-* [ ] _Use search engines for basic information gathering._
-* [ ] _Explore specialized websites for additional insights._
-* [ ] _Perform Whois lookups for domain information._
-* [ ] _Investigate DNS records for domain details._
-* [ ] _Check IP addresses for location and hosting information._
-* [ ] _Network mapping and relationship analysis._
-* [ ] _Utilize Recon-NG for automated data gathering._
-* [ ] _Extract metadata from files and images._
+* [ ] Use search engines for basic information gathering.
+* [ ] Explore specialized websites for additional insights.
+* [ ] Perform Whois lookups for domain information.
+* [ ] Investigate DNS records for domain details.
+* [ ] Check IP addresses for location and hosting information.
+* [ ] Network mapping and relationship analysis.
+* [ ] Utilize Recon-NG for automated data gathering.
+* [ ] Extract metadata from files and images.
 
 ## Cheat Sheet
 
@@ -17,13 +17,17 @@
 
 #### [Google](https://www.exploit-db.com/google-hacking-database)
 
-_Sub Domains_
+{% hint style="info" %}
+Sub Domains
+{% endhint %}
 
 ```bash
 site:$WEBSITE
 ```
 
-_HTTP Title_
+{% hint style="info" %}
+HTTP Title
+{% endhint %}
 
 ```bash
 intitle:"login" |
@@ -32,7 +36,9 @@ intitle:"administrator"
 site:$WEBSITE
 ```
 
-_URI_
+{% hint style="info" %}
+URI
+{% endhint %}
 
 ```bash
 inurl:conf |
@@ -48,7 +54,9 @@ inurl:php
 site:$WEBSITE
 ```
 
-_File Types_
+{% hint style="info" %}
+File Types
+{% endhint %}
 
 ```bash
 filetype:pdf |
@@ -58,7 +66,9 @@ filetype:xlsx
 site:$WEBSITE
 ```
 
-_Extensions_
+{% hint style="info" %}
+Extensions
+{% endhint %}
 
 ```bash
 ext:log | 
@@ -82,13 +92,17 @@ ext:daf
 site:$WEBSITE
 ```
 
-_Exact Phrase_
+{% hint style="info" %}
+Exact Phrase
+{% endhint %}
 
 ```bash
 "choose file" site:$WEBSITE 
 ```
 
-_Cache_
+{% hint style="info" %}
+Cache
+{% endhint %}
 
 ```bash
 cache:"$WEBSITE"
@@ -96,37 +110,49 @@ cache:"$WEBSITE"
 
 #### [Shodan](https://www.shodan.io/)&#x20;
 
-_Port_
+{% hint style="info" %}
+Port
+{% endhint %}
 
 ```bash
 port:22
 ```
 
-_Country_
+{% hint style="info" %}
+Country
+{% endhint %}
 
 ```bash
 country:"IR"
 ```
 
-_City_
+{% hint style="info" %}
+City
+{% endhint %}
 
 ```bash
 city:"Tehran"
 ```
 
-_Organization_
+{% hint style="info" %}
+Organization
+{% endhint %}
 
 ```bash
 org:"United States Department"
 ```
 
-_Product_
+{% hint style="info" %}
+Product
+{% endhint %}
 
 ```bash
 product:"Apache"
 ```
 
-_Date_
+{% hint style="info" %}
+Date
+{% endhint %}
 
 ```bash
 product:"apache" after:"22/02/2009" before:"14/3/2010"
@@ -134,31 +160,41 @@ product:"apache" after:"22/02/2009" before:"14/3/2010"
 
 #### [Censys](https://search.censys.io/)
 
-_Service_
+{% hint style="info" %}
+Service
+{% endhint %}
 
 ```bash
 services.service_name: "HTTP"
 ```
 
-_Country_
+{% hint style="info" %}
+Country
+{% endhint %}
 
 ```bash
 location.country: "Iran"
 ```
 
-_TLS Cipher_
+{% hint style="info" %}
+TLS Cipher
+{% endhint %}
 
 ```bash
 services.tls.certificate.parsed.subject.common_name: "$WEBSITE"
 ```
 
-_ASN_
+{% hint style="info" %}
+ASN
+{% endhint %}
 
 ```bash
 autonomous_system.asn: 15169
 ```
 
-_Banner_
+{% hint style="info" %}
+Banner
+{% endhint %}
 
 ```bash
 services.banner: "Apache"
@@ -166,37 +202,49 @@ services.banner: "Apache"
 
 #### [Zoomeye](https://www.zoomeye.hk/)
 
-_Port_
+{% hint style="info" %}
+Port
+{% endhint %}
 
 ```bash
 port:80
 ```
 
-_Application_
+{% hint style="info" %}
+Application
+{% endhint %}
 
 ```bash
 app:"Apache"
 ```
 
-_Country_
+{% hint style="info" %}
+Country
+{% endhint %}
 
 ```bash
 country:"Iran"
 ```
 
-_IP_
+{% hint style="info" %}
+IP
+{% endhint %}
 
 ```bash
 ip:"$TARGET"
 ```
 
-_City_
+{% hint style="info" %}
+City
+{% endhint %}
 
 ```bash
 city:"Tehran"
 ```
 
-_OS_
+{% hint style="info" %}
+OS
+{% endhint %}
 
 ```bash
 os:"Windows"
@@ -218,7 +266,9 @@ os:"Windows"
 
 ### Whois
 
-_Whois_
+{% hint style="info" %}
+Whois
+{% endhint %}
 
 {% embed url="https://whois.domaintools.com/" %}
 
@@ -230,7 +280,9 @@ _Whois_
 
 {% embed url="https://www.godaddy.com/en-ca/whois" %}
 
-_Revers Whois_
+{% hint style="info" %}
+Revers Whois
+{% endhint %}
 
 {% embed url="https://viewdns.info/reversewhois/" %}
 
@@ -254,39 +306,73 @@ _Revers Whois_
 
 ### [Maltego](https://www.maltego.com/)
 
-_Domain Scan_
+{% hint style="info" %}
+Domain Scan
+{% endhint %}
 
-`Run Machine > URL To Network And Domain Information > Fill in Input your Target > Right Click Domain > All Transforms`
+{% hint style="warning" %}
+Run Machine > URL To Network And Domain Information > Fill in Input your Target > Right Click Domain > All Transforms
+{% endhint %}
 
-_Create New Graph_
+{% hint style="info" %}
+Create New Graph
+{% endhint %}
 
-`Application Menu > New`
+{% hint style="warning" %}
+Application Menu > New
+{% endhint %}
 
-`Entity Palette > Infrastructure > Drag & Drop Domain > Enter Domain Name`
+{% hint style="warning" %}
+Entity Palette > Infrastructure > Drag & Drop Domain > Enter Domain Name
+{% endhint %}
 
-_Get IP Address_
+{% hint style="info" %}
+Get IP Address
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > [Securitytrails] DNS History Field A`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > \[Securitytrails] DNS History Field A
+{% endhint %}
 
-_DNS Records_
+{% hint style="info" %}
+DNS Records
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > [WhoisXML] DNS lookup`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > \[WhoisXML] DNS lookup
+{% endhint %}
 
-_Name Servers_
+{% hint style="info" %}
+Name Servers
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > [Securitytrails] DNS History Field NS`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > \[Securitytrails] DNS History Field NS
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To DNS Name - NS`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To DNS Name - NS
+{% endhint %}
 
-_Mail Servers_
+{% hint style="info" %}
+Mail Servers
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To DNS Name - MX`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To DNS Name - MX
+{% endhint %}
 
-_Whois Information_
+{% hint style="info" %}
+Whois Information
+{% endhint %}
 
-`Right-click Domain > Run Transforms > Domain owner detail`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > Domain owner detail
+{% endhint %}
 
-`Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS [IBM Watson]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS \[IBM Watson]
+{% endhint %}
 
 `Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS > To WHOIS Records [Whois XML]`
 
