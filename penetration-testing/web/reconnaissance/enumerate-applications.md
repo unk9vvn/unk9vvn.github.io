@@ -325,7 +325,9 @@ gobuster vhost ‐u $WEBSITE \
                --append-domain
 ```
 
-_DNS Inverse Queries_&#x20;
+{% hint style="info" %}
+DNS Inverse Queries&#x20;
+{% endhint %}
 
 #### [Dig](https://github.com/polarityio/dig)
 
@@ -345,7 +347,9 @@ subfinder -silent -d $WEBSITE | dnsx -silent > /tmp/sub-domains.txt
 dnsgen /tmp/sub-domains.txt > /tmp/gen-sub-domains.txt
 ```
 
-_Combine with_[ _ShuffleDNS_](https://github.com/projectdiscovery/shuffledns)
+{% hint style="info" %}
+Combine with[ ShuffleDNS](https://github.com/projectdiscovery/shuffledns)
+{% endhint %}
 
 ```sh
 echo "1.1.1.1" > /tmp/resolver.txt
@@ -355,13 +359,15 @@ shuffledns -d $WEBSITE \
            -r /tmp/resolver.txt
 ```
 
-_Web Service Discovery_
+{% hint style="info" %}
+Web Service Discovery
+{% endhint %}
 
 ```sh
 httpx -silent -u $WEBSITE
 ```
 
-1. _Host: \[FUZZ]_
+1. Host: \[FUZZ]
 
 ```sh
 ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt \
@@ -369,7 +375,7 @@ ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt \
      -H "Host: FUZZ"
 ```
 
-2. _Host: \[FUZZ].$WEBSITE_
+2. Host: \[FUZZ].$WEBSITE
 
 ```sh
 ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt \
@@ -377,7 +383,7 @@ ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt \
      -H "Host: FUZZ.$WEBSITE"
 ```
 
-3. _Host: \[FOUND-SUBDOMAINS]_
+3. Host: \[FOUND-SUBDOMAINS]
 
 ```sh
 ffuf -w /tmp/gen-sub-domains.txt -u $TARGET -H "Host: FUZZ"
@@ -411,36 +417,42 @@ ffuf -w /tmp/gen-sub-domains.txt -u $TARGET -H "Host: FUZZ"
 
 ### Reverse IP Service&#x20;
 
-1. _Query DNS records of domains and subdomains to get IP_
+1. Query DNS records of domains and subdomains to get IP
 
 ```sh
 for domain in $(subfinder -d $WEBSITE -silent); do echo $domain | \
 dnsx -a -silent -resp-only; done
 ```
 
-2. _Whois the IP addresses and extract the properties_
+2. Whois the IP addresses and extract the properties
 
 ```bash
 whois $TARGET
 ```
 
-3. _Reverse Lookup on the properties_
+3. Reverse Lookup on the properties
 
 #### Query Ripe
 
-_mnt-by field_
+{% hint style="info" %}
+mnt-by field
+{% endhint %}
 
 ```sh
 whois -h whois.ripe.net -i mnt-by $COMPANY 
 ```
 
-_person field_
+{% hint style="info" %}
+person field
+{% endhint %}
 
 ```sh
 whois -h whois.ripe.net -- -i person $NAME 
 ```
 
-_admin-c field_
+{% hint style="info" %}
+admin-c field
+{% endhint %}
 
 ```sh
 whois -h whois.ripe.net -- -i admin-c $NAME 
@@ -448,13 +460,17 @@ whois -h whois.ripe.net -- -i admin-c $NAME
 
 #### Query Arin
 
-_Network address space (Net Handle) field_
+{% hint style="info" %}
+Network address space (Net Handle) field
+{% endhint %}
 
 ```sh
 whois -h whois.arin.net -- 'n ! $NAME'
 ```
 
-_OrgId field_
+{% hint style="info" %}
+OrgId field
+{% endhint %}
 
 ```sh
 whois -h whois.arin.net -- 'o ! $NAME'
