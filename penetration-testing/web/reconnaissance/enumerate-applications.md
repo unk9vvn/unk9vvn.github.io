@@ -83,14 +83,18 @@ assetfinder $WEBSITE | httpx --status-code --title
 
 #### [SubFinder](https://github.com/projectdiscovery/subfinder)
 
-_Favicon Hashes_
+{% hint style="info" %}
+Favicon Hashes
+{% endhint %}
 
 ```bash
 subfinder -d $WEBSITE -all -recursive | httpx -favicon -j | \
 jq -r .favicon | grep -v null | sort-u
 ```
 
-_Subdomain Fuzzing_
+{% hint style="info" %}
+Subdomain Fuzzing
+{% endhint %}
 
 ```bash
 subfinder -d $WEBSITE -all -recursive -o /tmp/subdomains.txt
@@ -98,7 +102,9 @@ subfinder -d $WEBSITE -all -recursive -o /tmp/subdomains.txt
 
 #### [Alterx](https://github.com/projectdiscovery/alterx)
 
-_Subdomain New Gen_
+{% hint style="info" %}
+Subdomain New Gen
+{% endhint %}
 
 ```bash
 cat /tmp/subdomains.txt | alterx -o /tmp/gen-subdomains.txt
@@ -106,7 +112,9 @@ cat /tmp/subdomains.txt | alterx -o /tmp/gen-subdomains.txt
 
 #### [Httpx-Toolkit](https://github.com/projectdiscovery/httpx)
 
-_Resolve live subdomains_
+{% hint style="info" %}
+Resolve Live Subdomains
+{% endhint %}
 
 ```bash
 cat /tmp/gen-subdomains.txt | \
@@ -116,7 +124,9 @@ httpx-toolkit -ports 80,443,8080,8000,8888,8082,8083 \
 
 #### [Puredns](https://github.com/d3mondev/puredns)
 
-_Resolve New Gen_
+{% hint style="info" %}
+Resolve New Gen
+{% endhint %}
 
 ```bash
 puredns resolve /tmp/gen-subdomains.txt -r /tmp/resolve-subdomains.txt
@@ -124,7 +134,9 @@ puredns resolve /tmp/gen-subdomains.txt -r /tmp/resolve-subdomains.txt
 
 #### [Katana](https://github.com/projectdiscovery/katana)
 
-_Fetch URLs_
+{% hint style="info" %}
+Fetch URLs
+{% endhint %}
 
 ```bash
 katana -u /tmp/alive-subdomains.txt \
@@ -137,7 +149,9 @@ katana -u /tmp/alive-subdomains.txt \
 
 #### [SubFinder ](https://github.com/projectdiscovery/subfinder)& [ShuffleDNS](https://github.com/projectdiscovery/shuffledns)
 
-_Recon and Resolve_
+{% hint style="info" %}
+Recon and Resolve
+{% endhint %}
 
 ```bash
 echo "1.1.1.1" > /tmp/resolvers.txt
@@ -155,13 +169,18 @@ dirb $WEBSITE /usr/share/seclists/Discovery/Web-Content/raft-large-directories.t
 
 #### [DirSearch](https://github.com/maurosoria/dirsearch)
 
-_Dictionary_
+{% hint style="info" %}
+Dictionary
+{% endhint %}
 
-<pre class="language-bash"><code class="lang-bash"><strong>dirsearch -u $WEBSITE \
-</strong><strong>          -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
-</strong></code></pre>
+```bash
+dirsearch -u $WEBSITE \
+          -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
+```
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 dirsearch -u $WEBSITE \
@@ -206,13 +225,17 @@ ffuf -u $WEBSITE/FUZZ \
 
 #### [Nmap](https://nmap.org/)
 
-_TCP Ports_
+{% hint style="info" %}
+TCP Ports
+{% endhint %}
 
 ```bash
 nmap -sS -sV --mtu 5000 $WEBSITE
 ```
 
-_UDP Ports_
+{% hint style="info" %}
+UDP Ports
+{% endhint %}
 
 ```bash
 nmap -sU -sV --mtu 5000 $WEBSITE
@@ -220,13 +243,17 @@ nmap -sU -sV --mtu 5000 $WEBSITE
 
 #### [Netcat](https://nmap.org/ncat/)
 
-_TCP Ports_
+{% hint style="info" %}
+TCP Ports
+{% endhint %}
 
 ```sh
 nc -zv -w 1 $WEBSITE 1-65535
 ```
 
-_UDP Ports_
+{% hint style="info" %}
+UDP Ports
+{% endhint %}
 
 ```sh
 nc -zvu -w 1 $WEBSITE 1-65535
@@ -246,7 +273,9 @@ masscan $TARGET -p1-1000 --rate 1000
 
 #### CIDR Discovery&#x20;
 
-_ASN Discovery_
+{% hint style="info" %}
+ASN Discovery
+{% endhint %}
 
 ```sh
 whois -h whois.cymru.com $TARGET
@@ -259,7 +288,9 @@ jq -r ".data.prefixes[] | {prefix: .prefix, ASN: .asn.asn}"
 
 ### Virtual Hosts
 
-_DNS Zone Transfer_&#x20;
+{% hint style="info" %}
+DNS Zone Transfer&#x20;
+{% endhint %}
 
 #### [Nslookup](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup)
 
