@@ -2,7 +2,7 @@
 
 ## Check List&#x20;
 
-* [ ] _Generate a map of the application at hand based on the research conducted._
+* [ ] Generate a map of the application at hand based on the research conducted.
 
 ## Cheat Sheet
 
@@ -134,23 +134,33 @@ services.http.response.body: {"s3.amazonaws.com", "storage.googleapis.com", "blo
 
 #### Enum Clouds
 
-**Extract Cloud IPv4 Ranges**
+Extract Cloud IPv4 Ranges
 
-_Google_
+{% hint style="info" %}
+Extract Cloud IPv4 Ranges
+{% endhint %}
+
+{% hint style="info" %}
+Google
+{% endhint %}
 
 ```bash
 wget -qO- https://www.gstatic.com/ipranges/cloud.json | \
 jq '.prefixes[] | .ipv4Prefix' -r
 ```
 
-_Amazon_
+{% hint style="info" %}
+Amazon
+{% endhint %}
 
 ```bash
 wget -qO- https://ip-ranges.amazonaws.com/ip-ranges.json | \
 jq '.prefixes[] | .ip_prefix' -r
 ```
 
-_Azure_
+{% hint style="info" %}
+Azure
+{% endhint %}
 
 ```bash
 jq < /path_file/ServiceTags_Public_*.json '.values | .[] | .properties.addressPrefixes | .[]' -r
@@ -158,7 +168,9 @@ jq < /path_file/ServiceTags_Public_*.json '.values | .[] | .properties.addressPr
 
 **Scanning Large Ranges**
 
-_Amazon_
+{% hint style="info" %}
+Amazon
+{% endhint %}
 
 ```bash
 wget -qO- https://ip-ranges.amazonaws.com/ip-ranges.json | \
@@ -180,13 +192,17 @@ awk '/open/ {print $4}' /tmp/range-ip-output.masscan > /tmp/range-ip-output.tlso
 
 **Attributing Hosts**
 
-_Extract TLS IP_
+{% hint style="info" %}
+Extract TLS IP
+{% endhint %}
 
 ```bash
 head -1 /tmp/range-ip-output.tlsopen && export IP=$(head -1 /tmp/range-ip-output.tlsopen)
 ```
 
-_OpenSSL_
+{% hint style="info" %}
+OpenSSL
+{% endhint %}
 
 ```bash
 openssl s_client -connect $IP:443 2>/dev/null | \
@@ -196,7 +212,9 @@ grep Subject:
 
 **TLS Scan**
 
-_TLS Test_
+{% hint style="info" %}
+TLS Test
+{% endhint %}
 
 ```bash
 echo $IP | \
@@ -205,15 +223,15 @@ tls-scan --port=443 --cacert=ca-bundle.crt -o /tmp/range-ip-output-tlsinfo.json
 
 **Interpreting TLS Scan Results**
 
-_Extract Subject_
+{% hint style="info" %}
+Extract Subject
+{% endhint %}
 
 ```bash
 cat /tmp/range-ip-output-tlsinfo.json | \
 jq '[.ip, .certificateChain[].subjectCN] | join(",")' -r > /tmp/range-ip-output-tlsinfo.csv | \
 head -2 /tmp/range-ip-output-tlsinfo.csv
 ```
-
-
 
 #### **Database**
 
@@ -265,7 +283,9 @@ services.service_name: {MYSQL, POSTGRES, MSSQL}
 
 #### [Nmap ](https://nmap.org/)
 
-_Identifying Authentication Services Using Related Scripts_
+{% hint style="info" %}
+Identifying Authentication Services Using Related Scripts
+{% endhint %}
 
 ```bash
 nmap -sS -sV --mtu 5000 --script http-auth-finder $WEBSITE
@@ -273,7 +293,9 @@ nmap -sS -sV --mtu 5000 --script http-auth-finder $WEBSITE
 
 #### [Nmap](https://nmap.org/)
 
-&#x20;_Checking SSH-Based Authentication_
+{% hint style="info" %}
+&#x20;Checking SSH-Based Authentication
+{% endhint %}
 
 ```bash
 nmap -p 22 -sS -sV --mtu 5000 --script ssh-auth-methods $WEBSITE
@@ -441,7 +463,9 @@ services.http.response.headers: (key: "Server" and value.headers: {"Cloudflare",
 
 #### [Nmap](https://nmap.org/)
 
-&#x20;_Identifying Software-Based Firewalls_
+{% hint style="info" %}
+&#x20;Identifying Software-Based Firewalls
+{% endhint %}
 
 ```bash
 nmap -sS -sV --mtu 5000 --script firewall-bypass $WEBSITE
