@@ -2,9 +2,9 @@
 
 ## Check List
 
-* [ ] _Review webpage comments and metadata to find any information leakage._
-* [ ] _Gather JavaScript files and review the JS code to better understand the application and to find any information leakage._
-* [ ] _Identify if source map files or other front-end debug files exist._
+* [ ] Review webpage comments and metadata to find any information leakage.
+* [ ] Gather JavaScript files and review the JS code to better understand the application and to find any information leakage.
+* [ ] Identify if source map files or other front-end debug files exist.
 
 ## Cheat Sheet
 
@@ -12,7 +12,9 @@
 
 #### HTML Comment&#x20;
 
-_Simple Page_
+{% hint style="info" %}
+Simple Page
+{% endhint %}
 
 ```html
 <!DOCTYPE html>
@@ -49,7 +51,9 @@ _Simple Page_
 </html>
 ```
 
-_Dashboard Page_
+{% hint style="info" %}
+Dashboard Page
+{% endhint %}
 
 ```html
 <!DOCTYPE html>
@@ -91,7 +95,9 @@ _Dashboard Page_
 
 #### DTD XML
 
-_DOCTYPE note_
+{% hint style="info" %}
+DOCTYPE note
+{% endhint %}
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -117,7 +123,9 @@ _DOCTYPE note_
 </note>
 ```
 
-_DOCTYPE credentials_
+{% hint style="info" %}
+DOCTYPE Credentials
+{% endhint %}
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
