@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Fingerprint the components being used by the web applications._
+* [ ] Fingerprint the components being used by the web applications.
 
 ## Cheat Sheet
 
@@ -27,7 +27,6 @@ Content-Length: 20336
 Keep-Alive: timeout=5, max=100
 Connection: Keep-Alive
 Content-Type: text/html; charset=UTF-8
-
 ```
 
 #### X-Generator
@@ -184,7 +183,9 @@ curl -s $WEBSITE | grep -o "gtag.js"
 
 #### BurpSuite
 
-`Burp Suite > Target > Right Click on One Domain > Send to Intruder > Intruder > Add Variable to Target Fuzzing > Payloads > Payloads Setting Add WordList > Start Attack`
+{% hint style="info" %}
+Burp Suite > Target > Right Click on One Domain > Send to Intruder > Intruder > Add Variable to Target Fuzzing > Payloads > Payloads Setting Add Wordlist > Start Attack
+{% endhint %}
 
 ### File Extensions
 
@@ -222,6 +223,6 @@ dirsearch -u $WEBSITE \
 curl -s $WEBSITE | grep -i "syntax error"
 ```
 
-```
+```php
 Parse error: syntax error, unexpected 'S SERVER' (T_VARIABLE) in /var/www/html/index.php on line 5
 ```
