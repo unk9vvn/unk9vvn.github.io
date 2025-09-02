@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Identify possible entry and injection points through request and response analysis._
+* [ ] Identify possible entry and injection points through request and response analysis.
 
 ## Cheat Sheet
 

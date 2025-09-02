@@ -2,7 +2,7 @@
 
 ## Check List&#x20;
 
-* [ ] _Map the target application and understand the principal workflows._
+* [ ] Map the target application and understand the principal workflows.
 
 ## Cheat Sheet
 
@@ -10,11 +10,15 @@
 
 #### Burp Suite
 
-_Mapping a Website with Burp Suite_
+{% hint style="info" %}
+Mapping a Website with Burp Suite
+{% endhint %}
 
 `Burp Suite > Target > Site map > Right Click on One Domain > Engagement tools > Analyze Target`
 
-_Crawling a Website with Burp Suite_
+{% hint style="info" %}
+Crawling a Website with Burp Suite
+{% endhint %}
 
 `Burp Suite > ِDashbord > New Scan > Use Web app Scan > Use a preset scan mode > Analyze Target in Summary`
 
@@ -36,10 +40,14 @@ dirsearch -u $WEBSITE \
 
 #### BurpSuite
 
-`Burp Suite > Target > Site map > Analyze Three Domain`&#x20;
+{% hint style="info" %}
+Burp Suite > Target > Site map > Analyze Three Domain&#x20;
+{% endhint %}
 
 ### Race
 
 #### BurpSuite
 
-`Burp Suite > Target > Right Click on One Domain > Extensions > Turbo intruder > send to turbo intruder > Add to WordList path in line "for word in open('/usr/share/dict/words')" > Attack`
+{% hint style="info" %}
+Burp Suite > Target > Right Click on One Domain > Extensions > Turbo intruder > send to turbo intruder > Add to WordList path in line "for word in open('/usr/share/dict/words')" > Attack
+{% endhint %}
