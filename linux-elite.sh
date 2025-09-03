@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="4.7"
+ver="4.8"
 
 
 # Color definitions
@@ -703,6 +703,21 @@ EOF
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 loxs.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+  	# install passhunt
+	if [ ! -d "/usr/share/passhunt" ]; then
+		name="passhunt"
+		git clone https://github.com/Viralmaniar/Passhunt /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 passhunt.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
@@ -2163,6 +2178,21 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./setup.sh install
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+   	# install passhunt
+	if [ ! -d "/usr/share/passhunt" ]; then
+		name="passhunt"
+		git clone https://github.com/Viralmaniar/Passhunt /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 passhunt.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
