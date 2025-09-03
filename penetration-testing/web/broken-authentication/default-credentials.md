@@ -47,6 +47,12 @@ nuclei -u $WEBSITE -tags default-login
 
 ### Application Generated Default Passwords
 
+#### [CeWL](https://github.com/digininja/CeWL)
+
+```bash
+cewl $WEBSITE -w /tmp/words.txt
+```
+
 #### [Crunch](https://sourceforge.net/projects/crunch-wordlist/)
 
 ```bash
