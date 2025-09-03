@@ -25,9 +25,7 @@
 
 {% embed url="https://cirt.net/passwords" %}
 
-{% hint style="info" %}
-Search Default Passwords
-{% endhint %}
+#### [defaultcreds-cheat-sheet](https://github.com/ihebski/DefaultCreds-cheat-sheet)
 
 ```bash
 creds search tomcat
