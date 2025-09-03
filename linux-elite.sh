@@ -426,7 +426,7 @@ penetrating_testing()
 	npm_installer "Web" "Penetration-Testing" "$web_npm"
 
  # install Ruby GEM
-	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear"
+	web_gem="ssrf_proxy API_Fuzzer dawnscanner mechanize XSpear pass-station"
 	gem_installer "Web" "Penetration-Testing" "$web_gem"
 
 	# install Golang
@@ -2092,7 +2092,7 @@ EOF
 	npm_installer "Network" "Penetration-Testing" "$network_npm"
 
 	# install Ruby GEM
-	network_gem="seccomp-tools one_gadget"
+	network_gem="seccomp-tools one_gadget pass-station"
 	npm_installer "Network" "Penetration-Testing" "$network_gem"
 
 	# install Golang
