@@ -15,8 +15,6 @@
 
 {% embed url="https://github.com/ihebski/DefaultCreds-cheat-sheet/blob/main/DefaultCreds-Cheat-Sheet.csv" %}
 
-{% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
-
 {% embed url="https://many-passwords.github.io/" %}
 
 {% embed url="https://crackstation.net/" %}
@@ -25,16 +23,20 @@
 
 {% embed url="https://cirt.net/passwords" %}
 
-#### [defaultcreds-cheat-sheet](https://github.com/ihebski/DefaultCreds-cheat-sheet)
-
-```bash
-creds search tomcat
-```
-
 #### [Nmap](https://github.com/nnposter/nndefaccts)
 
 ```bash
 sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
+```
+
+### Organization Default Passwords
+
+{% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
+
+#### [defaultcreds-cheat-sheet](https://github.com/ihebski/DefaultCreds-cheat-sheet)
+
+```bash
+creds search tomcat
 ```
 
 #### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/http/default-logins)
