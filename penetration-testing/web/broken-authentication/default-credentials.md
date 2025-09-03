@@ -15,6 +15,10 @@
 
 {% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
 
+{% embed url="https://crackstation.net/" %}
+
+{% embed url="https://haveibeenpwned.com/Passwords" %}
+
 {% embed url="https://cirt.net/passwords" %}
 
 {% hint style="info" %}
@@ -25,10 +29,16 @@ Search Default Passwords
 creds search tomcat
 ```
 
-#### Nmap Scan
+#### [Nmap](https://nmap.org/book/man-nse.html)
 
 ```bash
 sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
+```
+
+#### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/http/default-logins)
+
+```bash
+nuclei -u $WEBSITE -tags default-login
 ```
 
 ### Status Code <a href="#error-message" id="error-message"></a>
