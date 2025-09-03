@@ -31,7 +31,7 @@
 creds search tomcat
 ```
 
-#### [Nmap](https://nmap.org/book/man-nse.html)
+#### [Nmap](https://github.com/nnposter/nndefaccts)
 
 ```bash
 sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
