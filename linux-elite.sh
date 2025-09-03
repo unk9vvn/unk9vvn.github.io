@@ -614,6 +614,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install changeme
+	if [ ! -d "/usr/share/changeme" ]; then
+		name="changeme"
+		git clone https://github.com/ztgrace/changeme /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 changeme.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
   	# install oty
 	if [ ! -f "/usr/bin/oty" ]; then
 		name="oty"
@@ -2123,6 +2138,21 @@ cd /usr/share/$name;python3 mr.sip.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+   	# install changeme
+	if [ ! -d "/usr/share/changeme" ]; then
+		name="changeme"
+		git clone https://github.com/ztgrace/changeme /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 changeme.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
