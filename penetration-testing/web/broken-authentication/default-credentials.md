@@ -11,6 +11,8 @@
 
 #### Default Creds
 
+{% embed url="https://github.com/many-passwords/many-passwords" %}
+
 {% embed url="https://github.com/ihebski/DefaultCreds-cheat-sheet/blob/main/DefaultCreds-Cheat-Sheet.csv" %}
 
 {% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
