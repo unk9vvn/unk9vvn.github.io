@@ -50,7 +50,7 @@ nuclei -u $WEBSITE -tags default-login
 #### [CeWL](https://github.com/digininja/CeWL)
 
 ```bash
-cewl $WEBSITE -w /tmp/words.txt
+cewl $WEBSITE --header "Cookie: $COOKIE" -d 5 -m 4
 ```
 
 #### [Crunch](https://sourceforge.net/projects/crunch-wordlist/)
