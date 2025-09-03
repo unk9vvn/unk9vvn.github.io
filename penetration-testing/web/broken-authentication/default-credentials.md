@@ -43,7 +43,27 @@ sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
 nuclei -u $WEBSITE -tags default-login
 ```
 
-### Status Code <a href="#error-message" id="error-message"></a>
+### Application Generated Default Passwords
+
+#### [Crunch](https://sourceforge.net/projects/crunch-wordlist/)
+
+```bash
+crunch 8 12 -t @@company%% -o passlist.txt
+```
+
+{% hint style="info" %}
+`-t` = for password pattern
+
+`@` = lowercase keywords
+
+`,` = uppercase keywords
+
+`%` = digits
+
+`^` = meta characters
+
+Example Result: `abcompany12`
+{% endhint %}
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
