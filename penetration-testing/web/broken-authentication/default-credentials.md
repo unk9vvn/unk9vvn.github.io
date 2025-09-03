@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Determine whether the application has any user accounts with default passwords._
-* [ ] _Review whether new user accounts are created with weak or predictable passwords._
+* [ ] Determine whether the application has any user accounts with default passwords.
+* [ ] Review whether new user accounts are created with weak or predictable passwords.
 
 ## Cheat Sheet
 
@@ -27,7 +27,9 @@ sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano default-bruteforce.sh
@@ -163,7 +165,9 @@ else
 fi
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x default-bruteforce.sh;sudo ./default-bruteforce.sh $WEBSITE
