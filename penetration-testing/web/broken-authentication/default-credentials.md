@@ -17,6 +17,8 @@
 
 {% embed url="https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials" %}
 
+{% embed url="https://many-passwords.github.io/" %}
+
 {% embed url="https://crackstation.net/" %}
 
 {% embed url="https://haveibeenpwned.com/Passwords" %}
