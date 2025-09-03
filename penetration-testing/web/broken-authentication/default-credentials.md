@@ -48,19 +48,19 @@ nuclei -u $WEBSITE -tags default-login
 #### [Crunch](https://sourceforge.net/projects/crunch-wordlist/)
 
 ```bash
-crunch 8 12 -t @@company%% -o passlist.txt
+crunch 8 12 -t @@company%% -o /tmp/passlist.txt
 ```
 
 {% hint style="info" %}
-`-t` = for password pattern
+`-t` = Password Pattern
 
-`@` = lowercase keywords
+`@` = Lowercase Keywords
 
-`,` = uppercase keywords
+`,` = Uppercase Keywords
 
-`%` = digits
+`%` = Digits
 
-`^` = meta characters
+`^` = Meta Characters
 
 Example Result: `abcompany12`
 {% endhint %}
