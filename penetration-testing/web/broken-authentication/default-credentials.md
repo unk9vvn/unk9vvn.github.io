@@ -17,6 +17,14 @@
 
 {% embed url="https://cirt.net/passwords" %}
 
+{% hint style="info" %}
+Search Default Passwords
+{% endhint %}
+
+```bash
+creds search tomcat
+```
+
 #### Nmap Scan
 
 ```bash
