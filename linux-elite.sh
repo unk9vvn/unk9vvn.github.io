@@ -666,6 +666,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install mhddos
+	if [ ! -d "/usr/share/mhddos" ]; then
+		name="mhddos"
+		git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 start.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
  	# install subdomainizer
 	if [ ! -d "/usr/share/subdomainizer" ]; then
 		name="subdomainizer"
@@ -2157,6 +2172,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install mhddos
+	if [ ! -d "/usr/share/mhddos" ]; then
+		name="mhddos"
+		git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 start.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install mr.sip
 	if [ ! -d "/usr/share/mr.sip" ]; then
 		name="mr.sip"
@@ -2183,7 +2213,7 @@ EOF
 cd /usr/share/$name;python3 changeme.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
