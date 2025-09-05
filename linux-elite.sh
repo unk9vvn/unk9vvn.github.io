@@ -464,6 +464,7 @@ go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
 go install github.com/KathanP19/cf-hero@latest;ln -fs ~/go/bin/cf-hero /usr/bin/cf-hero
 go install github.com/bountysecurity/gbounty/cmd/gbounty@latest;ln -fs ~/go/bin/gbounty /usr/bin/gbounty
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
+go install github.com/musana/fuzzuli@latest;ln -fs ~/go/bin/fuzzuli /usr/bin/fuzzuli
 go install github.com/jaeles-project/gospider@latest;ln -fs ~/go/bin/gospider /usr/bin/gospider
 go install github.com/trickest/mksub@latest;ln -fs ~/go/bin/mksub /usr/bin/mksub
 go install github.com/nullt3r/udpx/cmd/udpx@latest;ln -fs ~/go/bin/udpx /usr/bin/udpx
@@ -1762,6 +1763,21 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
 		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+    # install sslpindetect
+	if [ ! -d "/usr/share/sslpindetect" ]; then
+		name="sslpindetect"
+		git clone https://github.com/aancw/SSLPinDetect /usr/share/$name
+		chmod 755 /usr/share/$name/*
+  		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 sslpindetect.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
