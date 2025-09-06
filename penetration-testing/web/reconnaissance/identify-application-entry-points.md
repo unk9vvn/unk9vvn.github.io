@@ -24,7 +24,7 @@ x8 --url $WEBSITE \
    -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
 ```
 
-#### BurpSuite
+#### Burp Suite
 
 ```http
 GET /?page=earbuds HTTP/1.1
