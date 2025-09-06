@@ -14,13 +14,17 @@
 Mapping a Website with Burp Suite
 {% endhint %}
 
-`Burp Suite > Target > Site map > Right Click on One Domain > Engagement tools > Analyze Target`
+{% hint style="info" %}
+Burp Suite > Target > Site map > Right Click on One Domain > Engagement tools > Analyze Target
+{% endhint %}
 
 {% hint style="info" %}
 Crawling a Website with Burp Suite
 {% endhint %}
 
-`Burp Suite > ِDashbord > New Scan > Use Web app Scan > Use a preset scan mode > Analyze Target in Summary`
+{% hint style="info" %}
+Burp Suite > ِDashbord > New Scan > Use Web app Scan > Use a preset scan mode > Analyze Target in Summary
+{% endhint %}
 
 #### [FeroxBuster](https://www.google.com/url?sa=t\&source=web\&rct=j\&opi=89978449\&url=https://github.com/epi052/feroxbuster\&ved=2ahUKEwiU3pPJrqGJAxV1Q6QEHe2kNVcQFnoECBkQAQ\&usg=AOvVaw3nTxxRaPVVZSoVDW5LKrjt)
 
@@ -38,7 +42,7 @@ dirsearch -u $WEBSITE \
 
 ### Data Flow&#x20;
 
-#### BurpSuite
+#### Burp Suite
 
 {% hint style="info" %}
 Burp Suite > Target > Site map > Analyze Three Domain&#x20;
@@ -46,7 +50,7 @@ Burp Suite > Target > Site map > Analyze Three Domain&#x20;
 
 ### Race
 
-#### BurpSuite
+#### Burp Suite
 
 {% hint style="info" %}
 Burp Suite > Target > Right Click on One Domain > Extensions > Turbo intruder > send to turbo intruder > Add to WordList path in line "for word in open('/usr/share/dict/words')" > Attack
