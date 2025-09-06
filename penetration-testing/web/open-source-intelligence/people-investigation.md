@@ -2,12 +2,12 @@
 
 ## Check List
 
-* [ ] _Use specialized search tools for finding people._
-* [ ] _Perform reverse phone lookups._
-* [ ] _Check if an email is linked to any online accounts_
-* [ ] _Search username availability across platforms_
-* [ ] _Use reverse image search for tracing photos_
-* [ ] _Review public social media profiles_
+* [ ] Use specialized search tools for finding people.
+* [ ] Perform reverse phone lookups.
+* [ ] Check if an email is linked to any online accounts
+* [ ] Search username availability across platforms
+* [ ] Use reverse image search for tracing photos
+* [ ] Review of public social media profiles
 
 ## Cheat Sheet
 
@@ -135,7 +135,9 @@ theHarvester -d $WEBSITE -b all
 
 #### [Linkedin](https://www.linkedin.com/)
 
-[_linkedin2username_](https://github.com/initstring/linkedin2username)
+{% hint style="info" %}
+linkedin2username
+{% endhint %}
 
 ```bash
 python3 linkedin2username.py -c $TARGET
