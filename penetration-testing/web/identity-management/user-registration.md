@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Verify that the identity requirements for user registration are aligned with business and security requirements._
-* [ ] _Validate the registration process._
+* [ ] Verify that the identity requirements for user registration are aligned with business and security requirements.
+* [ ] Validate the registration process.
 
 ## Cheat Sheet
 
@@ -11,7 +11,9 @@
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [cURL](https://curl.se/) & [WayBackURL](https://github.com/tomnomnom/waybackurls)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano smart-register-path.sh
@@ -227,7 +229,9 @@ echo -e "${BLUE}[*] All results saved to: $OUTDIR${NC}"
 exit 0
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x smart-register-path.sh;sudo ./smart-register-path.sh $WEBSITE
