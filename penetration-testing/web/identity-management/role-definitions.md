@@ -2,9 +2,9 @@
 
 ## Check List
 
-* [ ] _Identify and document roles used by the application._
-* [ ] _Attempt to switch, change, or access another role._
-* [ ] _Review the granularity of the roles and the needs behind the permissions given._
+* [ ] Identify and document roles used by the application.
+* [ ] Attempt to switch, change, or access another role.
+* [ ] Review the granularity of the roles and the needs behind the permissions given.
 
 ## Cheat Sheet
 
@@ -14,7 +14,9 @@
 
 #### Hidden Directories
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano hidden-dir-files.sh
@@ -95,7 +97,9 @@ for dir in $DIRS; do
 done
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x hidden-dir-files.sh;sudo ./hidden-dir-files.sh $WEBSITE
@@ -103,7 +107,9 @@ sudo chmod +x hidden-dir-files.sh;sudo ./hidden-dir-files.sh $WEBSITE
 
 #### Cookie and Account
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano cookie-account-identify.sh
@@ -205,7 +211,9 @@ for PATH in "${CMS_USER_PATHS[@]}"; do
 done
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x cookie-account-identify.sh;sudo ./cookie-account-identify.sh $WEBSITE
