@@ -14,7 +14,7 @@
 Mapping a Website with Burp Suite
 {% endhint %}
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Burp Suite > Target > Site map > Right Click on One Domain > Engagement tools > Analyze Target
 {% endhint %}
 
@@ -22,7 +22,7 @@ Burp Suite > Target > Site map > Right Click on One Domain > Engagement tools > 
 Crawling a Website with Burp Suite
 {% endhint %}
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Burp Suite > ِDashbord > New Scan > Use Web app Scan > Use a preset scan mode > Analyze Target in Summary
 {% endhint %}
 
@@ -44,7 +44,7 @@ dirsearch -u $WEBSITE \
 
 #### Burp Suite
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Burp Suite > Target > Site map > Analyze Three Domain&#x20;
 {% endhint %}
 
@@ -52,6 +52,6 @@ Burp Suite > Target > Site map > Analyze Three Domain&#x20;
 
 #### Burp Suite
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Burp Suite > Target > Right Click on One Domain > Extensions > Turbo intruder > send to turbo intruder > Add to WordList path in line "for word in open('/usr/share/dict/words')" > Attack
 {% endhint %}

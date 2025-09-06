@@ -183,7 +183,7 @@ curl -s $WEBSITE | grep -o "gtag.js"
 
 #### BurpSuite
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Burp Suite > Target > Right Click on One Domain > Send to Intruder > Intruder > Add Variable to Target Fuzzing > Payloads > Payloads Setting Add Wordlist > Start Attack
 {% endhint %}
 

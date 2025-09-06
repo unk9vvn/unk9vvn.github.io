@@ -374,97 +374,147 @@ Right-click Domain > Run Transforms > Domain owner detail
 Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS \[IBM Watson]
 {% endhint %}
 
-`Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS > To WHOIS Records [Whois XML]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > Domain owner detail > To Entities from WHOIS > To WHOIS Records \[Whois XML]
+{% endhint %}
 
-_Emails Related to Domain_
+{% hint style="info" %}
+Emails Related to Domain
+{% endhint %}
 
-`Right-click Domain > Run Transforms > Find in Entity Properties > To E-Mail addresses [within Properties]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > Find in Entity Properties > To E-Mail addresses \[within Properties]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > hunter > Find Email Address [Hunter]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > hunter > Find Email Address \[Hunter]
+{% endhint %}
 
-_Subdomains_
+{% hint style="info" %}
+Subdomains
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > [Securitytrails] List Subdomains`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > \[Securitytrails] List Subdomains
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To Subdomains (+Historical)[Shodan]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To Subdomains (+Historical)\[Shodan]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To Subdomains(Passive DNS)[OTX]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To Subdomains(Passive DNS)\[OTX]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To Subdomains[Shodan]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To Subdomains\[Shodan]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > All Transforms > To Subdomains[VirusTotal Public API]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > All Transforms > To Subdomains\[VirusTotal Public API]
+{% endhint %}
 
-_Phone Numbers_
+{% hint style="info" %}
+Phone Numbers
+{% endhint %}
 
-`Right-click Domain > Run Transforms > To Phone numbers [From whois info]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > To Phone numbers \[From whois info]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > To Phone Numbers [using Search Engine]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > To Phone Numbers \[using Search Engine]
+{% endhint %}
 
-`Right-click Domain > Run Transforms > To Phone Numbers [within Properties]`
+{% hint style="warning" %}
+Right-click Domain > Run Transforms > To Phone Numbers \[within Properties]
+{% endhint %}
 
 ### [Recon-NG](https://github.com/lanmaster53/recon-ng)
 
-_Run Recon-ng_
+{% hint style="info" %}
+Run Recon-ng
+{% endhint %}
 
 ```bash
 recon-ng
 ```
 
-_List Commands_
+{% hint style="info" %}
+List Commands
+{% endhint %}
 
 ```bash
 [recon-ng][default] > help
 ```
 
-_View All Modules_
+{% hint style="info" %}
+View All Modules
+{% endhint %}
 
 ```bash
 [recon-ng][default] > marketplace search
 ```
 
-_Install a Module_
+{% hint style="info" %}
+Install a Module
+{% endhint %}
 
 ```bash
 [recon-ng][default] > marketplace install recon/domains-contacts/hunter_io
 ```
 
-_Load a Module_
+{% hint style="info" %}
+Load a Module
+{% endhint %}
 
 ```bash
 [recon-ng][default] > modules load hunter_io
 ```
 
-_List Module Options_
+{% hint style="info" %}
+List Module Options
+{% endhint %}
 
 ```bash
 [recon-ng][default][hunter_io] > options list
 ```
 
-_Set Module Options_
+{% hint style="info" %}
+Set Module Options
+{% endhint %}
 
 ```bash
 [recon-ng][default][hunter_io] > options set SOURCE $WEBSITE
 ```
 
-_Run Module_
+{% hint style="info" %}
+Run Module
+{% endhint %}
 
 ```bash
 [recon-ng][default][hunter_io] > run
 ```
 
-_List API Keys_
+{% hint style="info" %}
+List API Keys
+{% endhint %}
 
 ```bash
 [recon-ng][default] > keys list
 ```
 
-_Add API Key_
+{% hint style="info" %}
+Add API Key
+{% endhint %}
 
 ```bash
 [recon-ng][default] > keys add hunter_io 9918b4ea[...]b46a73f071 
 ```
 
-_Remove API Key_
+{% hint style="info" %}
+Remove API Key
+{% endhint %}
 
 ```bash
 [recon-ng][default] > keys remove hunter_io 
@@ -486,4 +536,6 @@ exiftool $FILE
 
 #### [FOCA](https://github.com/ElevenPaths/FOCA)
 
-`Application Menu > Project > New Project > Fill the Inputs > Create > Select Path for Result > Select Extensions and Search Engine > Search All`&#x20;
+{% hint style="warning" %}
+Application Menu > Project > New Project > Fill the Inputs > Create > Select Path for Result > Select Extensions and Search Engine > Search All&#x20;
+{% endhint %}
