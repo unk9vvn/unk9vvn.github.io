@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Identify sensitive information transmitted through the various channels._
-* [ ] _Assess the privacy and security of the channels used._
+* [ ] Identify sensitive information transmitted through the various channels.
+* [ ] Assess the privacy and security of the channels used.
 
 ## Cheat Sheet
 
@@ -35,7 +35,9 @@ sslyze $WEBSITE
 
 #### [Bettercap](https://www.bettercap.org/)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano mitm-bettercap.sh
@@ -258,7 +260,9 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 bettercap -iface "$IFACE" -caplet "$MITM_DIR/cert_injector.cap"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x mitm-bettercap.sh;sudo ./mitm-bettercap.sh
