@@ -2,9 +2,9 @@
 
 ## Check List
 
-* [ ] _Ensure that defaults and known files have been removed._
-* [ ] _Dirbust sensitive file extensions, or extensions that might contain raw data (e.g. scripts, raw data, credentials, etc.)._
-* [ ] _Validate that no system framework bypasses exist on the rules set._
+* [ ] Ensure that defaults and known files have been removed.
+* [ ] Dirbust sensitive file extensions, or extensions that might contain raw data (e.g. scripts, raw data, credentials, etc.).
+* [ ] Validate that no system framework bypasses exist on the rules set.
 
 ## Cheat Sheet
 
@@ -12,7 +12,9 @@
 
 #### [Google](https://www.exploit-db.com/google-hacking-database)
 
-_Extensions_
+{% hint style="info" %}
+Extensions
+{% endhint %}
 
 ```bash
 ext:log | 
@@ -36,13 +38,17 @@ ext:daf
 site:$WEBSITE
 ```
 
-_OR_
+{% hint style="info" %}
+OR
+{% endhint %}
 
 ```bash
 site:*.$WEBSITE (ext:doc OR ext:docx OR ext:odt OR ext:pdf OR ext:rtf OR ext:ppt OR ext:pptx OR ext:csv OR ext:xls OR ext:xlsx OR ext:txt OR ext:xml OR ext:json OR ext:zip OR ext:rar OR ext:md OR ext:log OR ext:bak OR ext:conf OR ext:sql)
 ```
 
-_File Types_
+{% hint style="info" %}
+File Types
+{% endhint %}
 
 ```bash
 filetype:pdf |
@@ -55,7 +61,9 @@ site:$WEBSITE
 
 #### [Nikto](https://github.com/sullo/nikto)
 
-_Scan all_
+{% hint style="info" %}
+Scan all
+{% endhint %}
 
 ```bash
 nikto -h $WEBSITE -ssl
@@ -63,7 +71,9 @@ nikto -h $WEBSITE -ssl
 
 #### [Eyewitness](https://github.com/RedSiege/EyeWitness)
 
-_File Types_
+{% hint style="info" %}
+File Types
+{% endhint %}
 
 ```bash
 eyewitness --single $WEBSITE --web
@@ -71,7 +81,9 @@ eyewitness --single $WEBSITE --web
 
 #### [Katana](https://github.com/projectdiscovery/katana) & [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano ext-fuzzer.sh
@@ -158,7 +170,9 @@ ffuf -w "$URLS_FILE":URL \
 rm -f "$KATANA_OUTPUT" "$URLS_FILE" "$COOKIE_FILE" "$PAYLOAD_FILE"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x ext-smart-fuzzer.sh;sudo ./ext-smart-fuzzer.sh $WEBSITE
@@ -168,7 +182,9 @@ sudo chmod +x ext-smart-fuzzer.sh;sudo ./ext-smart-fuzzer.sh $WEBSITE
 
 #### [Fuxploider](https://github.com/almandin/fuxploider)
 
-_Fuzz Uploader_
+{% hint style="info" %}
+Fuzz Uploader
+{% endhint %}
 
 ```bash
 fuxploider -u $WEBSITE --form-action /upload
@@ -176,9 +192,13 @@ fuxploider -u $WEBSITE --form-action /upload
 
 #### [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)
 
-_Fuzz Extension & Content-Type_
+{% hint style="info" %}
+Fuzz Extension & Content-Type
+{% endhint %}
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano fuzz-uploader.sh
@@ -318,7 +338,9 @@ done
 echo "All files have been tested with all content types."
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x fuzz-uploader.sh;sudo ./fuzz-uploader.sh $WEBSITE/upload
