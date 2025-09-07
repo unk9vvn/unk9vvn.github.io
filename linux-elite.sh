@@ -6398,7 +6398,7 @@ main()
 				    gnome-terminal apt-utils \
 				    htop nload bleachbit remmina \
 				    filezilla thunderbird code cmatrix \
-				    wine winetricks winbind \
+				    wine winetricks winbind redis-tools \
 				    p7zip p7zip-full rar zip
 
 				# install Python2 pip
@@ -6462,7 +6462,7 @@ main()
 				    gnome-terminal apt-utils \
 				    htop nload bleachbit remmina \
 				    filezilla thunderbird code cmatrix \
-				    wine winetricks winbind \
+				    wine winetricks winbind redis-tools \
 				    p7zip p7zip-full rar zip
     
 				# install snap
