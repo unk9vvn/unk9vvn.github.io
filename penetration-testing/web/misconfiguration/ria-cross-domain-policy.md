@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Review and validate the policy files._
+* [ ] Review and validate the policy files.
 
 ## Cheat Sheet
 
@@ -10,7 +10,9 @@
 
 #### [Nmap](https://nmap.org/)
 
-_Check crossdomain.xml & clientaccesspolicy.xml_
+{% hint style="info" %}
+Check crossdomain.xml & clientaccesspolicy.xml
+{% endhint %}
 
 ```bash
 nmap -p 80,443 \
@@ -21,7 +23,9 @@ nmap -p 80,443 \
 
 ### [BeEF](https://github.com/beefproject/beef) (SWF)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano beefer.sh
@@ -133,7 +137,9 @@ printf "\n"
 printf "${GREEN}BeEF Panel > Commands > Misc > Create Invisible Iframe > URL: http://$WAN:8080/pwn > Execute${RESET}\n"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x beefer.sh;sudo ./beefer.sh
