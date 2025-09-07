@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Identify hidden administrator interfaces and functionality._
+* [ ] Identify hidden administrator interfaces and functionality.
 
 ## Cheat Sheet
 
@@ -117,7 +117,9 @@ waybackurls $WEBSITE
 
 #### [Katana](https://github.com/projectdiscovery/katana)
 
-_Extract URLs_
+{% hint style="info" %}
+Extract URLs
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE \
@@ -143,7 +145,9 @@ grep -v '&amp' | \
 sort -u > /tmp/urls.txt
 ```
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano fuzz-login.sh
@@ -172,7 +176,9 @@ while read -r word; do
 done < "$SENSITIVE_WORDS"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x fuzz-login.sh;sudo ./fuzz-login.sh $WEBSITE

