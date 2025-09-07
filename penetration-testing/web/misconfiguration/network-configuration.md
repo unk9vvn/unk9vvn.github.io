@@ -833,3 +833,35 @@ Denial of Service
 ```bash
 msfconsole -qx "use auxiliary/dos/misc/memcached;set RHOSTS $TARGET;run;exit"
 ```
+
+### Redis
+
+#### [Nmap](https://nmap.org/nsedoc/scripts/redis-info.html)
+
+{% hint style="info" %}
+Identify Redis
+{% endhint %}
+
+```bash
+nmap -p 6379 -sS -sV --mtu 5000 --script redis-info $TARGET
+```
+
+#### [redis-cli](https://redis.io/docs/latest/develop/tools/cli/)
+
+{% hint style="info" %}
+Unauthorized Access
+{% endhint %}
+
+```bash
+redis-cli -h $TARGET -p 6379
+```
+
+#### [Hydra](https://github.com/vanhauser-thc/thc-hydra)
+
+{% hint style="info" %}
+Brute Force Creds
+{% endhint %}
+
+```bash
+hydra -P passwords.txt -s 6379 $TARGET redis
+```
