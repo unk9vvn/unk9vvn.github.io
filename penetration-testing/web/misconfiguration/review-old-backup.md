@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Find and analyze unreferenced files that might contain sensitive information._
+* [ ] Find and analyze unreferenced files that might contain sensitive information.
 
 ## Cheat Sheet
 
@@ -10,7 +10,9 @@
 
 #### [Google](https://google.com)
 
-_Backup File Extension_
+{% hint style="info" %}
+Backup File Extension
+{% endhint %}
 
 ```bash
 ext:bak | 
@@ -28,7 +30,9 @@ ext:daf
 site:$WEBSITE
 ```
 
-_Backup File Names_
+{% hint style="info" %}
+Backup File Names
+{% endhint %}
 
 ```bash
 intitle:"index of" | 
@@ -101,7 +105,9 @@ site:$WEBSITE
 
 #### [x8](https://github.com/Sh1Yo/x8)
 
-_Find Hidden Parameters_
+{% hint style="info" %}
+Find Hidden Parameters
+{% endhint %}
 
 ```bash
 x8 --url $WEBSITE \
@@ -122,7 +128,9 @@ arjun -u $WEBSITE/endpoint.php \
 
 #### [Gobuster](https://github.com/OJ/gobuster)
 
-_Backup Ext Fuzz_
+{% hint style="info" %}
+Backup Ext Fuzz
+{% endhint %}
 
 ```bash
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt \
@@ -132,7 +140,9 @@ gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories
 
 #### [DirSearch](https://github.com/maurosoria/dirsearch)
 
-_Backup Ext Fuzz_
+{% hint style="info" %}
+Backup Ext Fuzz
+{% endhint %}
 
 ```bash
 dirsearch -u $WEBSITE \
@@ -146,7 +156,9 @@ dirsearch -u $WEBSITE \
 
 #### [Katana](https://github.com/projectdiscovery/katana) & [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano backup-smart-fuzzer.sh
@@ -241,7 +253,9 @@ ffuf -w "$URLS_FILE":URL \
      "${HEADER_PARAMS[@]}"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x backup-fuzzer.sh;sudo ./backup-fuzzer.sh $WEBSITE
