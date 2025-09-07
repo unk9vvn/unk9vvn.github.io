@@ -31,6 +31,16 @@ testssl $WEBSITE
 sslyze $WEBSITE
 ```
 
+#### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/ssl)
+
+{% hint style="info" %}
+Misconf & Vulns
+{% endhint %}
+
+```bash
+nuclei -tags ssl -u https://$WEBSITE
+```
+
 ### Man In The Middle
 
 #### [Bettercap](https://www.bettercap.org/)
