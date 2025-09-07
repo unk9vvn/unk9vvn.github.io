@@ -43,6 +43,16 @@ Browser Login
 ftp://anonymous:anonymous@$TARGET
 ```
 
+#### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/network/default-login)
+
+{% hint style="info" %}
+Misconf & Vulns
+{% endhint %}
+
+```bash
+nuclei -tags ftp -u $TARGET:21
+```
+
 #### [WGET](https://www.gnu.org/software/wget/)
 
 {% hint style="info" %}
@@ -261,6 +271,16 @@ Brute Force
 nmap -p 161 -sU -sV --mtu 5000 --script snmp-brute $WEBSITE
 ```
 
+#### Nuclei
+
+{% hint style="info" %}
+Misconf & Vulns
+{% endhint %}
+
+```bash
+nuclei -tags snmp -u $TARGET:161
+```
+
 #### [SNMPWalk](https://linux.die.net/man/1/snmpwalk)
 
 {% hint style="info" %}
@@ -446,6 +466,16 @@ Enumerate Services and Processes
 nmap -p 139,445 \
      -sS -sV --mtu 5000 \
      --script smb-enum-services,smb-enum-processes $WEBSITE
+```
+
+#### Nuclei
+
+{% hint style="info" %}
+SMB Misconf & Vulns
+{% endhint %}
+
+```bash
+nuclei -tags smb -u $TARGET:445
 ```
 
 #### [netexec](https://github.com/Pennyw0rth/NetExec)
@@ -724,6 +754,16 @@ Identify Memcached
 nmap -p 11211 -sS -sV --mtu 5000 --script memcached-info $WEBSITE
 ```
 
+#### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/blob/main/network/misconfig/memcached-stats.yaml)
+
+{% hint style="info" %}
+Memcached Misconf
+{% endhint %}
+
+```bash
+nuclei -tags memcached -u $TARGET:11211
+```
+
 #### [Netcat](https://nmap.org/ncat/)
 
 {% hint style="info" %}
@@ -863,10 +903,21 @@ Brute Force Creds
 {% endhint %}
 
 ```bash
-hydra -P passwords.txt -s 6379 $TARGET redis
+hydra -P /usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt \
+      -s 6379 $TARGET redis
 ```
 
-#### Metasploit-Framework
+#### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/blob/main/javascript/default-logins/redis-default-logins.yaml)
+
+{% hint style="info" %}
+Scan Misconf with Nuclei
+{% endhint %}
+
+```bash
+nuclei -tags redis -u $TARGET:6379
+```
+
+#### [Metasploit-Framework](https://www.metasploit.com/)
 
 {% hint style="info" %}
 Scan with Metasploit
