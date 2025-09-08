@@ -177,8 +177,12 @@ COOKIES=$(curl -s -I "$URL" \
   | cut -d';' -f1 \
   | grep -i 'PHPSESSID')
 
+# Extract only domain and port
+HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
+
 # HEADERS
 HEADERS=(
+  -H "Host: $HOST"
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
