@@ -102,7 +102,7 @@ URL="$1"
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
 grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
-sed 's:[/?]*$::' | sort -u | head -n1)
+sed 's:[/?]*$::' | sed 's:$:/:')
 
 if [ -z "$LOGIN" ]; then
     echo "[!] No login page found. Exiting."
@@ -182,19 +182,17 @@ HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
 
 # HEADERS
 HEADERS=(
-  -H "Host: $HOST"
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
-  -H "Accept-Encoding: gzip, deflate, br"
+  -H "Accept-Encoding: gzip, deflate"
   -H "Content-Type: application/x-www-form-urlencoded"
   -H "Origin: $URL"
+  -H "Sec-GPC: 1"
   -H "Connection: keep-alive"
   -H "Referer: $LOGIN"
   -H "Cookie: $COOKIES"
   -H "Upgrade-Insecure-Requests: 1"
-  -H "DNT: 1"
-  -H "Sec-GPC: 1"
   -H "Priority: u=0, i"
 )
 
