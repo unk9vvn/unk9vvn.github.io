@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Make sure application paths are configured correctly._
+* [ ] Make sure application paths are configured correctly.
 
 ## Cheat Sheet
 
@@ -10,7 +10,9 @@
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano pc-dict-fuzzer.sh
@@ -118,7 +120,9 @@ ffuf -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt:DIR
      "${HEADER_PARAMS[@]}"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x pc-dict-fuzzer.sh;sudo ./pc-dict-fuzzer.sh $WEBSITE
@@ -128,7 +132,9 @@ sudo chmod +x pc-dict-fuzzer.sh;sudo ./pc-dict-fuzzer.sh $WEBSITE
 
 #### [FFUF ](https://github.com/ffuf/ffuf)& [Katana](https://github.com/projectdiscovery/katana)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano pc-crawl-fuzzer.sh
@@ -255,7 +261,9 @@ ffuf -w $URLS_FILE:URL \
      "${HEADER_PARAMS[@]}"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x pc-crawl-fuzzer.sh;sudo ./pc-crawl-fuzzer.sh $WEBSITE

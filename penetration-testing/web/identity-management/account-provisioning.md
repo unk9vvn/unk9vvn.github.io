@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Verify which accounts may provision other accounts and of what type._
+* [ ] Verify which accounts may provision other accounts and of what type.
 
 ## Cheat Sheet
 
@@ -10,13 +10,17 @@
 
 #### [XSRFProbe](https://github.com/0xInfection/XSRFProbe)
 
-_Non-Authenticated Endpoint_
+{% hint style="info" %}
+Non-Authenticated Endpoint
+{% endhint %}
 
 ```bash
 xsrfprobe -u https://$WEBSITE/profile/update -v
 ```
 
-_Authenticated Endpoint_
+{% hint style="info" %}
+Authenticated Endpoint
+{% endhint %}
 
 ```bash
 xsrfprobe -u https://$WEBSITE/profile/update -v -c "$COOKIE"
@@ -30,7 +34,9 @@ xsrfprobe -u https://$WEBSITE/profile/update -v -c "$COOKIE"
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [FFUF ](https://github.com/ffuf/ffuf)& [XSRFprobe](https://github.com/0xInfection/XSRFProbe)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 <pre class="language-bash"><code class="lang-bash"><strong>#!/bin/bash
 </strong>
@@ -79,7 +85,9 @@ echo "✅ CSRF Scan Complete."
 echo "📄 Vulnerable endpoints saved in: /tmp/results/vulnerable_csrf.txt"
 </code></pre>
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo nano csrf-hunter.sh;sudo ./csrf-hunter.sh $WEBSITE

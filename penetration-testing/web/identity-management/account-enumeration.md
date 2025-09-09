@@ -4,8 +4,8 @@
 
 ## Check List
 
-* [ ] _Review processes that pertain to user identification (e.g. registration, login, etc.)._
-* [ ] _Enumerate users where possible through response analysis._
+* [ ] Review processes that pertain to user identification (e.g. registration, login, etc.).
+* [ ] Enumerate users where possible through response analysis.
 
 ## Cheat Sheet
 
@@ -13,7 +13,9 @@
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano sc-user-enum.sh
@@ -125,7 +127,9 @@ else
 fi
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x sc-user-enum.sh;sudo ./sc-user-enum.sh $WEBSITE/login \
@@ -137,7 +141,9 @@ sudo chmod +x sc-user-enum.sh;sudo ./sc-user-enum.sh $WEBSITE/login \
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano em-user-enum.sh
@@ -251,7 +257,9 @@ else
 fi
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x em-user-enum.sh;sudo ./em-user-enum.sh $WEBSITE/login \
@@ -263,7 +271,9 @@ sudo chmod +x em-user-enum.sh;sudo ./em-user-enum.sh $WEBSITE/login \
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano nu-user-enum.sh
@@ -374,7 +384,9 @@ else
 fi
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x nu-user-enum.sh;sudo ./nu-user-enum.sh $WEBSITE/login \

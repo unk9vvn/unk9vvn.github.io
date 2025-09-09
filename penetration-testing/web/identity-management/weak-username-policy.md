@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Determine whether a consistent account name structure renders the application vulnerable to account enumeration._
-* [ ] _Determine whether the application’s error messages permit account enumeration._
+* [ ] Determine whether a consistent account name structure renders the application vulnerable to account enumeration.
+* [ ] Determine whether the application’s error messages permit account enumeration.
 
 ## Cheat Sheet
 
@@ -11,7 +11,9 @@
 
 [**Katana** ](https://github.com/projectdiscovery/katana)**&** [**cURL**](https://curl.se/) **&** [**WayBackURL**](https://github.com/tomnomnom/waybackurls)**​**
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano sc-weak-username.sh
@@ -217,7 +219,9 @@ analyze_username "$USERNAME" "$FIRST_NAME" "$LAST_NAME"
 echo -e "${GREEN}[✔] Done!${NC}"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x sc-weak-username.sh;sudo ./sc-weak-username.sh $WEBSITE/login \
