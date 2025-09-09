@@ -2,8 +2,8 @@
 
 ## Check List
 
-* [ ] _Enumerate all possible domains (previous and current)._
-* [ ] _Identify forgotten or misconfigured domains._
+* [ ] Enumerate all possible domains (previous and current).
+* [ ] Identify forgotten or misconfigured domains.
 
 ## Cheat Sheet
 
@@ -70,7 +70,9 @@ sublist3r -d $WEBSITE
 
 #### [Host](https://linux.die.net/man/1/host)
 
-_Recon Sub_
+{% hint style="info" %}
+Recon Sub
+{% endhint %}
 
 ```bash
 host $WEBSITE
@@ -78,7 +80,9 @@ host $WEBSITE
 
 #### [Whois](https://github.com/rfc1036/whois)
 
-_Recon IP_
+{% hint style="info" %}
+Recon IP
+{% endhint %}
 
 ```bash
 whois $TARGET | grep "OrgName"
@@ -86,7 +90,9 @@ whois $TARGET | grep "OrgName"
 
 #### [can-i-take-over-xyz](https://github.com/EdOverflow/can-i-take-over-xyz)
 
-_Checklist Providers_
+{% hint style="info" %}
+Checklist Providers
+{% endhint %}
 
 {% embed url="https://github.com/EdOverflow/can-i-take-over-xyz" %}
 
@@ -94,7 +100,9 @@ _Checklist Providers_
 
 #### [SubFinder ](https://github.com/projectdiscovery/subfinder)& [ShuffleDNS ](https://github.com/projectdiscovery/shuffledns)& [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/http/takeovers)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano sub-takeover.sh
@@ -132,7 +140,9 @@ echo "[+] Checking for subdomain takeover vulnerabilities..."
 nuclei -tags takeover -l /tmp/subdomains.txt
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x sub-takeover.sh;sudo ./sub-takeover.sh -d $WEBSITE
@@ -140,7 +150,9 @@ sudo chmod +x sub-takeover.sh;sudo ./sub-takeover.sh -d $WEBSITE
 
 ### [BeEF](https://github.com/beefproject/beef)
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano beef-sub-takeover.sh
@@ -242,7 +254,9 @@ printf "\n"
 printf "${GREEN}BeEF Panel > Commands > Misc > Create Invisible Iframe > URL: http://$WAN:8080/pwn > Execute${RESET}\n"
 ```
 
-_Script Run_
+{% hint style="info" %}
+Script Run
+{% endhint %}
 
 ```bash
 sudo chmod +x beef-sub-takeover.sh;sudo ./beef-sub-takeover.sh $WEBSITE

