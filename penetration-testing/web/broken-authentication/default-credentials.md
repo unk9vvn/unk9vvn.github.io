@@ -55,10 +55,6 @@ cewl $WEBSITE --header "Cookie: $COOKIE" -d 5 -m 4
 
 #### [Crunch](https://sourceforge.net/projects/crunch-wordlist/)
 
-```bash
-crunch 8 12 -t @@company%% -o /tmp/passlist.txt
-```
-
 {% hint style="info" %}
 `-t` = Password Pattern
 
@@ -72,6 +68,10 @@ crunch 8 12 -t @@company%% -o /tmp/passlist.txt
 
 Example Result: `abcompany12`
 {% endhint %}
+
+```bash
+crunch 8 12 -t @@company%% -o /tmp/passlist.txt
+```
 
 #### [FFUF](https://github.com/ffuf/ffuf)
 
