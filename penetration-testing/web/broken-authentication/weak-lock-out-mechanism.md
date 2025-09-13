@@ -16,7 +16,7 @@ Create Script
 {% endhint %}
 
 ```bash
-sudo nano bruteforce-multitor.sh
+sudo nano multitor-bruteforce.sh
 ```
 
 ```bash
@@ -182,5 +182,5 @@ Run Script
 {% endhint %}
 
 ```bash
-sudo chmod +x bruteforce-multitor.sh;sudo ./bruteforce-multitor.sh $WEBSITE
+sudo chmod +x multitor-bruteforce.sh;sudo ./multitor-bruteforce.sh $WEBSITE
 ```
