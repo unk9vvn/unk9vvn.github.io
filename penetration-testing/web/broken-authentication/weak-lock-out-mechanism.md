@@ -7,7 +7,7 @@
 
 ## Cheat Sheet
 
-### IP Restriction Bypass with Tor
+### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [Multitor ](https://github.com/trimstray/multitor)& [FFUF](https://github.com/ffuf/ffuf)
 
