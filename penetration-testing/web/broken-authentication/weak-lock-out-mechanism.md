@@ -157,13 +157,23 @@ HEADERS=(
 )
 
 # Run FFUF
-SOCKS_PROXY="socks4://127.0.0.1:9000"
-
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
-    ffuf -u "$FFUF_URL" -w "$USERLIST:FUZZ1" -w "$PASSLIST:FUZZ2" -x "$SOCKS_PROXY" -X GET -ac -c -r -mc 200 "${HEADERS[@]}"
+    ffuf -u "$FFUF_URL" \
+    -w "$USERLIST:FUZZ1" \
+    -w "$PASSLIST:FUZZ2" \
+    -x "socks4://127.0.0.1:16379" \
+    -X GET \
+    -ac -c -r -mc 200 \
+    "${HEADERS[@]}"
 else
-    ffuf -u "$FULL_ACTION" -w "$USERLIST:FUZZ1" -w "$PASSLIST:FUZZ2" -x "$SOCKS_PROXY" -X POST -d "$DATA" -ac -c -r -mc 200 "${HEADERS[@]}"
+    ffuf -u "$FULL_ACTION" \
+    -w "$USERLIST:FUZZ1" \
+    -w "$PASSLIST:FUZZ2" \
+    -x "socks4://127.0.0.1:16379" \
+    -X POST -d "$DATA" \
+    -ac -c -r -mc 200 \
+    "${HEADERS[@]}"
 fi
 ```
 
