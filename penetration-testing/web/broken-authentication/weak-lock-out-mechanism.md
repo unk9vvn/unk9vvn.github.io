@@ -7,6 +7,8 @@
 
 ## Cheat Sheet
 
+### IP Restriction Bypass with Tor
+
 #### [Katana ](https://github.com/projectdiscovery/katana)& [Multitor ](https://github.com/trimstray/multitor)& [FFUF](https://github.com/ffuf/ffuf)
 
 {% hint style="info" %}
