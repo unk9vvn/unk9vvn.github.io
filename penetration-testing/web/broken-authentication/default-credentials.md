@@ -36,7 +36,7 @@ sudo nmap -p80,443 --mtu 5000 --script http-default-accounts $WEBSITE
 #### [defaultcreds-cheat-sheet](https://github.com/ihebski/DefaultCreds-cheat-sheet)
 
 ```bash
-creds search tomcat
+creds search $VENDOR
 ```
 
 #### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/http/default-logins)
