@@ -671,7 +671,7 @@ EOF
 		name="mhddos"
 		git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip install -r /usr/share/$name/requirements.txt
+		pip install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 start.py "\$@"
