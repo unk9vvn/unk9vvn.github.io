@@ -679,7 +679,7 @@ cd /usr/share/$name;python3 start.py "\$@"
 EOF
     	chmod +x /usr/bin/$name
     	apt remove -y python3-urllib3
-    	pip3 install --user --upgrade urllib3 --break-system-packages
+    	pip3 install --user --upgrade urllib3 charset_normalizer --break-system-packages
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 
@@ -2206,7 +2206,7 @@ cd /usr/share/$name;python3 start.py "\$@"
 EOF
     	chmod +x /usr/bin/$name
     	apt remove -y python3-urllib3
-    	pip3 install --user --upgrade urllib3 --break-system-packages
+    	pip3 install --user --upgrade urllib3 charset_normalizer --break-system-packages
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 
