@@ -665,20 +665,40 @@ EOF
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
-
+	
 	# install mhddos
 	if [ ! -d "/usr/share/mhddos" ]; then
-		name="mhddos"
-		git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		pip install -r /usr/share/$name/requirements.txt --break-system-packages
-		cat > /usr/bin/$name << EOF
+    	name="mhddos"
+    	apt -y install curl wget libcurl4 libssl-dev python3 python3-pip make cmake automake autoconf m4 build-essential git zmap
+    	git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
+    	chmod 755 /usr/share/$name/*
+    	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+    	cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 start.py "\$@"
 EOF
-		chmod +x /usr/bin/$name
+    	chmod +x /usr/bin/$name
+    	apt remove -y python3-urllib3
+    	pip3 install urllib3 --upgrade
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
+
+    	if [ ! -d "/usr/share/$name/PyRoxy" ]; then
+        	git clone https://github.com/MatrixTM/PyRoxy
+        	cd /usr/share/$name/PyPoxy;chmod 755 *;python3 setup.py install
+        	pip3 install --user cloudscraper impacket --break-system-packages
+    	fi
+
+    	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
+        	git clone https://github.com/MatrixTM/SpoofFinder
+        	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages     
+    	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
+	        cat > /usr/bin/spoofinder << EOF
+#!/bin/bash
+cd /usr/share/$name/SpoofFinder;python3 spoof_finder.py "\$@"
+EOF
+        	chmod +x /usr/bin/spoofinder
+    	fi
 	fi
 
  	# install subdomainizer
@@ -2172,19 +2192,39 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
- 	# install mhddos
+	# install mhddos
 	if [ ! -d "/usr/share/mhddos" ]; then
-		name="mhddos"
-		git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		pip install -r /usr/share/$name/requirements.txt
-		cat > /usr/bin/$name << EOF
+    	name="mhddos"
+    	apt -y install curl wget libcurl4 libssl-dev python3 python3-pip make cmake automake autoconf m4 build-essential git zmap
+    	git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
+    	chmod 755 /usr/share/$name/*
+    	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+    	cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 start.py "\$@"
 EOF
-		chmod +x /usr/bin/$name
+    	chmod +x /usr/bin/$name
+    	apt remove -y python3-urllib3
+    	pip3 install urllib3 --upgrade
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
+
+    	if [ ! -d "/usr/share/$name/PyRoxy" ]; then
+        	git clone https://github.com/MatrixTM/PyRoxy
+        	cd /usr/share/$name/PyPoxy;chmod 755 *;python3 setup.py install
+        	pip3 install --user cloudscraper impacket --break-system-packages
+    	fi
+
+    	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
+        	git clone https://github.com/MatrixTM/SpoofFinder
+        	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages     
+    	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
+	        cat > /usr/bin/spoofinder << EOF
+#!/bin/bash
+cd /usr/share/$name/SpoofFinder;python3 spoof_finder.py "\$@"
+EOF
+        	chmod +x /usr/bin/spoofinder
+    	fi
 	fi
 
 	# install mr.sip
