@@ -679,19 +679,20 @@ cd /usr/share/$name;python3 start.py "\$@"
 EOF
     	chmod +x /usr/bin/$name
     	apt remove -y python3-urllib3
-    	pip3 install urllib3 --upgrade
+    	pip3 install --user --upgrade urllib3 --break-system-packages
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 
     	if [ ! -d "/usr/share/$name/PyRoxy" ]; then
-        	git clone https://github.com/MatrixTM/PyRoxy
-        	cd /usr/share/$name/PyPoxy;chmod 755 *;python3 setup.py install
+        	git clone https://github.com/MatrixTM/PyRoxy /usr/share/$name/PyRoxy
+			chmod 755 /usr/share/$name/PyPoxy/*
+        	cd /usr/share/$name/PyPoxy;python3 setup.py install
         	pip3 install --user cloudscraper impacket --break-system-packages
     	fi
 
     	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
-        	git clone https://github.com/MatrixTM/SpoofFinder
-        	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages     
+        	git clone https://github.com/MatrixTM/SpoofFinder /usr/share/$name/SpoofFinder
+        	pip3 install -r /usr/share/$name/SpoofFinder/requirements.txt --break-system-packages
     	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
 	        cat > /usr/bin/spoofinder << EOF
 #!/bin/bash
@@ -2205,19 +2206,20 @@ cd /usr/share/$name;python3 start.py "\$@"
 EOF
     	chmod +x /usr/bin/$name
     	apt remove -y python3-urllib3
-    	pip3 install urllib3 --upgrade
+    	pip3 install --user --upgrade urllib3 --break-system-packages
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 
     	if [ ! -d "/usr/share/$name/PyRoxy" ]; then
-        	git clone https://github.com/MatrixTM/PyRoxy
-        	cd /usr/share/$name/PyPoxy;chmod 755 *;python3 setup.py install
+        	git clone https://github.com/MatrixTM/PyRoxy /usr/share/$name/PyRoxy
+			chmod 755 /usr/share/$name/PyPoxy/*
+        	cd /usr/share/$name/PyPoxy;python3 setup.py install
         	pip3 install --user cloudscraper impacket --break-system-packages
     	fi
 
     	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
-        	git clone https://github.com/MatrixTM/SpoofFinder
-        	pip3 install -r /usr/share/$name/requirements.txt --break-system-packages     
+        	git clone https://github.com/MatrixTM/SpoofFinder /usr/share/$name/SpoofFinder
+        	pip3 install -r /usr/share/$name/SpoofFinder/requirements.txt --break-system-packages
     	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
 	        cat > /usr/bin/spoofinder << EOF
 #!/bin/bash
