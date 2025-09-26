@@ -692,6 +692,7 @@ EOF
 
     	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
         	git clone https://github.com/MatrixTM/SpoofFinder /usr/share/$name/SpoofFinder
+			chmod 755 /usr/share/$name/SpoofFinder/*
         	pip3 install -r /usr/share/$name/SpoofFinder/requirements.txt --break-system-packages
     	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
 	        cat > /usr/bin/spoofinder << EOF
@@ -2219,6 +2220,7 @@ EOF
 
     	if [ ! -d "/usr/share/$name/SpoofFinder" ]; then
         	git clone https://github.com/MatrixTM/SpoofFinder /usr/share/$name/SpoofFinder
+        	chmod 755 /usr/share/$name/SpoofFinder/*
         	pip3 install -r /usr/share/$name/SpoofFinder/requirements.txt --break-system-packages
     	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
 	        cat > /usr/bin/spoofinder << EOF
