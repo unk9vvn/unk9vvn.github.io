@@ -78,9 +78,89 @@ Using the next command, get information from the target service such as host nam
 {% endstep %}
 
 {% step %}
+Using the next command, find a list of common community strings (for example, public, private, manager, ...) and extract information from them using the snmpwalk command.
+{% endstep %}
 
+{% step %}
+We use the snmpset command to write and change an OID on the SNMP service
+{% endstep %}
 
+{% step %}
+If the service was an old version, we write a string value on the service using the command related to SNMPv1
+{% endstep %}
 
+{% step %}
+If the service was an old version, use the SNMPv1 command to write a string value on the service, but if it was not using the old version, run the SNMPv2 command on the service.
+{% endstep %}
+
+{% step %}
+Then open a port using the Ngrok command and execute the RCE injection command on the target and you can exploit it using Metasploit
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### SMB
+{% endstep %}
+
+{% step %}
+If it was open, we check service vulnerabilities using Nmap with special switches for SMB
+{% endstep %}
+
+{% step %}
+The next step is to use Brute Force commands on the target protocol to identify the protocol, get the username and password list, identify the domains and groups in the service, identify active services on this protocol, and identify the running processes.
+{% endstep %}
+
+{% step %}
+Enter the service without a password using the commands related to the smbclient tool and find the list of subscriptions and a list of information.
+{% endstep %}
+
+{% step %}
+The next step is to log in using the rpcclient command with an empty username so that we can connect to RPC with an empty session to scan/count users, groups, sessions and settings. If the server allows it, it exposes user information and subscriptions.
+{% endstep %}
+
+{% step %}
+We can do this process and exploit using Metasploit commands
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### Memcached
+{% endstep %}
+
+{% step %}
+Use the Nmap command to identify and check the existence of the protocol on the target
+{% endstep %}
+
+{% step %}
+If the service on the target is active, use the Nuclei command to identify the vulnerability on the protocol
+{% endstep %}
+
+{% step %}
+Using the command related to Netcat, step by step, save the protocol version, status, items, name of identification key and list of lists.
+{% endstep %}
+
+{% step %}
+The next step is to test the vulnerability of DOS and DDOS on the service to identify the vulnerability using commands
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### Redis
+{% endstep %}
+
+{% step %}
+Identify the presence of the service on the target server by using the first Redis command in the cheat sheet with the Nmap tool
+{% endstep %}
+
+{% step %}
+If the service is open on the target server, use the next command to check access in unauthenticated mode
+{% endstep %}
+
+{% step %}
+In the next command, we use Hydra on the Burte Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconf Vulnerability to the service.
 {% endstep %}
 {% endstepper %}
 
