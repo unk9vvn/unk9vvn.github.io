@@ -4,31 +4,7 @@
 
 * [ ] Identify what sensitive design and configuration information of the application, system, or organization is exposed directly (on the organization’s website) or indirectly (via third-party services).
 
-## Methodology
-
-### Misconf Vulns
-
-{% stepper %}
-{% step %}
-### asdasdasdasdasdasd
-
-aaaaaaaa
-{% endstep %}
-
-{% step %}
-### adasdasdadasdasdasd
-
-asdasdasdasdasd
-{% endstep %}
-
-{% step %}
-###
-
-
-{% endstep %}
-{% endstepper %}
-
-## Cheat Sheet <a href="#cheat-sheet" id="cheat-sheet"></a>
+## Cheat Sheet
 
 ### [Google](https://www.exploit-db.com/google-hacking-database) <a href="#google-hacking" id="google-hacking"></a>
 
