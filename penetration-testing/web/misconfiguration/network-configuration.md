@@ -29,7 +29,58 @@ And using the next command, can we login through the browser or not?
 {% endstep %}
 
 {% step %}
-And if we enter, enter the commands related to FTP and exploit it using Hydra and Metasploit commands.
+And if we enter, enter the commands related to FTP and exploit it using Hydra and Metasploit commands
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### WebDAV
+{% endstep %}
+
+{% step %}
+Run on $TARGET using the WebDAV command
+{% endstep %}
+
+{% step %}
+And if it was open, the next command is used to find vulnerabilities related to WebDAV service using Metasploit.
+{% endstep %}
+
+{% step %}
+Using the Hydra tool, we do Burte Force on this service to get the list of usernames and passwords
+{% endstep %}
+
+{% step %}
+After the Burte Force command, we check if we can upload a file using the next command.\
+If we could, we will upload the PHP file that contains RCE to the service using the command
+{% endstep %}
+
+{% step %}
+And we can do the same thing using the PUT method, whether we can use this method to upload a file on this service or not.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### SNMP
+{% endstep %}
+
+{% step %}
+Run $TARTGET using the command related to SNMP discover
+{% endstep %}
+
+{% step %}
+If it was open, check the vulnerabilities of the service using the command of the nuclei tool
+{% endstep %}
+
+{% step %}
+Using the next command, get information from the target service such as host name and OID information, list of interfaces, configured IP addresses, hardware configuration, and sometimes more sensitive information depending on the implementation
+{% endstep %}
+
+{% step %}
+
+
+
 {% endstep %}
 {% endstepper %}
 
