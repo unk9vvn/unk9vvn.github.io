@@ -7,6 +7,52 @@
 * [ ] Test XST vulnerabilities.
 * [ ] Test HTTP method overriding techniques.
 
+{% stepper %}
+{% step %}
+### HTTP Method
+{% endstep %}
+
+{% step %}
+We run the following command to identify the active methods on the target using the Curl tool.
+{% endstep %}
+
+{% step %}
+We can do this by using the Nmap tool to identify the active methods on the target.
+{% endstep %}
+
+{% step %}
+We can do this by using the Nmap tool to identify the active methods on the target. After executing the command, if the PUT method is active on the target, using the next command, we try to upload a php file to the target to get RCE.
+{% endstep %}
+
+{% step %}
+If our file is uploaded to the specified path using the PUT method, the site is vulnerable.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### XSS in Trace Mehtod
+{% endstep %}
+
+{% step %}
+first Check if the Server Supports TRACE Send a simple TRACE request to check if the server responds
+{% endstep %}
+
+{% step %}
+If the server supports the Trace method, the next step is to inject JavaScript code.
+{% endstep %}
+
+{% step %}
+Modify the request by injecting an XSS payload inside the `Via` header If the server reflects this payload in its response without sanitization, it may be vulnerable to XSS
+{% endstep %}
+
+{% step %}
+{% hint style="info" %}
+If a web application connected to this server processes and displays the reflected data inside an HTML page, the script may execute in a victim's browser
+{% endhint %}
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Discover the Supported Methods <a href="#discover-the-supported-methods" id="discover-the-supported-methods"></a>
