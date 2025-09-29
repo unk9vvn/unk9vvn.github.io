@@ -4,6 +4,8 @@
 
 * [ ] Review the HSTS header and its validity.
 
+## Methodology
+
 {% stepper %}
 {% step %}
 ### HTTP Strict Transport Security (Missing)
