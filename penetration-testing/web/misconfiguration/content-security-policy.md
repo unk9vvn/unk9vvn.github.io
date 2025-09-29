@@ -4,6 +4,44 @@
 
 * [ ] Review the Content-Security-Policy header or meta element to identify misconfigurations.
 
+## Methodology
+
+{% stepper %}
+{% step %}
+### Content Security Policy
+{% endstep %}
+
+{% step %}
+Inspect HTTP response headers of target
+{% endstep %}
+
+{% step %}
+Observe the Content-Security-Policy header includes script-src 'unsafe-inline'
+{% endstep %}
+
+{% step %}
+This allows inline scripts execution, weakening CSP protections against Cross-Site Scripting (XSS)
+{% endstep %}
+
+{% step %}
+Although no direct exploit is shown, the presence of `unsafe-inline` increases risk of script injection attacks
+{% endstep %}
+
+{% step %}
+Best practice Avoid `unsafe-inline` in `script-src` to reduce XSS attack surface
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Appending % or %" to the URL endpoint causes the browser to misinterpret or relax CSP enforcement
+{% endstep %}
+
+{% step %}
+By inspecting and editing the HTML in the dev tools, an attacker can inject inline JavaScript and use this [cheat sheet](https://unk9vvn.gitbook.io/penetration-testing/web/misconfiguration/content-security-policy) despite a strict script-src policy, leading to a bypass of the CSP
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### CSP Header
