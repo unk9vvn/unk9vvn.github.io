@@ -38,7 +38,7 @@ Appending % or %" to the URL endpoint causes the browser to misinterpret or rela
 {% endstep %}
 
 {% step %}
-By inspecting and editing the HTML in the dev tools, an attacker can inject inline JavaScript and use this [cheat sheet](https://unk9vvn.gitbook.io/penetration-testing/web/misconfiguration/content-security-policy) despite a strict script-src policy, leading to a bypass of the CSP
+By inspecting and editing the HTML in the dev tools, an attacker can inject inline JavaScript and use this cheat sheet despite a strict script-src policy, leading to a bypass of the CSP
 {% endstep %}
 {% endstepper %}
 

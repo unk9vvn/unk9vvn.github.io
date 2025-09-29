@@ -5,6 +5,142 @@
 * [ ] Determine whether a consistent account name structure renders the application vulnerable to account enumeration.
 * [ ] Determine whether the application’s error messages permit account enumeration.
 
+## Methodology
+
+{% stepper %}
+{% step %}
+### Weak Username Policy
+{% endstep %}
+
+{% step %}
+Go to the site’s "Contact Us" section and find the organizational or admin email You can find registered accounts on that site using this script, which is in the cheat sheet
+{% endstep %}
+
+{% step %}
+Find the registration and login pages and go to the email or password recovery section
+{% endstep %}
+
+{% step %}
+Capture and track recovery requests using the Burp Suite tool Important note: If the website processes multiple email parameters, you can put our own email next to the registered user's email and recieve the password recovery link or email
+{% endstep %}
+
+{% step %}
+In the interception of a password recovery request or email, if the request method is POST, as in the following request, add your email next to the test email or the user’s email
+
+```http
+GET /password-reset
+Host: $WEBSITE
+SetCookie: $COOKIE
+
+email=user@mail.com%0A%0Dbcc:my@mail.com
+```
+{% endstep %}
+
+{% step %}
+If the request method was sent as GET, then add your email address next to the test email or another user's email address like this
+
+```http
+GET /password-reset?email=user@mail.com&email=my@mail.com
+Host: $WEBSITE
+SetCookie: 
+```
+{% endstep %}
+
+{% step %}
+If a recovery link was sent to your email, change your password and BOOOOM, Account Takeover
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+In the APIs (documentation and other methods for finding the APIs mentioned in the previous methodologies), you should look for paths related to password recovery, such as the following paths
+
+```json
+/api/password-reset
+/auth/reset-password
+/api/users/reset
+/api/forgot-password
+/api/change-password
+/api/resetpass
+```
+{% endstep %}
+
+{% step %}
+The next step is that once you find these routes, you should note that most of them contain parameters that lead us to vulnerabilities, such as the following parameter present in the requests for these routes
+
+```json
+{
+  "username/ID/Emali": "",
+  "new_password": "new_pass456"
+}
+```
+{% endstep %}
+
+{% step %}
+Search for these routes on the site, make requests, and track these requests using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+The parameters may contain an ID, username, or email. Replace these parameters with the ID, username, or email of the target user and send the request It is better to create a test email for these types of tests and check the test email after each scenario. If it works, you have found the vulnerability
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Go to the login page, enter your email and password, and track the request using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+To find users, test different usernames using cheat sheet scripts If you enter the correct email, the server informs that it exists, but if you enter the wrong email, the server responds by informing that this email does not exist
+{% endstep %}
+
+{% step %}
+There is a Weak Username Policy vulnerability here
+{% endstep %}
+
+{% step %}
+The next important step is to enter the forgotten password section and change the request method from POST to GET
+{% endstep %}
+
+{% step %}
+Change the forgotten password path to `/api/users,`_If it shows the records and user information in the response, you have found the vulnerability_
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+First of all, go to the registration section of the site and complete the registration process with two user accounts It is possible that the username automatically created for us in the system may follow a guessable pattern, and you should take this into account
+{% endstep %}
+
+{% step %}
+For example, a username could be jac1234, and it can be found using brute-force techniques After you understand the username pattern for each account after registration, Start testing the login page to see how the system responds to both unsuccessful and successful logins
+{% endstep %}
+
+{% step %}
+The next step is to use the Burp Suite tool to track login requests and the response differences between successful and unsuccessful logins
+{% endstep %}
+
+{% step %}
+If the user is incorrect, the program or system will display `The username is incorrect` but if the username is correct and the password is incorrect, it will display `The password is incorrect` This difference in error messages allows us to perform the username enumeration process by systematically testing different usernames and examining the responses
+{% endstep %}
+
+{% step %}
+Use the Intruder feature in Burp to automate the process of finding valid usernames and random passwords Important: The intruder payload section uses a common list of usernames to generate possible prefixes (first three letters) And brute-forced the last four digits You can add the phrase 'password is incorrect' to the Grep-Match settings to identify valid usernames based on the error responses
+{% endstep %}
+
+{% step %}
+Now, using the list of valid usernames, go to the Forgot Password section, use the Burp Suite tool to request a traceback, and send a valid username with an incorrect password for user confirmation
+{% endstep %}
+
+{% step %}
+Now right-click on the request section and click on the "Response to this request" option so that you can receive the response to our request
+{% endstep %}
+
+{% step %}
+If the response is in JSON format and the response body contains 'false,' manipulate it and convert it to 'true' _If you enter the next stage, change the password and log in to the user account with the new information, and you will find the vulnerability_
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Register & Weak Username

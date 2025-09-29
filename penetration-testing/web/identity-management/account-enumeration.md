@@ -7,6 +7,44 @@
 * [ ] Review processes that pertain to user identification (e.g. registration, login, etc.).
 * [ ] Enumerate users where possible through response analysis.
 
+## Methodology
+
+{% stepper %}
+{% step %}
+### Account Enumeration
+{% endstep %}
+
+{% step %}
+Another common method used on many websites, especially for password reset, works like this
+{% endstep %}
+
+{% step %}
+_When you click on `Forgot Password` the site asks for your email or phone number If the email or phone number belongs to a registered user, the site sends a reset link or a message But if the email or number isn't in the system, it shows a message stating that `it's not registered`_&#x20;
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Enter the registration process in the system and use the Burp Suite tool to track requests and use a test and duplicate email
+{% endstep %}
+
+{% step %}
+During the registration process, if a duplicate email is used, the system will display the message "Email Already Exists". This message means that there is an enumeration vulnerability that can reveal a large list of valid users and emails _How can we create a list of accounts? Request an interception, click on the email field with Burp Suite, and press Ctrl + I to save it in the Intruder field. In the Payload tab, Set the attack type to Sniper and provide the list of emails. Using the server response that indicates "Email already exists" or any other response, we set the value in the system response within the Grep-match settings, which allows us to understand the output more accurately and find valid accounts_
+{% endstep %}
+
+{% step %}
+Next, go to the profile editing section where you can edit your name, email, and mobile number. However, the important point here is that if the email is inactive or grayed out, you should track the request and check whether it will still be sent despite the email being inactive
+{% endstep %}
+
+{% step %}
+By testing the email edit section, if the system accepts the requested emails as unvalidated, you can enter a valid email using the list of accounts obtained in the Account Enumeration vulnerability
+{% endstep %}
+
+{% step %}
+The system accepts valid emails without validation, recognizes them as active emails, and logs us into the valid email profile (i.e., logging into the user account)
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Status Code
