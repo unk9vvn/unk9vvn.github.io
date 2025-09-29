@@ -4,6 +4,34 @@
 
 * [ ] Review and validate the policy files.
 
+{% stepper %}
+{% step %}
+### CrossDomain.xml & clientaccesspolicy.xml file
+{% endstep %}
+
+{% step %}
+Check and identify the presence of crossdomain.xml & clientaccesspolicy.xml files on the target using Nmap command.
+{% endstep %}
+
+{% step %}
+If the files exist, we run them using the next command, which is a script related to BeEF
+{% endstep %}
+
+{% step %}
+Vulnerability Conditions The `crossdomain.xml` file is overly permissive (`<allow-access-from domain="*">`) Sensitive data or actions are accessible on the target domain
+{% endstep %}
+
+{% step %}
+Exploit Modify the ActionScript to fetch sensitive data from the target domain and send it to a malicious server Compile the ActionScript into an SWF file
+{% endstep %}
+
+{% step %}
+Capture Data Use a script to capture stolen data from the victim when they load the malicious SWF Direct the victim to a page with the malicious SWF, ensuring they are logged into the target site Review the data captured on the malicious server for sensitive information
+
+
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Check Policy Files Weakness
