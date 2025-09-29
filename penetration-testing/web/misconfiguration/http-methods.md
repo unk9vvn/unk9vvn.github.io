@@ -7,6 +7,8 @@
 * [ ] Test XST vulnerabilities.
 * [ ] Test HTTP method overriding techniques.
 
+## Methodology
+
 {% stepper %}
 {% step %}
 ### HTTP Method
