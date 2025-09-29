@@ -4,6 +4,52 @@
 
 * [ ] Assess that the access control configuration for the storage services is properly in place.
 
+## Methodology
+
+{% stepper %}
+{% step %}
+### Cloud Storage (AWS S3)
+{% endstep %}
+
+{% step %}
+Go to AWS S3 console Create a new bucket with the **exact name** matching the vulnerable/unclaimed bucket
+{% endstep %}
+
+{% step %}
+Complete the bucket creation process Upload a proof-of-concept file (HTML or TXT file) Set the uploaded file’s permissions to public read
+{% endstep %}
+
+{% step %}
+Add proper metadata (`Content-Type: text/html if HTML file`) (Optional) Enable static website hosting on the bucket and set the uploaded file as the index document The attacker now controls the bucket and can serve malicious content
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### Cloud Storage (S3)
+{% endstep %}
+
+{% step %}
+So I get all the alive subdomains use Subdomain Enum Command in cheat sheet&#x20;
+{% endstep %}
+
+{% step %}
+So I put every single alive domain in browser let call it Target example `https://$WEBSITE/` so after this I put `/%C0` → say `https://$WEBSITE/%C0`&#x20;
+{% endstep %}
+
+{% step %}
+.And I notice that it give me an cloudflare error like this `InvalidURI` Couldn’t parse the specified URI /%C0 So I just append the target domain with .s3.amazonaws.com `https://$WEBSITE.s3.amazonaws.com/`
+{% endstep %}
+
+{% step %}
+And I get the bucket name. Some time it says no such bucket. So in that case what I do I just run dig on that Command
+{% endstep %}
+
+{% step %}
+So it gives CNAME of pointed (`http://$WEBSITE`) so I am thinking what to do with this. So I read this article But unluckily on CRUD operation I get access denied and use .aws s3 Commands And in response I have foun `PRE Server/`
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### WHOIS Lookup
