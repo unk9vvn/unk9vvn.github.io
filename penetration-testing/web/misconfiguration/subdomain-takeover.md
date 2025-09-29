@@ -5,6 +5,53 @@
 * [ ] Enumerate all possible domains (previous and current).
 * [ ] Identify forgotten or misconfigured domains.
 
+## Methodology
+
+{% stepper %}
+{% step %}
+### Subdomain Takeover
+{% endstep %}
+
+{% step %}
+Use the target subdomains command to collect URI and extract a list from the list of target subdomains
+{% endstep %}
+
+{% step %}
+Separate the CNAME records by using the following commands that are executed on the target with dig and dns recone tools.
+{% endstep %}
+
+{% step %}
+Using the next command, we will check the list of subdomains that are CNAMEd to another domain, whether it will be taken over or not, and if it is among the lists, we can do the subdomain takeover.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+### Subdomain Takeover (Dangling DNS)
+{% endstep %}
+
+{% step %}
+Identified unclaimed subdomains (e.g., via CNAME, A, MX, or NS records) pointing to deprovisioned services (e.g., AWS S3, Zendesk, CloudFront) use this Command for Subdomain takeover
+{% endstep %}
+
+{% step %}
+Service Claiming Re-registered the external service (e.g., S3 bucket or SaaS trial) using the vulnerable subdomain
+{% endstep %}
+
+{% step %}
+Gained control of the subdomain to serve malicious or spoofed content Exploited existing `curl/wget/documentation` links or`CI/CD` pipeline calls referencing the subdomain to deliver
+
+* Unsigned binaries
+* VM/container images
+* CloudFormation templates
+* SSLVPN configurations
+{% endstep %}
+
+{% step %}
+Indirect compromise of downstream systems via trusted artifact delivery mechanisms Over 8M live requests to hijacked buckets across gov, Fortune 500, and `OSS`, enabling large-scale poisoning or exploitation
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Subdomain Fuzzing
