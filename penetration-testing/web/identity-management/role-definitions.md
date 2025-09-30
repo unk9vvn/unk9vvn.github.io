@@ -16,7 +16,7 @@ Identify User Roles and Access Levels Determine the lowest user role in the syst
 {% endstep %}
 
 {% step %}
-.چDiscover Administrative or Role-Management APIs To find API paths in the system, we can use this Reconnaissance Section cheat sheet in the API Endpoints section use the documentation of that system to find the API paths and roles in the API, And find the API documentation for that site or company Go to their official website and check if they have a developer's section Look for links to API documentation or API references If they don't have a section specifically for developers, try searching their website for 'API', and use this cheat sheet to find API documentation
+Discover Administrative or Role-Management APIs To find API paths in the system, we can use this Reconnaissance Section cheat sheet in the API Endpoints section use the documentation of that system to find the API paths and roles in the API, And find the API documentation for that site or company Go to their official website and check if they have a developer's section Look for links to API documentation or API references If they don't have a section specifically for developers, try searching their website for 'API', and use this cheat sheet to find API documentation
 {% endstep %}
 
 {% step %}
