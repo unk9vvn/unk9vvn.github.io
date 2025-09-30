@@ -188,7 +188,7 @@ msfconsole -qx "
 
 ### WebDAV
 
-#### methodology
+#### Methodology
 
 {% stepper %}
 {% step %}
@@ -304,7 +304,7 @@ nc -lvnp 1234
 
 ### SNMP
 
-#### methodology
+#### Methodology
 
 {% stepper %}
 {% step %}
@@ -493,7 +493,7 @@ msfconsole -qx "
 
 ### SMB
 
-#### methodology
+#### Methodology
 
 {% stepper %}
 {% step %}
@@ -855,7 +855,7 @@ msfconsole -qx "
 
 ### Memcached
 
-#### methodology
+#### Methodology
 
 {% stepper %}
 {% step %}
