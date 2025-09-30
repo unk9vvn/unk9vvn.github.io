@@ -4,11 +4,13 @@
 
 * [ ] Review and validate the policy files.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
 {% step %}
-### CrossDomain.xml & clientaccesspolicy.xml file
+CrossDomain.xml & clientaccesspolicy.xml file
 {% endstep %}
 
 {% step %}
@@ -31,8 +33,6 @@ Exploit Modify the ActionScript to fetch sensitive data from the target domain a
 Capture Data Use a script to capture stolen data from the victim when they load the malicious SWF Direct the victim to a page with the malicious SWF, ensuring they are logged into the target site Review the data captured on the malicious server for sensitive information
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Check Policy Files Weakness
 

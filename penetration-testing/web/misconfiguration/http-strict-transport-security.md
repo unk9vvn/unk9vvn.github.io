@@ -4,7 +4,9 @@
 
 * [ ] Review the HSTS header and its validity.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
 {% step %}
@@ -19,8 +21,6 @@ Access the Target URL and Inspect the Response Headers Use a tool such as **Burp
 Check for HSTS Header Confirm the absence of the following header in the server response `Strict-Transport-Security` _The best way to exploit and exploit this vulnerability is to use a cheat sheet_
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Recon Header
 

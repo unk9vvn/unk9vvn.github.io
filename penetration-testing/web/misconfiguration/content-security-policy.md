@@ -4,7 +4,9 @@
 
 * [ ] Review the Content-Security-Policy header or meta element to identify misconfigurations.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
 {% step %}
@@ -41,8 +43,6 @@ Appending % or %" to the URL endpoint causes the browser to misinterpret or rela
 By inspecting and editing the HTML in the dev tools, an attacker can inject inline JavaScript and use this cheat sheet despite a strict script-src policy, leading to a bypass of the CSP
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### CSP Header
 

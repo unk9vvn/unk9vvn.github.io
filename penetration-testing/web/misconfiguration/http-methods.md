@@ -7,13 +7,11 @@
 * [ ] Test XST vulnerabilities.
 * [ ] Test HTTP method overriding techniques.
 
-## Methodology
+## Cheat Sheet
+
+### Methdology
 
 {% stepper %}
-{% step %}
-### HTTP Method
-{% endstep %}
-
 {% step %}
 We run the following command to identify the active methods on the target using the Curl tool.
 {% endstep %}
@@ -33,7 +31,7 @@ If our file is uploaded to the specified path using the PUT method, the site is 
 
 {% stepper %}
 {% step %}
-### XSS in Trace Mehtod
+XSS in Trace Mehtod
 {% endstep %}
 
 {% step %}
@@ -54,8 +52,6 @@ If a web application connected to this server processes and displays the reflect
 {% endhint %}
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Discover the Supported Methods <a href="#discover-the-supported-methods" id="discover-the-supported-methods"></a>
 
