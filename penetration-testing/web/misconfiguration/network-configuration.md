@@ -2,10 +2,12 @@
 
 ## Check List
 
+
+
 * [ ] Review the applications’ configurations set across the network and validate that they are not vulnerable.
 * [ ] Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.
 
-## Methodology
+### Methodology
 
 {% stepper %}
 {% step %}
@@ -21,15 +23,15 @@ If $TARGET has FTP protocol, do the next command to login with Anonymous
 {% endstep %}
 
 {% step %}
-And using the next command to brute force the login page, will the username or password be found or not?
+and using the next command to brute force the login page, will the username or password be found or not?
 {% endstep %}
 
 {% step %}
-And using the next command, can we login through the browser or not?
+and using the next command, can we login through the browser or not?
 {% endstep %}
 
 {% step %}
-And if we enter, enter the commands related to FTP and exploit it using Hydra and Metasploit commands
+and if we enter, enter the commands related to FTP and exploit it using Hydra and Metasploit commands
 {% endstep %}
 {% endstepper %}
 
@@ -142,7 +144,7 @@ Using the command related to Netcat, step by step, save the protocol version, st
 {% endstep %}
 
 {% step %}
-The next step is to test the vulnerability of DOS and DDOS on the service to identify the vulnerability using commands
+The next step is to test the vulnerability of DOS and DDoS the service to identify the vulnerability using commands
 {% endstep %}
 {% endstepper %}
 
@@ -160,7 +162,7 @@ If the service is open on the target server, use the next command to check acces
 {% endstep %}
 
 {% step %}
-In the next command, we use Hydra on the Burte Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconf Vulnerability to the service.
+In the next command, we use Hydra on the Brute Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconfiguration Vulnerability to the service.
 {% endstep %}
 {% endstepper %}
 
@@ -204,15 +206,15 @@ ftp://anonymous:anonymous@$TARGET
 
 #### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/network/default-login)
 
-{% hint style="info" %}
-Misconf & Vulns
+{% hint style="warning" %}
+Misconfiguration & Vulnerabilities
 {% endhint %}
 
 ```bash
 nuclei -tags ftp -u $TARGET:21
 ```
 
-#### [WGET](https://www.gnu.org/software/wget/)
+#### [Wget](https://www.gnu.org/software/wget/)
 
 {% hint style="info" %}
 Download Files
@@ -1035,6 +1037,10 @@ msfconsole -qx "use auxiliary/dos/misc/memcached;set RHOSTS $TARGET;run;exit"
 
 ### Redis
 
+#### Methodology
+
+#### Black Box
+
 #### [Nmap](https://nmap.org/nsedoc/scripts/redis-info.html)
 
 {% hint style="info" %}
@@ -1114,6 +1120,8 @@ msfconsole -qx "
     set THREADS 10;
     run -j"
 ```
+
+#### Exploitation
 
 {% hint style="info" %}
 Remote Code Execution
