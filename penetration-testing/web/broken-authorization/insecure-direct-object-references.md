@@ -26,17 +26,16 @@ Try changing the param value to some other user and see if does anything to thei
 {% step %}
 change HTTP method like this
 
-```http
-GET /users/delete/victim_id ->403
-POST /users/delete/victim_id ->200
-```
+<pre class="language-http"><code class="lang-http"><strong>GET /users/delete/victim_id -> 403
+</strong>POST /users/delete/victim_id -> 200
+</code></pre>
 {% endstep %}
 
 {% step %}
 Try replacing parameter names instead of this :&#x20;
 
 ```http
-GET /api/albums?album_id=<album id>
+GET /api/albums?album_id= <album id>
 ```
 {% endstep %}
 
@@ -49,7 +48,7 @@ will help with this by remembering all the parameters you have passed to a host.
 {% endhint %}
 
 ```http
-GET /api/albums?account_id=<account id>
+GET /api/albums?account_id= <account id>
 ```
 {% endstep %}
 
@@ -59,7 +58,7 @@ Path Traversal IN users Path
 if request like this :&#x20;
 
 ```http
-POST /users/delete/victim_id ->403
+POST /users/delete/victim_id -> 403
 ```
 {% endstep %}
 
@@ -67,7 +66,7 @@ POST /users/delete/victim_id ->403
 change request to this&#x20;
 
 ```http
-POST /users/delete/my_id/..victim_id ->200
+POST /users/delete/my_id/..victim_id -> 200
 ```
 {% endstep %}
 
@@ -93,9 +92,9 @@ GET /file?id=302
 Missing Function Level Acess Control and changes Charachter path
 
 ```
-GET /admin/profile ->401
-GET /Admin/profile ->200
-GET /ADMIN/profile ->200
+GET /admin/profile -> 401
+GET /Admin/profile -> 200
+GET /ADMIN/profile -> 200
 ```
 {% endstep %}
 
@@ -118,8 +117,8 @@ pattern application users to allot an iD&#x20;
 Bypass object level authorization Add parameter onto the endpoit if not present by defualt
 
 ```
-GET /api_v1/messages ->200
-GET /api_v1/messages?user_id=victim_uuid ->200
+GET /api_v1/messages -> 200
+GET /api_v1/messages?user_id=victim_uuid -> 200
 ```
 {% endstep %}
 
@@ -156,8 +155,8 @@ json parameter pollution
 Wrap the ID with an array in the body
 
 ```json
-{"userid":123} ->401
-{"userid":[123]} ->200
+{"userid":123} -> 401
+{"userid":[123]} -> 200
 ```
 {% endstep %}
 
@@ -165,8 +164,8 @@ Wrap the ID with an array in the body
 c wrap the id with a json objec
 
 ```json
-{"userid":123} ->401
-{"userid":{"userid":123}} ->200
+{"userid":123} -> 401
+{"userid":{"userid":123}} -> 200
 ```
 {% endstep %}
 
@@ -174,8 +173,8 @@ c wrap the id with a json objec
 Test an outdata API version
 
 ```http
-GET /v3/users_data/1234 ->401
-GET /v1/users_data/1234 ->200
+GET /v3/users_data/1234 -> 401
+GET /v1/users_data/1234 -> 200
 ```
 {% endstep %}
 {% endstepper %}
