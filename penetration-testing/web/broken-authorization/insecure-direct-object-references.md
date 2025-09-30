@@ -179,3 +179,76 @@ GET /v1/users_data/1234 -> 200
 {% endstep %}
 {% endstepper %}
 
+{% stepper %}
+{% step %}
+Log in to your own account in two browsers A and B with User A and User B
+{% endstep %}
+
+{% step %}
+Create your own \*_Licenses and certifications_ in both the account
+{% endstep %}
+
+{% step %}
+Create your own \*_Licenses and certifications_ in both the account
+{% endstep %}
+
+{% step %}
+Now In the body change the **ID** number and you will be able to delete all the **Licenses and certifications** present in HackerOne
+{% endstep %}
+
+{% step %}
+For now change the ID to the **Licenses and certifications** ID of the Other account and it will be deleted.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Go to the subscribe page and sign up with an email (or create two test emails).
+{% endstep %}
+
+{% step %}
+Note the subscribe URL: `...?p=subscribe&id=1`.
+{% endstep %}
+
+{% step %}
+Change `subscribe` → `unsubscribe`: `...?p=unsubscribe&id=1`.
+{% endstep %}
+
+{% step %}
+In the unsubscribe form enter the target email (for example, the email you previously subscribed with).
+{% endstep %}
+
+{% step %}
+The page shows “You have been unsubscribed...” and a confirmation email is received.\
+(The report indicates this works without CAPTCHA or a confirmation link.)=
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Capture the GraphQL `UpdateCampaign` POST request when editing a campaign (example request sent to `POST /graphql` with JSON body containing `input.campaign_id`).
+{% endstep %}
+
+{% step %}
+The `campaign_id` is a base64-encoded global id (e.g. `Z2lkOi8vaGFja2Vyb25lL0NhbXBhaWduLzI0NA==` → `gid://hackerone/Campaign/244` when decoded).
+{% endstep %}
+
+{% step %}
+Change the numeric ID part of the decoded GID (e.g. `244` → `243` or `245`), re‑encode the modified GID to base64 and replace `input.campaign_id` with that value in the same request.
+{% endstep %}
+
+{% step %}
+Send the modified `UpdateCampaign` request. The server accepts the request for the targeted `campaign_id` (even if that campaign belongs to another program), allowing the campaign to be updated/removed via that request.
+{% endstep %}
+
+{% step %}
+Impact: by targeting another program’s ongoing campaign id, a requester can modify or delete campaigns they don’t own.
+
+{% hint style="info" %}
+Key detail: decode `campaign_id` from base64 → you get `gid://hackerone/Campaign/<N>`. Modifying `<N>` and re-encoding changes the target campaign.\
+\
+\
+idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severity_rating`,`readable_substate`,`created_at`,`submitted_at`,`reporter_name`
+{% endhint %}
+{% endstep %}
+{% endstepper %}

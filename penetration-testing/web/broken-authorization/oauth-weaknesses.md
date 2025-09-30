@@ -470,3 +470,11 @@ GET /client/CLIENT_ID/logo HTTP/1.1
 Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator server
 {% endstep %}
 {% endstepper %}
+
+{% stepper %}
+{% step %}
+OAuth Parameters
+
+
+{% endstep %}
+{% endstepper %}
