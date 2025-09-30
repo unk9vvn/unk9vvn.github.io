@@ -10,10 +10,6 @@
 
 {% stepper %}
 {% step %}
-### HTTP Strict Transport Security (Missing)
-{% endstep %}
-
-{% step %}
 Access the Target URL and Inspect the Response Headers Use a tool such as **Burp Suite**, **cURL**, or **browser dev tools** to inspect the HTTP response headers The best way is to use this cheat sheet Example using cURL
 {% endstep %}
 

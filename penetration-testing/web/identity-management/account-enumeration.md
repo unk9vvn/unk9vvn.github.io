@@ -7,13 +7,11 @@
 * [ ] Review processes that pertain to user identification (e.g. registration, login, etc.).
 * [ ] Enumerate users where possible through response analysis.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
-{% step %}
-### Account Enumeration
-{% endstep %}
-
 {% step %}
 Another common method used on many websites, especially for password reset, works like this
 {% endstep %}
@@ -44,8 +42,6 @@ By testing the email edit section, if the system accepts the requested emails as
 The system accepts valid emails without validation, recognizes them as active emails, and logs us into the valid email profile (i.e., logging into the user account)
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Status Code
 

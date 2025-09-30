@@ -6,13 +6,11 @@
 * [ ] Attempt to switch, change, or access another role.
 * [ ] Review the granularity of the roles and the needs behind the permissions given.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
-{% step %}
-### Role Defenitions
-{% endstep %}
-
 {% step %}
 Identify User Roles and Access Levels Determine the lowest user role in the system (Contributor, Basic User) and understand its permissions and restrictions The goal is to exploit the system using only this minimal privilege account Use this cheat sheet to find account types and Fuzz directories
 {% endstep %}
@@ -282,8 +280,6 @@ In this section, use the Burp Suite tool to intercept requests to access areas t
 ```
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Roles Identification
 

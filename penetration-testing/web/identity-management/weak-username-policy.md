@@ -5,13 +5,11 @@
 * [ ] Determine whether a consistent account name structure renders the application vulnerable to account enumeration.
 * [ ] Determine whether the application’s error messages permit account enumeration.
 
-## Methodology
+## Cheat Sheet
+
+### Methodology
 
 {% stepper %}
-{% step %}
-### Weak Username Policy
-{% endstep %}
-
 {% step %}
 Go to the site’s "Contact Us" section and find the organizational or admin email You can find registered accounts on that site using this script, which is in the cheat sheet
 {% endstep %}
@@ -140,8 +138,6 @@ Now right-click on the request section and click on the "Response to this reques
 If the response is in JSON format and the response body contains 'false,' manipulate it and convert it to 'true' _If you enter the next stage, change the password and log in to the user account with the new information, and you will find the vulnerability_
 {% endstep %}
 {% endstepper %}
-
-## Cheat Sheet
 
 ### Register & Weak Username
 

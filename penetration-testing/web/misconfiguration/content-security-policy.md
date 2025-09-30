@@ -10,10 +10,6 @@
 
 {% stepper %}
 {% step %}
-### Content Security Policy
-{% endstep %}
-
-{% step %}
 Inspect HTTP response headers of target
 {% endstep %}
 

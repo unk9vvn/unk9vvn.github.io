@@ -11,10 +11,6 @@
 
 {% stepper %}
 {% step %}
-Subdomain Takeover
-{% endstep %}
-
-{% step %}
 Use the target subdomains command to collect URI and extract a list from the list of target subdomains
 {% endstep %}
 
@@ -29,7 +25,7 @@ Using the next command, we will check the list of subdomains that are CNAMEd to 
 
 {% stepper %}
 {% step %}
-Subdomain Takeover (Dangling DNS)
+Dangling DNS
 {% endstep %}
 
 {% step %}
