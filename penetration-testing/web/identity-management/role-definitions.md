@@ -50,6 +50,8 @@ Read Other Users’ Data By changing the conversation ID, they can view other us
 
 ***
 
+#### Role Parameter Tampering
+
 {% stepper %}
 {% step %}
 First, let's check what roles are on the site and how they are written (Admin or admin or Administrator and ...) so that you can use this cheat sheet to find the different levels in the system
@@ -64,12 +66,12 @@ look at registration request body, it can be like this
 
 ```json
 {
-"username": "USERNAME",
-"name": "$NAME",
-"email": "$EMAIL",
-"phone": "$NUMBER",
-"password": "$PASS",
-"role": "User"
+    "username": "USERNAME",
+    "name": "$NAME",
+    "email": "$EMAIL",
+    "phone": "$NUMBER",
+    "password": "$PASS",
+    "role": "User"
 }
 ```
 {% endstep %}
@@ -80,6 +82,8 @@ change `User` role to `Admin` role and register. if you can access admin panel, 
 {% endstepper %}
 
 ***
+
+#### Broken Access Control
 
 {% stepper %}
 {% step %}
@@ -117,6 +121,8 @@ If there is no response from the request, we change the method to PATCH and rese
 
 ***
 
+#### Role-based Access Control Bypass
+
 {% stepper %}
 {% step %}
 First, enter the site, log in, and go to the home page or your account page
@@ -144,6 +150,8 @@ Take the response you received, change the parameters related to the role to hig
 {% endstepper %}
 
 ***
+
+#### JWT/Token Response Manipulation
 
 {% stepper %}
 {% step %}
@@ -208,6 +216,8 @@ Set-Cookie: jwt=...
 
 ***
 
+#### **Privilege Escalation via Role Parameter Tampering**
+
 {% stepper %}
 {% step %}
 In the systems we are examining, which may contain multiple roles such as user, employee, and admin, what is important is that we can focus on the intermediate roles because they are usually where the errors occur
@@ -258,6 +268,8 @@ Send a request and check if the normal user has become an admin. If so, there is
 {% endstepper %}
 
 ***
+
+#### Bypass Broken Function Level Authorization
 
 {% stepper %}
 {% step %}
