@@ -42,6 +42,8 @@ Malicious redirect; potential token or session theft if combined with other flaw
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Missing or weak `state` validation allows an attacker to bind a malicious authorization code to a victim’s session.
@@ -60,6 +62,8 @@ Send a test request and observe whether the application validates `state`.
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Identify SPA pages using `#access_token` or `#id_token`.
@@ -74,6 +78,8 @@ Ensure no real tokens are logged.
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Clients may request scopes they are not allowed; if the server does not enforce restrictions, privilege escalation is possible.
@@ -87,6 +93,8 @@ Identify `scope` parameter in authorization requests.
 Check server-side enforcement against client-allowed scopes.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -125,6 +133,8 @@ The Authorization Code should be tight to only user started the OAuth process. U
 {% endhint %}
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -175,6 +185,8 @@ Access the victim account using the social media account
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 
@@ -188,6 +200,8 @@ Referer : https://$WEBSITE/oaut-linking?code=$TOEN
 ```
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -208,6 +222,8 @@ Ensure that the OAuth process fails&#x20;
 If Authorization Code is exchanged for an Access Token, invalidate the Authorization Code and not issue any more Access Token against it. For the [JWT tokens](https://auth0.com/docs/secure/tokens/access-tokens#jwt-access-tokens) use the Refresh Token mechanism to extend it.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -340,6 +356,8 @@ Example of an XSS payload to exploit the issue: (Credits to [Dawid](https://gith
 
 {% step %}
 Require client applications to register a whitelist of valid <sub>redirect\_uris</sub>. Use strict byte-to-byte comparison to validate the URI. Allow complete and exact matches.
+
+
 {% endstep %}
 {% endstepper %}
 
@@ -377,6 +395,8 @@ GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/callback/../vuln 
 
 {% step %}
 If it is possible to redirect the user to another endpoint (/vuln), there is a vulnerability FUZZING PATH TRAVERSAL Check the other PATH TRAVERSAL bypasses using the TRAVERSAL\_DIR\_ONLY wordlist.
+
+
 {% endstep %}
 {% endstepper %}
 
@@ -468,14 +488,14 @@ GET /client/CLIENT_ID/logo HTTP/1.1
 
 {% step %}
 Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator server
+
+
 {% endstep %}
 {% endstepper %}
 
 {% stepper %}
 {% step %}
 OAuth Parameters
-
-
 
 | Parameter                | Usage Location                                                               |
 | ------------------------ | ---------------------------------------------------------------------------- |
