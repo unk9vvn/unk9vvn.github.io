@@ -44,6 +44,8 @@ Malicious redirect; potential token or session theft if combined with other flaw
 
 ***
 
+#### Authorization Code Injection via Unvalidated `state`
+
 {% stepper %}
 {% step %}
 Missing or weak `state` validation allows an attacker to bind a malicious authorization code to a victim’s session
@@ -64,6 +66,8 @@ Send a test request and observe whether the application validates `state`
 
 ***
 
+#### SPA Fragment Token Exposure
+
 {% stepper %}
 {% step %}
 Identify SPA pages using `#access_token` or `#id_token`
@@ -80,6 +84,8 @@ Ensure no real tokens are logged
 
 ***
 
+#### OAuth2 Scope Escalation
+
 {% stepper %}
 {% step %}
 Clients may request scopes they are not allowed; if the server does not enforce restrictions, privilege escalation is possible
@@ -95,6 +101,8 @@ Check server-side enforcement against client-allowed scopes
 {% endstepper %}
 
 ***
+
+#### **OAuth Flow Manipulation**
 
 {% stepper %}
 {% step %}
@@ -135,6 +143,8 @@ The Authorization Code should be tight to only user started the OAuth process. U
 {% endstepper %}
 
 ***
+
+#### **OAuth Account-Linking CSRF**
 
 {% stepper %}
 {% step %}
@@ -187,6 +197,8 @@ Access the victim account using the social media account
 
 ***
 
+#### **Authorization Code Leakage via Referer (Referer-based Token Exposure)**
+
 {% stepper %}
 {% step %}
 Browse to a 3rd party page from the URL with sensitive data. If the Authorization Code is reflected inside the Referer header while visiting the third-party site, it can be leaked by the  attacker and reused to hijack the victim's account like this
@@ -200,6 +212,8 @@ Referer : https://example/oaut-linking?code=$TOEN
 {% endstepper %}
 
 ***
+
+#### **Authorization Code Replay / Authorization Code Reuse**
 
 {% stepper %}
 {% step %}
@@ -222,6 +236,8 @@ If Authorization Code is exchanged for an Access Token, invalidate the Authoriza
 {% endstepper %}
 
 ***
+
+#### OAuth Open Redirect
 
 {% stepper %}
 {% step %}
@@ -251,8 +267,9 @@ Host: afine.com
 {% endstep %}
 
 {% step %}
-SECOND ORDER SSRF - start the HTTP Listener on ports 80 & 443 and repeat the SIMPLE OPEN REDIRECT
+#### SECOND ORDER SSRF
 
+* &#x20;start the HTTP Listener on ports 80 & 443 and repeat the SIMPLE OPEN REDIRECT
 * Check the collaborator if you get the HTTP interaction, for example
 
 ```http
@@ -262,7 +279,9 @@ Host: afine.com
 {% endstep %}
 
 {% step %}
-PATH BYPASS - manipulate path to access the same endpoint in different ways, together with Open Redirect
+#### PATH BYPASS&#x20;
+
+* manipulate path to access the same endpoint in different ways, together with Open Redirect
 
 ```http
 EXAMPLES OF A REQUEST:
@@ -273,7 +292,9 @@ GET /OAuth/./../auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 {% endstep %}
 
 {% step %}
-PARAMETER POLLUTION - reuse the redirect\_uri parameter
+#### PARAMETER POLLUTION&#x20;
+
+* reuse the redirect\_uri parameter
 
 ```http
 EXAMPLES OF A REQUEST:
@@ -282,7 +303,9 @@ GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=htt
 {% endstep %}
 
 {% step %}
-REFERER BASED REDIRECTION - host the below script on your server, visit it, then use SSO
+#### REFERER BASED REDIRECTION&#x20;
+
+* host the below script on your server, visit it, then use SSO
 
 ```html
 <html><a href="https://example/login">click on this link</a></html>
@@ -290,8 +313,9 @@ REFERER BASED REDIRECTION - host the below script on your server, visit it, then
 {% endstep %}
 
 {% step %}
-&#x20; FUZZING OPEN REDIRECTION & SECOND ORDER SSRF Generate a payload list using crimson\_redirector
+#### &#x20; FUZZING OPEN REDIRECTION & SECOND ORDER SSRF&#x20;
 
+* Generate a payload list using crimson\_redirector
 * USAGE: crimson\_redirector.py whitelisted\_domain domain\_collab vps\_ip redirect\_parameter\_name
 * EXAMPLE: crimson\_redirector.py whitelisted.com col.afine.com 123.123.123.123 redirect\_uri
 {% endstep %}
@@ -310,6 +334,8 @@ Check the output of the Intruder for any suspicious responses
 {% endstepper %}
 
 ***
+
+#### XSS IN OAuth Flow
 
 {% stepper %}
 {% step %}
@@ -359,6 +385,8 @@ Require client applications to register a whitelist of valid <sub>redirect\_uris
 
 ***
 
+#### Path Traversal
+
 {% stepper %}
 {% step %}
 Redirect flow to the endpoint on the same domain using path traversal. The attacker could use the vulnerability on the other endpoint within the application and the new path as a proxy page to steal a victim's Access Token, thus hijacking his account
@@ -395,6 +423,8 @@ If it is possible to redirect the user to another endpoint (/vuln), there is a v
 {% endstepper %}
 
 ***
+
+#### Dynamic Registration SSRF
 
 {% stepper %}
 {% step %}
@@ -492,7 +522,7 @@ Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator s
 
 {% stepper %}
 {% step %}
-OAuth Parameters
+#### OAuth Parameters
 
 | Parameter                | Usage Location                                                               |
 | ------------------------ | ---------------------------------------------------------------------------- |
@@ -577,6 +607,8 @@ OAuth Parameters
 
 ***
 
+#### PaniCode Bypass&#x20;
+
 {% stepper %}
 {% step %}
 The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com)
@@ -634,6 +666,8 @@ redirect_uri=https://oauth.šemrush.com/oauth2/success
 {% endstepper %}
 
 ***
+
+#### XSS in errors Parameters OAuth Flow
 
 {% stepper %}
 {% step %}
