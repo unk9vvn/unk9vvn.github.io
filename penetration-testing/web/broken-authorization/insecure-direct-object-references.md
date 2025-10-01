@@ -15,8 +15,6 @@ Create two accounts if possible or else enumerate users first
 
 {% step %}
 Check if the endpoint is private or public and does it contains any kind of id param
-
-
 {% endstep %}
 
 {% step %}
@@ -26,9 +24,10 @@ Try changing the param value to some other user and see if does anything to thei
 {% step %}
 change HTTP method like this
 
-<pre class="language-http"><code class="lang-http"><strong>GET /users/delete/victim_id -> 403
-</strong>POST /users/delete/victim_id -> 200
-</code></pre>
+```http
+GET /users/delete/victim_id -> 403
+POST /users/delete/victim_id -> 200
+```
 {% endstep %}
 
 {% step %}
@@ -299,7 +298,7 @@ must also put in the body of the request, in the parameter "username" the userna
 
 ```json
 POST / HTTP/2
-Host: gql.reddit.com
+Host: gql.example.com
 
 {"id":"11a239b07f86","variables":{"username":"*********"}}
 ```
@@ -314,7 +313,7 @@ In the next request you have to put in the request body, in the "id" parameter t
 
 ```json
 POST / HTTP/2
-Host: gql.reddit.com
+Host: gql.example.com
 
 {"id":"c558e604581f","variables":{"input":{"socialLinks":[{"outboundUrl":"https://www.hackerone.com","title":"hacker","type":"CUSTOM","id":"* * * * * * * * *  * * * * *  * * * * * * * * * *  * * * * *  *"}]}}}
 ```
