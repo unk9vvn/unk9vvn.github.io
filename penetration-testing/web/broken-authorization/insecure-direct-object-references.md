@@ -10,11 +10,11 @@
 
 {% stepper %}
 {% step %}
-Create two accounts if possible or else enumerate users first.
+Create two accounts if possible or else enumerate users first
 {% endstep %}
 
 {% step %}
-Check if the endpoint is private or public and does it contains any kind of id param.
+Check if the endpoint is private or public and does it contains any kind of id param
 
 
 {% endstep %}
@@ -32,7 +32,7 @@ change HTTP method like this
 {% endstep %}
 
 {% step %}
-Try replacing parameter names instead of this :&#x20;
+Try replacing parameter names instead of this
 
 ```http
 GET /api/albums?album_id= <album id>
@@ -40,11 +40,11 @@ GET /api/albums?album_id= <album id>
 {% endstep %}
 
 {% step %}
-Try This:
+Try This
 
 {% hint style="info" %}
 Tip: There is a Burp extension called Paramalyzer which\
-will help with this by remembering all the parameters you have passed to a host.
+will help with this by remembering all the parameters you have passed to a host
 {% endhint %}
 
 ```http
@@ -55,7 +55,7 @@ GET /api/albums?account_id= <account id>
 {% step %}
 Path Traversal IN users Path
 
-if request like this :&#x20;
+if request like this
 
 ```http
 POST /users/delete/victim_id -> 403
@@ -207,7 +207,7 @@ For now change the ID to the **Licenses and certifications** ID of the Other acc
 
 {% stepper %}
 {% step %}
-Go to the subscribe page and sign up with an email (or create two test emails).
+Go to the subscribe page and sign up with an email (or create two test emails)
 {% endstep %}
 
 {% step %}
@@ -219,12 +219,12 @@ Change subscribe → unsubscribe: `...?p=unsubscribe&id=1`.
 {% endstep %}
 
 {% step %}
-In the unsubscribe form enter the target email (for example, the email you previously subscribed with).
+In the unsubscribe form enter the target email (for example, the email you previously subscribed with)
 {% endstep %}
 
 {% step %}
-The page shows “You have been unsubscribed...” and a confirmation email is received.\
-(The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link.)=
+The page shows “You have been unsubscribed...” and a confirmation email is received\
+(The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link.)
 {% endstep %}
 {% endstepper %}
 
@@ -232,23 +232,23 @@ The page shows “You have been unsubscribed...” and a confirmation email is r
 
 {% stepper %}
 {% step %}
-Capture the GraphQL `UpdateCampaign` POST request when editing a campaign (example request sent to `POST /graphql` with JSON body containing `input.campaign_id`).
+Capture the GraphQL `UpdateCampaign` POST request when editing a campaign (example request sent to `POST /graphql` with JSON body containing `input.campaign_id`)
 {% endstep %}
 
 {% step %}
-The `campaign_id` is a base64-encoded global id (e.g. `Z2lkOi8vaGFja2Vyb25lL0NhbXBhaWduLzI0NA==` → `gid://hackerone/Campaign/244` when decoded).
+The `campaign_id` is a base64-encoded global id (e.g. `Z2lkOi8vaGFja2Vyb25lL0NhbXBhaWduLzI0NA==` → `gid://hackerone/Campaign/244` when decoded)
 {% endstep %}
 
 {% step %}
-Change the numeric ID part of the decoded GID (e.g. `244` → `243` or `245`), re‑encode the modified GID to base64 and replace `input.campaign_id` with that value in the same request.
+Change the numeric ID part of the decoded GID (e.g. `244` → `243` or `245`), re‑encode the modified GID to base64 and replace `input.campaign_id` with that value in the same request
 {% endstep %}
 
 {% step %}
-Send the modified `UpdateCampaign` request. The server accepts the request for the targeted `campaign_id` (even if that campaign belongs to another program), allowing the campaign to be updated/removed via that request.
+Send the modified `UpdateCampaign` request. The server accepts the request for the targeted `campaign_id` (even if that campaign belongs to another program), allowing the campaign to be updated/removed via that request
 {% endstep %}
 
 {% step %}
-Impact: by targeting another program’s ongoing campaign id, a requester can modify or delete campaigns they don’t own.
+Impact: by targeting another program’s ongoing campaign id, a requester can modify or delete campaigns they don’t own
 
 {% hint style="info" %}
 Key detail: decode `campaign_id` from base64 → you get `gid://hackerone/Campaign/<N>`. Modifying `<N>` and re-encoding changes the target campaign.\
@@ -263,23 +263,23 @@ idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severit
 
 {% stepper %}
 {% step %}
-Create two test accounts: `victim@test` and `attacker@test`. Ensure you control both.
+Create two test accounts: `victim@test` and `attacker@test`. Ensure you control both
 {% endstep %}
 
 {% step %}
-From the victim account, initiate an account-delete flow in your browser while intercepting requests (Burp/DevTools) to capture the JSON body that would be sent (this reveals the body format; do **not** forward the request). Example body contains `email` and `authPW`.
+From the victim account, initiate an account-delete flow in your browser while intercepting requests (Burp/DevTools) to capture the JSON body that would be sent (this reveals the body format; do **not** forward the request). Example body contains `email` and `authPW`
 {% endstep %}
 
 {% step %}
-Cancel the actual request so no deletion occurs.
+Cancel the actual request so no deletion occurs
 {% endstep %}
 
 {% step %}
-Log in as attacker and prepare a new `POST /v1/account/destroy` request in an interceptor/repeater. Replace the body with the victim’s captured `email` and `authPW` values (only for your test accounts). **Send the request only if both accounts are test accounts you control.**
+Log in as attacker and prepare a new `POST /v1/account/destroy` request in an interceptor/repeater. Replace the body with the victim’s captured `email` and `authPW` values (only for your test accounts). **Send the request only if both accounts are test accounts you control**
 {% endstep %}
 
 {% step %}
-Observe server response: if the server returns success and the victim account is deleted, the vulnerability is confirmed. Prefer to confirm by checking server response codes and deletion flags rather than deleting real production data.
+Observe server response: if the server returns success and the victim account is deleted, the vulnerability is confirmed. Prefer to confirm by checking server response codes and deletion flags rather than deleting real production data
 {% endstep %}
 {% endstepper %}
 
@@ -295,7 +295,7 @@ Replicate the following request by replacing it with your own authentication hea
 {% endstep %}
 
 {% step %}
-must also put in the body of the request, in the parameter "username" the username that you want, you can try my username: "criptexhackerone1". This request will return in the response the links of any user profile with the "id" of each link. for example :
+must also put in the body of the request, in the parameter "username" the username that you want, you can try my username: "criptexhackerone1". This request will return in the response the links of any user profile with the "id" of each link. for example
 
 ```json
 POST / HTTP/2
@@ -306,11 +306,11 @@ Host: gql.reddit.com
 {% endstep %}
 
 {% step %}
-When you get some "id" save it.
+When you get some "id" save it
 {% endstep %}
 
 {% step %}
-In the next request you have to put in the request body, in the "id" parameter the previously saved id, you can also change the name and the link:
+In the next request you have to put in the request body, in the "id" parameter the previously saved id, you can also change the name and the link
 
 ```json
 POST / HTTP/2
@@ -321,10 +321,10 @@ Host: gql.reddit.com
 {% endstep %}
 
 {% step %}
-Finally re-enter the victim's profile and you will see the modified links. It is important to mention that you may have to reload the page a few times or wait a few seconds.
+Finally re-enter the victim's profile and you will see the modified links. It is important to mention that you may have to reload the page a few times or wait a few seconds
 
 {% hint style="info" %}
-A real attacker can modify the name and content of any user's social links. It is important to add that social links are something main in user profiles, if an attacker exploits this with all reddit users it could be devastating.
+A real attacker can modify the name and content of any user's social links. It is important to add that social links are something main in user profiles, if an attacker exploits this with all reddit users it could be devastating
 {% endhint %}
 {% endstep %}
 {% endstepper %}
@@ -333,11 +333,11 @@ A real attacker can modify the name and content of any user's social links. It i
 
 {% stepper %}
 {% step %}
-Login (attacker)**:** Authenticate in the application with your test attacker account in a browser.
+Login (attacker)**:** Authenticate in the application with your test attacker account in a browser
 {% endstep %}
 
 {% step %}
-Capture baseline request: Navigate to the profile endpoint and capture the request to:
+Capture baseline request: Navigate to the profile endpoint and capture the request to
 
 ```http
 GET /api/v1/users/current? HTTP/1.1
@@ -345,7 +345,7 @@ GET /api/v1/users/current? HTTP/1.1
 {% endstep %}
 
 {% step %}
-Prepare modified request: In Repeater, modify the request path by replacing `current?` with a target identifier:
+Prepare modified request: In Repeater, modify the request path by replacing `current?` with a target identifier
 
 ```http
 GET /api/v1/users/$USERNAME HTTP/1.1
@@ -353,21 +353,23 @@ GET /api/v1/users/$USERNAME HTTP/1.1
 {% endstep %}
 
 {% step %}
-Send modified reques&#x74;**:** Send it from Repeater and inspect the HTTP response body.
+Send modified reques&#x74;**:** Send it from Repeater and inspect the HTTP response body
 
-* If the response returns JSON containing the target’s profile fields (e.g., `full_name`, `username`, `github_username`, `website`, `created_at`, `id`, `photo`, etc.), the endpoint leaks other users’ data.
+{% hint style="info" %}
+If the response returns JSON containing the target’s profile fields (e.g., `full_name`, `username`, `github_username`, `website`, `created_at`, `id`, `photo`, etc.), the endpoint leaks other users’ data
+{% endhint %}
 {% endstep %}
 
 {% step %}
-Verify with controlled accounts (recommended): For a safe PoC, create a second test account (victim-test), add a distinguishable field (e.g., `bio: "victim-test-proof"`), then repeat step 3 using that username — this proves read access without touching real users.
+Verify with controlled accounts (recommended): For a safe PoC, create a second test account (victim-test), add a distinguishable field (e.g., `bio: "victim-test-proof"`), then repeat step 3 using that username — this proves read access without touching real users
 {% endstep %}
 
 {% step %}
-Document evidence: Save/sanitize the HTTP request and response (redact cookies, Authorization headers, tokens and any PII you don’t own). Take a screenshot of the returned JSON (with sensitive fields redacted if needed). Note timestamps and user-agents.
+Document evidence: Save/sanitize the HTTP request and response (redact cookies, Authorization headers, tokens and any PII you don’t own). Take a screenshot of the returned JSON (with sensitive fields redacted if needed). Note timestamps and user-agents
 {% endstep %}
 
 {% step %}
-Do not brute-force: Avoid enumerating many usernames or automating tests on production. Limit yourself to 1–2 manual checks or use staging.
+Do not brute-force: Avoid enumerating many usernames or automating tests on production. Limit yourself to 1–2 manual checks or use staging
 {% endstep %}
 {% endstepper %}
 
@@ -379,7 +381,7 @@ You can move your contents via <sub>Move to</sub> button at $WEB/dashboard&#x20;
 {% endstep %}
 
 {% step %}
-when you click to Move to > My Content you will send a POST request to `/dashboard` like that :
+when you click to Move to > My Content you will send a POST request to `/dashboard` like that
 {% endstep %}
 
 {% step %}
@@ -395,7 +397,7 @@ After sending the request through Burp Suite and changing the parameter, go back
 
 {% stepper %}
 {% step %}
-Make two accounts one is for the victim and the other for an attacker.
+Make two accounts one is for the victim and the other for an attacker
 {% endstep %}
 
 {% step %}
@@ -403,29 +405,29 @@ Add some featured images in both accounts. Go to Profile --> Add Profile Section
 {% endstep %}
 
 {% step %}
-Delete an image on the attacker's account and capture that request using burp and sent it to the repeater.\
-It makes a delete request like the one, given below.
+Delete an image on the attacker's account and capture that request using burp and sent it to the repeater\
+It makes a delete request like the one, given below
 {% endstep %}
 
 {% step %}
-It takes consists of thress things ProfileId, and sectionUrn which also take same ProfileId value.
+It takes consists of thress things ProfileId, and sectionUrn which also take same ProfileId value
 {% endstep %}
 
 {% step %}
-Now visit the victim's profile featured images without logging in as the victim. Copy the link of the image you want to delete from the victim's profile, which looks like this.
+Now visit the victim's profile featured images without logging in as the victim. Copy the link of the image you want to delete from the victim's profile, which looks like this
 {% endstep %}
 
 {% step %}
 Paste that link into your notepad and notice that in this link, we got both ProfileId , ImageId.\
-In the above link, I get these.
+In the above link, I get these
 {% endstep %}
 
 {% step %}
-Now simply replace the respected values of required parameters in the repeater and send a request.
+Now simply replace the respected values of required parameters in the repeater and send a request
 {% endstep %}
 
 {% step %}
-You see that the targeted featured image from the victim's profile was successfully deleted.
+You see that the targeted featured image from the victim's profile was successfully deleted
 {% endstep %}
 {% endstepper %}
 
@@ -441,7 +443,7 @@ https://$WEBSITE/UpdateProfile/<user-id>
 {% endstep %}
 
 {% step %}
-Change the _Numeric_ <sub>user-id</sub> to any other, and you'll see other user's email-addresses.
+Change the Numeric <sub>user-id</sub> to any other, and you'll see other user's email-addresses
 {% endstep %}
 {% endstepper %}
 
@@ -449,7 +451,7 @@ Change the _Numeric_ <sub>user-id</sub> to any other, and you'll see other user'
 
 {% stepper %}
 {% step %}
-Go to the site and wherever you see CSV file download and other extensions, activate the Interception section using Burp Suite.
+Go to the site and wherever you see CSV file download and other extensions, activate the Interception section using Burp Suite
 {% endstep %}
 
 {% step %}
@@ -465,7 +467,7 @@ Manipulate the parameter and change the Id and send the response
 {% endstep %}
 
 {% step %}
-If another file with other content including user information or sensitive information is found inside this downloaded file, it has IDOR vulnerability.
+If another file with other content including user information or sensitive information is found inside this downloaded file, it has IDOR vulnerability
 {% endstep %}
 {% endstepper %}
 
