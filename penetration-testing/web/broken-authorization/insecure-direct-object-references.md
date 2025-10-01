@@ -52,7 +52,7 @@ GET /api/albums?account_id= <account id>
 {% endstep %}
 
 {% step %}
-Path Traversal IN users Path
+#### Path Traversal IN users Path
 
 if request like this
 
@@ -79,7 +79,7 @@ Content-Type: application/json
 {% endstep %}
 
 {% step %}
-swap non-numeric with numeric id
+#### swap non-numeric with numeric id
 
 ```http
 GET /file?id=90djbkdbkdbd29dd
@@ -88,7 +88,7 @@ GET /file?id=302
 {% endstep %}
 
 {% step %}
-Missing Function Level Acess Control and changes Charachter path
+#### Missing Function Level Acess Control and changes Charachter path
 
 ```
 GET /admin/profile -> 401
@@ -180,6 +180,8 @@ GET /v1/users_data/1234 -> 200
 
 ***
 
+#### Delete Account (IDOR)
+
 {% stepper %}
 {% step %}
 Log in to your own account in two browsers A and B with User A and User B
@@ -203,6 +205,8 @@ For now change the ID to the **Licenses and certifications** ID of the Other acc
 {% endstepper %}
 
 ***
+
+#### Unsubscribe IDOR
 
 {% stepper %}
 {% step %}
@@ -228,6 +232,8 @@ The page shows “You have been unsubscribed...” and a confirmation email is r
 {% endstepper %}
 
 ***
+
+#### GraphQL IDOR
 
 {% stepper %}
 {% step %}
@@ -260,6 +266,8 @@ idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severit
 
 ***
 
+#### Account Deletion IDOR
+
 {% stepper %}
 {% step %}
 Create two test accounts: `victim@test` and `attacker@test`. Ensure you control both
@@ -283,6 +291,8 @@ Observe server response: if the server returns success and the victim account is
 {% endstepper %}
 
 ***
+
+#### GraphQL IDOR
 
 {% stepper %}
 {% step %}
@@ -330,6 +340,8 @@ A real attacker can modify the name and content of any user's social links. It i
 
 ***
 
+#### IDOR Broken Object Level Authorization
+
 {% stepper %}
 {% step %}
 Login (attacker)**:** Authenticate in the application with your test attacker account in a browser
@@ -374,6 +386,8 @@ Do not brute-force: Avoid enumerating many usernames or automating tests on prod
 
 ***
 
+#### Content Move IDOR
+
 {% stepper %}
 {% step %}
 You can move your contents via <sub>Move to</sub> button at $WEB/dashboard&#x20;
@@ -393,6 +407,8 @@ After sending the request through Burp Suite and changing the parameter, go back
 {% endstepper %}
 
 ***
+
+#### Featured Image Deletion IDOR
 
 {% stepper %}
 {% step %}
@@ -432,6 +448,8 @@ You see that the targeted featured image from the victim's profile was successfu
 
 ***
 
+#### IDOR in Update Profile Section
+
 {% stepper %}
 {% step %}
 create An Account in web and go to Update Profile Section For example
@@ -447,6 +465,8 @@ Change the Numeric <sub>user-id</sub> to any other, and you'll see other user's 
 {% endstepper %}
 
 ***
+
+#### File Download IDORD
 
 {% stepper %}
 {% step %}
