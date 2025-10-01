@@ -207,11 +207,11 @@ Go to the subscribe page and sign up with an email (or create two test emails).
 {% endstep %}
 
 {% step %}
-Note the subscribe URL: `...?p=subscribe&id=1`.
+Note the subscribe URL: `...?p=subscribe&id=1.`
 {% endstep %}
 
 {% step %}
-Change `subscribe` → `unsubscribe`: `...?p=unsubscribe&id=1`.
+Change subscribe → unsubscribe: `...?p=unsubscribe&id=1`.
 {% endstep %}
 
 {% step %}
@@ -220,7 +220,7 @@ In the unsubscribe form enter the target email (for example, the email you previ
 
 {% step %}
 The page shows “You have been unsubscribed...” and a confirmation email is received.\
-(The report indicates this works without CAPTCHA or a confirmation link.)=
+(The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link.)=
 {% endstep %}
 {% endstepper %}
 
@@ -250,5 +250,179 @@ Key detail: decode `campaign_id` from base64 → you get `gid://hackerone/Campai
 \
 idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severity_rating`,`readable_substate`,`created_at`,`submitted_at`,`reporter_name`
 {% endhint %}
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Create two test accounts: `victim@test` and `attacker@test`. Ensure you control both.
+{% endstep %}
+
+{% step %}
+From the victim account, initiate an account-delete flow in your browser while intercepting requests (Burp/DevTools) to capture the JSON body that would be sent (this reveals the body format; do **not** forward the request). Example body contains `email` and `authPW`.
+{% endstep %}
+
+{% step %}
+Cancel the actual request so no deletion occurs.
+{% endstep %}
+
+{% step %}
+Log in as attacker and prepare a new `POST /v1/account/destroy` request in an interceptor/repeater. Replace the body with the victim’s captured `email` and `authPW` values (only for your test accounts). **Send the request only if both accounts are test accounts you control.**
+{% endstep %}
+
+{% step %}
+Observe server response: if the server returns success and the victim account is deleted, the vulnerability is confirmed. Prefer to confirm by checking server response codes and deletion flags rather than deleting real production data.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+allows to modify the links of any user. Users can put their custom links or social media links on their profile&#x20;
+{% endstep %}
+
+{% step %}
+Replicate the following request by replacing it with your own authentication headers
+{% endstep %}
+
+{% step %}
+must also put in the body of the request, in the parameter "username" the username that you want, you can try my username: "criptexhackerone1". This request will return in the response the links of any user profile with the "id" of each link. for example :
+
+```json
+POST / HTTP/2
+Host: gql.reddit.com
+
+{"id":"11a239b07f86","variables":{"username":"*********"}}
+```
+{% endstep %}
+
+{% step %}
+When you get some "id" save it.
+{% endstep %}
+
+{% step %}
+In the next request you have to put in the request body, in the "id" parameter the previously saved id, you can also change the name and the link:
+
+```json
+POST / HTTP/2
+Host: gql.reddit.com
+
+{"id":"c558e604581f","variables":{"input":{"socialLinks":[{"outboundUrl":"https://www.hackerone.com","title":"hacker","type":"CUSTOM","id":"* * * * * * * * *  * * * * *  * * * * * * * * * *  * * * * *  *"}]}}}
+```
+{% endstep %}
+
+{% step %}
+Finally re-enter the victim's profile and you will see the modified links. It is important to mention that you may have to reload the page a few times or wait a few seconds.
+
+{% hint style="info" %}
+A real attacker can modify the name and content of any user's social links. It is important to add that social links are something main in user profiles, if an attacker exploits this with all reddit users it could be devastating.
+{% endhint %}
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Login (attacker)**:** Authenticate in the application with your test attacker account in a browser.
+{% endstep %}
+
+{% step %}
+Capture baseline request: Navigate to the profile endpoint and capture the request to:
+
+```http
+GET /api/v1/users/current? HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Prepare modified request: In Repeater, modify the request path by replacing `current?` with a target identifier:
+
+```http
+GET /api/v1/users/$USERNAME HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Send modified reques&#x74;**:** Send it from Repeater and inspect the HTTP response body.
+
+* If the response returns JSON containing the target’s profile fields (e.g., `full_name`, `username`, `github_username`, `website`, `created_at`, `id`, `photo`, etc.), the endpoint leaks other users’ data.
+{% endstep %}
+
+{% step %}
+Verify with controlled accounts (recommended): For a safe PoC, create a second test account (victim-test), add a distinguishable field (e.g., `bio: "victim-test-proof"`), then repeat step 3 using that username — this proves read access without touching real users.
+{% endstep %}
+
+{% step %}
+Document evidence: Save/sanitize the HTTP request and response (redact cookies, Authorization headers, tokens and any PII you don’t own). Take a screenshot of the returned JSON (with sensitive fields redacted if needed). Note timestamps and user-agents.
+{% endstep %}
+
+{% step %}
+Do not brute-force: Avoid enumerating many usernames or automating tests on production. Limit yourself to 1–2 manual checks or use staging.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+You can move your contents via <sub>Move to</sub> button at $WEB/dashboard&#x20;
+{% endstep %}
+
+{% step %}
+when you click to Move to > My Content you will send a POST request to `/dashboard` like that :
+{% endstep %}
+
+{% step %}
+<sub>$ACTIONABLE\[]</sub> parameter's value is the content's ID. And if you change this ID to victim's content ID, you will see victim's content at My Content page
+{% endstep %}
+
+{% step %}
+After sending the request through Burp Suite and changing the parameter, go back to the Mycontent section
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+Make two accounts one is for the victim and the other for an attacker.
+{% endstep %}
+
+{% step %}
+Add some featured images in both accounts. Go to Profile --> Add Profile Section --> Recommended --> Add Featured
+{% endstep %}
+
+{% step %}
+Delete an image on the attacker's account and capture that request using burp and sent it to the repeater.\
+It makes a delete request like the one, given below.
+{% endstep %}
+
+{% step %}
+It takes consists of thress things ProfileId, and sectionUrn which also take same ProfileId value.
+{% endstep %}
+
+{% step %}
+Now visit the victim's profile featured images without logging in as the victim. Copy the link of the image you want to delete from the victim's profile, which looks like this.
+{% endstep %}
+
+{% step %}
+Paste that link into your notepad and notice that in this link, we got both ProfileId , ImageId.\
+In the above link, I get these.
+{% endstep %}
+
+{% step %}
+Now simply replace the respected values of required parameters in the repeater and send a request.
+{% endstep %}
+
+{% step %}
+You see that the targeted featured image from the victim's profile was successfully deleted.
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+create An Account in web and go to Update Profile Section For example
+
+```url
+https://$WEBSITE/UpdateProfile/<user-id>
+```
+{% endstep %}
+
+{% step %}
+Change the _Numeric_ <sub>user-id</sub> to any other, and you'll see other user's email-addresses.
 {% endstep %}
 {% endstepper %}
