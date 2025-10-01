@@ -1,4 +1,4 @@
-# OAuth Weaknesses
+# OAuth Weaknesses\\
 
 ## Check List
 
@@ -476,5 +476,85 @@ Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator s
 OAuth Parameters
 
 
+
+| Parameter                | Usage Location                                                               |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| client\_id               | authorization request, token request                                         |
+| client\_secret           | token request                                                                |
+| response\_type           | authorization request                                                        |
+| redirect\_uri            | authorization request, token request                                         |
+| scope                    | authorization request, authorization response, token request, token response |
+| state                    | authorization request, authorization response                                |
+| code                     | authorization response, token request                                        |
+| error                    | authorization response, token response                                       |
+| error\_description       | authorization response, token response                                       |
+| error\_uri               | authorization response, token response                                       |
+| grant\_type              | token request                                                                |
+| access\_token            | authorization response, token response                                       |
+| token\_type              | authorization response, token response                                       |
+| expires\_in              | authorization response, token response                                       |
+| username                 | token request                                                                |
+| password                 | token request                                                                |
+| refresh\_token           | token request, token response                                                |
+| nonce                    | authorization request                                                        |
+| display                  | authorization request                                                        |
+| prompt                   | authorization request                                                        |
+| max\_age                 | authorization request                                                        |
+| ui\_locales              | authorization request                                                        |
+| claims\_locales          | authorization request                                                        |
+| id\_token\_hint          | authorization request                                                        |
+| login\_hint              | authorization request                                                        |
+| acr\_values              | authorization request                                                        |
+| claims                   | authorization request                                                        |
+| registration             | authorization request                                                        |
+| request                  | authorization request                                                        |
+| request\_uri             | authorization request                                                        |
+| id\_token                | authorization response, access token response                                |
+| session\_state           | authorization response, access token response                                |
+| assertion                | token request                                                                |
+| client\_assertion        | token request                                                                |
+| client\_assertion\_type  | token request                                                                |
+| code\_verifier           | token request                                                                |
+| code\_challenge          | authorization request                                                        |
+| code\_challenge\_method  | authorization request                                                        |
+| claim\_token             | client request, token endpoint                                               |
+| pct                      | client request, token endpoint                                               |
+| pct                      | authorization server response, token endpoint                                |
+| rpt                      | client request, token endpoint                                               |
+| ticket                   | client request, token endpoint                                               |
+| upgraded                 | authorization server response, token endpoint                                |
+| vtr                      | authorization request, token request                                         |
+| device\_code             | token request                                                                |
+| resource                 | authorization request, token request                                         |
+| audience                 | token request                                                                |
+| requested\_token\_type   | token request                                                                |
+| subject\_token           | token request                                                                |
+| subject\_token\_type     | token request                                                                |
+| actor\_token             | token request                                                                |
+| actor\_token\_type       | token request                                                                |
+| issued\_token\_type      | token response                                                               |
+| response\_mode           | authorization request                                                        |
+| nfv\_token               | access token response                                                        |
+| iss                      | authorization request, authorization response                                |
+| sub                      | authorization request                                                        |
+| aud                      | authorization request                                                        |
+| exp                      | authorization request                                                        |
+| nbf                      | authorization request                                                        |
+| iat                      | authorization request                                                        |
+| jti                      | authorization request                                                        |
+| ace\_profile             | token response                                                               |
+| nonce1                   | client-rs request                                                            |
+| nonce2                   | rs-client response                                                           |
+| ace\_client\_recipientid | client-rs request                                                            |
+| ace\_server\_recipientid | rs-client response                                                           |
+| req\_cnf                 | token request                                                                |
+| rs\_cnf                  | token response                                                               |
+| cnf                      | token response                                                               |
+| authorization\_details   | authorization request, token request, token response                         |
+| dpop\_jkt                | authorization request                                                        |
+| sign\_info               | client-rs request, rs-client response                                        |
+| kdcchallenge             | rs-client response                                                           |
+| trust\_chain             | (no usage location provided)                                                 |
 {% endstep %}
 {% endstepper %}
+
