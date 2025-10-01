@@ -18,6 +18,8 @@ Check for HSTS Header Confirm the absence of the following header in the server 
 {% endstep %}
 {% endstepper %}
 
+***
+
 ### Recon Header
 
 #### [cURL](https://curl.se/)

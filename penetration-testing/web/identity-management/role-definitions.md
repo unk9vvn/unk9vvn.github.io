@@ -48,6 +48,8 @@ Read Other Users’ Data By changing the conversation ID, they can view other us
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 First, let's check what roles are on the site and how they are written (Admin or admin or Administrator and ...) so that you can use this cheat sheet to find the different levels in the system
@@ -76,6 +78,8 @@ look at registration request body, it can be like this
 change `User` role to `Admin` role and register. if you can access admin panel, you are an admin If the user id was used with ID instead of role, can we change it and cause account takeover? Instead of role, the registration form may have a numeric `user_type` and by changing that number, we can access Admin or higher roles
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -111,6 +115,8 @@ If there is no response from the request, we change the method to PATCH and rese
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 First, enter the site, log in, and go to the home page or your account page
@@ -136,6 +142,8 @@ In the Burp tool, right-click on the request page and click "Do intercept > Resp
 Take the response you received, change the parameters related to the role to higher roles If we gain admin access, the site is vulnerable
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -198,6 +206,8 @@ Set-Cookie: jwt=...
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 In the systems we are examining, which may contain multiple roles such as user, employee, and admin, what is important is that we can focus on the intermediate roles because they are usually where the errors occur
@@ -247,6 +257,8 @@ Send a request and check if the normal user has become an admin. If so, there is
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 _Note: Sometimes what we see on the front end may be completely different from what we see on the back end, like in this scenario_ Perform the registration process within the system with the lowest access level
@@ -278,6 +290,8 @@ In this section, use the Burp Suite tool to intercept requests to access areas t
 ```
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### Roles Identification
 

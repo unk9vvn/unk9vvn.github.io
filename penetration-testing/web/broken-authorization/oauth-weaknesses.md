@@ -312,6 +312,8 @@ Check the output of the Intruder for any suspicious responses.
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Redirect flow to the static endpoint on the same domain to break it.
@@ -361,6 +363,8 @@ Require client applications to register a whitelist of valid <sub>redirect\_uris
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Redirect flow to the endpoint on the same domain using path traversal. The attacker could use the vulnerability on the other endpoint within the application and the new path as a proxy page to steal a victim's Access Token, thus hijacking his account.
@@ -400,6 +404,8 @@ If it is possible to redirect the user to another endpoint (/vuln), there is a v
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Check if it is possible to register your client application. Discover the OpenID client registration endpoint: Using the configuration file <sub>/.well-known/openid-configuration</sub> By the directory brute-forcing (dir\_wordlist)
@@ -424,6 +430,8 @@ If you get the 200 OK response with a <sub>CLIENT\_ID</sub> in the body, it is l
 > The OpenID provider should require the client application to authenticate itself. For instance, use an HTTP bearer token.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -492,6 +500,8 @@ Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator s
 
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -578,6 +588,8 @@ OAuth Parameters
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com).
@@ -634,6 +646,8 @@ redirect_uri=https://oauth.šemrush.com/oauth2/success
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 We do the authentication process inside OAuth and I get the requests using Burp Suite
@@ -664,3 +678,5 @@ https://auth2.zomato.com/oauth2/fallbacks/error?error=xss&error_description=xsss
 ```
 {% endstep %}
 {% endstepper %}
+
+***

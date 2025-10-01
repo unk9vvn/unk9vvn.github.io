@@ -26,6 +26,8 @@ Add proper metadata (`Content-Type: text/html if HTML file`) (Optional) Enable s
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Cloud Storage (S3)
@@ -51,6 +53,8 @@ And I get the bucket name. Some time it says no such bucket. So in that case wha
 So it gives CNAME of pointed (`http://$WEBSITE`) so I am thinking what to do with this. So I read this article But unluckily on CRUD operation I get access denied and use .aws s3 Commands And in response I have foun `PRE Server/`
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### WHOIS Lookup
 

@@ -23,6 +23,8 @@ Using the next command, we will check the list of subdomains that are CNAMEd to 
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Dangling DNS
@@ -49,6 +51,8 @@ Gained control of the subdomain to serve malicious or spoofed content Exploited 
 Indirect compromise of downstream systems via trusted artifact delivery mechanisms Over 8M live requests to hijacked buckets across gov, Fortune 500, and `OSS`, enabling large-scale poisoning or exploitation
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### Subdomain Fuzzing
 

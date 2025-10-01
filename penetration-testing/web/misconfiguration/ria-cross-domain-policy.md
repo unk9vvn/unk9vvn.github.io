@@ -34,6 +34,8 @@ Capture Data Use a script to capture stolen data from the victim when they load 
 {% endstep %}
 {% endstepper %}
 
+***
+
 ### Check Policy Files Weakness
 
 #### [Nmap](https://nmap.org/)

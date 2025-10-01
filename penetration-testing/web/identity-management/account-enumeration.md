@@ -21,6 +21,8 @@ _When you click on `Forgot Password` the site asks for your email or phone numbe
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Enter the registration process in the system and use the Burp Suite tool to track requests and use a test and duplicate email
@@ -42,6 +44,8 @@ By testing the email edit section, if the system accepts the requested emails as
 The system accepts valid emails without validation, recognizes them as active emails, and logs us into the valid email profile (i.e., logging into the user account)
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### Status Code
 

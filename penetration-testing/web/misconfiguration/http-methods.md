@@ -29,6 +29,8 @@ If our file is uploaded to the specified path using the PUT method, the site is 
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 XSS in Trace Mehtod
@@ -52,6 +54,8 @@ If a web application connected to this server processes and displays the reflect
 {% endhint %}
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### Discover the Supported Methods <a href="#discover-the-supported-methods" id="discover-the-supported-methods"></a>
 

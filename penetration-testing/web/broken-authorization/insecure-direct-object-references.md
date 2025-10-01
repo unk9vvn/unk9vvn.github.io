@@ -179,6 +179,8 @@ GET /v1/users_data/1234 -> 200
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Log in to your own account in two browsers A and B with User A and User B
@@ -200,6 +202,8 @@ Now In the body change the **ID** number and you will be able to delete all the 
 For now change the ID to the **Licenses and certifications** ID of the Other account and it will be deleted.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -223,6 +227,8 @@ The page shows “You have been unsubscribed...” and a confirmation email is r
 (The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link.)=
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -253,6 +259,8 @@ idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severit
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Create two test accounts: `victim@test` and `attacker@test`. Ensure you control both.
@@ -274,6 +282,8 @@ Log in as attacker and prepare a new `POST /v1/account/destroy` request in an in
 Observe server response: if the server returns success and the victim account is deleted, the vulnerability is confirmed. Prefer to confirm by checking server response codes and deletion flags rather than deleting real production data.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -319,6 +329,8 @@ A real attacker can modify the name and content of any user's social links. It i
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 Login (attacker)**:** Authenticate in the application with your test attacker account in a browser.
@@ -359,6 +371,8 @@ Do not brute-force: Avoid enumerating many usernames or automating tests on prod
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 You can move your contents via <sub>Move to</sub> button at $WEB/dashboard&#x20;
@@ -376,6 +390,8 @@ when you click to Move to > My Content you will send a POST request to `/dashboa
 After sending the request through Burp Suite and changing the parameter, go back to the Mycontent section
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -413,6 +429,8 @@ You see that the targeted featured image from the victim's profile was successfu
 {% endstep %}
 {% endstepper %}
 
+***
+
 {% stepper %}
 {% step %}
 create An Account in web and go to Update Profile Section For example
@@ -426,6 +444,8 @@ https://$WEBSITE/UpdateProfile/<user-id>
 Change the _Numeric_ <sub>user-id</sub> to any other, and you'll see other user's email-addresses.
 {% endstep %}
 {% endstepper %}
+
+***
 
 {% stepper %}
 {% step %}
@@ -448,3 +468,5 @@ Manipulate the parameter and change the Id and send the response
 If another file with other content including user information or sensitive information is found inside this downloaded file, it has IDOR vulnerability.
 {% endstep %}
 {% endstepper %}
+
+***

@@ -35,6 +35,8 @@ and if we enter, enter the commands related to FTP and exploit it using Hydra an
 {% endstep %}
 {% endstepper %}
 
+***
+
 #### [Nmap](https://nmap.org)
 
 {% hint style="info" %}
@@ -213,6 +215,8 @@ And we can do the same thing using the PUT method, whether we can use this metho
 {% endstep %}
 {% endstepper %}
 
+***
+
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
@@ -339,6 +343,8 @@ If the service was an old version, use the SNMPv1 command to write a string valu
 Then open a port using the Ngrok command and execute the RCE injection command on the target and you can exploit it using Metasploit
 {% endstep %}
 {% endstepper %}
+
+***
 
 #### [Nmap](https://nmap.org/)
 
@@ -516,6 +522,8 @@ The next step is to log in using the rpcclient command with an empty username so
 We can do this process and exploit using Metasploit commands
 {% endstep %}
 {% endstepper %}
+
+***
 
 #### [Nmap](https://nmap.org/)
 
@@ -875,6 +883,8 @@ The next step is to test the vulnerability of DOS and DDoS the service to identi
 {% endstep %}
 {% endstepper %}
 
+***
+
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
@@ -1022,6 +1032,8 @@ If the service is open on the target server, use the next command to check acces
 In the next command, we use Hydra on the Brute Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconfiguration Vulnerability to the service.
 {% endstep %}
 {% endstepper %}
+
+***
 
 #### [Nmap](https://nmap.org/nsedoc/scripts/redis-info.html)
 
