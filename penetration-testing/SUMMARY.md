@@ -52,7 +52,7 @@
   * [Bypassing Authorization Schema](web/broken-authorization/bypassing-authorization-schema.md)
   * [Privilege Escalation](web/broken-authorization/privilege-escalation.md)
   * [Insecure Direct Object References](web/broken-authorization/insecure-direct-object-references.md)
-  * [OAuth Weaknesses\\](web/broken-authorization/oauth-weaknesses.md)
+  * [OAuth Weaknesses](web/broken-authorization/oauth-weaknesses.md)
 * [Session Management](web/session-management/README.md)
   * [Session Management Schema](web/session-management/session-management-schema.md)
   * [Cookies Attributes](web/session-management/cookies-attributes.md)

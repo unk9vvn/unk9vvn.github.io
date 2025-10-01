@@ -83,12 +83,10 @@ First, enter online shopping or selling sites
 {% endstep %}
 
 {% step %}
-Ask yourself: Are there higher roles on this site? If so, how can we identify them? The first type (Vertical Privilege Escalation) _This means that a regular user can achieve a higher level of access, such as admin. For example, a user who only needs to make purchases can now manage the entire site_ The second type (Horizontal Privilege Escalation)
-
-_This means that a user can access the information or capabilities of another user at the same privilege level. For example, a regular buyer can log in to another buyer's account_
+Ask yourself: Are there higher roles on this site? If so, how can we identify them? The first type (Vertical Privilege Escalation) _This means that a regular user can achieve a higher level of access, such as admin. For example, a user who only needs to make purchases can now manage the entire site_ The second type (Horizontal Privilege Escalation) This means that a user can access the information or capabilities of another user at the same privilege level. For example, a regular buyer can log in to another buyer's account
 
 {% hint style="info" %}
-_We need to know that there are two main types of access escalation_
+We need to know that there are two main types of access escalation
 {% endhint %}
 {% endstep %}
 
@@ -135,7 +133,7 @@ In the Burp tool, right-click on the request page and click "Do intercept > Resp
 {% endstep %}
 
 {% step %}
-Take the response you received, change the parameters related to the role to higher roles _If we gain admin access, the site is vulnerable_
+Take the response you received, change the parameters related to the role to higher roles If we gain admin access, the site is vulnerable
 {% endstep %}
 {% endstepper %}
 

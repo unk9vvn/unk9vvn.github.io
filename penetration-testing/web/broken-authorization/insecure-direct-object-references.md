@@ -426,3 +426,25 @@ https://$WEBSITE/UpdateProfile/<user-id>
 Change the _Numeric_ <sub>user-id</sub> to any other, and you'll see other user's email-addresses.
 {% endstep %}
 {% endstepper %}
+
+{% stepper %}
+{% step %}
+Go to the site and wherever you see CSV file download and other extensions, activate the Interception section using Burp Suite.
+{% endstep %}
+
+{% step %}
+Click on download file and get the request
+{% endstep %}
+
+{% step %}
+In the request, look for a parameter that has the word ID or is numeric
+{% endstep %}
+
+{% step %}
+Manipulate the parameter and change the Id and send the response
+{% endstep %}
+
+{% step %}
+If another file with other content including user information or sensitive information is found inside this downloaded file, it has IDOR vulnerability.
+{% endstep %}
+{% endstepper %}
