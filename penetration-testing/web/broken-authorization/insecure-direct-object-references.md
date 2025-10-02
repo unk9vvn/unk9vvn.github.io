@@ -464,7 +464,7 @@ Change the Numeric <sub>user-id</sub> to any other, and you'll see other user's 
 
 ***
 
-#### File Download IDORD
+#### File Download IDOR
 
 {% stepper %}
 {% step %}

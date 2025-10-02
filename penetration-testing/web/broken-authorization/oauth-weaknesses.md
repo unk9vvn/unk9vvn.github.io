@@ -137,7 +137,7 @@ Forward the modified request
 Check if you are logged in as a victim
 
 {% hint style="info" %}
-The Authorization Code should be tight to only user started the OAuth process. Use Authorization Code Grant type, instead of Implicit Grant type. Use the [Authorization Code flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-proof-key-for-code-exchange-pkce) with [PKCE](https://oauth.net/2/pkce/).
+The Authorization Code should be tight to only user started the OAuth process. Use Authorization Code Grant type, instead of Implicit Grant type. Use the [Authorization Code flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-proof-key-for-code-exchange-pkce) with [PKCE](https://oauth.net/2/pkce/)
 {% endhint %}
 {% endstep %}
 {% endstepper %}
@@ -253,7 +253,7 @@ Send the request with the redirect\_uri parameter to the repeater
 
 ```http
 GET /OAuth/auth?client_id=asd&redirect_uri=https://example.com&response_type=code HTTP/1.1
-Host: afine.com
+Host: example.com
 ```
 {% endstep %}
 
@@ -262,7 +262,7 @@ Detect the Open Redirect vulnerability Simple Open Redirect - replace the redire
 
 ```http
 GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
-Host: afine.com
+Host: example.com
 ```
 {% endstep %}
 
@@ -274,7 +274,7 @@ Host: afine.com
 
 ```http
 GET /OAuth/auth-callback?code=0SwG-3tuLQ9y8GNv2lNYt0mzBTPLKxtzLdw HTTP/1.1
-Host: afine.com
+Host: example.com
 ```
 {% endstep %}
 
@@ -405,7 +405,7 @@ Send the request with the <sub>redirect\_uri</sub> parameter to the repeater
 
 ```http
 GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com/callback HTTP/1.1
-Host: afine.com
+Host: example.com
 ```
 {% endstep %}
 
