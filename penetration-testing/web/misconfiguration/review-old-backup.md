@@ -6,6 +6,28 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+Using the first commands related to <sub>Google Dork,</sub> we replace <sub>$WEBSITE</sub> with the target domain name and then execute it
+{% endstep %}
+
+{% step %}
+Then, using the `X8` command and subsequent commands, we execute hidden parameters that contain old and sensitive files on the target
+{% endstep %}
+
+{% step %}
+Then, we run the following commands on the target using <sub>Gobuster</sub> and <sub>FFUF</sub> tools and a combination of tools such as <sub>FFUF</sub> and <sub>Katana</sub> to identify all sensitive paths and sensitive files on the target
+{% endstep %}
+
+{% step %}
+Then, we can use the script we created to run all these tools with one click on the target using their switches that speed up the work. If old files are backed up and saved, which the programmer may not have deleted, and contain important information such as web server configuration and admin password and username, they will be found and cause vulnerability
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Use of Publicly Available Information
 
 #### [Google](https://google.com)

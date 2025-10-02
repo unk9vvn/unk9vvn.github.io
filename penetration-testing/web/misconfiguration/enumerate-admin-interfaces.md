@@ -6,6 +6,28 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+To find the paths that exist for the admin login, use the first command used for robots.txt. This path may be leaked in this file, or using Google Dork, we can identify all the paths related to the admin page in the target
+{% endstep %}
+
+{% step %}
+Then, using the commands related to the scanning tools, identify the paths related to the admin login page on the target.
+{% endstep %}
+
+{% step %}
+We can run the Nmap command on the target with the switch for login pages, which may be for the admin
+{% endstep %}
+
+{% step %}
+Sometimes, writing a program inside the comments inside the pages will cause this error to leak the admin login page, which will cause vulnerability. Using the Katana command, we can perform this operation on the comments, and we can use the created script to find the path to the admin login page and execute it on the target
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Search Engine Discovery
 
 #### robots.txt

@@ -6,6 +6,16 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+Using the following script, we can create confusion on a sensitive path using the Path Confusion technique. Using this script, we can basically find sensitive files or sensitive paths. Using the symbols specified in the script, we can confuse the path on the sensitive path and access this sensitive path
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Dictionary Fuzzer
 
 #### [FFUF](https://github.com/ffuf/ffuf)

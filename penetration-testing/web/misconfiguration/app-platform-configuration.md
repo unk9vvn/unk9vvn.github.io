@@ -12,7 +12,7 @@
 
 {% stepper %}
 {% step %}
-Using the following command that works with the TOR tool, it creates 20 independent Tor proxies (SOCKS + control) for the debian-tor user and places them behind Privoxy so programs can use them. And it makes it easier for an attacker to send requests to the server
+Using the following command that works with the <sub>TOR</sub> tool, it creates 20 independent Tor proxies (SOCKS + control) for the debian-tor user and places them behind <sub>Privoxy</sub> so programs can use them. And it makes it easier for an attacker to send requests to the server
 {% endstep %}
 
 {% step %}
@@ -20,7 +20,7 @@ Using the next command, we scan the web server to find out what features it has 
 {% endstep %}
 
 {% step %}
-Then, using the following commands, we get a list of target subdomains and then using the HTTPX tool command, we check whether the subdomains we got are active
+Then, using the following commands, we get a list of target subdomains and then using the <sub>HTTPX</sub> tool command, we check whether the subdomains we got are active
 {% endstep %}
 
 {% step %}
@@ -40,9 +40,11 @@ And then using the Dirsearch tool command, which we run on all the subdomains th
 {% endstep %}
 
 {% step %}
-Using the Nuclei command, we can find vulnerabilities and CVEs on the target to identify the presence of vulnerabilities, and using the next commands, we can run commands related to the target's use of different CMSs on the target
+Using the Nuclei command, we can find vulnerabilities and <sub>CVEs</sub> on the target to identify the presence of vulnerabilities, and using the next commands, we can run commands related to the target's use of different <sub>CMSs</sub> on the target
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### **Sample and Known Files and Directories**
 

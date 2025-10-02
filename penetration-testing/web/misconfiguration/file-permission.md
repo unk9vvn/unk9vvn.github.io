@@ -6,6 +6,20 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+Using the following commands to find access to files inside the web server, which are made with PHP, we can run whether we can write, read, or execute a file inside the web server
+{% endstep %}
+
+{% step %}
+If a sensitive file is found, we can reach the vulnerability with high-level access
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Check DIR/File Permissions
 
 #### [namei](https://man7.org/linux/man-pages/man1/namei.1.html)

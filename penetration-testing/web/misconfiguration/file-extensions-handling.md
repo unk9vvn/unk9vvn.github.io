@@ -16,11 +16,11 @@ We open our browser and use the following command, which will find all sensitive
 {% endstep %}
 
 {% step %}
-And then we can use the following commands to check for the presence of sensitive files such as XLS, PDF, CONF, etc. on the target
+And then we can use the following commands to check for the presence of sensitive files such as <sub>XLS, PDF, CONF</sub>, etc. on the target
 {% endstep %}
 
 {% step %}
-Using the following commands, we will check for file Uploaders and scan different file types on the site using its own tool
+Using the following commands, we will check for file Uploader and scan different file types on the site using its own tool
 {% endstep %}
 
 {% step %}
@@ -29,6 +29,8 @@ We can create and run a script that does all this without errors, and if there i
 
 {% endstep %}
 {% endstepper %}
+
+***
 
 ### Forced Browsing <a href="#forced-browsing" id="forced-browsing"></a>
 
