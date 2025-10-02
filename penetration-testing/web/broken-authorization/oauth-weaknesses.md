@@ -148,7 +148,7 @@ The Authorization Code should be tight to only user started the OAuth process. U
 
 {% stepper %}
 {% step %}
-Check if there is a CSRF protection and test it The attacker could hijack the victim's account by conducting a Cross-Site Request Forgery attack.
+Check if there is a CSRF protection and test it The attacker could hijack the victim's account by conducting a Cross-Site Request Forgery attack
 {% endstep %}
 
 {% step %}
