@@ -108,8 +108,7 @@ GET /api/users/*
 {% endstep %}
 
 {% step %}
-Never ignore encoded/hashed ID for hashed ID ,create multiple accounts and understand the\
-pattern application users to allot an iD&#x20;
+Never ignore encoded/hashed ID for hashed ID ,create multiple accounts and understand the pattern application users to allot an iD&#x20;
 {% endstep %}
 
 {% step %}
@@ -188,11 +187,11 @@ Log in to your own account in two browsers A and B with User A and User B
 {% endstep %}
 
 {% step %}
-Create your own \*_Licenses and certifications_ in both the account
+Create your own \*Licenses and certifications in both the account
 {% endstep %}
 
 {% step %}
-Create your own \*_Licenses and certifications_ in both the account
+Create your own \*Licenses and certifications in both the account
 {% endstep %}
 
 {% step %}
@@ -420,8 +419,7 @@ Add some featured images in both accounts. Go to Profile --> Add Profile Section
 {% endstep %}
 
 {% step %}
-Delete an image on the attacker's account and capture that request using burp and sent it to the repeater\
-It makes a delete request like the one, given below
+Delete an image on the attacker's account and capture that request using burp and sent it to the repeater It makes a delete request like the one, given below
 {% endstep %}
 
 {% step %}
@@ -455,7 +453,7 @@ You see that the targeted featured image from the victim's profile was successfu
 create An Account in web and go to Update Profile Section For example
 
 ```url
-https://$WEBSITE/UpdateProfile/<user-id>
+https://example.com/UpdateProfile/<user-id>
 ```
 {% endstep %}
 

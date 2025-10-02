@@ -116,7 +116,7 @@ Initiate the OAuth login proccess
 {% step %}
 In the last step replace your identification data with the victim id
 
-```
+```json
 POST /auth HTTP/1.1
 Host : example.com
 Content-Type : 133
@@ -231,7 +231,7 @@ Complete the OAuth Flow again , but replace the authorization code with the one 
 {% step %}
 Ensure that the OAuth process fails&#x20;
 
-If Authorization Code is exchanged for an Access Token, invalidate the Authorization Code and not issue any more Access Token against it. For the [JWT tokens](https://auth0.com/docs/secure/tokens/access-tokens#jwt-access-tokens) use the Refresh Token mechanism to extend it
+If Authorization Code is exchanged for an Access Token, invalidate the Authorization Code and not issue any more Access Token against it. For the JWT tokens use the Refresh Token mechanism to extend it
 {% endstep %}
 {% endstepper %}
 
@@ -317,7 +317,7 @@ GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=htt
 
 * Generate a payload list using crimson\_redirector
 * USAGE: crimson\_redirector.py whitelisted\_domain domain\_collab vps\_ip redirect\_parameter\_name
-* EXAMPLE: crimson\_redirector.py whitelisted.com col.afine.com 123.123.123.123 redirect\_uri
+* EXAMPLE: crimson\_redirector.py whitelisted.com col.example.com 123.123.123.123 redirect\_uri
 {% endstep %}
 
 {% step %}
@@ -347,7 +347,7 @@ The attacker could use the static endpoint within the application to break the e
 {% endstep %}
 
 {% step %}
-Identify that the application allows redirecting the user to other paths on the same domain.
+Identify that the application allows redirecting the user to other paths on the same domain
 {% endstep %}
 
 {% step %}
@@ -358,7 +358,7 @@ Try exploiting the XSS vulnerability on one of these endpoints
 If it does not work, search for a static endpoint (401.html) which should break the OAuth flow
 
 ```http
-GET /OAuth/auth?client_id=1234&redirect_uri=https://target.com/401.html HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com/401.html HTTP/1.1
 ```
 {% endstep %}
 
@@ -486,9 +486,9 @@ POST /client_register HTTP/1.1
 Host: example
 Content-Type: application/json
 {
-  "redirect_uris": ["https://TARGET/callback"],
-  "jwks_uri": "https://jwks.afine.com/my_public_keys_jwks",
-  "logo_uri": "https://logo.afine.com/logo.png"
+  "redirect_uris": ["https://example.com/callback"],
+  "jwks_uri": "https://jwks.example.com/my_public_keys_jwks",
+  "logo_uri": "https://logo.example.com/logo.png"
 }
 ```
 {% endstep %}
@@ -611,7 +611,7 @@ Observe the <sub>DNS/HTTP</sub> out-of-bound interactions in your collaborator s
 
 {% stepper %}
 {% step %}
-The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.semrush.com)
+The attacker takes control of the homograph/IDN domain (for example, a domain that looks like oauth.example.com)
 {% endstep %}
 
 {% step %}
