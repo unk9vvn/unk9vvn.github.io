@@ -8,13 +8,15 @@
 
 ### Methodology
 
+#### Overly permissive Flash cross-domain policy (crossdomain.xml / clientaccesspolicy.xml)
+
 {% stepper %}
 {% step %}
 CrossDomain.xml & clientaccesspolicy.xml file
 {% endstep %}
 
 {% step %}
-Check and identify the presence of crossdomain.xml & clientaccesspolicy.xml files on the target using Nmap command.
+Check and identify the presence of crossdomain.xml & clientaccesspolicy.xml files on the target using Nmap command
 {% endstep %}
 
 {% step %}

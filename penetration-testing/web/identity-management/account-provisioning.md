@@ -6,6 +6,24 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+Prepare target URL and optional Auth cookie
+{% endstep %}
+
+{% step %}
+Identify routes and endpoints using scripts written, combine and deduplicate Katana and FFUF outputs into one file (/tmp/all\_endpoints.txt)
+{% endstep %}
+
+{% step %}
+CSRF testing with XSRFProbe: for each endpoint run XSRFProbe (use `-c` if cookie is provided) with `--random-agent --malicious --crawl`. XSRFProbe attempts to detect CSRF vulnerabilities and, if successful, generates a PoC and an HTML report
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Manual Create CSRF
 
 #### [XSRFProbe](https://github.com/0xInfection/XSRFProbe)

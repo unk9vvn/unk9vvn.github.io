@@ -10,6 +10,8 @@
 
 ### Methodology
 
+#### Sensitive file disclosure via file enumeration and insecure file upload
+
 {% stepper %}
 {% step %}
 We open our browser and use the following command, which will find all sensitive files on the site, by entering the URL plus the target domain name
@@ -24,9 +26,7 @@ Using the following commands, we will check for file Uploader and scan different
 {% endstep %}
 
 {% step %}
-We can create and run a script that does all this without errors, and if there is a sensitive file in the target, the vulnerability will be identified
-
-
+We can create and run a script that does all this without errors, and if there is a sensitive file in the target, the vulnerability will be identified&#x20;
 {% endstep %}
 {% endstepper %}
 

@@ -8,6 +8,8 @@
 
 ### Methodology
 
+#### File Permission (Sensitive File)
+
 {% stepper %}
 {% step %}
 Using the following commands to find access to files inside the web server, which are made with PHP, we can run whether we can write, read, or execute a file inside the web server

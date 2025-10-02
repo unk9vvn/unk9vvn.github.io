@@ -8,13 +8,15 @@
 
 ### Methodology
 
+#### Missing HSTS (HTTP Strict Transport Security)
+
 {% stepper %}
 {% step %}
 Access the Target URL and Inspect the Response Headers Use a tool such as **Burp Suite**, **cURL**, or **browser dev tools** to inspect the HTTP response headers The best way is to use this cheat sheet Example using cURL
 {% endstep %}
 
 {% step %}
-Check for HSTS Header Confirm the absence of the following header in the server response `Strict-Transport-Security` _The best way to exploit and exploit this vulnerability is to use a cheat sheet_
+Check for HSTS Header Confirm the absence of the following header in the server response `Strict-Transport-Security` The best way to exploit and exploit this vulnerability is to use a cheat sheet
 {% endstep %}
 {% endstepper %}
 

@@ -10,6 +10,8 @@
 
 ### Methodology
 
+#### TOR technique for finding sensitive routes
+
 {% stepper %}
 {% step %}
 Using the following command that works with the <sub>TOR</sub> tool, it creates 20 independent Tor proxies (SOCKS + control) for the debian-tor user and places them behind <sub>Privoxy</sub> so programs can use them. And it makes it easier for an attacker to send requests to the server

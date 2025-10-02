@@ -8,6 +8,8 @@
 
 ### Methodology
 
+#### Sensitive backup/file disclosure via directory enumeration and brute-forcing
+
 {% stepper %}
 {% step %}
 Using the first commands related to <sub>Google Dork,</sub> we replace <sub>$WEBSITE</sub> with the target domain name and then execute it

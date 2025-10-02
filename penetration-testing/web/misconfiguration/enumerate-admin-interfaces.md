@@ -8,13 +8,15 @@
 
 ### Methodology
 
+#### Admin panel enumeration / exposed admin-login path disclosure
+
 {% stepper %}
 {% step %}
 To find the paths that exist for the admin login, use the first command used for robots.txt. This path may be leaked in this file, or using Google Dork, we can identify all the paths related to the admin page in the target
 {% endstep %}
 
 {% step %}
-Then, using the commands related to the scanning tools, identify the paths related to the admin login page on the target.
+Then, using the commands related to the scanning tools, identify the paths related to the admin login page on the target
 {% endstep %}
 
 {% step %}

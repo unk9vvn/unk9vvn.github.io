@@ -8,6 +8,8 @@
 
 ### Methodology
 
+#### CSP misconfiguration
+
 {% stepper %}
 {% step %}
 Inspect HTTP response headers of target
@@ -31,6 +33,8 @@ Best practice Avoid `unsafe-inline` in `script-src` to reduce XSS attack surface
 {% endstepper %}
 
 ***
+
+#### CSP bypass via percent-encoding
 
 {% stepper %}
 {% step %}

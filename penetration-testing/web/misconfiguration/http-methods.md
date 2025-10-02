@@ -13,19 +13,19 @@
 
 {% stepper %}
 {% step %}
-We run the following command to identify the active methods on the target using the Curl tool.
+We run the following command to identify the active methods on the target using the Curl tool
 {% endstep %}
 
 {% step %}
-We can do this by using the Nmap tool to identify the active methods on the target.
+We can do this by using the Nmap tool to identify the active methods on the target
 {% endstep %}
 
 {% step %}
-We can do this by using the Nmap tool to identify the active methods on the target. After executing the command, if the PUT method is active on the target, using the next command, we try to upload a php file to the target to get RCE.
+We can do this by using the Nmap tool to identify the active methods on the target. After executing the command, if the PUT method is active on the target, using the next command, we try to upload a php file to the target to get RCE
 {% endstep %}
 
 {% step %}
-If our file is uploaded to the specified path using the PUT method, the site is vulnerable.
+If our file is uploaded to the specified path using the PUT method, the site is vulnerable
 {% endstep %}
 {% endstepper %}
 
@@ -39,7 +39,7 @@ first Check if the Server Supports TRACE Send a simple TRACE request to check if
 {% endstep %}
 
 {% step %}
-If the server supports the Trace method, the next step is to inject JavaScript code.
+If the server supports the Trace method, the next step is to inject JavaScript code
 {% endstep %}
 
 {% step %}

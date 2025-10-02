@@ -38,7 +38,7 @@ So I put every single alive domain in browser let call it Target example `https:
 {% endstep %}
 
 {% step %}
-.And I notice that it give me an cloudflare error like this `InvalidURI` Couldn’t parse the specified URI /%C0 So I just append the target domain with .s3.amazonaws.com `https://$WEBSITE.s3.amazonaws.com/`
+.And I notice that it give me an cloudflare error like this `InvalidURI` Couldn’t parse the specified URI`/%C0` So I just append the target domain with .s3.amazonaws.com `https://$WEBSITE.s3.amazonaws.com/`
 {% endstep %}
 
 {% step %}
@@ -46,7 +46,7 @@ And I get the bucket name. Some time it says no such bucket. So in that case wha
 {% endstep %}
 
 {% step %}
-So it gives CNAME of pointed (`http://$WEBSITE`) so I am thinking what to do with this. So I read this article But unluckily on CRUD operation I get access denied and use .aws s3 Commands And in response I have foun `PRE Server/`
+So it gives <sub>CNAME</sub> of pointed (`http://$WEBSITE`) so I am thinking what to do with this. So I read this article But unluckily on CRUD operation I get access denied and use .aws s3 Commands And in response I have foun `PRE Server/`
 {% endstep %}
 {% endstepper %}
 
