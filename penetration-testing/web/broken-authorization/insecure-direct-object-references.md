@@ -213,11 +213,11 @@ Go to the subscribe page and sign up with an email (or create two test emails)
 {% endstep %}
 
 {% step %}
-Note the subscribe URL: `...?p=subscribe&id=1.`
+Note the subscribe URL: `...?p=subscribe&id=`
 {% endstep %}
 
 {% step %}
-Change subscribe → unsubscribe: `...?p=unsubscribe&id=1`.
+Change subscribe → unsubscribe: `...?p=unsubscribe&id=1`
 {% endstep %}
 
 {% step %}
@@ -226,7 +226,7 @@ In the unsubscribe form enter the target email (for example, the email you previ
 
 {% step %}
 The page shows “You have been unsubscribed...” and a confirmation email is received\
-(The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link.)
+(The report indicates this works without <sub>CAPTCHA</sub> or a confirmation link)
 {% endstep %}
 {% endstepper %}
 
@@ -255,7 +255,7 @@ Send the modified `UpdateCampaign` request. The server accepts the request for t
 Impact: by targeting another program’s ongoing campaign id, a requester can modify or delete campaigns they don’t own
 
 {% hint style="info" %}
-Key detail: decode `campaign_id` from base64 → you get `gid://hackerone/Campaign/<N>`. Modifying `<N>` and re-encoding changes the target campaign.\
+Key detail: decode `campaign_id` from base64 → you get `gid://hackerone/Campaign/<N>`Modifying `<N>` and re-encoding changes the target campaign.\
 \
 \
 idor lead to view private reports `title`,`url`,`id`,`state`,`substate`,`severity_rating`,`readable_substate`,`created_at`,`submitted_at`,`reporter_name`
