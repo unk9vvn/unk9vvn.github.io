@@ -31,11 +31,9 @@ If our file is uploaded to the specified path using the PUT method, the site is 
 
 ***
 
-{% stepper %}
-{% step %}
-XSS in Trace Mehtod
-{% endstep %}
+#### XSS in Trace Method
 
+{% stepper %}
 {% step %}
 first Check if the Server Supports TRACE Send a simple TRACE request to check if the server responds
 {% endstep %}

@@ -8,11 +8,9 @@
 
 ### Methodology
 
-{% stepper %}
-{% step %}
-Cloud Storage (AWS S3)
-{% endstep %}
+#### Cloud Storage (AWS S3)
 
+{% stepper %}
 {% step %}
 Go to AWS S3 console Create a new bucket with the **exact name** matching the vulnerable/unclaimed bucket
 {% endstep %}
@@ -28,11 +26,9 @@ Add proper metadata (`Content-Type: text/html if HTML file`) (Optional) Enable s
 
 ***
 
-{% stepper %}
-{% step %}
-Cloud Storage (S3)
-{% endstep %}
+#### Cloud Storage (S3)
 
+{% stepper %}
 {% step %}
 So I get all the alive subdomains use Subdomain Enum Command in cheat sheet&#x20;
 {% endstep %}

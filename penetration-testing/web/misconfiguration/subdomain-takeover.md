@@ -25,11 +25,9 @@ Using the next command, we will check the list of subdomains that are CNAMEd to 
 
 ***
 
-{% stepper %}
-{% step %}
-Dangling DNS
-{% endstep %}
+#### Dangling DNS
 
+{% stepper %}
 {% step %}
 Identified unclaimed subdomains (e.g., via CNAME, A, MX, or NS records) pointing to deprovisioned services (e.g., AWS S3, Zendesk, CloudFront) use this Command for Subdomain takeover
 {% endstep %}
