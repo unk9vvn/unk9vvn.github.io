@@ -8,6 +8,28 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+We open our browser and use the following command, which will find all sensitive files on the site, by entering the URL plus the target domain name
+{% endstep %}
+
+{% step %}
+And then we can use the following commands to check for the presence of sensitive files such as XLS, PDF, CONF, etc. on the target
+{% endstep %}
+
+{% step %}
+Using the following commands, we will check for file Uploaders and scan different file types on the site using its own tool
+{% endstep %}
+
+{% step %}
+We can create and run a script that does all this without errors, and if there is a sensitive file in the target, the vulnerability will be identified
+
+
+{% endstep %}
+{% endstepper %}
+
 ### Forced Browsing <a href="#forced-browsing" id="forced-browsing"></a>
 
 #### [Google](https://www.exploit-db.com/google-hacking-database)

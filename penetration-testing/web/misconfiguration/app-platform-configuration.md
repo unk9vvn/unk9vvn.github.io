@@ -8,6 +8,42 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+Using the following command that works with the TOR tool, it creates 20 independent Tor proxies (SOCKS + control) for the debian-tor user and places them behind Privoxy so programs can use them. And it makes it easier for an attacker to send requests to the server
+{% endstep %}
+
+{% step %}
+Using the next command, we scan the web server to find out what features it has and get a list of the web server's features
+{% endstep %}
+
+{% step %}
+Then, using the following commands, we get a list of target subdomains and then using the HTTPX tool command, we check whether the subdomains we got are active
+{% endstep %}
+
+{% step %}
+And we can use the next command to find out the open ports of all active subdomains
+{% endstep %}
+
+{% step %}
+Using the Katana tool command, we crawl all pages and find the target points and files.
+{% endstep %}
+
+{% step %}
+Using the Katana tool command, we crawl all the pages and find the target points and files, and then we run it using the Grep command to find and show us if there is a sensitive file in our crawl output
+{% endstep %}
+
+{% step %}
+And then using the Dirsearch tool command, which we run on all the subdomains that are hit, to find all the sensitive paths or even sensitive files that could expose information about users or the web server
+{% endstep %}
+
+{% step %}
+Using the Nuclei command, we can find vulnerabilities and CVEs on the target to identify the presence of vulnerabilities, and using the next commands, we can run commands related to the target's use of different CMSs on the target
+{% endstep %}
+{% endstepper %}
+
 ### **Sample and Known Files and Directories**
 
 #### [Multitor](https://github.com/trimstray/multitor)
