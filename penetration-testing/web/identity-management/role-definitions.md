@@ -36,7 +36,7 @@ Construct the Exploit Request Using the retrieved tokens, craft an HTTP request 
 {% endstep %}
 
 {% step %}
-The attacker logs in using a low-privileged account Now check the API documentation for routes that include IDs They discover an API endpoint like:
+The attacker logs in using a low-privileged account Now check the API documentation for routes that include IDs They discover an API endpoint like
 
 ```
 /api/w/{workspace-id}/assistant/conversations/{conversation-id}
@@ -91,7 +91,7 @@ First, enter online shopping or selling sites
 {% endstep %}
 
 {% step %}
-Ask yourself: Are there higher roles on this site? If so, how can we identify them? The first type (Vertical Privilege Escalation) _This means that a regular user can achieve a higher level of access, such as admin. For example, a user who only needs to make purchases can now manage the entire site_ The second type (Horizontal Privilege Escalation) This means that a user can access the information or capabilities of another user at the same privilege level. For example, a regular buyer can log in to another buyer's account
+Ask yourself: Are there higher roles on this site? If so, how can we identify them? The first type (Vertical Privilege Escalation) This means that a regular user can achieve a higher level of access, such as admin. For example, a user who only needs to make purchases can now manage the entire site The second type (Horizontal Privilege Escalation) This means that a user can access the information or capabilities of another user at the same privilege level. For example, a regular buyer can log in to another buyer's account
 
 {% hint style="info" %}
 We need to know that there are two main types of access escalation
@@ -223,7 +223,7 @@ Set-Cookie: jwt=...
 In the systems we are examining, which may contain multiple roles such as user, employee, and admin, what is important is that we can focus on the intermediate roles because they are usually where the errors occur
 
 {% hint style="info" %}
-_Important note: In some systems, only the admin can convert a regular user to an admin, and intermediate roles such as managers cannot do this_
+Important note: In some systems, only the admin can convert a regular user to an admin, and intermediate roles such as managers cannot do this
 {% endhint %}
 {% endstep %}
 
@@ -232,7 +232,7 @@ _Important note: In some systems, only the admin can convert a regular user to a
 {% endstep %}
 
 {% step %}
-First of all, log in to the admin account, make an edit request on a regular user to make it an admin, and use the Burp Suite tool to track the request. Store suspicious parameters that are used and sent in the request to convert a regular user to an admin in a field, for example, "\[permissions]=administrator"
+First of all, log in to the admin account, make an edit request on a regular user to make it an admin, and use the Burp Suite tool to track the request. Store suspicious parameters that are used and sent in the request to convert a regular user to an admin in a field, for example, <sub>"\[permissions]=administrator</sub>"
 {% endstep %}
 
 {% step %}
@@ -273,7 +273,7 @@ Send a request and check if the normal user has become an admin. If so, there is
 
 {% stepper %}
 {% step %}
-_Note: Sometimes what we see on the front end may be completely different from what we see on the back end, like in this scenario_ Perform the registration process within the system with the lowest access level
+Note: Sometimes what we see on the front end may be completely different from what we see on the back end, like in this scenario Perform the registration process within the system with the lowest access level
 {% endstep %}
 
 {% step %}
@@ -284,7 +284,7 @@ Inside the user account, look for sections that are specific to the admin, such 
 When you click on this section, it displays messages such as "Access Denied"
 
 {% hint style="info" %}
-_But the point is that you shouldn't trust what you are shown and the front end may be misleading_
+But the point is that you shouldn't trust what you are shown and the front end may be misleading
 {% endhint %}
 {% endstep %}
 

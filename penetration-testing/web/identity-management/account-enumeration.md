@@ -17,7 +17,7 @@ Another common method used on many websites, especially for password reset, work
 {% endstep %}
 
 {% step %}
-_When you click on `Forgot Password` the site asks for your email or phone number If the email or phone number belongs to a registered user, the site sends a reset link or a message But if the email or number isn't in the system, it shows a message stating that `it's not registered`_&#x20;
+When you click on `Forgot Password` the site asks for your email or phone number If the email or phone number belongs to a registered user, the site sends a reset link or a message But if the email or number isn't in the system, it shows a message stating that `it's not registered`&#x20;
 {% endstep %}
 {% endstepper %}
 
@@ -29,7 +29,7 @@ Enter the registration process in the system and use the Burp Suite tool to trac
 {% endstep %}
 
 {% step %}
-During the registration process, if a duplicate email is used, the system will display the message "Email Already Exists". This message means that there is an enumeration vulnerability that can reveal a large list of valid users and emails _How can we create a list of accounts? Request an interception, click on the email field with Burp Suite, and press Ctrl + I to save it in the Intruder field. In the Payload tab, Set the attack type to Sniper and provide the list of emails. Using the server response that indicates "Email already exists" or any other response, we set the value in the system response within the Grep-match settings, which allows us to understand the output more accurately and find valid accounts_
+During the registration process, if a duplicate email is used, the system will display the message "Email Already Exists". This message means that there is an enumeration vulnerability that can reveal a large list of valid users and emails How can we create a list of accounts? Request an interception, click on the email field with Burp Suite, and press Ctrl + I to save it in the Intruder field. In the Payload tab, Set the attack type to Sniper and provide the list of emails. Using the server response that indicates "Email already exists" or any other response, we set the value in the system response within the Grep-match settings, which allows us to understand the output more accurately and find valid accounts
 {% endstep %}
 
 {% step %}
