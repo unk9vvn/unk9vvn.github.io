@@ -392,6 +392,11 @@ X-Remote-Addr: 127.0.0.1
 X-Custom-IP-Authorization: 127.0.0.1
 X-Originating-IP: 127.0.0.1
 X-Remote-IP: 127.0.0.1
+X-Original-Url: 127.0.0.1
+X-Forwarded-Server: 127.0.0.1
+X-Host: 127.0.0.1
+X-Forwarded-Host: 127.0.0.1
+X-Rewrite-Url: 127.0.0.1
 EOF
 
 # Run FFUF
@@ -404,7 +409,7 @@ if [[ "$METHOD" == "get" ]]; then
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "FUZZ3: 127.0.0.1" \
+         -H "FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
@@ -414,7 +419,7 @@ else
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "FUZZ3: 127.0.0.1" \
+         -H "FUZZ3 127.0.0.1" \
          "${HEADERS[@]}"
 fi
 ```
