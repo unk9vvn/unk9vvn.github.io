@@ -9,19 +9,211 @@
 
 ### Methodology
 
+#### Account Lockout Bypass
+
 {% stepper %}
 {% step %}
-### 1
-
-
+Attempt Failed Logins Perform 10 consecutive login attempts with incorrect credentials
 {% endstep %}
 
 {% step %}
-### 2
+Observe Error Message Change Note the response shifting to "Something went wrong" after the 10th failed attempt
+{% endstep %}
 
+{% step %}
+Login with Valid Credentials Immediately attempt login with correct credentials from the same IP address Confirm Successful Login
+{% endstep %}
 
+{% step %}
+Verify that login is successful despite the triggered lockout Repeat to Validate Flaw Repeat failed login attempts and login with valid credentials to confirm the lockout bypass
 {% endstep %}
 {% endstepper %}
+
+***
+
+#### Account Lockout Bypass via Password Reset
+
+{% stepper %}
+{% step %}
+Attempt Failed Logins Perform 5 consecutive login attempts with incorrect passwords using the target endpoint
+{% endstep %}
+
+{% step %}
+Trigger Account Lockout Observe the account lockout after the 5th failed login attempt
+{% endstep %}
+
+{% step %}
+Send Forgot Password Request Submit a POST request to the forgot password endpoint with the locked account's email
+{% endstep %}
+
+{% step %}
+Verify Account Unlock Attempt login again with a new password to confirm the account is unlocked
+{% endstep %}
+
+{% step %}
+Repeat Attack Cycle Continue sending login attempts and forgot password requests after every 5th failed attempt to sustain the attack
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Rate Limit Bypass via Endpoint Case Manipulation
+
+{% stepper %}
+{% step %}
+Attempt Login with Incorrect Credentials Access https://app.example.com/signin and enter a correct email with an incorrect password for testing
+{% endstep %}
+
+{% step %}
+Capture Request in Burp SuiteUse Burp Suite to intercept the login request sent to POST /auth/identity/callbac\[k]
+{% endstep %}
+
+{% step %}
+Modify Endpoint Case Change the endpoint to POST /auth/identity/callbac\[K] by altering the last letter's case
+{% endstep %}
+
+{% step %}
+Perform Brute Force Attack Send the modified request to Burp Intruder and start a brute force attack with a password list
+{% endstep %}
+
+{% step %}
+Verify Rate Limit Bypass and Successful Login Observe no rate limit after 1000 attempts; identify the single 200 response indicating correct email and password
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Password reset rate-limit bypass via trailing-space input variation
+
+{% stepper %}
+{% step %}
+Intercept the forgot password request
+{% endstep %}
+
+{% step %}
+Send it to repeater, forward it, you will get the response that link to reset is sent ,forward it 4 times more, everything will be fine till here i.e., till now you received 5 password reset links in email. Now send one more time and you will be blocked for 3 minutes
+{% endstep %}
+
+{% step %}
+Now add a space after the email&#x20;
+
+`email=’email@gmail.com ‘ [see the space before the last quote in the email].`
+{% endstep %}
+
+{% step %}
+Send the above request 5 times, you will get 5 more links in the email and after that again you will be blocked
+{% endstep %}
+
+{% step %}
+Repeat step 3 i.e., add another space and in this way, adding a single space after every 5 attempts we have successfully bypassed the no rate limit
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Rate Limit Bypass via Endpoint Case Variation & Parameter Tampering
+
+{% stepper %}
+{% step %}
+Capture the request in Burp. Send the request to Intruder & set the attack type to Cluster Bomb
+{% endstep %}
+
+{% step %}
+Add two positions as follows. First to the **endpoint** & second to the **“q”** variable
+
+```http
+POST /users/§reset-password§ HTTP/1.1
+Host: api.example.eu
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: en-US,en;q=0.§5§
+Accept-Encoding: gzip, deflate
+Referer: https://app.redacted.eu/lost-password
+Content-Type: application/json; charset=utf-8
+Content-Length: 33
+Origin: https://app.redacted.eu
+Connection: close
+Cookie: gcl=1.1.121338148.1680190017;
+Sec-Fetch-Site: same-site
+
+{"email":"wisax34347@djpich.com"}
+```
+{% endstep %}
+
+{% step %}
+The rate limit can be bypassed by changing the endpoint. For example, the original endpoint is ‘reset-password’ & it can be changed to various combinations such as ‘Reset-Password’ & ‘RESET-PASSWORD’, etc
+{% endstep %}
+
+{% step %}
+To generate different combinations of endpoints, you can use **Tinker**(https://github.com/heydc7/Tinker) for parameter tampering
+{% endstep %}
+
+{% step %}
+Payload 1
+
+```
+reset-password
+Reset-Password
+reset-Password
+Reset-password
+RESET-PASSWORD
+Reset-passworD
+reSet-passwOrd
+resEt-passwoRd
+rEset-pasSword
+reSet-paSSword
+rEsEt-pAssword
+rEsEt-pAsswOrd
+```
+{% endstep %}
+
+{% step %}
+Payload 2
+
+```
+Numbers from 1 to 10 with 1 step
+```
+{% endstep %}
+
+{% step %}
+Start the attack. The rate limit will be bypassed & you can see 100s of emails in your mailbox
+{% endstep %}
+
+{% step %}
+To make the attack look more legitimate to WAF, you can additionally set the **Throttle**(Intruder->Options) to 1000 milliseconds(1 Sec)
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Account Lockout Bypass via Email Case Variation
+
+{% stepper %}
+{% step %}
+Set up repeated login attempts: Use an incorrect password and attempt to log in at `https://client.example.com` 16 times using an email like `g4l2562z6v@tidissajiiu.com` (Tip: Send the request to Burp Suite’s Repeater tool for easy replaying of attempts)
+{% endstep %}
+
+{% step %}
+Observe account lockout message: After 16 failed login attempts, the account is locked. Even the correct password won’t work anymore
+
+* Response from Burp Repeater:
+* `{ "message": "Request limit exceeded. Please try again later.", "type": "too-many-requests" }`
+{% endstep %}
+
+{% step %}
+Change email character case: Change the case of a character in the email. For example, switch from `g4l2562z6v@tidissajiiu.com` to `g4l2562z6v@tidiSsajiiu.com` (`s` -> `S`).
+{% endstep %}
+
+{% step %}
+Resume login attempts with any password. You’ll find that the rate limit doesn’t apply, even after 16 attempts
+{% endstep %}
+
+{% step %}
+To verify, perform Step 3 and then log in with the correct password via the browser
+{% endstep %}
+{% endstepper %}
+
+***
 
 ### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>
 
