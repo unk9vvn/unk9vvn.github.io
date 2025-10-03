@@ -303,11 +303,10 @@ Create Script
 sudo nano http-methods-fuzzer.sh
 ```
 
-```bash
-#!/bin/bash
+<pre class="language-bash"><code class="lang-bash">#!/bin/bash
 
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <WEBSITE>"
+    echo "Usage: $0 &#x3C;WEBSITE>"
     exit 1
 fi
 
@@ -347,7 +346,7 @@ katana -u $WEBSITE \
        -sf url
 
 # Filter and clean extracted URLs
-sed -E 's/\?.*//; s/\.aspx$//; s/\/[^/]+\.json$//' "$KATANA_OUTPUT" | grep -Ev '\.js$|&amp' | sort -u > "$URLS_FILE"
+sed -E 's/\?.*//; s/\.aspx$//; s/\/[^/]+\.json$//' "$KATANA_OUTPUT" | grep -Ev '\.js$|&#x26;amp' | sort -u > "$URLS_FILE"
 
 # User-Agent and headers
 USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
@@ -382,15 +381,15 @@ for HEADER in "${HEADERS[@]}"; do
 done
 
 # Run ffuf
-echo -e "GET\nPOST\nPUT\nDELETE\nHEAD\nOPTIONS\nTRACE\nCONNECT\nPATCH" > /tmp/methods.txt
-ffuf -w "$URLS_FILE":URL \
+<strong>echo -e "GET\nPOST\nPUT\nDELETE\nHEAD\nOPTIONS\nTRACE\nCONNECT\nPATCH" > /tmp/methods.txt
+</strong>ffuf -w "$URLS_FILE":URL \
      -w /tmp/methods.txt:METHODS \
      -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt:DIR \
      -u URL/DIR \
      -X METHODS \
      -r -c -mc 200 \
      "${HEADER_PARAMS[@]}"
-```
+</code></pre>
 
 {% hint style="info" %}
 Run Script
