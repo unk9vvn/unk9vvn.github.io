@@ -440,6 +440,20 @@ whois $TARGET
 
 3. Reverse Lookup on the properties
 
+#### RapidDNS
+
+{% hint style="info" %}
+Reverse Lookup
+{% endhint %}
+
+```bash
+domain="$WEBSITE"
+curl -s "https://rapiddns.io/sameip/${domain}#result" \
+  | pup 'table tr td:nth-child(2) text{}' \
+  | sed '/^[[:space:]]*$/d' \
+  | nl -ba
+```
+
 #### Query Ripe
 
 {% hint style="info" %}
