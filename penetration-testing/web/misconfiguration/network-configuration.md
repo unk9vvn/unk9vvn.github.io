@@ -71,6 +71,16 @@ Browser Login
 ftp://anonymous:anonymous@$TARGET
 ```
 
+#### [Exploit-DB](https://www.exploit-db.com/)
+
+{% hint style="info" %}
+Search Exploit
+{% endhint %}
+
+```bash
+searchsploit $PRODUCT -s $VERSION -w
+```
+
 #### [Nuclei](https://github.com/projectdiscovery/nuclei-templates/tree/main/network/default-login)
 
 {% hint style="warning" %}
