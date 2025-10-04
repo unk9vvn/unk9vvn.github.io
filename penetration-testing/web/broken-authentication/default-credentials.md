@@ -7,6 +7,28 @@
 
 ## Cheat Sheet
 
+### Methodology
+
+{% stepper %}
+{% step %}
+For the first step, we can view default usernames and passwords in the list of these lists using Github repositories
+{% endstep %}
+
+{% step %}
+Then, using the next command related to the Nmap tool and related to the switch, we execute this vulnerability on the target and identify the existence of this vulnerability
+{% endstep %}
+
+{% step %}
+And by using the next commands that are related to the tools, we can execute on the target and the existence of this damage Identify the vulnerability on the target if there is a Default Credentials vulnerability on the login page or not
+{% endstep %}
+
+{% step %}
+And then we can automatically find the authentication form on the site using the written script, and then it finds the username and password forms, and it can brute force a list of password lists and default usernames using the FFUF tool
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### Vendor Default Credentials
 
 #### Default Creds
