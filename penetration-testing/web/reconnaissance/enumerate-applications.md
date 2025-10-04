@@ -37,6 +37,13 @@ gobuster dns --domain $WEBSITE \
 urlfinder -d $WEBSITE
 ```
 
+#### [RapidDNS](https://rapiddns.io/)
+
+```bash
+curl -s https://rapiddns.io/subdomain/${domain}?full=1 | \
+grep -Eo '[a-zA-Z0–9.-]+\.[a-zA-Z]{2,}' | sort -u
+```
+
 #### [Amass](https://github.com/owasp-amass/amass)
 
 {% hint style="info" %}
