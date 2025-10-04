@@ -853,7 +853,7 @@ services.http.response.headers: (key: "Server" and value.headers: {"Chromecast",
 services.http.response.html_title: "Ethereum Miner"
 ```
 
-#### Misconfigured WordPress
+#### Misconfiguration WordPress
 
 ```bash
 services: (http.response.html_title: "WordPress" and http.response.headers: (key: "Favicon" and value.headers: "c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"))

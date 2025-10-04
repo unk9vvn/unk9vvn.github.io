@@ -286,6 +286,14 @@ curl -s https://api.bgpview.io/ip/$TARGET | \
 jq -r ".data.prefixes[] | {prefix: .prefix, ASN: .asn.asn}"
 ```
 
+{% hint style="info" %}
+Nmap Script
+{% endhint %}
+
+```bash
+nmap --script targets-asn --script-args targets-asn.asn=$ASN
+```
+
 ### Virtual Hosts
 
 {% hint style="info" %}

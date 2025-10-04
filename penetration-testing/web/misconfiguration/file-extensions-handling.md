@@ -103,6 +103,20 @@ File Types
 eyewitness --single $WEBSITE --web
 ```
 
+#### Bash
+
+{% hint style="info" %}
+Scan phpinfo.php
+{% endhint %}
+
+```bash
+target="$1"
+for proto in http https; do
+  url="${proto}://$target/phpinfo.php"
+  wget -q -T 5 -O - "$url" 2>/dev/null | grep -qi "phpinfo\|<title>phpinfo" && echo "FOUND: $url" || echo "NOT FOUND: $url"
+done
+```
+
 #### [Katana](https://github.com/projectdiscovery/katana) & [FFUF](https://github.com/ffuf/ffuf)
 
 {% hint style="info" %}
@@ -356,7 +370,7 @@ for FILE in $FILES; do
     done
 
     echo "Finished testing file: $FILENAME"
-    echo "============================="
+     echo "============================="
 done
 
 echo "All files have been tested with all content types."

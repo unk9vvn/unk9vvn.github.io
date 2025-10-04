@@ -252,6 +252,16 @@ os:"Windows"
 
 ### Useful Website
 
+#### BGPView
+
+{% hint style="info" %}
+Find CIDRs
+{% endhint %}
+
+```bash
+curl -s https://api.bgpview.io/search?query_term=$COMPANY | jq
+```
+
 {% embed url="https://osintframework.com/" %}
 
 {% embed url="https://crt.sh/" %}
