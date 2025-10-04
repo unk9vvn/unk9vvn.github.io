@@ -120,7 +120,7 @@ If successful, you bypass OTP authentication
 
 ***
 
-### **OTP Bypass Using Form Resubmission in Repeater**
+#### **OTP Bypass Using Form Resubmission in Repeater**
 
 {% stepper %}
 {% step %}
@@ -146,7 +146,7 @@ If the system sends the OTP to your real number, use it to register under the fa
 
 ***
 
-### **Bypassing OTP with No Rate Limiting**
+#### **Bypassing OTP with No Rate Limiting**
 
 {% stepper %}
 {% step %}
@@ -176,7 +176,7 @@ If no rate limit is enforced, the correct OTP will eventually match
 
 ***
 
-### **Additional OTP Bypass Test Cases**
+#### **Additional OTP Bypass Test Cases**
 
 {% stepper %}
 {% step %}
@@ -198,7 +198,7 @@ Checking if Old OTP is Still Valid Some systems allow the reuse of old OTPs Test
 
 ***
 
-### **Rate Limiting Attack on OTP Verification**
+#### **Rate Limiting Attack on OTP Verification**
 
 {% stepper %}
 {% step %}
@@ -231,6 +231,34 @@ Start the attack
 
 {% step %}
 Identify a **response length change**, which may indicate the correct OTP
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### OTP bypassed by using luck infused logical thinking <a href="#id-0112" id="id-0112"></a>
+
+{% stepper %}
+{% step %}
+Register and Receive OTP Sign up on the target web app with your email and receive the 6-digit OTP
+{% endstep %}
+
+{% step %}
+Intercept OTP Verification Request Use Burp Suite to capture the POST request containing the email and OTP payload
+{% endstep %}
+
+{% step %}
+Test Invalid OTP Inputs Modify the payload by changing the OTP to a random value, deleting the OTP field, setting `"otp":`null, or sending an empty object
+{% endstep %}
+
+{% step %}
+Send Empty OTP Payload Submit a request with the payload
+
+`{"email": "me@example.com", "otp": ""}`
+{% endstep %}
+
+{% step %}
+Verify Authentication Bypass Check if the server accepts the empty OTP and grants access to the account
 {% endstep %}
 {% endstepper %}
 
