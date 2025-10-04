@@ -27,8 +27,7 @@ dnsrecon -d $WEBSITE \
 #### [GoBuster](https://github.com/OJ/gobuster)
 
 ```bash
-gobuster dns --wildcard \
-             -d $WEBSITE \
+gobuster dns --domain $WEBSITE \
              -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt
 ```
 
