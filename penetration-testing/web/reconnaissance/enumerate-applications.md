@@ -51,14 +51,9 @@ Favicon
 {% endhint %}
 
 ```bash
-domain="$1"; hash=$( (curl -fsS "https://$domain/favicon.ico" \
-|| curl -fsS "https://$domain/favicon.ico") \
-| base64 \
-| python3 - <<'PY'
-import sys,mmh3
-print(mmh3.hash(sys.stdin.buffer.read()))
-PY
-); shodan search "http.favicon.hash:$hash"
+domain="$1";curl -s https://$domain/favicon.ico | \
+base64 | python3 -c 'import mmh3, sys;print(mmh3.hash(sys.stdin.buffer.read()))' | \
+xargs -I{} shodan search http.favicon.hash:{} --fields hostnames | tr ";" "\n"
 ```
 
 #### [Amass](https://github.com/owasp-amass/amass)
