@@ -268,7 +268,8 @@ naabu -host $TARGET -p $PORT
 #### [Msscan](https://github.com/robertdavidgraham/masscan)
 
 ```sh
-masscan $TARGET -p1-1000 --rate 1000
+domain="$WEBSITE"; targets=$(dig +short A "$domain" | sed '/^\s*$/d' | awk -F. '{print $1"."$2"."$3".0/24"}' | sort -u | paste -s -d, -);
+masscan --open-only $targets -p1-65535,U:1-65535 --rate=10000 --http-user-agent "Mozilla/5.0 (Windows NT10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0" -oL "/tmp/output.txt"
 ```
 
 #### CIDR Discovery&#x20;
