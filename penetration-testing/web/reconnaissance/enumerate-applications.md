@@ -118,8 +118,9 @@ Resolve Live Subdomains
 
 ```bash
 cat /tmp/gen-subdomains.txt | \
-httpx-toolkit -ports 80,443,8080,8000,8888,8082,8083 \
-              -threads 200 > /tmp/alive-subdomains.txt
+httpx -ports 80,443,8080,8000,8888,8082,8083 \
+      -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" \
+      > /tmp/alive-subdomains.txt
 ```
 
 #### [Puredns](https://github.com/d3mondev/puredns)
