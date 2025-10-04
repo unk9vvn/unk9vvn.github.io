@@ -44,6 +44,23 @@ curl -s https://rapiddns.io/subdomain/${domain}?full=1 | \
 grep -Eo '[a-zA-Z0–9.-]+\.[a-zA-Z]{2,}' | sort -u
 ```
 
+#### [Shodan CLI](https://github.com/achillean/shodan-python)
+
+{% hint style="info" %}
+Favicon
+{% endhint %}
+
+```bash
+domain="$1"; hash=$( (curl -fsS "https://$domain/favicon.ico" \
+|| curl -fsS "https://$domain/favicon.ico") \
+| base64 \
+| python3 - <<'PY'
+import sys,mmh3
+print(mmh3.hash(sys.stdin.buffer.read()))
+PY
+); shodan search "http.favicon.hash:$hash"
+```
+
 #### [Amass](https://github.com/owasp-amass/amass)
 
 {% hint style="info" %}
