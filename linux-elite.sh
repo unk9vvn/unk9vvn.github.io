@@ -2612,6 +2612,32 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install ubidump
+	if [ ! -d "/usr/share/ubidump" ]; then
+		name="ubidump"
+		git clone https://github.com/nlitsme/ubidump /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cd /usr/share/$name;python3 setup.py install
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 ubidump.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
+	# install ubi reader
+	if [ ! -d "/usr/share/ubi_reader" ]; then
+		name="ubi_reader"
+		git clone https://github.com/onekey-sec/ubi_reader /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip install --user ubi_reader
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install bytesweep
 	if [ ! -d "/usr/share/bytesweep" ]; then
 		name="bytesweep"
