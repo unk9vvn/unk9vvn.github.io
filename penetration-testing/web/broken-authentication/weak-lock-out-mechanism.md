@@ -249,14 +249,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
-# install polipo
-if ! command -v "polipo" >/dev/null 2>&1; then
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
-    chmod +x /tmp/polipo_amd64.deb
-    dpkg -i /tmp/polipo_amd64.deb
-    rm -f /tmp/polipo_amd64.deb
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -264,6 +256,14 @@ for pkg in $DEPS; do
         apt install -y "$pkg"
     fi
 done
+
+# install polipo
+if ! command -v "polipo" >/dev/null 2>&1; then
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+    chmod +x /tmp/polipo_amd64.deb
+    dpkg -i /tmp/polipo_amd64.deb
+    rm -f /tmp/polipo_amd64.deb
+fi
 
 # Install Node.js packages
 if ! command -v multitor &>/dev/null; then
@@ -434,14 +434,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
-# install polipo
-if ! command -v "polipo" >/dev/null 2>&1; then
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
-    chmod +x /tmp/polipo_amd64.deb
-    dpkg -i /tmp/polipo_amd64.deb
-    rm -f /tmp/polipo_amd64.deb
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -449,6 +441,14 @@ for pkg in $DEPS; do
         apt install -y "$pkg"
     fi
 done
+
+# install polipo
+if ! command -v "polipo" >/dev/null 2>&1; then
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+    chmod +x /tmp/polipo_amd64.deb
+    dpkg -i /tmp/polipo_amd64.deb
+    rm -f /tmp/polipo_amd64.deb
+fi
 
 # Install Node.js packages
 if ! command -v multitor &>/dev/null; then
@@ -672,12 +672,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
-# Add Debian repo if missing
-if ! grep -q "deb.debian.org/debian" /etc/apt/sources.list; then
-    echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" | tee -a /etc/apt/sources.list
-    apt update
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -685,6 +679,14 @@ for pkg in $DEPS; do
         apt install -y "$pkg"
     fi
 done
+
+# install polipo
+if ! command -v "polipo" >/dev/null 2>&1; then
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+    chmod +x /tmp/polipo_amd64.deb
+    dpkg -i /tmp/polipo_amd64.deb
+    rm -f /tmp/polipo_amd64.deb
+fi
 
 # Install Node.js packages
 if ! command -v multitor &>/dev/null; then
@@ -709,6 +711,7 @@ fi
 if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null || true
 fi
+
 multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
 
 # Find Login Page
