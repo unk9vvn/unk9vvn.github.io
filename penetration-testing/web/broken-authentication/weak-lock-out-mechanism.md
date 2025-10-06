@@ -277,8 +277,8 @@ Host: example.com
 Content-Type: application/json
 
 { 
-"key": "value", 
-"captcha": "YourCaptchaCodeHere" 
+    "key": "value", 
+    "captcha": "YourCaptchaCodeHere" 
 } 
 ```
 {% endstep %}
