@@ -215,6 +215,93 @@ To verify, perform Step 3 and then log in with the correct password via the brow
 
 ***
 
+#### Reuse Previous Captcha <a href="#b198" id="b198"></a>
+
+{% stepper %}
+{% step %}
+Identify a previously seen captcha Choose a captcha code that you have already seen or solved before Explanation: This method assumes that the same captcha code might be accepted multiple times
+{% endstep %}
+
+{% step %}
+Prepare the form submission Construct the request to submit the captcha&#x20;
+
+Example request:
+
+```http
+POST /submit-form HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+captcha=ABC123 #{ola_captch_value}
+```
+{% endstep %}
+
+{% step %}
+Submit the same captcha repeatedly Submit the identical captcha code (for example, "ABC123") multiple times. Explanation: By sending the same code repeatedly, you hope that at least one attempt will be accepted by the server
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Submit Empty Captcha <a href="#ece8" id="ece8"></a>
+
+{% stepper %}
+{% step %}
+Trying to bypass the captcha by leaving the captcha field empty when submitting a form
+
+```http
+POST /submit-form HTTP/1.1 
+Host: example.com 
+Content-Type: application/x-www-form-urlencoded 
+
+captcha=
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Alter Data Format <a href="#id-608b" id="id-608b"></a>
+
+{% stepper %}
+{% step %}
+Changing the format in which data is sent to the server, such as converting it to JSON or plain text, in the hope that the captcha won't be validated
+{% endstep %}
+
+{% step %}
+A sample POST request with JSON data instead of the expected XML data
+
+```json
+POST /submit-data HTTP/1.1 
+Host: example.com 
+Content-Type: application/json
+
+{ 
+"key": "value", 
+"captcha": "YourCaptchaCodeHere" 
+} 
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Change Request Method <a href="#id-52aa" id="id-52aa"></a>
+
+{% stepper %}
+{% step %}
+###
+
+
+{% endstep %}
+
+{% step %}
+###
+
+
+{% endstep %}
+{% endstepper %}
+
 ### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [Multitor ](https://github.com/trimstray/multitor)& [FFUF](https://github.com/ffuf/ffuf)
