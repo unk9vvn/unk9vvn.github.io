@@ -290,17 +290,73 @@ Content-Type: application/json
 
 {% stepper %}
 {% step %}
-###
-
-
+Modify the way you send requests to the server by switching between different HTTP request methods like GET, POST, or PUT
 {% endstep %}
 
 {% step %}
-###
+A sample GET request instead of the expected POST request
 
-
+```http
+GET /submit-data?key=value&captcha=YourCaptchaCodeHere HTTP/1.1 
+Host: example.com
+```
 {% endstep %}
 {% endstepper %}
+
+***
+
+#### Manipulate Headers <a href="#id-462c" id="id-462c"></a>
+
+{% stepper %}
+{% step %}
+Using custom headers like X-Forwarded-For, X-Remote-IP, X-Original-IP, X-Remote-Addr, etc., to make it appear as though the requests are coming from different IP addresses, thereby avoiding captcha validation
+{% endstep %}
+
+{% step %}
+A sample GET request with a custom "X-Forwarded-For" header
+
+```http
+GET /page HTTP/1.1 
+Host: example.com 
+X-Forwarded-For: 127.0.0.1
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Inspect Parameters <a href="#id-8976" id="id-8976"></a>
+
+{% stepper %}
+{% step %}
+Always thoroughly examine the entire request (body, headers, or uri part) and understand the purpose of each parameter. By changing certain parameter values, you might find a way to bypass the captcha
+
+```http
+POST /submit-form HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+user_id=12345
+captcha=WXYZ789
+```
+{% endstep %}
+
+{% step %}
+In this case, the "user\_id" parameter might be related to captcha validation. By experimenting with different values for "user\_id," you may discover a way to bypass the captcha
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Human-Based Captcha Solving Services <a href="#f84c" id="f84c"></a>
+
+{% stepper %}
+{% step %}
+Instead of automated methods, you can use human-based captcha-solving services where real individuals solve captchas for you in exchange for a fee
+{% endstep %}
+{% endstepper %}
+
+***
 
 ### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>
 
