@@ -665,7 +665,21 @@ EOF
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
-	
+
+	# install tinker
+	if [ ! -d "/usr/share/tinker" ]; then
+		name="tinker"
+		git clone https://github.com/heydc7/Tinker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 main.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install mhddos
 	if [ ! -d "/usr/share/mhddos" ]; then
     	name="mhddos"
