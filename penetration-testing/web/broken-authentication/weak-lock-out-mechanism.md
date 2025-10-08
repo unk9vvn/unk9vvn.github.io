@@ -390,7 +390,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -419,6 +419,8 @@ if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
     chmod +x /usr/share/multitor/*
     cd /usr/share/multitor && sudo ./setup.sh install
+    sudo chown debian-tor:debian-tor /var/lib/multitor
+    sudo chmod 700 /var/lib/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -575,7 +577,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -604,6 +606,8 @@ if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
     chmod +x /usr/share/multitor/*
     cd /usr/share/multitor && sudo ./setup.sh install
+    sudo chown debian-tor:debian-tor /var/lib/multitor
+    sudo chmod 700 /var/lib/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -812,7 +816,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -841,6 +845,8 @@ if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
     chmod +x /usr/share/multitor/*
     cd /usr/share/multitor &#x26;&#x26; sudo ./setup.sh install
+    sudo chown debian-tor:debian-tor /var/lib/multitor
+    sudo chmod 700 /var/lib/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
