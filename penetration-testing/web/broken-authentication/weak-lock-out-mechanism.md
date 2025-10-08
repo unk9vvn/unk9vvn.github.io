@@ -519,7 +519,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
          -H "User-Agent:FUZZ3" \
@@ -529,7 +529,7 @@ else
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          -H "User-Agent:FUZZ3" \
@@ -756,7 +756,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
          -w "/tmp/forwarded.txt:FUZZ4" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
          -H "FUZZ4" \
@@ -768,7 +768,7 @@ else
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
          -w "/tmp/forwarded.txt:FUZZ4" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          -H "FUZZ4" \
@@ -944,7 +944,7 @@ if [[ "$METHOD" == "get" ]]; then
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
          -H "User-Agent:FUZZ3" \
@@ -954,7 +954,7 @@ else
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
          -w "$UA:FUZZ3" \
-         -x "socks4://127.0.0.1:16379" \
+         -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          -H "User-Agent:FUZZ3" \
