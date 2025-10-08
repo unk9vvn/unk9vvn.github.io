@@ -226,18 +226,6 @@ Content-Type: application/php
 poc.js'(select*from(select(sleep(20)))a)+'.extension
 ```
 {% endstep %}
-
-{% step %}
-#### NTFS Alternate Data Streams (ADS) abuse
-
-Sometimes applications identify file types based on their first signature bytes. Adding/replacing them in a file might trick the application
-
-```
-PNG: \x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\x03H\0\xs0\x03[
-JPG: \xff\xd8\xff
-GIF: GIF87a OR GIF8;
-```
-
-Using NTFS alternate data stream (ADS) in Windows. In this case, a colon character ":" will be inserted after a forbidden extension and before a permitted one. As a result, an empty file with the forbidden extension will be created on the server ("`file.asax:.jpg`") This file might be edited later using other techniques such as using its short filename. The "::$data" pattern can also be used to create non-empty files. Therefore, adding a dot character after this pattern might also be useful to bypass further restrictions ("`file.asp::$data.`")
-{% endstep %}
 {% endstepper %}
+
+***
