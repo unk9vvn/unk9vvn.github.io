@@ -94,7 +94,7 @@ Try using multibyte unicode characters, which may be converted to null bytes and
 {% step %}
 #### Overlapping-extension bypass
 
-Try positioning the prohibited string in such a way that removing it still leaves behind a valid file extension. For example, consider what happens if you strip .php from the following filename:\
+Try positioning the prohibited string in such a way that removing it still leaves behind a valid file extension. For example, consider what happens if you strip .php from the following filename\
 `exploit.p.phphp`
 {% endstep %}
 
@@ -154,7 +154,7 @@ Content-Type: text/html
 {% step %}
 #### Extensionless upload + Content-Type spoofing
 
-Try leaving extension blank and Content-Type: text/html
+Try leaving extension blank and Content-Type `text/html`
 
 ```http
 ------WebKitFormBoundary6IrxqgTfmnW0FkOZ
