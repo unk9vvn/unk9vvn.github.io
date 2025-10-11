@@ -34,8 +34,9 @@ uncover -gg 'intitle:"Login" site:$WEBSITE'
 
 #### All http Title
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'allintitle:"Login" site:$WEBSITE'
-</strong></code></pre>
+```bash
+uncover -gg 'allintitle:"Login" site:$WEBSITE'
+```
 
 #### Http Text
 
@@ -138,13 +139,14 @@ site:$WEBSITE'
 
 #### API  Endpoints
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:api | 
-</strong>site:*/rest | 
+```bash
+uncover -gg 'inurl:api | 
+site:*/rest | 
 site:*/v1 | 
 site:*/v2 | 
 site:*/v3 
 site:$WEBSITE'
-</code></pre>
+```
 
 #### High % Inurl Keywords
 
@@ -214,16 +216,17 @@ site:$WEBSITE'
 
 #### SQLi Parameters
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:id= | 
-</strong>inurl:pid= | 
+```bash
+uncover -gg 'inurl:id= | 
+inurl:pid= | 
 inurl:category= | 
 inurl:cat= | 
 inurl:action= | 
 inurl:sid= | 
 inurl:dir= | 
-inurl:&#x26; 
+inurl:& 
 site:$WEBSITE'
-</code></pre>
+```
 
 #### SSRF Parameters
 
@@ -345,8 +348,9 @@ site:$WEBSITE'
 
 #### Adobe Experience Manager&#x20;
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:/content/usergenerated | 
-</strong>inurl:/content/dam | 
+```bash
+uncover -gg 'inurl:/content/usergenerated | 
+inurl:/content/dam | 
 inurl:/jcr:content | 
 inurl:/libs/granite | 
 inurl:/etc/clientlibs | 
@@ -354,7 +358,7 @@ inurl:/content/geometrixx |
 inurl:/bin/wcm | 
 inurl:/crx/de 
 site:$WEBSITE'
-</code></pre>
+```
 
 #### WordPress
 
@@ -364,20 +368,23 @@ uncover -gg 'inurl:/wp-admin/admin-ajax.php site:$WEBSITE'
 
 #### Drupal
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'intext:"Powered by" &#x26; intext:Drupal &#x26; inurl:user site:$WEBSITE'
-</strong></code></pre>
+```bash
+uncover -gg 'intext:"Powered by" & intext:Drupal & inurl:user site:$WEBSITE'
+```
 
 #### Joomla
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'site:*/joomla/login site:$WEBSITE'
-</strong></code></pre>
+```bash
+uncover -gg 'site:*/joomla/login site:$WEBSITE'
+```
 
 ### [Duckduckgo](https://duckduckgo.com/)
 
 #### Subdomains
 
-<pre class="language-bash"><code class="lang-bash"><strong>site:$WEBSITE
-</strong></code></pre>
+```bash
+site:$WEBSITE
+```
 
 #### Http Title
 
@@ -472,8 +479,9 @@ uncover -s 'server:"aws" hostname:"$WEBSITE"'
 
 #### Net
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'net:"210.214.0.0/16"'
-</strong></code></pre>
+```bash
+uncover -s 'net:"210.214.0.0/16"'
+```
 
 #### Http Title
 
@@ -513,8 +521,9 @@ uncover -s 'ssl.cert.issuer.cn:"$WEBSITE" ssl.cert.subject.cn:"$WEBSITE"'
 
 #### Before/After
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'product:"apache" after:"01/01/2020" before:"01/01/2024"'
-</strong></code></pre>
+```bash
+uncover -s 'product:"apache" after:"01/01/2020" before:"01/01/2024"'
+```
 
 #### Device Type
 
@@ -530,13 +539,15 @@ uncover -s 'product:"MySQL"'
 
 #### Server
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'server:"nginx"'
-</strong></code></pre>
+```bash
+uncover -s 'server:"nginx"'
+```
 
 #### SSH Fingerprint
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0'
-</strong></code></pre>
+```bash
+uncover -s 'dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0'
+```
 
 #### PEM Certificates
 
@@ -621,49 +632,49 @@ uncover -s 'http.html:"* The wp-config.php creation script uses this file"'
 #### WebServers Configuration File
 
 ```bash
-path:**/WebServer.xml
+gh search code 'path:**/WebServer.xml'
 ```
 
 #### .bash\_history Commands
 
 ```bash
-path:**/.bash_history
+gh search code 'path:**/.bash_history'
 ```
 
 #### /etc/passwd File
 
 ```bash
-path:**/passwd path:etc
+gh search code 'path:**/passwd path:etc'
 ```
 
 #### Password in config.php
 
 ```bash
-path:**/config.php dbpasswd
+gh search code 'path:**/config.php dbpasswd'
 ```
 
 #### Shodan API Key in Python Script
 
 ```bash
-shodan_api_key language:python
+gh search code 'shodan_api_key language:python'
 ```
 
 #### /etc/shadow File
 
 ```bash
-path:**/shadow path:etc
+gh search code 'path:**/shadow path:etc'
 ```
 
 #### wp-config.php File
 
 ```bash
-path:**/wp-config.php
+gh search code 'path:**/wp-config.php'
 ```
 
 #### MySQL Dump File
 
 ```bash
-path:*.sql mysql dump
+gh search code 'path:*.sql mysql dump'
 ```
 
 ### [Censys](https://search.censys.io/) <a href="#censys" id="censys"></a>
@@ -671,211 +682,211 @@ path:*.sql mysql dump
 #### City
 
 ```bash
-location.city: "Tehran"
+uncover -cs 'location.city: "Tehran"'
 ```
 
 #### Country
 
 ```bash
-location.country: "Iran"
+uncover -cs 'location.country: "Iran"'
 ```
 
 #### GEO
 
 ```bash
-location.coordinates.latitude: 38.8951 and location.coordinates.longitude: -77.0364
+uncover -cs 'location.coordinates.latitude: 38.8951 and location.coordinates.longitude: -77.0364'
 ```
 
 #### Vulns
 
 ```bash
-vulnerabilities.cve.keyword: "CVE-2021-34527"
+uncover -cs 'vulnerabilities.cve.keyword: "CVE-2021-34527"'
 ```
 
 #### Hostname
 
 ```bash
-name: "$WEBSITE"
+uncover -cs 'name: "$WEBSITE"'
 ```
 
 #### NET
 
 ```bash
-ip: [1.1.1.1 to 1.1.255.255]
+uncover -cs 'ip: [1.1.1.1 to 1.1.255.255]'
 ```
 
 #### Http Title
 
 ```bash
-services.http.response.html_title: "Login Page" 
+uncover -cs 'services.http.response.html_title: "Login Page"'
 ```
 
 #### Organization
 
 ```bash
-autonomous_system.name: "Google"
+uncover -cs 'autonomous_system.name: "Google"'
 ```
 
 #### Autonomous System Number
 
 ```bash
-autonomous_system.asn: 13335
+uncover -cs 'autonomous_system.asn: 13335'
 ```
 
 #### Operating System
 
 ```bash
-operating_system.product: "Windows"
+uncover -cs 'operating_system.product: "Windows"'
 ```
 
 #### Port
 
 ```bash
-services.port=`80`
+uncover -cs 'services.port=`80`'
 ```
 
 #### SSL/TLS Certificates
 
 ```bash
-services.tls.certificate.parsed.subject.common_name: "$WEBSITE"
+uncover -cs 'services.tls.certificate.parsed.subject.common_name: "$WEBSITE"'
 ```
 
 #### Before/After
 
 ```bash
-services.software.product: "apache" AND services.observed_at: [2020-01-01 TO 2024-01-01]
+uncover -cs 'services.software.product: "apache" AND services.observed_at: [2020-01-01 TO 2024-01-01]'
 ```
 
 #### Device Type
 
 ```bash
-labels: device
+uncover -cs 'labels: device'
 ```
 
 #### Product
 
 ```bash
-services.software.vendor=`Apache`
+uncover -cs 'services.software.vendor=`Apache`'
 ```
 
 #### Server
 
 ```bash
-services.http.response.headers.server: "nginx"
+uncover -cs 'services.http.response.headers.server: "nginx"'
 ```
 
 #### SSH Fingerprint
 
 ```bash
-services.ssh.v2.fingerprint_sha256: "dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0"
+uncover -cs 'services.ssh.v2.fingerprint_sha256: "dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0"'
 ```
 
 #### PEM Certificates
 
 ```bash
-services: (http.response.html_title: "Index of /" and http.response.body: ".pem")
+uncover -cs 'services: (http.response.html_title: "Index of /" and http.response.body: ".pem")'
 ```
 
 #### Industrial Control Systems
 
 ```bash
-labels: ics
+uncover -cs 'labels: ics'
 ```
 
 #### Exchange 2013 / 2016
 
 ```bash
-services: (http.response.headers: (key: "X-AspNet-Version" and value.headers: "*") and http.response.html_title: "Outlook" and not http.response.headers: (key: "x-owa-version" and value.headers: "*"))
+uncover -cs 'services: (http.response.headers: (key: "X-AspNet-Version" and value.headers: "*") and http.response.html_title: "Outlook" and not http.response.headers: (key: "x-owa-version" and value.headers: "*"))'
 ```
 
 #### SMB (Samba) File Shares
 
 ```bash
-services: (service_name: SMB and banner: "shared_folder")
+uncover -cs 'services: (service_name: SMB and banner: "shared_folder")'
 ```
 
 #### Specifically Domain Controllers
 
 ```bash
-"Authentication: disabled" and services: (service_name: NETLOGON and service_name: SYSVOL) and not operating_system.product: "unix" and services.port: 445
+uncover -cs '"Authentication: disabled" and services: (service_name: NETLOGON and service_name: SYSVOL) and not operating_system.product: "unix" and services.port: 445'
 ```
 
 #### FTP Servers with Anonymous Login
 
 ```bash
-services.ftp.status_code: 230
+uncover -cs 'services.ftp.status_code: 230'
 ```
 
 #### Webcams
 
 ```bash
-services.http.response.headers: (key: "Server" and value.headers: "Webcam")
+uncover -cs 'services.http.response.headers: (key: "Server" and value.headers: "Webcam")'
 ```
 
 #### Android IP Webcam Server
 
 ```bash
-services.http.response.html_title: "IP Webcam"
+uncover -cs 'services.http.response.html_title: "IP Webcam"'
 ```
 
 #### Security DVRs
 
 ```bash
-services.http.response.html_title: "Security DVR"
+uncover -cs 'services.http.response.html_title: "Security DVR"'
 ```
 
 #### Printers
 
 ```bash
-services.http.response.headers: (key: "Server" and value.headers: "Printer")
+uncover -cs 'services.http.response.headers: (key: "Server" and value.headers: "Printer")'
 ```
 
 #### Chromecast / Smart TVs
 
 ```bash
-services.http.response.headers: (key: "Server" and value.headers: {"Chromecast", "Smart TV"})
+uncover -cs 'services.http.response.headers: (key: "Server" and value.headers: {"Chromecast", "Smart TV"})'
 ```
 
 #### Ethereum Miners
 
 ```bash
-services.http.response.html_title: "Ethereum Miner"
+uncover -cs 'services.http.response.html_title: "Ethereum Miner"'
 ```
 
 #### Misconfiguration WordPress
 
 ```bash
-services: (http.response.html_title: "WordPress" and http.response.headers: (key: "Favicon" and value.headers: "c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"))
+uncover -cs 'services: (http.response.html_title: "WordPress" and http.response.headers: (key: "Favicon" and value.headers: "c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"))'
 ```
 
 #### Services on Ports 22-25
 
 ```bash
-services.port: {22,23,24,25}
+uncover -cs 'services.port: {22,23,24,25}'
 ```
 
 #### Elasticsearch Service on Port 443
 
 ```bash
-(services.service_name=`ELASTICSEARCH`) and service.port=`443`
+uncover -cs '(services.service_name=`ELASTICSEARCH`) and service.port=`443`'
 ```
 
 #### Login Page with Specific Banner Hash in Iran
 
 ```bash
-((services.banner_hashes=`sha256:4d3efcb4c2cc2cdb96dddf455977c3291f4b0f6a8a290bfc15e460d917703226`) and labels=`login-page`) and location.country=`Iran` 
+uncover -cs '((services.banner_hashes=`sha256:4d3efcb4c2cc2cdb96dddf455977c3291f4b0f6a8a290bfc15e460d917703226`) and labels=`login-page`) and location.country=`Iran`'
 ```
 
 #### OWA Login Page
 
 ```bash
-same_service(services.http.response.favicons.name: */owa/auth/* and services.http.response.html_title={"Outlook Web App", "Outlook"}) 
+uncover -cs 'same_service(services.http.response.favicons.name: */owa/auth/* and services.http.response.html_title={"Outlook Web App", "Outlook"})'
 ```
 
 #### Exchange Server in Iran
 
 ```bash
-(services.software.product=`Exchange Server`) and location.country=`Iran` 
+uncover -cs '(services.software.product=`Exchange Server`) and location.country=`Iran`'
 ```
 
 ### [Zoomeye](https://www.zoomeye.hk/) <a href="#zoomeye" id="zoomeye"></a>
@@ -883,239 +894,239 @@ same_service(services.http.response.favicons.name: */owa/auth/* and services.htt
 #### GEO
 
 ```bash
-geo:"35.6892,51.3890"
+uncover -ze 'geo:"35.6892,51.3890"'
 ```
 
 #### Vuln
 
 ```bash
-vuln:"CVE-2021-34527"
+uncover -ze 'vuln:"CVE-2021-34527"'
 ```
 
 #### Net
 
 ```bash
-net:"192.168.0.0/24"
+uncover -ze 'net:"192.168.0.0/24"'
 ```
 
 #### Http Title
 
 ```bash
-port:80 AND title:"Login Page"
+uncover -ze 'port:80 AND title:"Login Page"'
 ```
 
 #### Organization
 
 ```bash
-organization:"Google"
+uncover -ze 'organization:"Google"'
 ```
 
 #### SSL/TLS Certificates
 
 ```bash
-ssl.cert.subject.cn:"$WEBSITE"
+uncover -ze 'ssl.cert.subject.cn:"$WEBSITE"'
 ```
 
 #### Before/After
 
 ```bash
-product:"apache" after:"2020-01-01" before:"2024-01-01"
+uncover -ze 'product:"apache" after:"2020-01-01" before:"2024-01-01"'
 ```
 
 #### Product
 
 ```bash
-product:"Apache"
+uncover -ze 'product:"Apache"'
 ```
 
 #### Server
 
 ```bash
-server:"nginx"
+uncover -ze 'server:"nginx"'
 ```
 
 #### SSH Fingerprint
 
 ```bash
-dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0
+uncover -ze 'dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0'
 ```
 
 #### PEM Certificates
 
 ```bash
-http.title:"Index of /" http.html:".pem"
+uncover -ze 'http.title:"Index of /" http.html:".pem"'
 ```
 
 #### Industrial Control Systems
 
 ```bash
-ics:"SCADA"
+uncover -ze 'ics:"SCADA"'
 ```
 
 #### Exchange 2013 / 2016
 
 ```bash
-"X-AspNet-Version" http.title:"Outlook" -"x-owa-version"
+uncover -ze '"X-AspNet-Version" http.title:"Outlook" -"x-owa-version"'
 ```
 
 #### SMB (Samba) File Shares
 
 ```bash
-"Authentication: disabled" port:445
+uncover -ze '"Authentication: disabled" port:445'
 ```
 
 #### Specifically Domain Controllers
 
 ```bash
-smb.share:"SYSVOL" OR smb.share:"NETLOGON"
+uncover -ze 'smb.share:"SYSVOL" OR smb.share:"NETLOGON"'
 ```
 
 #### FTP Servers with Anonymous Login
 
 ```bash
-port:21 ,ftp.anonymous:"true"
+uncover -ze 'port:21 ,ftp.anonymous:"true"'
 ```
 
 #### D-Link Webcams
 
 ```bash
-title:"d-Link Internet Camera" AND http.status_code:"200"
+uncover -ze 'title:"d-Link Internet Camera" AND http.status_code:"200"'
 ```
 
 #### Android IP Webcam Server
 
 ```bash
-Server:"IP Webcam Server" "200 OK"
+uncover -ze 'Server:"IP Webcam Server" "200 OK"'
 ```
 
 #### Security DVRs
 
 ```bash
-port:80 AND "DVR_H264 ActiveX"
+uncover -ze 'port:80 AND "DVR_H264 ActiveX"'
 ```
 
 #### HP Printers
 
 ```bash
-"Serial Number:" "Built:" "Server: HP HTTP"
+uncover -ze '"Serial Number:" "Built:" "Server: HP HTTP"'
 ```
 
 #### Chromecast / Smart TVs
 
 ```bash
-product:"Chromecast" OR product:"Smart TV"
+uncover -ze 'product:"Chromecast" OR product:"Smart TV"'
 ```
 
 #### Ethereum Miners
 
 ```bash
-"ETH" "speed" "Total"
+uncover -ze '"ETH" "speed" "Total"'
 ```
 
 #### Misconfigured WordPress
 
 ```bash
-http.title:"WordPress" AND http.favicon.hash:"c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"
+uncover -ze 'http.title:"WordPress" AND http.favicon.hash:"c4d2e77e3e9a4c8d4d2e9b6c9f6d3c6f"'
 ```
 
 #### Web Application
 
 ```bash
-webapp:wordpress
+uncover -ze 'webapp:wordpress'
 ```
 
 #### Version
 
 ```bash
-ver: 2.1
+uncover -ze 'ver: 2.1'
 ```
 
 #### ProFTPD Server
 
 ```bash
-app: ProFTPD
+uncover -ze 'app: ProFTPD'
 ```
 
 #### Device Type
 
 ```bash
-device: router
+uncover -ze 'device: router'
 ```
 
 #### Operating System
 
 ```bash
-os: windows
+uncover -ze 'os: windows'
 ```
 
 #### Service
 
 ```bash
-service: http
+uncover -ze 'service: http'
 ```
 
 #### IP
 
 ```bash
-ip: 192.168.1.1
+uncover -ze 'ip: 192.168.1.1'
 ```
 
 #### Devices in 192.168.1.1/24 Network Range
 
 ```bash
-cidr: 192.168.1.1/24 
+uncover -ze 'cidr: 192.168.1.1/24'
 ```
 
 #### Hostname
 
 ```bash
-hostname: $WEBSITE
+uncover -ze 'hostname: $WEBSITE'
 ```
 
 #### Port
 
 ```bash
-port: 80
+uncover -ze 'port: 80'
 ```
 
 #### City
 
 ```bash
-city: tehran
+uncover -ze 'city: tehran'
 ```
 
 #### Country
 
 ```bash
-country: iran
+uncover -ze 'country: iran'
 ```
 
 #### Autonomous System Number
 
 ```bash
-asn: 8978
+uncover -ze 'asn: 8978'
 ```
 
 #### Header
 
 ```bash
-header: server
+uncover -ze 'header: server'
 ```
 
 #### Found 'hello' in Description'
 
 ```bash
-desc: hello
+uncover -ze 'desc: hello'
 ```
 
 #### Title
 
 ```bash
-title: $WEBSITE
+uncover -ze 'title: $WEBSITE'
 ```
 
 #### Site
 
 ```bash
-site: $WEBSITE
+uncover -ze 'site: $WEBSITE'
 ```
