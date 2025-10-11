@@ -11,44 +11,43 @@
 #### Subdomain Gathering&#x20;
 
 ```bash
-site:$WEBSITE
+uncover -gg 'site:$WEBSITE'
 ```
 
 #### Negative Search
 
 ```bash
--www -shop -share -ir -mfa site:$WEBSITE 
+uncover -gg '-www -shop -share -ir -mfa site:$WEBSITE'
 ```
 
 #### File Upload Endpoints
 
 ```bash
-"admin" site:$WEBSITE 
+uncover -gg '"admin" site:$WEBSITE'
 ```
 
 #### Http Title
 
 ```bash
-intitle:"Login" site:$WEBSITE
+uncover -gg 'intitle:"Login" site:$WEBSITE'
 ```
 
 #### All http Title
 
-```bash
-allintitle:"Login" site:$WEBSITE
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'allintitle:"Login" site:$WEBSITE'
+</strong></code></pre>
 
 #### Http Text
 
 ```bash
-intext:"Login" site:$WEBSITE
+uncover -gg 'intext:"Login" site:$WEBSITE'
 ```
 
 #### File Type
 
 {% code fullWidth="false" %}
 ```bash
-filetype:pdf | 
+uncover -gg 'filetype:pdf | 
 filetype:csv | 
 filetype:xls | 
 filetype:json | 
@@ -61,14 +60,14 @@ filetype:pptx |
 filetype:txt | 
 filetype:xlsx | 
 filetype:env 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 {% endcode %}
 
 #### Extension
 
 ```bash
-ext:log | 
+uncover -gg 'ext:log | 
 ext:txt | 
 ext:conf | 
 ext:cnf | 
@@ -86,13 +85,13 @@ ext:htpasswd |
 ext:htaccess | 
 ext:json | 
 ext:daf 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Sensitive Documents
 
 ```bash
-ext:txt | 
+uncover -gg 'ext:txt | 
 ext:pdf | 
 ext:xml | 
 ext:xls | 
@@ -101,27 +100,27 @@ ext:ppt |
 ext:pptx | 
 ext:doc | 
 ext:docx 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Sensitive JS
 
 ```bash
-intitle:"index of" inurl:"/js/" ("config.js" | "credentials.js" | "secrets.js" | "keys.js" | "password.js" | "api_keys.js" | "auth_tokens.js" | "access_tokens.js" | "sessions.js" | "authorization.js" | "encryption.js" | "certificates.js" | "ssl_keys.js" | "passphrases.js" | "policies.js" | "permissions.js" | "privileges.js" | "hashes.js" | "salts.js" | "nonces.js" | "signatures.js" | "digests.js" | "tokens.js" | "cookies.js" | "topsecr3tdonotlook.js") site:$WEBSITE
+uncover -gg 'intitle:"index of" inurl:"/js/" ("config.js" | "credentials.js" | "secrets.js" | "keys.js" | "password.js" | "api_keys.js" | "auth_tokens.js" | "access_tokens.js" | "sessions.js" | "authorization.js" | "encryption.js" | "certificates.js" | "ssl_keys.js" | "passphrases.js" | "policies.js" | "permissions.js" | "privileges.js" | "hashes.js" | "salts.js" | "nonces.js" | "signatures.js" | "digests.js" | "tokens.js" | "cookies.js" | "topsecr3tdonotlook.js") site:$WEBSITE'
 ```
 
 #### Backup Files
 
 ```bash
-intitle:index.of "backup" OR "bkp" OR "bak" | 
+uncover -gg 'intitle:index.of "backup" OR "bkp" OR "bak" | 
 intitle:index.of id_rsa OR id_dsa filetype:key 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### URI
 
 ```bash
-inurl:conf | 
+uncover -gg 'inurl:conf | 
 inurl:env | 
 inurl:cgi | 
 inurl:bin | 
@@ -134,24 +133,23 @@ inurl:api |
 inurl:swagger | 
 inurl:database | 
 inurl:php 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### API  Endpoints
 
-```bash
-inurl:api | 
-site:*/rest | 
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:api | 
+</strong>site:*/rest | 
 site:*/v1 | 
 site:*/v2 | 
 site:*/v3 
-site:$WEBSITE
-```
+site:$WEBSITE'
+</code></pre>
 
 #### High % Inurl Keywords
 
 ```bash
-inurl:conf | 
+uncover -gg 'inurl:conf | 
 inurl:env | 
 inurl:cgi | 
 inurl:bin | 
@@ -161,13 +159,13 @@ inurl:sql |
 inurl:backup | 
 inurl:admin | 
 inurl:php 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Server Errors
 
 ```bash
-inurl:"error" | 
+uncover -gg 'inurl:"error" | 
 intitle:"exception" | 
 intitle:"failure" | 
 intitle:"server at" | 
@@ -182,26 +180,26 @@ inurl:exception |
 "unhandled exception" | 
 "stack trace" | 
 inurl:error.log OR inurl:debug.log filetype:log 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### XSS Parameters
 
 ```bash
-inurl:q= | 
+uncover -gg 'inurl:q= | 
 inurl:s= | 
 inurl:search= | 
 inurl:query= | 
 inurl:keyword= | 
 inurl:lang= | 
 inurl:& 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Open Redirect Parameters
 
 ```bash
-inurl:url= | 
+uncover -gg 'inurl:url= | 
 inurl:return= | 
 inurl:next= | 
 inurl:redirect= | 
@@ -211,27 +209,26 @@ inurl:r2= |
 inurl:page= | 
 inurl:& | 
 inurl:http 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### SQLi Parameters
 
-```bash
-inurl:id= | 
-inurl:pid= | 
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:id= | 
+</strong>inurl:pid= | 
 inurl:category= | 
 inurl:cat= | 
 inurl:action= | 
 inurl:sid= | 
 inurl:dir= | 
-inurl:& 
-site:$WEBSITE
-```
+inurl:&#x26; 
+site:$WEBSITE'
+</code></pre>
 
 #### SSRF Parameters
 
 ```bash
-inurl:http | 
+uncover -gg 'inurl:http | 
 inurl:url= | 
 inurl:path= | 
 inurl:dest= | 
@@ -240,13 +237,13 @@ inurl:data= |
 inurl:domain= | 
 inurl:page= | 
 inurl:& 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### LFI Parameters
 
 ```bash
-inurl:include | 
+uncover -gg 'inurl:include | 
 inurl:dir | 
 inurl:detail= | 
 inurl:file= | 
@@ -256,13 +253,13 @@ inurl:locate= |
 inurl:doc= | 
 inurl:conf= | 
 inurl:& 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### RCE Parameters
 
 ```bash
-inurl:cmd | 
+uncover -gg 'inurl:cmd | 
 inurl:exec= | 
 inurl:query= | 
 inurl:code= | 
@@ -271,34 +268,34 @@ inurl:run= |
 inurl:read= | 
 inurl:ping= | 
 inurl:& 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### API Docs
 
 ```bash
-inurl:apidocs | 
+uncover -gg 'inurl:apidocs | 
 inurl:api-docs | 
 inurl:swagger | 
 inurl:api-explorer 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Login Pages
 
 ```bash
-inurl:login | 
+uncover -gg 'inurl:login | 
 inurl:signin | 
 intitle:login | 
 intitle:signin | 
 inurl:secure 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Environments
 
 ```bash
-inurl:test | 
+uncover -gg 'inurl:test | 
 inurl:env | 
 inurl:dev | 
 inurl:staging | 
@@ -309,82 +306,78 @@ inurl:exports |
 inurl:downloads | 
 inurl:internal | 
 inurl:demo 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Sensitive Parameters
 
 ```bash
-inurl:email= | 
+uncover -gg 'inurl:email= | 
 inurl:phone= | 
 inurl:password= | 
 inurl:pass= | 
 inurl:pwd= | 
 inurl:secret= | 
 inurl:& 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Cached Site
 
 ```bash
-cache:"$WEBSITE"
+uncover -gg 'cache:"$WEBSITE"'
 ```
 
 #### Link to a Specific URL
 
 ```bash
-link:$WEBSITE
+uncover -gg 'link:$WEBSITE'
 ```
 
 #### Bug Bounty Reports
 
 ```bash
-"submit vulnerability report" | 
+uncover -gg '"submit vulnerability report" | 
 "powered by bugcrowd" | 
 "powered by hackerone" 
-site:$WEBSITE
+site:$WEBSITE'
 ```
 
 #### Adobe Experience Manager&#x20;
 
-```bash
-inurl:/content/usergenerated | 
-inurl:/content/dam | 
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'inurl:/content/usergenerated | 
+</strong>inurl:/content/dam | 
 inurl:/jcr:content | 
 inurl:/libs/granite | 
 inurl:/etc/clientlibs | 
 inurl:/content/geometrixx | 
 inurl:/bin/wcm | 
 inurl:/crx/de 
-site:$WEBSITE
-```
+site:$WEBSITE'
+</code></pre>
 
 #### WordPress
 
 ```bash
-inurl:/wp-admin/admin-ajax.php site:$WEBSITE
+uncover -gg 'inurl:/wp-admin/admin-ajax.php site:$WEBSITE'
 ```
 
 #### Drupal
 
-```bash
-intext:"Powered by" & intext:Drupal & inurl:user site:$WEBSITE
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'intext:"Powered by" &#x26; intext:Drupal &#x26; inurl:user site:$WEBSITE'
+</strong></code></pre>
 
 #### Joomla
 
-```bash
-site:*/joomla/login site:$WEBSITE
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -gg 'site:*/joomla/login site:$WEBSITE'
+</strong></code></pre>
 
 ### [Duckduckgo](https://duckduckgo.com/)
 
 #### Subdomains
 
-```bash
-site:$WEBSITE
-```
+<pre class="language-bash"><code class="lang-bash"><strong>site:$WEBSITE
+</strong></code></pre>
 
 #### Http Title
 
@@ -450,181 +443,177 @@ info:$WEBSITE
 #### City
 
 ```bash
-city:"Tehran"
+uncover -s 'city:"Tehran"'
 ```
 
 #### Country
 
 ```bash
-country:"IR"
+uncover -s 'country:"IR"'
 ```
 
 #### GEO
 
 ```bash
-geo:"56.913055,118.250862"
+uncover -s 'geo:"56.913055,118.250862"'
 ```
 
 #### Vulns
 
 ```bash
-vuln:"CVE-2019-19781"
+uncover -s 'vuln:"CVE-2019-19781"'
 ```
 
 #### Hostname
 
 ```bash
-'server:"aws" hostname:"$WEBSITE"'
+uncover -s 'server:"aws" hostname:"$WEBSITE"'
 ```
 
 #### Net
 
-```bash
-net:"210.214.0.0/16"
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'net:"210.214.0.0/16"'
+</strong></code></pre>
 
 #### Http Title
 
 ```bash
-http.title:"Login"
+uncover -s 'http.title:"Login"'
 ```
 
 #### Organization
 
 ```bash
-org:"United States Department"
+uncover -s 'org:"United States Department"'
 ```
 
 #### Autonomous System Number
 
 ```bash
-asn:"AS29068"
+uncover -s 'asn:"AS29068"'
 ```
 
 #### Operating System
 
 ```bash
-os:"windows server 2022"
+uncover -s 'os:"windows server 2022"'
 ```
 
 #### Port
 
 ```bash
-port:"21"
+uncover -s 'port:"21"'
 ```
 
 #### SSL/TLS Certificates
 
 ```bash
-ssl.cert.issuer.cn:"$WEBSITE" ssl.cert.subject.cn:"$WEBSITE"
+uncover -s 'ssl.cert.issuer.cn:"$WEBSITE" ssl.cert.subject.cn:"$WEBSITE"'
 ```
 
 #### Before/After
 
-```bash
-product:"apache" after:"01/01/2020" before:"01/01/2024"
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'product:"apache" after:"01/01/2020" before:"01/01/2024"'
+</strong></code></pre>
 
 #### Device Type
 
 ```bash
-device:"webcam"
+uncover -s 'device:"webcam"'
 ```
 
 #### Product
 
 ```bash
-product:"MySQL"
+uncover -s 'product:"MySQL"'
 ```
 
 #### Server
 
-```bash
-server:"nginx"
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'server:"nginx"'
+</strong></code></pre>
 
 #### SSH Fingerprint
 
-```bash
-dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0
-```
+<pre class="language-bash"><code class="lang-bash"><strong>uncover -s 'dc:14:de:8e:d7:c1:15:43:23:82:25:81:d2:59:e8:c0'
+</strong></code></pre>
 
 #### PEM Certificates
 
 ```bash
-http.title:"Index of /" http.html:".pem"
+uncover -s 'http.title:"Index of /" http.html:".pem"'
 ```
 
 #### Industrial Control Systems
 
 ```bash
-'port:"502" port:"102"'
+uncover -s 'port:"502" port:"102"'
 ```
 
 #### Exchange 2013 / 2016
 
 ```bash
-"X-AspNet-Version" http.title:"Outlook" -"x-owa-version"
+uncover -s '"X-AspNet-Version" http.title:"Outlook" -"x-owa-version"'
 ```
 
 #### SMB (Samba) File Shares
 
 ```bash
-"Authentication: disabled" port:445
+uncover -s '"Authentication: disabled" port:445'
 ```
 
 #### Specifically Domain Controllers
 
 ```bash
-"Authentication: disabled" NETLOGON SYSVOL -unix port:445
+uncover -s '"Authentication: disabled" NETLOGON SYSVOL -unix port:445'
 ```
 
 #### FTP Servers with Anonymous Login
 
 ```bash
-"220" "230 Login successful." port:21
+uncover -s '"220" "230 Login successful." port:21'
 ```
 
 #### D-Link Webcams
 
 ```bash
-d-Link Internet Camera, 200 OK
+uncover -s 'd-Link Internet Camera, 200 OK'
 ```
 
 #### Android IP Webcam Server
 
 ```bash
-Server:"IP Webcam Server" "200 OK"
+uncover -s 'Server:"IP Webcam Server" "200 OK"'
 ```
 
 #### Security DVRs
 
 ```bash
-html:"DVR_H264 ActiveX"
+uncover -s 'html:"DVR_H264 ActiveX"'
 ```
 
 #### HP Printers
 
 ```bash
-"Serial Number:" "Built:" "Server: HP HTTP"
+uncover -s '"Serial Number:" "Built:" "Server: HP HTTP"'
 ```
 
 #### Chromecast / Smart TVs
 
 ```bash
-"Chromecast:" port:8008
+uncover -s '"Chromecast:" port:8008'
 ```
 
 #### Ethereum Miners
 
 ```bash
-“ETH” “speed” “Total”
+uncover -s '"ETH" "speed" "Total"'
 ```
 
 #### Misconfigured WordPress
 
 ```bash
-http.html:"* The wp-config.php creation script uses this file"
+uncover -s 'http.html:"* The wp-config.php creation script uses this file"'
 ```
 
 ### [GitHub](https://github.com/explore) <a href="#github" id="github"></a>
