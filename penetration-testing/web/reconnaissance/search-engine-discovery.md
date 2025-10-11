@@ -8,7 +8,7 @@
 
 ### [Google](https://www.exploit-db.com/google-hacking-database) <a href="#google-hacking" id="google-hacking"></a>
 
-#### Subdomains Gathering&#x20;
+#### Subdomain Gathering&#x20;
 
 ```bash
 site:$WEBSITE
