@@ -512,6 +512,7 @@ go install github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest;ln -fs ~/g
 go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest;ln -fs ~/go/bin/tlsx /usr/bin/tlsx
 go install github.com/projectdiscovery/useragent/cmd/ua@latest;ln -fs ~/go/bin/ua /usr/bin/ua
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest;ln -fs ~/go/bin/httpx /usr/bin/httpx
+go install github.com/projectdiscovery/tldfinder/cmd/tldfinder@latest;ln -fs ~/go/bin/tldfinder /usr/bin/tldfinder
 go install github.com/mirzaaghazadeh/jsdif@latest;ln -fs ~/go/bin/jsdif /usr/bin/jsdif
 go install github.com/bitquark/shortscan/cmd/shortscan@latest;ln -fs ~/go/bin/shortscan /usr/bin/shortscan
 go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest;ln -fs ~/go/bin/naabu /usr/bin/naabu
