@@ -278,12 +278,6 @@ UDP Ports
 nc -zvu -w 1 $WEBSITE 1-65535
 ```
 
-#### [Naabu](https://github.com/projectdiscovery/naabu)
-
-```sh
-naabu -host $TARGET -p $PORT
-```
-
 #### [Msscan](https://github.com/robertdavidgraham/masscan)
 
 {% hint style="info" %}
@@ -293,6 +287,12 @@ Fast Scan TCP/UDP
 ```sh
 TARGETS=$(dig +short A "$WEBSITE" | sed '/^\s*$/d' | awk -F. '{print $1"."$2"."$3".0/24"}' | sort -u | paste -s -d, -);
 sudo masscan --range $TARGETS -p1-65535,U:1-65535 --rate=10000 --http-user-agent "Mozilla/5.0 (Windows NT10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0" -oG /tmp/massscan.txt
+```
+
+#### [Naabu](https://github.com/projectdiscovery/naabu)
+
+```sh
+naabu -host $TARGET -p $PORT
 ```
 
 #### [Httpx](https://github.com/projectdiscovery/httpx)
