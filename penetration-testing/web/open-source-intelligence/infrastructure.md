@@ -252,6 +252,16 @@ os:"Windows"
 
 ### Useful Website
 
+#### Bug Bounty Programs
+
+{% hint style="info" %}
+Find BB Target
+{% endhint %}
+
+```bash
+for platform in hackerone bugcrowd intigriti; do echo -e "\n\033[1;36m==============================\n[$platform Programs]\n==============================\033[0m"; curl -s "https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/${platform}_data.json" | jq -r '.[].url'; done
+```
+
 #### BGPView
 
 {% hint style="info" %}
