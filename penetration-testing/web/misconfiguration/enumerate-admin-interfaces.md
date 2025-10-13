@@ -6,7 +6,7 @@
 
 ### Methodology
 
-#### Admin panel enumeration / exposed admin-login path disclosure
+#### Admin Panel Enumeration / Exposed Admin-Login Path Disclosure
 
 {% stepper %}
 {% step %}

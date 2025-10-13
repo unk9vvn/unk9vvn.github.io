@@ -8,7 +8,7 @@
 
 ### Methodology
 
-#### TOR technique for finding sensitive routes
+#### TOR Technique For Finding Sensitive Routes
 
 {% stepper %}
 {% step %}
@@ -48,7 +48,7 @@ Using the Nuclei command, we can find vulnerabilities and <sub>CVEs</sub> on the
 
 ## Cheat Sheet
 
-### **Sample and Known Files and Directories**
+### **Sample And Known Files And Directories**
 
 #### [Multitor](https://github.com/trimstray/multitor)
 

@@ -84,7 +84,7 @@ Using NTFS alternate data stream (ADS) in Windows. In this case, a colon charact
 
 ***
 
-#### EXIF metadata webshell
+#### EXIF Metadata Webshell
 
 {% stepper %}
 {% step %}
@@ -116,7 +116,7 @@ Use the timestamp to find your shell
 
 ***
 
-#### Polyglot file upload
+#### Polyglot File Upload
 
 {% stepper %}
 {% step %}
@@ -171,7 +171,7 @@ Result: The server accepted the modified file and returned 200 OK
 
 ***
 
-#### GIF image carving (PHP payload injection)
+#### GIF Image Carving (PHP Payload Injection)
 
 {% stepper %}
 {% step %}

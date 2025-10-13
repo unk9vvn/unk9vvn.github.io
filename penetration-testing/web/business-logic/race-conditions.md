@@ -51,7 +51,7 @@ Check if multiple successful transactions occur for the same action
 
 ***
 
-#### Quota‑limit bypass via concurrent folder‑creation requests
+#### Quota‑Limit Bypass via Concurrent Folder‑Creation Requests
 
 {% stepper %}
 {% step %}
@@ -81,7 +81,7 @@ Verify whether the total number of folders for `<knowledge_space>` exceeds `<max
 
 ***
 
-#### non‑idempotent request replay
+#### Non‑Idempotent Request Replay
 
 {% stepper %}
 {% step %}
@@ -119,7 +119,7 @@ Verify Increased Balance Check the account balance to confirm that the gift card
 
 ***
 
-#### Race condition (concurrent redemption / double-spend)
+#### Race Condition (Concurrent Redemption / Double-spend)
 
 {% stepper %}
 {% step %}
@@ -157,7 +157,7 @@ Verify Increased Balance Check the account balance to confirm that the gift card
 
 ***
 
-#### authentication token issuance race
+#### Authentication Token Issuance Race
 
 {% stepper %}
 {% step %}

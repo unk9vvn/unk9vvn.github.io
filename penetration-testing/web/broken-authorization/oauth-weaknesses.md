@@ -265,7 +265,7 @@ Host: example.com
 {% endstep %}
 
 {% step %}
-#### SECOND ORDER SSRF
+#### Second Order SSRF
 
 * &#x20;start the HTTP Listener on ports 80 & 443 and repeat the SIMPLE OPEN REDIRECT
 * Check the collaborator if you get the HTTP interaction, for example
@@ -277,7 +277,7 @@ Host: example.com
 {% endstep %}
 
 {% step %}
-#### PATH BYPASS&#x20;
+#### Path Bypass&#x20;
 
 * manipulate path to access the same endpoint in different ways, together with Open Redirect
 
@@ -290,7 +290,7 @@ GET /OAuth/./../auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 {% endstep %}
 
 {% step %}
-#### PARAMETER POLLUTION&#x20;
+#### Parameter Pollution&#x20;
 
 * reuse the redirect\_uri parameter
 
@@ -301,7 +301,7 @@ GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=htt
 {% endstep %}
 
 {% step %}
-#### REFERER BASED REDIRECTION&#x20;
+#### Referer Based Redirection
 
 * host the below script on your server, visit it, then use SSO
 
@@ -311,7 +311,7 @@ GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=htt
 {% endstep %}
 
 {% step %}
-#### &#x20; FUZZING OPEN REDIRECTION & SECOND ORDER SSRF&#x20;
+#### &#x20; Fuzzing Open Redirction & Second Order SSRF&#x20;
 
 * Generate a payload list using crimson\_redirector
 * USAGE: crimson\_redirector.py whitelisted\_domain domain\_collab vps\_ip redirect\_parameter\_name
@@ -665,7 +665,7 @@ redirect_uri=https://oauth.šemrush.com/oauth2/success
 
 ***
 
-#### XSS in errors Parameters OAuth Flow
+#### XSS in Errors Parameters OAuth Flow
 
 {% stepper %}
 {% step %}

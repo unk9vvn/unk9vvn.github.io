@@ -54,13 +54,13 @@ Check what are file extensions allowed in the web app. This depends on the type 
 {% endstep %}
 
 {% step %}
-#### Double-extension upload bypass
+#### Double-Extension Upload Bypass
 
 Try adding a valid extension before the execution extension `exploit.png.php or exploit.php.png`&#x20;
 {% endstep %}
 
 {% step %}
-#### Trailing-extension upload bypass
+#### Trailing-Extension Upload Bypass
 
 Check adding a valid extension at the end `exploit.php/.jpg` ( app may save this as a .php file but recognizes as `.jpg`)
 {% endstep %}
@@ -78,38 +78,38 @@ Upload a file with a null byte injection `exploit.php%00.jpg or exploit.jpg%00.p
 {% endstep %}
 
 {% step %}
-#### Semicolon extension bypass
+#### Semicolon Extension bypass
 
 Add semicolons before the file extension `exploit.asp;.jpg`
 {% endstep %}
 
 {% step %}
-#### Multibyte Unicode filename normalization bypass
+#### Multibyte Unicode Filename Normalization Bypass
 
 Try using multibyte unicode characters, which may be converted to null bytes and dots after unicode conversion or normalization Sequences like xC0 x2E, xC4 xAE or xC0 xAE may be translated to x2E if the filename parsed as a UTF-8 string, but then converted to ASCII characters before being used in a path
 {% endstep %}
 
 {% step %}
-#### Overlapping-extension bypass
+#### Overlapping-Extension Bypass
 
 Try positioning the prohibited string in such a way that removing it still leaves behind a valid file extension. For example, consider what happens if you strip .php from the following filename\
 `exploit.p.phphp`
 {% endstep %}
 
 {% step %}
-#### Filename-based XSS
+#### Filename-Based XSS
 
 Try to put the XSS payload in the name of the `filetest.jpg`,`test.jpg`
 {% endstep %}
 
 {% step %}
-#### Filename-based command injection
+#### Filename-Based Command Injection
 
 Command Injection in the `filename e.g. ; sleep 10;`
 {% endstep %}
 
 {% step %}
-#### Content-Type spoofing
+#### Content-Type Spoofing
 
 Try to use extension as .html and change Content-Type to `html/text`
 
@@ -122,7 +122,7 @@ Content-Type: html/text
 {% endstep %}
 
 {% step %}
-#### Missing Content-Type upload bypass
+#### Missing Content-Type Upload Bypass
 
 Try to send the request with no Content-Type
 
@@ -137,7 +137,7 @@ filename="exploit.html"
 {% endstep %}
 
 {% step %}
-#### Content-Type spoofing
+#### Content-Type Spoofing
 
 Try to use extension as `.jpg/png` ( if app expects image only) but change Content-Type to `text/html`
 
@@ -150,7 +150,7 @@ Content-Type: text/html
 {% endstep %}
 
 {% step %}
-#### Extensionless upload + Content-Type spoofing
+#### Extensionless Upload + Content-Type Spoofing
 
 Try leaving extension blank and Content-Type `text/html`
 
@@ -163,7 +163,7 @@ Content-Type: text/html
 {% endstep %}
 
 {% step %}
-#### Extension-only upload + Content-Type spoofing
+#### Extension-Only Upload + Content-Type Spoofing
 
 Try using the extension only&#x20;
 
@@ -176,7 +176,7 @@ Content-Type: image/png
 {% endstep %}
 
 {% step %}
-#### Filename special-characters bypass
+#### Filename Special-Characters Bypass
 
 Try to use especial characters in the names
 

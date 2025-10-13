@@ -83,7 +83,7 @@ Verify Rate Limit Bypass and Successful Login Observe no rate limit after 1000 a
 
 ***
 
-#### Password reset rate-limit bypass via trailing-space input variation
+#### Password Reset Rate-Limit Bypass Via Trailing-Space Input Variation
 
 {% stepper %}
 {% step %}

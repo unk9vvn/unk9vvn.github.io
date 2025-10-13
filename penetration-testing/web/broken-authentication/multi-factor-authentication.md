@@ -46,7 +46,7 @@ The system authenticates the account despite the incorrect OTP
 
 ***
 
-#### **Changing Error Response to Success**
+#### **Changing Error Response To Success**
 
 {% stepper %}
 {% step %}
@@ -118,7 +118,7 @@ If successful, you bypass OTP authentication
 
 ***
 
-#### **OTP Bypass Using Form Resubmission in Repeater**
+#### **OTP Bypass Using Form Resubmission In Repeater**
 
 {% stepper %}
 {% step %}
@@ -144,7 +144,7 @@ If the system sends the OTP to your real number, use it to register under the fa
 
 ***
 
-#### **Bypassing OTP with No Rate Limiting**
+#### **Bypassing OTP With No Rate Limiting**
 
 {% stepper %}
 {% step %}
@@ -234,7 +234,7 @@ Identify a **response length change**, which may indicate the correct OTP
 
 ***
 
-#### OTP bypassed by using luck infused logical thinking <a href="#id-0112" id="id-0112"></a>
+#### OTP Bypassed By Using Luck Infused Logical Thinking <a href="#id-0112" id="id-0112"></a>
 
 {% stepper %}
 {% step %}

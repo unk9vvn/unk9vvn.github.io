@@ -8,7 +8,7 @@
 
 ### Methodology
 
-#### Sensitive file disclosure via file enumeration and insecure file upload
+#### Sensitive File Disclosure Via File Enumeration And Insecure File Upload
 
 {% stepper %}
 {% step %}

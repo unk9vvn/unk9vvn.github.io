@@ -216,7 +216,7 @@ Set-Cookie: jwt=...
 
 ***
 
-#### **Privilege Escalation via Role Parameter Tampering**
+#### **Privilege Escalation Via Role Parameter Tampering**
 
 {% stepper %}
 {% step %}

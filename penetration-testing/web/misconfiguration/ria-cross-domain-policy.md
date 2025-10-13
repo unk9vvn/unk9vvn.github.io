@@ -6,7 +6,7 @@
 
 ### Methodology
 
-#### Overly permissive Flash cross-domain policy (crossdomain.xml / clientaccesspolicy.xml)
+#### Overly Permissive Flash Cross-Domain Policy (crossdomain.xml / clientaccesspolicy.xml)
 
 {% stepper %}
 {% step %}

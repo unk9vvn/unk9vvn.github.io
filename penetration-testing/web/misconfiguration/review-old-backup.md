@@ -6,7 +6,7 @@
 
 ### Methodology
 
-#### Sensitive backup/file disclosure via directory enumeration and brute-forcing
+#### Sensitive Backup/File Disclosure Via Directory Enumeration And Brute-Forcing
 
 {% stepper %}
 {% step %}

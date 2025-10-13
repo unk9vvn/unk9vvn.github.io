@@ -9,7 +9,7 @@
 
 ### Black Box
 
-#### Punycode Email IDN Homograph Attack for Account Takeover
+#### Punycode Email IDN Homograph Attack For Account Takeover
 
 {% stepper %}
 {% step %}

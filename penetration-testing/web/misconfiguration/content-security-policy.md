@@ -6,7 +6,7 @@
 
 ### Methodology
 
-#### CSP misconfiguration
+#### CSP Misconfiguration
 
 {% stepper %}
 {% step %}
@@ -32,7 +32,7 @@ Best practice Avoid `unsafe-inline` in `script-src` to reduce XSS attack surface
 
 ***
 
-#### CSP bypass via percent-encoding
+#### CSP Bypass Via Percent-Encoding
 
 {% stepper %}
 {% step %}
