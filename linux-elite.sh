@@ -631,6 +631,22 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+ 	# install github-dork
+	if [ ! -d "/usr/share/github-dork" ]; then
+		name="github-dork"
+		git clone https://github.com/techgaun/github-dorks /usr/share/$name
+		chmod 755 /usr/share/$name/*
+        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cd /usr/share/$name;python3 setup.py install
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 github-dork.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
   	# install changeme
 	if [ ! -d "/usr/share/changeme" ]; then
 		name="changeme"
