@@ -637,7 +637,7 @@ EOF
 		git clone https://github.com/techgaun/github-dorks /usr/share/$name
 		chmod 755 /usr/share/$name/*
         pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-		cd /usr/share/$name;python3 setup.py install
+		cd /usr/share/$name;sudo python3 setup.py install
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 github-dork.py "\$@"
