@@ -1,2 +1,11 @@
 # IMAP SMTP Injection
 
+## Check List
+
+## Methodology
+
+### Black Box
+
+### White Box
+
+## Cheat Sheet

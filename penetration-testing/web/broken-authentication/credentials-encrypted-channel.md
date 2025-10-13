@@ -5,7 +5,9 @@
 * [ ] Identify sensitive information transmitted through the various channels.
 * [ ] Assess the privacy and security of the channels used.
 
-### Methodology
+## Methodology
+
+### Black Box
 
 {% stepper %}
 {% step %}

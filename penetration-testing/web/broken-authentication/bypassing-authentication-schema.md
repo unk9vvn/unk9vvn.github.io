@@ -4,6 +4,12 @@
 
 * [ ] Ensure that authentication is applied across all services that require it.
 
+## Methodology
+
+### Black Box
+
+### White Box
+
 ## Cheat Sheet
 
 #### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>

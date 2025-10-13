@@ -1,2 +1,11 @@
 # Improper Error Handling
 
+## Check List
+
+## Methodology
+
+### Black Box
+
+### White Box
+
+## Cheat Sheet
