@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 #### XSS Stored via Upload avatar PNG \[HTML]
 
@@ -236,3 +234,7 @@ By carving these payloads into the unmodified section of the GIF file, I success
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

@@ -4,8 +4,6 @@
 
 * [ ] Review the HSTS header and its validity.
 
-## Cheat Sheet
-
 ### Methodology
 
 #### Missing HSTS (HTTP Strict Transport Security)
@@ -21,6 +19,8 @@ Check for HSTS Header Confirm the absence of the following header in the server 
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Recon Header
 

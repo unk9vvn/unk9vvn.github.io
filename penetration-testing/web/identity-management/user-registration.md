@@ -5,7 +5,9 @@
 * [ ] Verify that the identity requirements for user registration are aligned with business and security requirements.
 * [ ] Validate the registration process.
 
-## Cheat Sheet
+## Methodology
+
+### Black Box
 
 #### Punycode Email IDN Homograph Attack for Account Takeover
 
@@ -34,6 +36,10 @@ Reset and Takeover Copy reset link from Collaborator, open in browser and set ne
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Find Register Form
 

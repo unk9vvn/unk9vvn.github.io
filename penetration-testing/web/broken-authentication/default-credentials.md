@@ -5,9 +5,9 @@
 * [ ] Determine whether the application has any user accounts with default passwords.
 * [ ] Review whether new user accounts are created with weak or predictable passwords.
 
-## Cheat Sheet
+## Methodology
 
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -28,6 +28,10 @@ And then we can automatically find the authentication form on the site using the
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Vendor Default Credentials
 

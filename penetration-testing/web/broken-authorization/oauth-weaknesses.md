@@ -4,11 +4,9 @@
 
 
 
-## Cheat Sheet
+## Methodology
 
-
-
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -166,8 +164,8 @@ initiate the proccess of Attaching the socail media account&#x20;
 {% step %}
 On the request with the linking code
 
-* if it is a GET Request , then copy the whole URL
-* if it is a POST request , generate a CSRF Poc using Burp Suite
+* if it is a <sub>GET</sub> Request , then copy the whole URL
+* if it is a <sub>POST</sub> Request , generate a CSRF Poc using Burp Suite
 {% endstep %}
 
 {% step %}
@@ -755,3 +753,9 @@ Exploit Race Condition for Refresh Token After obtaining initial access\_token a
 Verify Multiple Refresh Tokens Check new access\_tokens as before; all should be valid, and repeat revocation test to confirm persistence
 {% endstep %}
 {% endstepper %}
+
+***
+
+### White Box
+
+## Cheat Sheet

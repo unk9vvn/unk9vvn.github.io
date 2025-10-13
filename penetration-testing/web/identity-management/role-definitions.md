@@ -6,9 +6,9 @@
 * [ ] Attempt to switch, change, or access another role.
 * [ ] Review the granularity of the roles and the needs behind the permissions given.
 
-## Cheat Sheet
+## Methodology
 
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -304,6 +304,10 @@ In this section, use the Burp Suite tool to intercept requests to access areas t
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Roles Identification
 

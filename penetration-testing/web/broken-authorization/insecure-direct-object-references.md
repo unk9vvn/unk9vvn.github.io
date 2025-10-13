@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -489,3 +487,7 @@ If another file with other content including user information or sensitive infor
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

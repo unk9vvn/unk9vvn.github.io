@@ -5,8 +5,6 @@
 * [ ] Identify sensitive information transmitted through the various channels.
 * [ ] Assess the privacy and security of the channels used.
 
-## Cheat Sheet
-
 ### Methodology
 
 {% stepper %}
@@ -24,6 +22,10 @@ Then, using the Nuclei tool, we check the presence of vulnerabilities in TLS/SSL
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Scan Vulns
 

@@ -4,8 +4,6 @@
 
 * [ ] Identify hidden administrator interfaces and functionality.
 
-## Cheat Sheet
-
 ### Methodology
 
 #### Admin panel enumeration / exposed admin-login path disclosure
@@ -29,6 +27,8 @@ Sometimes, writing a program inside the comments inside the pages will cause thi
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Search Engine Discovery
 

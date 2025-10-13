@@ -6,8 +6,6 @@
 * [ ] Dirbust sensitive file extensions, or extensions that might contain raw data (e.g. scripts, raw data, credentials, etc.).
 * [ ] Validate that no system framework bypasses exist on the rules set.
 
-## Cheat Sheet
-
 ### Methodology
 
 #### Sensitive file disclosure via file enumeration and insecure file upload
@@ -31,6 +29,8 @@ We can create and run a script that does all this without errors, and if there i
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Forced Browsing <a href="#forced-browsing" id="forced-browsing"></a>
 

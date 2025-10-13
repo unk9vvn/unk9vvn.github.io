@@ -4,9 +4,9 @@
 
 * [ ] Verify which accounts may provision other accounts and of what type.
 
-## Cheat Sheet
+## Methodology
 
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -23,6 +23,10 @@ CSRF testing with XSRFProbe: for each endpoint run XSRFProbe (use `-c` if cookie
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Manual Create CSRF
 

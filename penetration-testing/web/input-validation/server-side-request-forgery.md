@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -31,3 +29,7 @@ Check if the server has hit our server or not, if it has hit, the vulnerability 
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

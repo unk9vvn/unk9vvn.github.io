@@ -5,9 +5,9 @@
 * [ ] Evaluate the account lockout mechanism’s ability to mitigate brute force password guessing.
 * [ ] Evaluate the unlock mechanism’s resistance to unauthorized account unlocking.
 
-## Cheat Sheet
+## Methodology
 
-### Methodology
+### Black Box
 
 #### Account Lockout Bypass
 
@@ -357,6 +357,10 @@ Instead of automated methods, you can use human-based captcha-solving services w
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>
 

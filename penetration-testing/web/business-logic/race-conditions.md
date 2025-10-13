@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 #### Race Condition / Concurrency Testing
 
@@ -242,3 +240,7 @@ Repeat to verify reproducibility and log any successful attempts
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

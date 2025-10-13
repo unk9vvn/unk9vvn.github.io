@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 #### Server‑Side Template Injection (SSTI) in Next.js
 
@@ -41,3 +39,7 @@ Look for stack traces or error messages revealing `ejs`, `handlebars`, `pug`, or
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

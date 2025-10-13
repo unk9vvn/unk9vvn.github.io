@@ -7,9 +7,9 @@
 * [ ] Review processes that pertain to user identification (e.g. registration, login, etc.).
 * [ ] Enumerate users where possible through response analysis.
 
-## Cheat Sheet
+## Methodology
 
-### Methodology
+### Black Box
 
 {% stepper %}
 {% step %}
@@ -46,6 +46,10 @@ The system accepts valid emails without validation, recognizes them as active em
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
 
 ### Status Code
 

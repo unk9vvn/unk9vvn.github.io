@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 #### **Manipulating OTP Verification Response**
 
@@ -263,3 +261,7 @@ Verify Authentication Bypass Check if the server accepts the empty OTP and grant
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet

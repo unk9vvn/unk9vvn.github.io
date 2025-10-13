@@ -2,11 +2,9 @@
 
 ## Check List
 
+## Methodology
 
-
-## Cheat Sheet
-
-### Methodology
+### Black Box
 
 #### Stored Cross-Site Scripting (Stored XSS) via SVG Upload
 
@@ -229,3 +227,7 @@ poc.js'(select*from(select(sleep(20)))a)+'.extension
 {% endstepper %}
 
 ***
+
+### White Box
+
+## Cheat Sheet
