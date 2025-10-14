@@ -9,17 +9,19 @@
 
 ### Methodology
 
+#### Subdomain Takeover
+
 {% stepper %}
 {% step %}
 Use the target subdomains command to collect URI and extract a list from the list of target subdomains
 {% endstep %}
 
 {% step %}
-Separate the CNAME records by using the following commands that are executed on the target with dig and dns recone tools.
+Separate the CNAME records by using the following commands that are executed on the target with dig and dns recone tools
 {% endstep %}
 
 {% step %}
-Using the next command, we will check the list of subdomains that are CNAMEd to another domain, whether it will be taken over or not, and if it is among the lists, we can do the subdomain takeover.
+Using the next command, we will check the list of subdomains that are CNAMEd to another domain, whether it will be taken over or not, and if it is among the lists, we can do the subdomain takeover
 {% endstep %}
 {% endstepper %}
 

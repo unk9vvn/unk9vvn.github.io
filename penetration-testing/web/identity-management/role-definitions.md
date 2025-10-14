@@ -6,9 +6,11 @@
 * [ ] Attempt to switch, change, or access another role.
 * [ ] Review the granularity of the roles and the needs behind the permissions given.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
+
+#### Role Definitions Discovery
 
 {% stepper %}
 {% step %}
@@ -121,7 +123,7 @@ If there is no response from the request, we change the method to PATCH and rese
 
 ***
 
-#### Role-based Access Control Bypass
+#### Role-Based Access Control Bypass
 
 {% stepper %}
 {% step %}

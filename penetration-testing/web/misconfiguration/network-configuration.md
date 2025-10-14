@@ -7,11 +7,9 @@
 * [ ] Review the applications’ configurations set across the network and validate that they are not vulnerable.
 * [ ] Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.
 
-## Cheat Sheet
+## Methodology
 
-### FTP
-
-#### Methodology&#x20;
+#### FTP
 
 {% stepper %}
 {% step %}
@@ -23,11 +21,11 @@ If $TARGET has FTP protocol, do the next command to login with Anonymous
 {% endstep %}
 
 {% step %}
-and using the next command to brute force the login page, will the username or password be found or not?
+and using the next command to brute force the login page, will the username or password be found or not
 {% endstep %}
 
 {% step %}
-and using the next command, can we login through the browser or not?
+and using the next command, can we login through the browser or not
 {% endstep %}
 
 {% step %}
@@ -36,6 +34,141 @@ and if we enter, enter the commands related to FTP and exploit it using Hydra an
 {% endstepper %}
 
 ***
+
+#### WebDAV
+
+{% stepper %}
+{% step %}
+Run on $TARGET using the WebDAV command
+{% endstep %}
+
+{% step %}
+And if it was open, the next command is used to find vulnerabilities related to WebDAV service using Metasploit
+{% endstep %}
+
+{% step %}
+Using the Hydra tool, we do Burte Force on this service to get the list of usernames and passwords
+{% endstep %}
+
+{% step %}
+After the Burte Force command, we check if we can upload a file using the next command\
+If we could, we will upload the PHP file that contains RCE to the service using the command
+{% endstep %}
+
+{% step %}
+And we can do the same thing using the PUT method, whether we can use this method to upload a file on this service or not
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SNMP
+
+{% stepper %}
+{% step %}
+Run $TARTGET using the command related to SNMP discover
+{% endstep %}
+
+{% step %}
+If it was open, check the vulnerabilities of the service using the command of the nuclei tool
+{% endstep %}
+
+{% step %}
+Using the next command, get information from the target service such as host name and OID information, list of interfaces, configured IP addresses, hardware configuration, and sometimes more sensitive information depending on the implementation
+{% endstep %}
+
+{% step %}
+Using the next command, find a list of common community strings (for example, public, private, manager, ...) and extract information from them using the snmpwalk command
+{% endstep %}
+
+{% step %}
+We use the snmpset command to write and change an OID on the SNMP service
+{% endstep %}
+
+{% step %}
+If the service was an old version, we write a string value on the service using the command related to SNMPv1
+{% endstep %}
+
+{% step %}
+If the service was an old version, use the SNMPv1 command to write a string value on the service, but if it was not using the old version, run the SNMPv2 command on the service
+{% endstep %}
+
+{% step %}
+Then open a port using the Ngrok command and execute the RCE injection command on the target and you can exploit it using Metasploit
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SMB
+
+{% stepper %}
+{% step %}
+If it was open, we check service vulnerabilities using Nmap with special switches for SMB
+{% endstep %}
+
+{% step %}
+The next step is to use Brute Force commands on the target protocol to identify the protocol, get the username and password list, identify the domains and groups in the service, identify active services on this protocol, and identify the running processes
+{% endstep %}
+
+{% step %}
+Enter the service without a password using the commands related to the smbclient tool and find the list of subscriptions and a list of information
+{% endstep %}
+
+{% step %}
+The next step is to log in using the rpcclient command with an empty username so that we can connect to RPC with an empty session to scan/count users, groups, sessions and settings. If the server allows it, it exposes user information and subscriptions
+{% endstep %}
+
+{% step %}
+We can do this process and exploit using Metasploit commands
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Memcached
+
+{% stepper %}
+{% step %}
+Use the Nmap command to identify and check the existence of the protocol on the target
+{% endstep %}
+
+{% step %}
+If the service on the target is active, use the Nuclei command to identify the vulnerability on the protocol
+{% endstep %}
+
+{% step %}
+Using the command related to Netcat, step by step, save the protocol version, status, items, name of identification key and list of lists
+{% endstep %}
+
+{% step %}
+The next step is to test the vulnerability of DOS and DDoS the service to identify the vulnerability using commands
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Redis
+
+{% stepper %}
+{% step %}
+Identify the presence of the service on the target server by using the first Redis command in the cheat sheet with the Nmap tool
+{% endstep %}
+
+{% step %}
+If the service is open on the target server, use the next command to check access in unauthenticated mode
+{% endstep %}
+
+{% step %}
+In the next command, we use Hydra on the Brute Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconfiguration Vulnerability to the service.
+{% endstep %}
+{% endstepper %}
+
+***
+
+## Cheat Sheet
+
+### FTP
 
 #### [Nmap](https://nmap.org)
 
@@ -200,33 +333,6 @@ msfconsole -qx "
 
 ### WebDAV
 
-#### Methodology
-
-{% stepper %}
-{% step %}
-Run on $TARGET using the WebDAV command
-{% endstep %}
-
-{% step %}
-And if it was open, the next command is used to find vulnerabilities related to WebDAV service using Metasploit.
-{% endstep %}
-
-{% step %}
-Using the Hydra tool, we do Burte Force on this service to get the list of usernames and passwords
-{% endstep %}
-
-{% step %}
-After the Burte Force command, we check if we can upload a file using the next command.\
-If we could, we will upload the PHP file that contains RCE to the service using the command
-{% endstep %}
-
-{% step %}
-And we can do the same thing using the PUT method, whether we can use this method to upload a file on this service or not.
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
@@ -317,44 +423,6 @@ nc -lvnp 1234
 ```
 
 ### SNMP
-
-#### Methodology
-
-{% stepper %}
-{% step %}
-Run $TARTGET using the command related to SNMP discover
-{% endstep %}
-
-{% step %}
-If it was open, check the vulnerabilities of the service using the command of the nuclei tool
-{% endstep %}
-
-{% step %}
-Using the next command, get information from the target service such as host name and OID information, list of interfaces, configured IP addresses, hardware configuration, and sometimes more sensitive information depending on the implementation
-{% endstep %}
-
-{% step %}
-Using the next command, find a list of common community strings (for example, public, private, manager, ...) and extract information from them using the snmpwalk command.
-{% endstep %}
-
-{% step %}
-We use the snmpset command to write and change an OID on the SNMP service
-{% endstep %}
-
-{% step %}
-If the service was an old version, we write a string value on the service using the command related to SNMPv1
-{% endstep %}
-
-{% step %}
-If the service was an old version, use the SNMPv1 command to write a string value on the service, but if it was not using the old version, run the SNMPv2 command on the service.
-{% endstep %}
-
-{% step %}
-Then open a port using the Ngrok command and execute the RCE injection command on the target and you can exploit it using Metasploit
-{% endstep %}
-{% endstepper %}
-
-***
 
 #### [Nmap](https://nmap.org/)
 
@@ -508,32 +576,6 @@ msfconsole -qx "
 ```
 
 ### SMB
-
-#### Methodology
-
-{% stepper %}
-{% step %}
-If it was open, we check service vulnerabilities using Nmap with special switches for SMB
-{% endstep %}
-
-{% step %}
-The next step is to use Brute Force commands on the target protocol to identify the protocol, get the username and password list, identify the domains and groups in the service, identify active services on this protocol, and identify the running processes.
-{% endstep %}
-
-{% step %}
-Enter the service without a password using the commands related to the smbclient tool and find the list of subscriptions and a list of information.
-{% endstep %}
-
-{% step %}
-The next step is to log in using the rpcclient command with an empty username so that we can connect to RPC with an empty session to scan/count users, groups, sessions and settings. If the server allows it, it exposes user information and subscriptions.
-{% endstep %}
-
-{% step %}
-We can do this process and exploit using Metasploit commands
-{% endstep %}
-{% endstepper %}
-
-***
 
 #### [Nmap](https://nmap.org/)
 
@@ -876,28 +918,6 @@ msfconsole -qx "
 
 ### Memcached
 
-#### Methodology
-
-{% stepper %}
-{% step %}
-Use the Nmap command to identify and check the existence of the protocol on the target
-{% endstep %}
-
-{% step %}
-If the service on the target is active, use the Nuclei command to identify the vulnerability on the protocol
-{% endstep %}
-
-{% step %}
-Using the command related to Netcat, step by step, save the protocol version, status, items, name of identification key and list of lists.
-{% endstep %}
-
-{% step %}
-The next step is to test the vulnerability of DOS and DDoS the service to identify the vulnerability using commands
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
@@ -1029,24 +1049,6 @@ msfconsole -qx "use auxiliary/dos/misc/memcached;set RHOSTS $TARGET;run;exit"
 ```
 
 ### Redis
-
-#### Methodology
-
-{% stepper %}
-{% step %}
-Identify the presence of the service on the target server by using the first Redis command in the cheat sheet with the Nmap tool
-{% endstep %}
-
-{% step %}
-If the service is open on the target server, use the next command to check access in unauthenticated mode
-{% endstep %}
-
-{% step %}
-In the next command, we use Hydra on the Brute Force service to extract a list of password lists, and with the next command, we use the Nuclei tool to check the Misconfiguration Vulnerability to the service.
-{% endstep %}
-{% endstepper %}
-
-***
 
 #### [Nmap](https://nmap.org/nsedoc/scripts/redis-info.html)
 

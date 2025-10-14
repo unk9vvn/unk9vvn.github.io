@@ -4,9 +4,11 @@
 
 * [ ] Verify which accounts may provision other accounts and of what type.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
+
+#### Account Provisioning
 
 {% stepper %}
 {% step %}

@@ -5,9 +5,11 @@
 * [ ] Determine whether a consistent account name structure renders the application vulnerable to account enumeration.
 * [ ] Determine whether the application’s error messages permit account enumeration.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
+
+#### Email header injection via CRLF
 
 {% stepper %}
 {% step %}
@@ -51,6 +53,8 @@ If a recovery link was sent to your email, change your password and BOOOOM, Acco
 
 ***
 
+#### Password‑reset API bypass
+
 {% stepper %}
 {% step %}
 In the APIs (documentation and other methods for finding the APIs mentioned in the previous methodologies), you should look for paths related to password recovery, such as the following paths
@@ -87,6 +91,8 @@ The parameters may contain an ID, username, or email. Replace these parameters w
 
 ***
 
+#### Account enumeration via weak username policy
+
 {% stepper %}
 {% step %}
 Go to the login page, enter your email and password, and track the request using the Burp Suite tool
@@ -110,6 +116,8 @@ Change the forgotten password path to `/api/users,`If it shows the records and u
 {% endstepper %}
 
 ***
+
+#### **Username enumeration & 2FA bypass via error message differences and JSON response manipulation**
 
 {% stepper %}
 {% step %}

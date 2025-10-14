@@ -1,15 +1,15 @@
 # Account Enumeration
 
-
-
 ## Check List
 
 * [ ] Review processes that pertain to user identification (e.g. registration, login, etc.).
 * [ ] Enumerate users where possible through response analysis.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
+
+#### **Account enumeration via the “Forgot Password”**
 
 {% stepper %}
 {% step %}
@@ -22,6 +22,8 @@ When you click on `Forgot Password` the site asks for your email or phone number
 {% endstepper %}
 
 ***
+
+#### **Account enumeration via the registration flow**
 
 {% stepper %}
 {% step %}

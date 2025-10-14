@@ -18,17 +18,17 @@ Enter an incorrect OTP and capture the request using Burp Suite
 {% endstep %}
 
 {% step %}
-Intercept and modify the server's response:
+Intercept and modify the server's response
 {% endstep %}
 
 {% step %}
-Original response:
+Original response
 
 ```
 {"verificationStatus":false,"mobile":9072346577,"profileId":"84673832"}
 ```
 
-Change to:
+Change to
 
 ```
 {"verificationStatus":true,"mobile":9072346577,"profileId":"84673832"}
@@ -66,7 +66,7 @@ Capture the server response
 {% endstep %}
 
 {% step %}
-Modify it to:
+Modify it to
 
 ```
 { "success": "true" }
@@ -189,8 +189,6 @@ Test common default values to check for misconfigurations OTP Leakage in Server 
 
 {% step %}
 Checking if Old OTP is Still Valid Some systems allow the reuse of old OTPs Test if previously used OTPs are still accepted
-
-
 {% endstep %}
 {% endstepper %}
 

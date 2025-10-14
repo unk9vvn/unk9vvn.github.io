@@ -5,9 +5,11 @@
 * [ ] Determine whether the application has any user accounts with default passwords.
 * [ ] Review whether new user accounts are created with weak or predictable passwords.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
+
+#### Default Credentials
 
 {% stepper %}
 {% step %}

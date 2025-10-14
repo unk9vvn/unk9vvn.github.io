@@ -22,7 +22,7 @@ Using the next command, we scan the web server to find out what features it has 
 {% endstep %}
 
 {% step %}
-Then, using the following commands, we get a list of target subdomains and then using the <sub>HTTPX</sub> tool command, we check whether the subdomains we got are active
+Then, using the following commands, we get a list of target subdomains and then using the <sub>HTTPX tool</sub> command, we check whether the subdomains we got are active
 {% endstep %}
 
 {% step %}
@@ -30,7 +30,7 @@ And we can use the next command to find out the open ports of all active subdoma
 {% endstep %}
 
 {% step %}
-Using the Katana tool command, we crawl all pages and find the target points and files.
+Using the Katana tool command, we crawl all pages and find the target points and files
 {% endstep %}
 
 {% step %}
