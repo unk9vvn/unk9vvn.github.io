@@ -301,7 +301,7 @@ grep 'Host:' /tmp/massscan.txt \
 
 awk -F: '{print $1}' /tmp/masscan-ipports.txt | sort -u > /tmp/masscan-ips.txt
 awk -F: '{print $2}' /tmp/masscan-ipports.txt | sort -n -u | paste -s -d, - > /tmp/masscan-ports.csv
-naabu -list /tmp/masscan-ips.txt -p $(cat /tmp/masscan-ports.csv) -rate 1000 -o /tmp/naabu-raw.txt
+sudo naabu -list /tmp/masscan-ips.txt -p $(cat /tmp/masscan-ports.csv) -rate 1000 -nmap-cli 'nmap -sV --mtu 5000' -o /tmp/naabu-raw.txt
 cat /tmp/naabu-raw.txt | sed -n 's/^\([0-9.]*:[0-9]*\).*$/\1/p' | sort -u > /tmp/naabu-ports.txt
 ```
 
@@ -314,7 +314,7 @@ Find HTTP Services
 ```bash
 cat /tmp/naabu-ports.txt \
   | httpx \
-      -ports -status-code -title -server -location -ip \
+      -ports -status-code -title -server -tech-detect -location -ip \
       -o /tmp/httpx-results.txt
 ```
 
