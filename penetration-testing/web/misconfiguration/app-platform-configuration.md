@@ -10,7 +10,7 @@
 
 ### Methodology
 
-#### TOR Technique For Finding Sensitive Routes&#x20;
+#### TOR Technique for Finding Sensitive Routes
 
 {% stepper %}
 {% step %}
