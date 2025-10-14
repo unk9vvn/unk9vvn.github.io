@@ -313,8 +313,8 @@ Find HTTP Services
 
 ```bash
 cat /tmp/naabu-ports.txt \
-  | httpx \
-      -ports -status-code -title -server -tech-detect -location -ip \
+  | httpx --follow-redirects \
+      -ports -sc -td -auto-referer -title -favicon -server -location -ip \
       -o /tmp/httpx-results.txt
 ```
 
