@@ -6,9 +6,11 @@
 * [ ] Validate that no debugging code or extensions are left in the production environments.
 * [ ] Review the logging mechanisms set in place for the application.
 
+## Cheat Sheet
+
 ### Methodology
 
-#### TOR Technique For Finding Sensitive Routes
+#### TOR Technique For Finding Sensitive Routes&#x20;
 
 {% stepper %}
 {% step %}
@@ -45,8 +47,6 @@ Using the Nuclei command, we can find vulnerabilities and <sub>CVEs</sub> on the
 {% endstepper %}
 
 ***
-
-## Cheat Sheet
 
 ### **Sample And Known Files And Directories**
 

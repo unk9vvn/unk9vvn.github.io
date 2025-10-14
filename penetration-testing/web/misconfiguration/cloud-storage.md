@@ -4,6 +4,8 @@
 
 * [ ] Assess that the access control configuration for the storage services is properly in place.
 
+## Cheat Sheet
+
 ### Methodology
 
 #### Cloud Storage (AWS S3)
@@ -49,8 +51,6 @@ So it gives <sub>CNAME</sub> of pointed (`http://$WEBSITE`) so I am thinking wha
 {% endstepper %}
 
 ***
-
-## Cheat Sheet
 
 ### WHOIS Lookup
 

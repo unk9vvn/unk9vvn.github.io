@@ -7,7 +7,11 @@
 * [ ] Test XST vulnerabilities.
 * [ ] Test HTTP method overriding techniques.
 
+## Cheat Sheet
+
 ### Methdology
+
+#### HTTP Methods&#x20;
 
 {% stepper %}
 {% step %}
@@ -29,7 +33,7 @@ If our file is uploaded to the specified path using the PUT method, the site is 
 
 ***
 
-#### XSS in Trace Method
+#### XSS in Trace Method (Black Box)
 
 {% stepper %}
 {% step %}
@@ -52,8 +56,6 @@ If a web application connected to this server processes and displays the reflect
 {% endstepper %}
 
 ***
-
-## Cheat Sheet
 
 ### Discover the Supported Methods <a href="#discover-the-supported-methods" id="discover-the-supported-methods"></a>
 

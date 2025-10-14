@@ -2,9 +2,9 @@
 
 ## Check List
 
-## Methodology
+## Cheat Sheet
 
-### Black Box
+### Methodology (Black Box)
 
 #### Race Condition / Concurrency Testing
 
@@ -242,5 +242,3 @@ Repeat to verify reproducibility and log any successful attempts
 ***
 
 ### White Box
-
-## Cheat Sheet

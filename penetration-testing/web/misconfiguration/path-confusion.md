@@ -4,6 +4,8 @@
 
 * [ ] Make sure application paths are configured correctly.
 
+## Cheat Sheet
+
 ### Methodology
 
 #### Path Confusion
@@ -15,8 +17,6 @@ Using the following script, we can create confusion on a sensitive path using th
 {% endstepper %}
 
 ***
-
-## Cheat Sheet
 
 ### Dictionary Fuzzer
 

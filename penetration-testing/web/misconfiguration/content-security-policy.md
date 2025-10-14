@@ -4,6 +4,8 @@
 
 * [ ] Review the Content-Security-Policy header or meta element to identify misconfigurations.
 
+## Cheat Sheet
+
 ### Methodology
 
 #### CSP Misconfiguration
@@ -45,8 +47,6 @@ By inspecting and editing the HTML in the dev tools, an attacker can inject inli
 {% endstepper %}
 
 ***
-
-## Cheat Sheet
 
 ### CSP Header
 
