@@ -288,7 +288,7 @@ Upon forwarding the modified request, the server would grant access, bypassing t
 
 ***
 
-#### Account takeover via trusted-device session re-association
+#### Account Takeover Via Trusted-Device Session Re-Association
 
 {% stepper %}
 {% step %}
@@ -398,7 +398,7 @@ Each cycle re-establishes a new trusted session which the attacker then re-assoc
 
 ***
 
-#### 2FA Bypass Via Parameter tampering
+#### 2FA Bypass Via Parameter Tampering
 
 {% stepper %}
 {% step %}
@@ -546,7 +546,7 @@ You will notice that 2FA has been automatically disabled, allowing you to log in
 
 ***
 
-#### 2FA **race condition** (authentication bypass via a temporary-session-token race / TOCTOU)
+#### 2FA **race Condition** (Authentication Bypass Via a Temporary-Session-Token Race / TOCTOU)
 
 {% stepper %}
 {% step %}
@@ -608,7 +608,7 @@ Repeat multiple times to confirm timing consistency and determine the reliabilit
 
 ***
 
-#### Response manipulation
+#### Response Manipulation
 
 {% stepper %}
 {% step %}
@@ -678,7 +678,7 @@ Content-Type: application/json
 
 ***
 
-#### 2FA Code Leakage in Response
+#### 2FA Code Leakage In Response
 
 {% stepper %}
 {% step %}
@@ -809,7 +809,7 @@ Content-Type: application/json
 
 ***
 
-#### CSRF on 2FA Disabling
+#### CSRF On 2FA Disabling
 
 {% stepper %}
 {% step %}
@@ -830,7 +830,7 @@ Content-Type: application/json
 
 ***
 
-#### Bypass 2FA using the “Remember me” functionality
+#### Bypass 2FA Using The “Remember Me” Functionality
 
 {% stepper %}
 {% step %}
@@ -905,7 +905,7 @@ Content-Type: application/json
 
 ***
 
-#### Remove the OTP Parameter
+#### Remove The OTP Parameter
 
 {% stepper %}
 {% step %}
@@ -942,7 +942,7 @@ Content-Type: application/json
 
 ***
 
-Manipulate the OTP Parameter Values
+#### Manipulate the OTP Parameter Values
 
 {% stepper %}
 {% step %}
@@ -990,7 +990,7 @@ Request for MFA Code, wait for a longer time, and try using the same code; succe
 
 ***
 
-#### 2FA bypass via race condition
+#### 2FA Bypass Via Race Condition
 
 {% stepper %}
 {% step %}
@@ -1026,15 +1026,7 @@ Collect non-sensitive evidence (sanitized logs, video of the flow without reveal
 {% endstep %}
 {% endstepper %}
 
-
-
-
-
-
-
-
-
-
+***
 
 ### White Box
 
