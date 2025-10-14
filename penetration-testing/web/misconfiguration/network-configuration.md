@@ -11,7 +11,7 @@
 
 ### FTP
 
-#### Methodology
+#### Methodology&#x20;
 
 {% stepper %}
 {% step %}
@@ -716,7 +716,10 @@ msfconsole -qx "
     use auxiliary/scanner/smb/smb_login;
     set RHOSTS $TARGET;
     set SMBUser Administrator;
-    set PASS_FILE /usr/share/seclists/Passwords/darkweb2017-top100.txt;
+    set PASS_FILE /usr/share/seclists/Passwords/Default-Credentials/default-passwords.txt;
+    set STOP_ON_SUCCESS true;
+    set ANONYMOUS_LOGIN true;
+    set THREADS 10;
     run;
     exit"
 ```
@@ -1119,7 +1122,6 @@ msfconsole -qx "
     use auxiliary/scanner/redis/redis_login;
     set RHOSTS $TARGET;
     set ANONYMOUS_LOGIN true;
-    set BLANK_PASSWORDS true;
     set STOP_ON_SUCCESS true;
     set THREADS 10;
     run -j"
