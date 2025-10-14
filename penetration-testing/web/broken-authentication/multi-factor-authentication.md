@@ -452,7 +452,7 @@ The client will be logged into the account without providing the MFA code
 
 ***
 
-#### 2FA Bypass Via Session cloning
+#### 2FA Bypass Via Session Coning
 
 {% stepper %}
 {% step %}
@@ -502,7 +502,7 @@ Observe that you can access the account content without being prompted for the 2
 
 ***
 
-#### Email‑based 2FA reset race condition
+#### Email‑Based 2FA Reset Race Condition
 
 {% stepper %}
 {% step %}
@@ -539,14 +539,12 @@ After a day, return to the site and log in again
 
 {% step %}
 You will notice that 2FA has been automatically disabled, allowing you to log in successfully without providing a 2FA code — meaning an attacker could fully take over the victim’s account if the victim doesn’t cancel the request in time
-
-
 {% endstep %}
 {% endstepper %}
 
 ***
 
-#### 2FA **race Condition** (Authentication Bypass Via a Temporary-Session-Token Race / TOCTOU)
+#### 2FA R**ace Condition** (Authentication Bypass Via a Temporary-Session-Token Race / TOCTOU)
 
 {% stepper %}
 {% step %}
@@ -753,9 +751,9 @@ This file may contain information about the 2FA implementation
 {% endstep %}
 
 {% step %}
-var twoFactorEnabled = true;
+var twoFactorEnabled = true
 
-var twoFactorMethod = "SMS";
+var twoFactorMethod = "SMS"
 {% endstep %}
 
 {% step %}
@@ -942,7 +940,7 @@ Content-Type: application/json
 
 ***
 
-#### Manipulate the OTP Parameter Values
+#### Manipulate The OTP Parameter Values
 
 {% stepper %}
 {% step %}
