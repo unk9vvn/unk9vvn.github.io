@@ -259,7 +259,7 @@ Host: example.com
 Detect the Open Redirect vulnerability Simple Open Redirect - replace the redirect\_uri parameter with the domain under your control
 
 ```http
-GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://attacker.com HTTP/1.1
 Host: example.com
 ```
 {% endstep %}
@@ -282,7 +282,6 @@ Host: example.com
 * manipulate path to access the same endpoint in different ways, together with Open Redirect
 
 ```http
-EXAMPLES OF A REQUEST:
 GET /OAuth/////?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 GET /OAuth/./././?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 GET /OAuth/./../auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
@@ -295,8 +294,7 @@ GET /OAuth/./../auth?client_id=1234&redirect_uri=https://example.com HTTP/1.1
 * reuse the redirect\_uri parameter
 
 ```http
-EXAMPLES OF A REQUEST:
-GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=https://example.com HTTP/1.1
+GET /OAuth/auth?client_id=1234&redirect_uri=https://example.com&redirect_uri=https://attacker.com HTTP/1.1
 ```
 {% endstep %}
 
