@@ -40,7 +40,7 @@ urlfinder -d $WEBSITE
 #### [RapidDNS](https://rapiddns.io/)
 
 ```bash
-curl -s https://rapiddns.io/subdomain/${domain}?full=1 | \
+curl -s https://rapiddns.io/subdomain/${WEBSITE}?full=1 | \
 grep -Eo '[a-zA-Z0–9.-]+\.[a-zA-Z]{2,}' | sort -u
 ```
 
@@ -51,7 +51,7 @@ Favicon
 {% endhint %}
 
 ```bash
-domain="$1";curl -s https://$domain/favicon.ico | \
+curl -s https://$WEBSITE/favicon.ico | \
 base64 | python3 -c 'import mmh3, sys;print(mmh3.hash(sys.stdin.buffer.read()))' | \
 xargs -I{} shodan search http.favicon.hash:{} --fields hostnames | tr ";" "\n"
 ```
