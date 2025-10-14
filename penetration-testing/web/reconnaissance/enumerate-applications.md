@@ -292,7 +292,17 @@ sudo masscan --range $TARGETS -p1-65535,U:1-65535 --rate=10000 --http-user-agent
 #### [Naabu](https://github.com/projectdiscovery/naabu)
 
 ```sh
-naabu -host $TARGET -p $PORT
+grep 'Host:' /tmp/massscan.txt \
+  | sed -E 's/.*Host: ([0-9.]+) .*Ports: (.*)/\1 \2/' \
+  | while read ip ports; do
+      echo "$ports" | tr ',' '\n' | awk -v ip="$ip" -F'/' '{print ip ":" $1}'
+    done \
+  | sort -u > /tmp/masscan-ipports.txt
+
+awk -F: '{print $1}' /tmp/masscan-ipports.txt | sort -u > /tmp/masscan-ips.txt
+awk -F: '{print $2}' /tmp/masscan-ipports.txt | sort -n -u | paste -s -d, - > /tmp/masscan-ports.csv
+naabu -list /tmp/masscan-ips.txt -p $(cat /tmp/masscan-ports.csv) -rate 1000 -o /tmp/naabu-raw.txt
+cat /tmp/naabu-raw.txt | sed -n 's/^\([0-9.]*:[0-9]*\).*$/\1/p' | sort -u > /tmp/naabu-ports.txt
 ```
 
 #### [Httpx](https://github.com/projectdiscovery/httpx)
@@ -302,9 +312,10 @@ Find HTTP Services
 {% endhint %}
 
 ```bash
-cat /tmp/massscan.txt | grep tcp | \
-awk ' {print $4,":",$3}' | tr -d ' ' | \
-httpx -title -sc -cl
+cat /tmp/naabu-ports.txt \
+  | httpx \
+      -ports -status-code -title -server -location -ip \
+      -o /tmp/httpx-results.txt
 ```
 
 #### CIDR Discovery&#x20;
