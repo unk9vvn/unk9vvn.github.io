@@ -897,11 +897,9 @@ EOF
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		name="x8"
-		mkdir -p /usr/share/x8
-		wget https://github.com/Sh1Yo/x8/releases/latest/download/x86_64-linux-x8.gz -O /tmp/$name.gz
-		gunzip -c /tmp/$name.gz > /usr/share/$name/$name;rm -f /tmp/$name.gz
-		chmod 755 /usr/share/$name/*
-		ln -fs /usr/share/$name/x8 /usr/bin/$name
+		git clone https://github.com/Sh1Yo/x8 /usr/share/x8
+		cd /usr/share/x8 && cargo build --release
+		ln -fs /usr/share/$name/target/release/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
