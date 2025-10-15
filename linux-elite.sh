@@ -1471,13 +1471,13 @@ EOF
 	fi
 
 	# install c-jwt-cracker
-	if [ ! -d "/usr/share/jwtcrack" ]; then
-		name="jwtcrack"
+	if [ ! -d "/usr/share/c-jwt-cracker" ]; then
+		name="c-jwt-cracker"
 		git clone https://github.com/brendan-rius/c-jwt-cracker /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name && sudo make
-		ln -fs /usr/share/$name/jwtcrack /usr/bin/$name
-		chmod +x /usr/bin/$name
+		ln -fs /usr/share/$name/jwtcrack /usr/bin/jwtcrack
+		chmod +x /usr/bin/jwtcrack
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
