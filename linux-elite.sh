@@ -1470,6 +1470,18 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install c-jwt-cracker
+	if [ ! -d "/usr/share/jwtcrack" ]; then
+		name="jwtcrack"
+		git clone https://github.com/brendan-rius/c-jwt-cracker /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name && sudo make
+		ln -fs /usr/share/$name/jwtcrack /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install sessionprobe
 	if [ ! -d "/usr/share/sessionprobe" ]; then
 		name="sessionprobe"
