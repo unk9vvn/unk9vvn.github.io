@@ -10,7 +10,7 @@
 
 {% stepper %}
 {% step %}
-To test for SSPP in query strings, you can insert query syntax characters like #, &, and = into your input and observe how the application responds
+To test for SSPP in query strings, you can insert query syntax characters like `#`, `&`, and `=` into your input and observe how the application responds
 {% endstep %}
 
 {% step %}
@@ -72,17 +72,15 @@ Inspect the server response and session behavior (cookies). If authentication su
 
 {% stepper %}
 {% step %}
-Identify the endpoint that reads id and returns a user profile (e.g., /profile?id=...)
+Identify the endpoint that reads id and returns a user profile (e.g., `/profile?id=...`)
 {% endstep %}
 
 {% step %}
-Record a normal request
+Record a normal request and note the response
 
 ```
 GET /profile?id=1
 ```
-
-and note the response
 {% endstep %}
 
 {% step %}
