@@ -401,6 +401,8 @@ POST /api/v1/reset-password
 {% endstep %}
 {% endstepper %}
 
+***
+
 ### White Box
 
 ## Cheat Sheet
