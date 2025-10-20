@@ -47,8 +47,9 @@ nmap -sS -sV -Pn --mtu 5000 \
 
 Server Header
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -cs 'services.http.response.headers.server: "nginx"'
-</strong></code></pre>
+```bash
+uncover -cs 'services.http.response.headers.server: "nginx"'
+```
 
 SSL Certificate SHA-1 Fingerprint
 
@@ -64,8 +65,9 @@ uncover -cs 'services.tls.certificates.leaf_data.fingerprint_sha256: $HASH'
 
 Common Name (CN) in SSL Certificate
 
-<pre class="language-bash"><code class="lang-bash"><strong>uncover -cs 'services.tls.certificates.leaf_data.subject.common_name: "$WEBSITE"'
-</strong></code></pre>
+```bash
+uncover -cs 'services.tls.certificates.leaf_data.subject.common_name: "$WEBSITE"'
+```
 
 Operating System
 
