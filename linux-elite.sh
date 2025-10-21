@@ -662,6 +662,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+  	# install sudomy
+	if [ ! -d "/usr/share/sudomy" ]; then
+		name="sudomy"
+		git clone https://github.com/screetsec/Sudomy /usr/share/$name
+		chmod 755 /usr/share/$name/*
+        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;sudo ./sudomy "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
   	# install oty
 	if [ ! -f "/usr/bin/oty" ]; then
 		name="oty"
