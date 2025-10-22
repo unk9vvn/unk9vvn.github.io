@@ -166,16 +166,15 @@ katana -u /tmp/alive-subdomains.txt \
        -o /tmp/all-urls.txt
 ```
 
-#### [SubFinder ](https://github.com/projectdiscovery/subfinder)& [ShuffleDNS](https://github.com/projectdiscovery/shuffledns)
+#### [SubFinder ](https://github.com/projectdiscovery/subfinder)& [DNSx ](https://github.com/projectdiscovery/dnsx)& [Naabu ](https://github.com/projectdiscovery/naabu)& [HTTPx](https://github.com/projectdiscovery/httpx)
 
 {% hint style="info" %}
-Recon and Resolve
+Recon Subs and Ports and Web Services
 {% endhint %}
 
 ```bash
-echo "1.1.1.1" > /tmp/resolvers.txt
-subfinder -d $WEBSITE -all -recursive | \
-shuffledns -d $WEBSITE -r /tmp/resolvers.txt -mode resolve
+subfinder -d $WEBSITE -all -recursive -o /tmp/subs.txt; \
+dnsx -r 8.8.8.8 -l /tmp/subs.txt -ro | naabu -tp 1000 | httpx
 ```
 
 #### Directory Fuzzing&#x20;
