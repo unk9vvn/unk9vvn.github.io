@@ -4,6 +4,248 @@
 
 * [ ] Fingerprint the components being used by the web applications.
 
+## Methodology
+
+#### HTTP Headers
+
+{% stepper %}
+{% step %}
+Fetch HTTP headers from the target website to extract the X-Powered-By header, identifying backend technologies like PHP or ASP.NET, and noting version details for potential vulnerability research
+{% endstep %}
+
+{% step %}
+Analyze the response headers to identify the X-Generator header, revealing CMS or framework details such as WordPress or Drupal, which can indicate specific vulnerabilities or misconfigurations
+{% endstep %}
+
+{% step %}
+Inspect additional headers like Server, Content-Type, or Cache-Control to gather information about the web server software, version, and caching behavior, cross-referencing with known CVEs
+{% endstep %}
+
+{% step %}
+Examine security headers such as X-Frame-Options, Strict-Transport-Security, or Content-Security-Policy to assess the target’s security posture and identify weak or missing configurations
+{% endstep %}
+
+{% step %}
+Query a network intelligence platform to search for servers or response bodies indicating specific technologies like ASP.NET or Microsoft-IIS, narrowing down targets for platform-specific exploit testing
+{% endstep %}
+
+{% step %}
+Use a web fingerprinting tool to identify the target’s CMS, frameworks, or plugins, collecting detailed technology stack information to prioritize vulnerability scanning
+{% endstep %}
+
+{% step %}
+Document all header details, including X-Powered-By, X-Generator, and server versions, along with fingerprinting results, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed technologies or versions, such as outdated software or weak security headers, to prioritize reporting based on potential exploit severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Cookies
+
+{% stepper %}
+{% step %}
+Fetch HTTP response headers from the target website to extract Set-Cookie headers, identifying session cookies and their attributes like name, path, domain, or security flags
+{% endstep %}
+
+{% step %}
+Analyze the Set-Cookie header for specific session cookie names associated with known CMS or frameworks (e.g., CAKEPHP, laravel\_session, wp-settings), indicating the underlying technology stack
+{% endstep %}
+
+{% step %}
+Check cookie attributes such as Secure, HttpOnly, SameSite, and Expires to evaluate session management security, identifying risks like missing protections or overly permissive settings
+{% endstep %}
+
+{% step %}
+Identify duplicate or redundant Set-Cookie headers (e.g., multiple CAKEPHP cookies) to detect misconfigurations that could lead to session fixation or cookie overwrites
+{% endstep %}
+
+{% step %}
+Cross-reference session cookie names with a list of known CMS or framework identifiers (e.g., zope3, kohanasession, BITRIX\_) to confirm the platform and research version-specific vulnerabilities
+{% endstep %}
+
+{% step %}
+Test for session cookie persistence by sending requests with and without cookies, observing server behavior to detect improper session handling or authentication bypass opportunities
+{% endstep %}
+
+{% step %}
+Document all Set-Cookie headers, including cookie names, values, attributes, and associated CMS/framework, to create a detailed proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of identified issues, such as weak session management, exposed CMS versions, or missing security flags, to prioritize reporting based on potential exploit severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### HTML Source Code
+
+{% stepper %}
+{% step %}
+Fetch the target website’s HTML source code and search for specific JavaScript references (e.g., gtag.js) to identify third-party analytics scripts or tracking tools, noting associated IDs or keys
+{% endstep %}
+
+{% step %}
+Extract HTML comments to uncover references to analytics platforms (e.g., Google Analytics, Site Kit), developer notes, or configuration details that may expose sensitive information
+{% endstep %}
+
+{% step %}
+Inspect tags for generator attributes to identify CMS platforms like WordPress, Joomla, Drupal, or MediaWiki, along with version numbers, to pinpoint potential vulnerabilities
+{% endstep %}
+
+{% step %}
+Search for CMS-specific markers in the HTML source, such as for phpBB or specific comments like \<!-- START headerTags.cfm for Adobe ColdFusion, to confirm the technology stack
+{% endstep %}
+
+{% step %}
+Identify framework-specific identifiers like \_\_VIEWSTATE for ASP.NET or \<!-- ZK for ZK Framework, revealing backend technologies for targeted vulnerability research
+{% endstep %}
+
+{% step %}
+Look for proprietary platform markers, such as for Business Catalyst or ndxz-studio for Indexhibit, to detect niche CMS or hosting solutions
+{% endstep %}
+
+{% step %}
+Analyze comments for sensitive data, such as API keys, domain configurations, or internal references, that could lead to unauthorized access or information disclosure
+{% endstep %}
+
+{% step %}
+Use a web technology identification tool to cross-reference findings, confirming CMS, frameworks, or libraries in use, and mapping them to known vulnerabilities
+{% endstep %}
+
+{% step %}
+Document all findings, including script references, comment snippets, meta tags, and identified platforms, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed CMS versions, hardcoded keys, or misconfigured analytics scripts, prioritizing reporting based on potential exploit severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Specific File and Folders
+
+{% stepper %}
+{% step %}
+Configure a proxy tool to intercept and map the target website's sitemap, identifying potential paths or endpoints for fuzzing like directories or file extensions that may expose sensitive resources
+{% endstep %}
+
+{% step %}
+Select a specific domain or endpoint within the proxy tool's sitemap and send it to an automated fuzzing module to prepare for targeted directory or file enumeration
+{% endstep %}
+
+{% step %}
+Mark variable positions in the target URL (e.g., directory name or file extension) to enable fuzzing, replacing placeholders with payloads to test for hidden or misconfigured resources
+{% endstep %}
+
+{% step %}
+Integrate a comprehensive wordlist into the fuzzing module's payload settings, selecting lists containing common directory names, file extensions, or backup file patterns for thorough coverage
+{% endstep %}
+
+{% step %}
+Launch the fuzzing attack to send multiple requests with varying payloads, monitoring responses for indicators like 200 OK, directory listings, or file downloads that reveal sensitive files
+{% endstep %}
+
+{% step %}
+Analyze attack results to identify successful payloads, noting response codes, lengths, or content differences that indicate exposed configuration files, backups, or administrative interfaces
+{% endstep %}
+
+{% step %}
+Follow up on discovered files or folders by accessing them manually to extract sensitive data such as credentials, database dumps, or internal documentation for impact assessment
+{% endstep %}
+
+{% step %}
+Document all fuzzing results, including successful payloads, response details, and discovered resources, to create a detailed proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed files or folders, such as information disclosure, unauthorized access, or chainable vulnerabilities, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### File Extensions
+
+{% stepper %}
+{% step %}
+Use a web technology detection tool to analyze the target website's headers, scripts, and content, identifying file extensions associated with detected CMS, frameworks, or libraries like PHP, ASPX, or JSP
+{% endstep %}
+
+{% step %}
+Query an online technology profiler by entering the target URL to extract details on server technologies, including supported file extensions and associated versions for vulnerability mapping
+{% endstep %}
+
+{% step %}
+Run a web fingerprinting tool on the target to scan for CMS, plugins, and server software, noting file extensions like .php, .html, or .asp that indicate the platform's capabilities
+{% endstep %}
+
+{% step %}
+Execute a directory brute-forcing tool with the target URL, filtering for successful responses (e.g., 200 OK) and targeting specific extensions like PHP, ASPX, or JSP to uncover hidden files or misconfigurations
+{% endstep %}
+
+{% step %}
+Perform file extension enumeration using a comprehensive wordlist, testing for a wide range of formats including configuration files (.conf, .ini), backups (.bak, .zip), databases (.sql, .db), and archives (.tar.gz, .rar) to detect exposed sensitive resources
+{% endstep %}
+
+{% step %}
+Analyze discovered files for platform indicators such as .php3-.php5 for PHP versions or .aspx for ASP.NET, cross-referencing with known vulnerabilities or misconfigurations
+{% endstep %}
+
+{% step %}
+Validate enumerated extensions by accessing discovered files to check for content like configuration data, logs, or source code that may reveal internal details or credentials
+{% endstep %}
+
+{% step %}
+Document all identified extensions, associated technologies, and accessible files, including response codes and content snippets, to create a detailed proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed file extensions, such as information disclosure from config files or RCE from executable scripts, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Error Message
+
+{% stepper %}
+{% step %}
+Fetch the target website’s response content and search for error-related keywords like “syntax error” to identify debugging messages or stack traces exposed in the HTML output
+{% endstep %}
+
+{% step %}
+Analyze retrieved error messages, such as PHP parse errors or unexpected token errors, to extract details like file paths (e.g., /var/www/html/index.php) or line numbers that reveal server-side structure
+{% endstep %}
+
+{% step %}
+Inspect error messages for specific technology indicators, such as PHP, MySQL, or Apache errors, to confirm the server’s software stack and cross-reference with known vulnerabilities
+{% endstep %}
+
+{% step %}
+Test the target URL with malformed requests or invalid parameters to trigger additional error responses, uncovering further details about the application’s backend or configuration
+{% endstep %}
+
+{% step %}
+Check for full path disclosures in error messages to map the server’s filesystem, identifying potential targets for local file inclusion (LFI) or directory traversal attacks
+{% endstep %}
+
+{% step %}
+Document all error messages, including the triggering URL, error type, file paths, and line numbers, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed error messages, such as information disclosure, potential for chaining with other vulnerabilities, or server misconfiguration, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### HTTP Headers

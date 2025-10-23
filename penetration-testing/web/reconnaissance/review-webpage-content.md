@@ -6,6 +6,142 @@
 * [ ] Gather JavaScript files and review the JS code to better understand the application and to find any information leakage.
 * [ ] Identify if source map files or other front-end debug files exist.
 
+## Methodology
+
+#### Comment and Metadata
+
+{% stepper %}
+{% step %}
+Fetch the target webpage and parse all HTML comments to extract developer notes, author details, email addresses, API keys, internal IPs, or hardcoded credentials often left in production code
+{% endstep %}
+
+{% step %}
+Retrieve dashboard or admin pages and inspect embedded comments for sensitive information such as admin usernames, passwords, backup server IPs, SMTP credentials, or debug API endpoints
+{% endstep %}
+
+{% step %}
+Access XML files or endpoints and examine DOCTYPE declarations containing inline comments to uncover author information, API keys, or structural notes about sensitive data handling
+{% endstep %}
+
+{% step %}
+Parse XML DTD sections for comments revealing admin credentials, SFTP keys, or access control structures that should not be exposed in production
+{% endstep %}
+
+{% step %}
+Scrape HTML tags from the target page to extract non-standard metadata fields like author, email, api-key, or custom attributes that may contain sensitive configuration data
+{% endstep %}
+
+{% step %}
+Automate extraction of all HTML comments across multiple pages using crawling tools to identify patterns of leaked credentials or internal documentation
+{% endstep %}
+
+{% step %}
+Search for version control hints, environment indicators (e.g., “Staging”), or debug flags within comments and metadata to confirm environment type and potential misconfigurations
+{% endstep %}
+
+{% step %}
+Cross-reference extracted emails, usernames, or API keys with external breach databases or password lists to assess reuse and exploitation potential
+{% endstep %}
+
+{% step %}
+Document all findings with full context (URL, comment block, metadata field) to build high-impact proof-of-concept reports for responsible disclosure
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Identifying JavaScript Code and Gathering JavaScript File
+
+{% stepper %}
+{% step %}
+Fetch the target webpage and parse all tags to extract inline JavaScript code, identifying sensitive data such as API keys, database connection strings, or authentication tokens embedded within configuration objects
+{% endstep %}
+
+{% step %}
+Analyze inline JavaScript for function calls or external API integrations (e.g., Google Maps, reCAPTCHA) to uncover hardcoded credentials or keys that could be exploited for unauthorized access
+{% endstep %}
+
+{% step %}
+Inspect JavaScript code for fetch requests or AJAX calls to internal endpoints, noting headers like Authorization that may expose bearer tokens or sensitive API keys
+{% endstep %}
+
+{% step %}
+Crawl the target website to enumerate all JavaScript files (.js) referenced in tags or dynamically loaded, capturing URLs for further analysis
+{% endstep %}
+
+{% step %}
+Use a web crawling tool to extract URLs ending in .js, focusing on files hosted on the target domain or third-party services to identify configuration scripts or libraries
+{% endstep %}
+
+{% step %}
+Download identified JavaScript files and search for sensitive information such as API keys, database credentials, or internal endpoints exposed within the code
+{% endstep %}
+
+{% step %}
+Cross-reference extracted keys or tokens with external services (e.g., Google APIs, reCAPTCHA) to verify their validity and assess potential misuse risks
+{% endstep %}
+
+{% step %}
+Analyze JavaScript files for commented-out sections or debug logs that may reveal internal logic, environment details, or sensitive data inadvertently left in production
+{% endstep %}
+
+{% step %}
+Document all findings, including script locations, extracted keys, and affected endpoints, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed credentials or tokens, such as unauthorized API access, data leakage, or database compromise, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Identifying Source Map Files
+
+{% stepper %}
+{% step %}
+Crawl the target website to enumerate all URLs, focusing on locating source map files (.map) that reveal original source code paths, internal file structures, or developer comments
+{% endstep %}
+
+{% step %}
+Inspect retrieved source map files for sensitive information such as absolute file paths (e.g., /home/sysadmin/project/src) or project-specific details that expose development environment structures
+{% endstep %}
+
+{% step %}
+Analyze source map JSON files for embedded credentials, such as client IDs, client secrets, or OAuth token URIs, that could enable unauthorized access to external services
+{% endstep %}
+
+{% step %}
+Use a URL discovery tool to extract all accessible endpoints from the target, identifying pages, APIs, or static files that may link to source maps or sensitive resources
+{% endstep %}
+
+{% step %}
+Employ a web crawling tool to comprehensively map the target’s URLs, prioritizing endpoints that reference JavaScript or CSS files potentially linked to source maps
+{% endstep %}
+
+{% step %}
+Filter crawled URLs for CSS files (.css) to identify stylesheets, checking for references to source maps or comments containing sensitive configuration data
+{% endstep %}
+
+{% step %}
+Run a specialized tool to extract JavaScript and CSS links from the target, focusing on endpoints that may expose source map files or internal API references
+{% endstep %}
+
+{% step %}
+Verify the presence of source maps by appending .map to identified JavaScript or CSS file URLs (e.g., main.chunk.js.map), downloading and parsing them for sensitive data
+{% endstep %}
+
+{% step %}
+Cross-reference extracted paths or credentials from source maps with the target’s infrastructure to assess risks like code exposure, directory traversal, or service compromise
+{% endstep %}
+
+{% step %}
+Document all findings, including URLs, source map contents, and exposed credentials, to build a detailed proof-of-concept for responsible disclosure
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Comment and Metadata&#x20;

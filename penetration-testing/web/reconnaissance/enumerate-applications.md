@@ -4,6 +4,282 @@
 
 * [ ] Enumerate the applications within scope that exist on a web server.
 
+## Methodology
+
+#### Different URL
+
+{% stepper %}
+{% step %}
+Perform subdomain enumeration using a DNS enumeration tool with a comprehensive wordlist to identify subdomains, leveraging brute-force techniques to uncover hidden or non-indexed subdomains
+{% endstep %}
+
+{% step %}
+Execute DNS reconnaissance to brute-force subdomains with a wordlist, focusing on resolving DNS records to map the target’s domain infrastructure and identify potential entry points
+{% endstep %}
+
+{% step %}
+Use a DNS fuzzing tool with a wordlist to discover subdomains, validating their existence by resolving DNS queries and prioritizing active subdomains for further testing
+{% endstep %}
+
+{% step %}
+Query the target domain with a URL discovery tool to extract subdomains and endpoints from public sources, identifying overlooked assets or misconfigured services
+{% endstep %}
+
+{% step %}
+Fetch subdomain data from an online DNS service to enumerate subdomains, ensuring a unique and sorted list to streamline reconnaissance and reduce duplicate findings
+{% endstep %}
+
+{% step %}
+Retrieve the target’s favicon, hash it, and search for matching favicon hashes across external services to identify hosts sharing the same favicon, uncovering related domains or assets
+{% endstep %}
+
+{% step %}
+Conduct passive subdomain enumeration to collect subdomains from public sources without direct interaction, minimizing detection risk and gathering initial reconnaissance data
+{% endstep %}
+
+{% step %}
+Perform active subdomain enumeration with brute-forcing and a wordlist to discover subdomains, validating them through DNS resolution to ensure accuracy and relevance
+{% endstep %}
+
+{% step %}
+Enumerate IP addresses within a specified CIDR range to identify network assets, mapping organizational infrastructure for potential cloud or internal server discovery
+{% endstep %}
+
+{% step %}
+Query assets by autonomous system number (ASN) to discover hosts within the target’s network provider, expanding reconnaissance to related infrastructure
+{% endstep %}
+
+{% step %}
+Extract SSL certificate details by connecting to the target’s HTTPS service, analyzing certificate metadata like issuer, subject, or expiration to uncover subdomains or misconfigurations
+{% endstep %}
+
+{% step %}
+Combine subdomain discovery with HTTP probing to identify live subdomains, capturing status codes and page titles to prioritize active web services for vulnerability testing
+{% endstep %}
+
+{% step %}
+Generate favicon hashes from enumerated subdomains and filter unique hashes to identify shared web assets, linking related hosts or applications for deeper reconnaissance
+{% endstep %}
+
+{% step %}
+Save enumerated subdomains to a file for further processing, ensuring a structured output for subsequent tools or manual analysis
+{% endstep %}
+
+{% step %}
+Generate new subdomain permutations from an existing list to expand the list of potential subdomains, capturing variations that may reveal unlisted assets
+{% endstep %}
+
+{% step %}
+Resolve a list of subdomains against common ports (e.g., 80, 443, 8080) with a custom user-agent to identify live web services, filtering for active hosts to focus testing efforts
+{% endstep %}
+
+{% step %}
+Perform DNS resolution on permuted subdomains to validate their existence, ensuring only resolvable domains are included for further reconnaissance
+{% endstep %}
+
+{% step %}
+Crawl live subdomains to fetch URLs, leveraging archival sources and filtering out non-relevant file types (e.g., images, CSS) to focus on endpoints like APIs or admin pages
+{% endstep %}
+
+{% step %}
+Chain subdomain enumeration, DNS resolution, port scanning, and HTTP probing to build a comprehensive profile of live subdomains, ports, and web services, streamlining reconnaissance for vulnerability assessment
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Non-Standard Ports
+
+{% stepper %}
+{% step %}
+Perform a stealth TCP port scan on the target to identify open ports and services, capturing version details to map potential vulnerabilities or misconfigured services
+{% endstep %}
+
+{% step %}
+Conduct a UDP port scan on the target to discover open UDP services, focusing on protocols like DNS or SNMP that may expose sensitive information or attack vectors
+{% endstep %}
+
+{% step %}
+Use a lightweight TCP port scan to quickly enumerate open ports across the full range (1-65535), identifying non-standard ports for further investigation
+{% endstep %}
+
+{% step %}
+Execute a UDP port scan across the full port range to detect less common services, prioritizing those that may indicate misconfigured or exposed network applications
+{% endstep %}
+
+{% step %}
+Perform a high-speed TCP and UDP scan on the target’s IP range derived from DNS resolution, using a custom user-agent to mimic legitimate traffic and capturing all open ports
+{% endstep %}
+
+{% step %}
+Extract and process scan results to generate lists of IP-port pairs, unique IPs, and port ranges, organizing data for targeted follow-up scans or service enumeration
+{% endstep %}
+
+{% step %}
+Conduct a refined port scan using a curated list of IPs and ports, integrating service version detection to identify specific software and potential CVEs
+{% endstep %}
+
+{% step %}
+Probe identified open ports for HTTP services, capturing details like status codes, titles, server headers, favicon hashes, and redirect locations to profile web-based applications
+{% endstep %}
+
+{% step %}
+Query the target’s IP to retrieve ASN and CIDR information via WHOIS lookup, mapping the organization’s network scope for broader reconnaissance
+{% endstep %}
+
+{% step %}
+Fetch ASN and prefix details from an API to identify the target’s network infrastructure, uncovering related IP ranges or autonomous systems for expanded asset discovery
+{% endstep %}
+
+{% step %}
+Use a specialized script to enumerate targets within a specified ASN, identifying additional hosts or services within the same network for comprehensive attack surface mapping
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Virtual Hosts
+
+{% stepper %}
+{% step %}
+Query the target domain for name server (NS) records to identify authoritative DNS servers, establishing a foundation for further DNS-based reconnaissance
+{% endstep %}
+
+{% step %}
+Enumerate DNS records (A, TXT, NS, MX) to map the target’s domain infrastructure, uncovering associated IPs, mail servers, or text-based configuration details
+{% endstep %}
+
+{% step %}
+Attempt a DNS zone transfer from identified name servers to retrieve a complete list of domain records, exposing subdomains or internal hosts if misconfigured
+{% endstep %}
+
+{% step %}
+Perform comprehensive DNS queries to gather all available record types, including A, NS, MX, and TXT, to build a detailed map of the target’s DNS structure
+{% endstep %}
+
+{% step %}
+Conduct reverse DNS lookups using the target’s IP address to identify hostnames or domains associated with the IP, revealing potential shared hosting or related assets
+{% endstep %}
+
+{% step %}
+Enumerate subdomains using a passive discovery tool, resolving them to IPs and saving results for further processing, minimizing active queries to avoid detection
+{% endstep %}
+
+{% step %}
+Generate subdomain permutations from an existing list to expand the pool of potential subdomains, capturing variations that may point to unlisted assets
+{% endstep %}
+
+{% step %}
+Resolve permuted subdomains using a custom resolver to validate their existence, filtering out non-resolvable entries to focus on live hosts
+{% endstep %}
+
+{% step %}
+Probe the target domain for HTTP services to confirm the presence of active web servers, capturing basic response data like status codes for further analysis
+{% endstep %}
+
+{% step %}
+Fuzz virtual hosts by testing a wordlist of common hostnames against the target, identifying non-standard or hidden virtual hosts on the same IP
+{% endstep %}
+
+{% step %}
+Fuzz virtual hosts by appending the target domain to a wordlist of subdomains, detecting subdomain-specific virtual hosts that may not resolve via DNS
+{% endstep %}
+
+{% step %}
+Use a list of discovered subdomains to fuzz virtual hosts, verifying if known subdomains are hosted on the same server and exposing misconfigured virtual hosts
+{% endstep %}
+
+{% step %}
+Leverage online DNS lookup tools to cross-reference domain records, subdomains, and historical data, validating findings and uncovering additional assets
+{% endstep %}
+
+{% step %}
+Perform reverse WHOIS lookups using email or registrant details to discover additional domains linked to the target organization, expanding the attack surface
+{% endstep %}
+
+{% step %}
+Query external security databases with the target’s IP to gather insights on open ports, services, or known vulnerabilities, enriching reconnaissance with network context
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Reverse IP Service
+
+{% stepper %}
+{% step %}
+Enumerate subdomains of the target website using a passive discovery tool and resolve their associated IP addresses, creating a list of IPs linked to the target’s infrastructure
+{% endstep %}
+
+{% step %}
+Perform WHOIS lookups on identified IP addresses to extract properties such as registrant details, organization, or network ranges, mapping the target’s ownership and network structure
+{% endstep %}
+
+{% step %}
+Conduct reverse DNS lookups on the resolved IPs using an online service to identify all domains and subdomains hosted on the same IP, uncovering shared hosting or related assets
+{% endstep %}
+
+{% step %}
+Query RIPE database by maintainer (mnt-by) field with the target company’s identifier to discover IP ranges or assets managed by the organization, expanding the network scope
+{% endstep %}
+
+{% step %}
+Search RIPE database by person field to find domains or IPs associated with a specific individual, revealing additional assets linked to the target’s administrators or contacts
+{% endstep %}
+
+{% step %}
+Query RIPE database by admin-c field to identify IPs or domains tied to administrative contacts, uncovering infrastructure managed by specific personnel
+{% endstep %}
+
+{% step %}
+Perform ARIN WHOIS lookups using network handle (Net Handle) to retrieve details about IP address allocations, identifying network ranges owned by the target organization
+{% endstep %}
+
+{% step %}
+Query ARIN database by OrgId to discover all IP addresses or domains registered to the target organization, mapping their network footprint for reconnaissance
+{% endstep %}
+
+{% step %}
+Use an intelligence tool to enumerate domains associated with the target organization, leveraging passive sources to identify related assets without direct interaction
+{% endstep %}
+
+{% step %}
+Perform IP-based intelligence gathering within a specified CIDR range to uncover hosts, subdomains, or services within the target’s network, expanding the attack surface
+{% endstep %}
+
+{% step %}
+Conduct active reconnaissance by querying assets within a specified autonomous system number (ASN), identifying live hosts and services tied to the target’s network provider
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Digital Certificate
+
+{% stepper %}
+{% step %}
+Query a certificate transparency database to extract unique common names (CN) associated with the target domain, identifying subdomains and related hosts exposed through SSL certificates
+{% endstep %}
+
+{% step %}
+Retrieve all name values from certificate transparency logs for the target domain, uncovering additional subdomains, wildcard entries, or alternate names linked to the target’s infrastructure
+{% endstep %}
+
+{% step %}
+Search a network intelligence platform for certificates matching the target’s organization, extracting common names and associated domains to reveal hidden assets or misconfigured certificates
+{% endstep %}
+
+{% step %}
+Enumerate subdomains using a GitHub reconnaissance tool with an API token, leveraging repository data to discover subdomains mentioned in code, commits, or configuration files
+{% endstep %}
+
+{% step %}
+Fetch historical URLs for the target domain from an archival service, identifying past endpoints, APIs, or pages that may expose forgotten assets or sensitive functionality
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Different URL

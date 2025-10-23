@@ -4,6 +4,104 @@
 
 * [ ] Identify possible entry and injection points through request and response analysis.
 
+## Methodology
+
+#### Requests
+
+{% stepper %}
+{% step %}
+Crawl the target website to enumerate all URLs, capturing query strings and endpoints to identify parameters like page= or id= that may be vulnerable to manipulation or injection
+{% endstep %}
+
+{% step %}
+Perform directory and file fuzzing on the target using both GET and POST methods with a comprehensive wordlist, discovering hidden endpoints or sensitive resources exposed via query strings
+{% endstep %}
+
+{% step %}
+Intercept and analyze HTTP requests using a proxy tool to inspect query parameters, headers, and cookies, identifying session tokens, user inputs, or misconfigured access controls
+{% endstep %}
+
+{% step %}
+Examine the Cookie header in HTTP requests to extract session identifiers or authentication tokens, assessing their structure for potential session hijacking or weak encoding
+{% endstep %}
+
+{% step %}
+Analyze POST request bodies to identify form parameters like username and password, testing for weak credentials, lack of CSRF protection, or injection vulnerabilities
+{% endstep %}
+
+{% step %}
+Map query string parameters across crawled URLs to detect patterns, such as recurring parameters (e.g., search=, q=), that could be exploited for XSS, SQLi, or open redirects
+{% endstep %}
+
+{% step %}
+Verify the presence of sensitive data in request headers, such as custom headers or referers, to uncover internal endpoints or leaked information during cross-origin requests
+{% endstep %}
+
+{% step %}
+Test identified query parameters for improper input validation by injecting payloads like ../ or SQL syntax, checking for responses that indicate LFI, SQLi, or other vulnerabilities
+{% endstep %}
+
+{% step %}
+Document all findings, including URLs, request methods, query strings, headers, and body parameters, to create a detailed proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of exposed parameters or weak headers, such as session fixation, data leakage, or unauthorized access, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Response
+
+{% stepper %}
+{% step %}
+Inspect HTTP response headers to identify security-related headers like Content-Security-Policy, X-Frame-Options, or Strict-Transport-Security, assessing their configuration for potential misconfigurations or weaknesses
+{% endstep %}
+
+{% step %}
+Analyze the Set-Cookie header to extract session cookies, noting attributes like Secure, HttpOnly, SameSite, and expiration dates to evaluate session management vulnerabilities or weak policies
+{% endstep %}
+
+{% step %}
+Examine cache-related headers such as Cache-Control, Pragma, or Expires to identify caching behaviors, checking for risks like sensitive data exposure in cached responses
+{% endstep %}
+
+{% step %}
+Review server headers (e.g., Server: Apache/2.4.62) to determine the web server software and version, cross-referencing with known CVEs for outdated or vulnerable versions
+{% endstep %}
+
+{% step %}
+Check for custom or non-standard headers like P3P, Origin-Trial, or Report-To, analyzing their purpose and potential for exposing internal configurations or debugging information
+{% endstep %}
+
+{% step %}
+Parse the response body for HTML metadata, including tags, to extract details like charset, viewport settings, or custom attributes that may reveal CMS versions or developer notes
+{% endstep %}
+
+{% step %}
+Identify linked resources in the response body, such as CSS, JavaScript, or image files, to uncover references to sensitive endpoints or external dependencies
+{% endstep %}
+
+{% step %}
+Analyze the Content-Type header to confirm the response format (e.g., JSON, HTML, binary), ensuring expected content matches the response to detect misconfigured endpoints
+{% endstep %}
+
+{% step %}
+Check for inline comments or sensitive information within the HTML response body, such as developer notes or hardcoded credentials, that could expose internal details
+{% endstep %}
+
+{% step %}
+Document all findings, including header values, cookie attributes, and response body snippets, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of identified issues, such as weak security headers, exposed server versions, or sensitive data in responses, to prioritize reporting based on severity
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Requests

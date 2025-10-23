@@ -4,6 +4,302 @@
 
 * [ ] Generate a map of the application at hand based on the research conducted.
 
+## Methodology
+
+#### Application Components
+
+{% stepper %}
+{% step %}
+Perform a stealth TCP scan on common web ports to detect server software and versions, extracting server headers to identify technologies like Apache or Nginx for vulnerability mapping
+{% endstep %}
+
+{% step %}
+Use a web fingerprinting tool to analyze the target, identifying server-side technologies, CMS, or frameworks, and cross-referencing with known exploits
+{% endstep %}
+
+{% step %}
+Fetch HTTP headers to extract server details, such as software version or custom headers, to confirm the web server stack and assess misconfigurations
+{% endstep %}
+
+{% step %}
+Scan web ports with enumeration scripts to identify PaaS-specific headers or patterns, detecting platforms like Heroku or Google App Engine
+{% endstep %}
+
+{% step %}
+Conduct passive subdomain enumeration to uncover PaaS-hosted subdomains, revealing cloud-based infrastructure tied to the target
+{% endstep %}
+
+{% step %}
+Query DNS records with a wordlist to identify subdomains potentially hosted on PaaS platforms, expanding the attack surface
+{% endstep %}
+
+{% step %}
+Search for PaaS-specific terms in HTTP response bodies to confirm the presence of cloud platforms like Azure or Heroku, prioritizing tests for platform-specific misconfigurations
+{% endstep %}
+
+{% step %}
+Scan web ports with scripts to detect serverless indicators, such as Lambda or Cloud Functions, by analyzing response headers, titles, or body content
+{% endstep %}
+
+{% step %}
+Query response bodies for serverless-related terms to identify functions hosted on platforms like AWS Lambda or Azure Functions, assessing exposure risks
+{% endstep %}
+
+{% step %}
+Use fingerprinting tools to confirm serverless environments, checking for unique response patterns or API gateway references
+{% endstep %}
+
+{% step %}
+Perform port scanning with enumeration scripts to identify microservices-related endpoints, such as Kubernetes or Docker, by analyzing headers and titles
+{% endstep %}
+
+{% step %}
+Run a Kubernetes-specific scanning tool on suspected cluster IPs to detect exposed nodes, services, or APIs, identifying misconfigured microservices
+{% endstep %}
+
+{% step %}
+Use a web vulnerability scanner to enumerate paths and detect microservices frameworks, checking for common configuration files or API endpoints
+{% endstep %}
+
+{% step %}
+Search response bodies for microservices-related terms like Kubernetes or service mesh to confirm the architecture and prioritize testing for orchestration vulnerabilities
+{% endstep %}
+
+{% step %}
+Scan web ports with scripts to identify static storage endpoints, such as S3 buckets or Google Cloud Storage, by analyzing response headers or body content
+{% endstep %}
+
+{% step %}
+Execute a bucket enumeration tool to brute-force cloud storage names associated with the target, identifying publicly accessible or misconfigured buckets
+{% endstep %}
+
+{% step %}
+Run a cloud-specific scanning tool to detect exposed storage services across AWS, Google Cloud, or Azure, checking for sensitive data exposure
+{% endstep %}
+
+{% step %}
+Query response bodies for cloud storage signatures to confirm the presence of S3, GCS, or Azure Blob Storage, assessing risks like public read access
+{% endstep %}
+
+{% step %}
+Extract IPv4 ranges for major cloud providers (Google, AWS, Azure) by querying their public IP range APIs, identifying potential cloud-hosted assets
+{% endstep %}
+
+{% step %}
+Filter cloud IP ranges for a specific region (e.g., us-east-1) to narrow reconnaissance to the target’s likely infrastructure, reducing irrelevant results
+{% endstep %}
+
+{% step %}
+Perform high-speed port scanning on identified cloud IP ranges, focusing on web ports to discover live hosts and services
+{% endstep %}
+
+{% step %}
+Extract IPs with open TLS ports from scan results, prioritizing them for certificate analysis to uncover associated domains or subdomains
+{% endstep %}
+
+{% step %}
+Analyze TLS certificates for extracted IPs to retrieve subject details, linking IPs to target domains or identifying wildcard certificates
+{% endstep %}
+
+{% step %}
+Parse TLS scan results to extract subject common names (CN) and map them to IPs, confirming ownership and identifying related assets
+{% endstep %}
+
+{% step %}
+Scan common database ports (e.g., 3306 for MySQL, 5432 for PostgreSQL) with scripts to identify database services, versions, and configurations
+{% endstep %}
+
+{% step %}
+Connect to database ports to retrieve banners or version information, confirming the presence of MySQL, PostgreSQL, or MSSQL instances
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to detect database-related technologies in the web stack, cross-referencing with port scan findings
+{% endstep %}
+
+{% step %}
+Run automated database scanners to enumerate version details for MySQL or PostgreSQL, identifying vulnerabilities like outdated versions or weak authentication
+{% endstep %}
+
+{% step %}
+Query a network intelligence platform for database services (e.g., MySQL, MSSQL) to confirm exposed instances and assess access risks
+{% endstep %}
+
+{% step %}
+Scan web ports with authentication-specific scripts to detect login pages or authentication endpoints, identifying potential targets for credential testing
+{% endstep %}
+
+{% step %}
+Perform SSH port scanning to enumerate supported authentication methods, checking for weak or unsupported methods like password-based login
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to identify authentication-related technologies or frameworks, confirming the presence of login interfaces
+{% endstep %}
+
+{% step %}
+Query response headers for WWW-Authenticate or SSH banners to detect authentication mechanisms, prioritizing tests for misconfigured access controls
+{% endstep %}
+
+{% step %}
+Scan web ports with enumeration scripts to identify third-party services or APIs, analyzing headers and titles for integration clues
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to detect third-party SDKs, CDNs, or APIs embedded in the website, noting their versions for vulnerability research
+{% endstep %}
+
+{% step %}
+Fetch the website’s content and search for API, CDN, or SDK references in the response body, identifying external service dependencies
+{% endstep %}
+
+{% step %}
+Enumerate paths with a directory scanner, targeting extensions like .api, .json, or .xml to uncover API endpoints or webhook configurations
+{% endstep %}
+
+{% step %}
+Query DNS records to identify third-party service domains, such as CDNs or cloud APIs, linked to the target
+{% endstep %}
+
+{% step %}
+Perform subdomain enumeration to discover third-party-hosted subdomains, expanding reconnaissance to external integrations
+{% endstep %}
+
+{% step %}
+Search response bodies for terms like “api” or “webhook” to confirm third-party service integrations, assessing risks like exposed API keys or misconfigured webhooks
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Network Components
+
+{% stepper %}
+{% step %}
+Perform a stealth TCP scan on common web ports to identify server headers and reverse proxy indicators, extracting software details like Nginx or Apache to confirm proxy presence
+{% endstep %}
+
+{% step %}
+Use a web fingerprinting tool to analyze the target, detecting reverse proxy technologies or configurations through response patterns or headers
+{% endstep %}
+
+{% step %}
+Fetch HTTP headers to inspect server or proxy-specific headers, identifying signatures of reverse proxies like HAProxy or Nginx
+{% endstep %}
+
+{% step %}
+Query DNS records to map the target’s infrastructure, checking for CNAMEs or IPs that suggest proxying through external services
+{% endstep %}
+
+{% step %}
+Run a WAF detection tool to identify if a reverse proxy is paired with a web application firewall, noting its type for potential bypass testing
+{% endstep %}
+
+{% step %}
+Search a network intelligence platform for headers indicating reverse proxy software, confirming the use of Nginx, Apache, or HAProxy in the target’s stack
+{% endstep %}
+
+{% step %}
+Scan web ports with scripts to detect load balancer signatures, analyzing server headers for indicators like F5 or AWS ELB
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to identify load balancer technologies, checking for patterns in responses that suggest traffic distribution
+{% endstep %}
+
+{% step %}
+Send multiple HTTP header requests to the target, observing variations in server headers or response times to detect load balancer presence across multiple backend servers
+{% endstep %}
+
+{% step %}
+Query a network intelligence platform for headers associated with load balancers like Nginx, HAProxy, or AWS ELB, confirming their role in the infrastructure
+{% endstep %}
+
+{% step %}
+Perform a stealth TCP scan with scripts to trace HTTP responses, identifying CDN-specific headers or behaviors from providers like Cloudflare or Akamai
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to detect CDN usage, analyzing response headers or content delivery patterns for CDN-specific signatures
+{% endstep %}
+
+{% step %}
+Fetch HTTP headers to identify CDN providers through server headers or custom headers like CF-Ray for Cloudflare or X-Akamai for Akamai
+{% endstep %}
+
+{% step %}
+Query DNS records to check for CNAMEs pointing to CDN providers, confirming the use of services like Amazon CloudFront or Fastly
+{% endstep %}
+
+{% step %}
+Search a network intelligence platform for headers indicating CDN presence, verifying providers like Cloudflare, Akamai, or Fastly in the target’s infrastructure
+{% endstep %}
+
+{% step %}
+Document all findings, including header details, DNS records, and detected components, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess the impact of identified components, such as misconfigured proxies, load balancers, or CDNs, to prioritize reporting based on potential vulnerabilities like header manipulation or cache poisoning
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Security Components
+
+{% stepper %}
+{% step %}
+Perform a stealth TCP scan with firewall bypass scripts to identify software-based firewalls, testing evasion techniques and analyzing responses for firewall signatures
+{% endstep %}
+
+{% step %}
+Use a web fingerprinting tool to detect firewall technologies through response patterns, headers, or blocked requests that indicate filtering
+{% endstep %}
+
+{% step %}
+Query a network intelligence platform for services on web ports with firewall-related server headers, confirming the presence of network-level filtering
+{% endstep %}
+
+{% step %}
+Execute a targeted port scan on web ports with WAF fingerprinting scripts to detect WAF technologies, analyzing blocking responses or custom error pages
+{% endstep %}
+
+{% step %}
+Run a cloud lookup module to identify cloud-based WAF services like Cloudflare, AWS WAF, or Akamai, mapping the target's WAF infrastructure
+{% endstep %}
+
+{% step %}
+Use a fingerprinting tool to detect WAF presence through behavioral analysis of HTTP responses and error patterns
+{% endstep %}
+
+{% step %}
+Fetch HTTP headers to inspect server or WAF-specific headers, identifying providers like ModSecurity, Cloudflare, or Imperva
+{% endstep %}
+
+{% step %}
+Deploy a specialized WAF detection tool to confirm WAF type and version, testing various payloads to trigger blocking responses and fingerprint the protection layer
+{% endstep %}
+
+{% step %}
+Search a network intelligence platform for WAF-specific server headers, verifying the presence of ModSecurity, Cloudflare, Imperva, or AWS WAF in the target's stack
+{% endstep %}
+
+{% step %}
+Document all WAF findings, including detection method, WAF type, and blocking behavior, to create a comprehensive proof-of-concept for responsible disclosure
+{% endstep %}
+
+{% step %}
+Assess WAF bypass potential by testing various payloads, encodings, or request patterns to identify weaknesses or evasion opportunities for further testing
+{% endstep %}
+
+{% step %}
+Evaluate the impact of identified security components, such as misconfigured firewalls or bypassable WAFs, to prioritize reporting based on potential exploitation severity
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Application Components <a href="#application-components" id="application-components"></a>
