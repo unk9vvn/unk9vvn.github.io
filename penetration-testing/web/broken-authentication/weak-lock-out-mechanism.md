@@ -5,7 +5,7 @@
 * [ ] Evaluate the account lockout mechanism’s ability to mitigate brute force password guessing.
 * [ ] Evaluate the unlock mechanism’s resistance to unauthorized account unlocking.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
 
@@ -425,6 +425,7 @@ if [ ! -d "/usr/share/multitor" ]; then
     cd /usr/share/multitor && sudo ./setup.sh install
     sudo chown debian-tor:debian-tor /var/lib/multitor
     sudo chmod 700 /var/lib/multitor
+    sudo chmod /usr/local/bin/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -612,6 +613,7 @@ if [ ! -d "/usr/share/multitor" ]; then
     cd /usr/share/multitor && sudo ./setup.sh install
     sudo chown debian-tor:debian-tor /var/lib/multitor
     sudo chmod 700 /var/lib/multitor
+    sudo chmod /usr/local/bin/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
@@ -851,6 +853,7 @@ if [ ! -d "/usr/share/multitor" ]; then
     cd /usr/share/multitor &#x26;&#x26; sudo ./setup.sh install
     sudo chown debian-tor:debian-tor /var/lib/multitor
     sudo chmod 700 /var/lib/multitor
+    sudo chmod /usr/local/bin/multitor
     color_print GREEN "[*] Successfully Installed multitor"
 fi
 
