@@ -353,7 +353,7 @@ Check if the response includes the injected Set-Cookie: crlfinjection=unk9vvn
 
 ***
 
-#### [CRLF Injection Using cURL](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/CRLF%20Injection/Files/crlfinjection.txt)
+#### [CRLF Injection Using cURL](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection)
 
 {% stepper %}
 {% step %}
