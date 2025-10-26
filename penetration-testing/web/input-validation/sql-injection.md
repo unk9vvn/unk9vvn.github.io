@@ -148,15 +148,90 @@ Test for additional metadata, such as table names or column names, using payload
 
 ***
 
-#### UNION-based SQL Injection in SignUp
+#### SQL Injection in Referrer Header&#x20;
 
 {% stepper %}
 {% step %}
-
+Referer is another HTTP header which can be vulnerable to SQL injection once the application is storing it in database without sanitizing it. It's an optional header field that allows the client to specify
 {% endstep %}
 
 {% step %}
+Go to the homepage and trace the request using Burp Suite
+{% endstep %}
 
+{% step %}
+Then send the request to the Repeater and check the Referrer header using the following payload
+
+```
+GET /index.php HTTP/1.1
+Host: [host]
+User-Agent: 
+Referer: http://www.yaboukir.com' or 1/*
+```
+{% endstep %}
+
+{% step %}
+Then check if the server shows any strange behavior after injecting the payload into this header
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SQL injection In Refresh Token Parameter
+
+{% stepper %}
+{% step %}
+Log in to the site and complete the authentication process
+{% endstep %}
+
+{% step %}
+Intercept requests while completing the authentication process using Burp Suite
+{% endstep %}
+
+{% step %}
+During the authentication completion process, if the site uses the OAuth mechanism, check the requests to see if you see a parameter called `refresh_token`
+{% endstep %}
+
+{% step %}
+And if the site uses REST APIs for authentication and sends data in JSON format, look for the refresh\_token parameter
+{% endstep %}
+
+{% step %}
+Test SQL injection payloads by finding this parameter at the specified points to identify the vulnerability, as shown below
+
+```json
+POST /api/v1/token HTTP/1.1
+Host: tsftp.informatica.com
+User-Agent: curl/7.88.1
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 65
+Connection: close
+
+{
+  "grant_type": "refresh_token",
+  "refresh_token": "'; WAITFOR DELAY '0:0:1'--"
+}
+```
+{% endstep %}
+
+{% step %}
+Another example is the refresh\_token parameter, which is also used in Oauth
+
+```http
+POST /oauth2/token HTTP/1.1
+Host: <token-server.example.com>
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+Connection: close
+
+grant_type=refresh_token&refresh_token='; WAITFOR DELAY '0:0:1'--&client_id=<CLIENT_ID>&client_secret=<CLIENT_SECRET>&scope=<optional_scopes>
+
+```
+{% endstep %}
+
+{% step %}
+By injecting this code into this parameter, it may give us an error in response, but we should look at the response time to see if it really takes that long
 {% endstep %}
 {% endstepper %}
 
