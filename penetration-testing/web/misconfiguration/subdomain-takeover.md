@@ -5,9 +5,7 @@
 * [ ] Enumerate all possible domains (previous and current).
 * [ ] Identify forgotten or misconfigured domains.
 
-## Cheat Sheet
-
-### Methodology
+## Methodology
 
 #### Subdomain Takeover
 
@@ -53,6 +51,8 @@ Indirect compromise of downstream systems via trusted artifact delivery mechanis
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Subdomain Fuzzing
 

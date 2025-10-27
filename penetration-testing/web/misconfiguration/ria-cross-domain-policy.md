@@ -4,9 +4,7 @@
 
 * [ ] Review and validate the policy files.
 
-## Cheat Sheet
-
-### Methodology
+## Methodology
 
 #### Overly Permissive Flash Cross-Domain Policy (crossdomain.xml / clientaccesspolicy.xml)
 
@@ -37,6 +35,8 @@ Capture Data Use a script to capture stolen data from the victim when they load 
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Check Policy Files Weakness
 

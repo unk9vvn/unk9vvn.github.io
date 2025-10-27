@@ -7,9 +7,7 @@
 * [ ] Test XST vulnerabilities.
 * [ ] Test HTTP method overriding techniques.
 
-## Cheat Sheet
-
-### Methdology
+## Methdology
 
 #### HTTP Methods&#x20;
 
@@ -56,6 +54,8 @@ If a web application connected to this server processes and displays the reflect
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Discover the Supported Methods <a href="#discover-the-supported-methods" id="discover-the-supported-methods"></a>
 

@@ -4,9 +4,7 @@
 
 * [ ] Find and analyze unreferenced files that might contain sensitive information.
 
-## Cheat Sheet
-
-### Methodology
+## Methodology
 
 #### Sensitive Backup/File Disclosure Via Directory Enumeration And Brute-Forcing&#x20;
 
@@ -29,6 +27,8 @@ Then, we can use the script we created to run all these tools with one click on 
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Use of Publicly Available Information
 

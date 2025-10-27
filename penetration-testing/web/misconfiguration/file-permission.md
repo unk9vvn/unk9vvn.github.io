@@ -4,9 +4,7 @@
 
 * [ ] Review and identify any rogue file permissions.
 
-## Cheat Sheet
-
-### Methodology
+## Methodology
 
 #### File Permission (Sensitive File)
 
@@ -21,6 +19,8 @@ If a sensitive file is found, we can reach the vulnerability with high-level acc
 {% endstepper %}
 
 ***
+
+## Cheat Sheet
 
 ### Check DIR/File Permissions
 
