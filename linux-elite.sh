@@ -927,10 +927,11 @@ EOF
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		name="x8"
-		git clone https://github.com/Sh1Yo/x8 /usr/share/x8
-		cd /usr/share/x8 && cargo build --release
+		git clone https://github.com/Sh1Yo/x8 /usr/share/$name
+		cd /usr/share/$name && cargo build --release
 		ln -fs /usr/share/$name/target/release/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
+		git clone https://github.com/the-xentropy/samlists /usr/share/$name/smalists
 		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
