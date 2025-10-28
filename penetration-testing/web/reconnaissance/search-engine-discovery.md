@@ -989,49 +989,49 @@ uncover -s 'http.html:"* The wp-config.php creation script uses this file"'
 #### WebServers Configuration File
 
 ```bash
-gh search code 'path:**/WebServer.xml'
+gh search code "path:**/WebServer.xml" --repo $URI
 ```
 
 #### .bash\_history Commands
 
 ```bash
-gh search code 'path:**/.bash_history'
+gh search code "path:**/.bash_history" --repo $URI
 ```
 
 #### /etc/passwd File
 
 ```bash
-gh search code 'path:**/passwd path:etc'
+gh search code "path:**/passwd path:etc" --repo $URI
 ```
 
 #### Password in config.php
 
 ```bash
-gh search code 'path:**/config.php dbpasswd'
+gh search code "path:**/config.php dbpasswd" --repo $URI
 ```
 
 #### Shodan API Key in Python Script
 
 ```bash
-gh search code 'shodan_api_key language:python'
+gh search code "shodan_api_key language:python" --repo $URI
 ```
 
 #### /etc/shadow File
 
 ```bash
-gh search code 'path:**/shadow path:etc'
+gh search code "path:**/shadow path:etc" --repo $URI
 ```
 
 #### wp-config.php File
 
 ```bash
-gh search code 'path:**/wp-config.php'
+gh search code "path:**/wp-config.php" --repo $URI
 ```
 
 #### MySQL Dump File
 
 ```bash
-gh search code 'path:*.sql mysql dump'
+gh search code "path:*.sql mysql dump" --repo $URI
 ```
 
 #### Vulnerability Management
@@ -1041,7 +1041,9 @@ Patch list
 {% endhint %}
 
 ```bash
-gh pr list --search "security" --state all --repo $URI
+gh pr list -S "cve OR vuln OR security OR xss OR ssrf OR sensitive" \
+           -s all \
+           --repo $URI
 ```
 
 {% hint style="info" %}
