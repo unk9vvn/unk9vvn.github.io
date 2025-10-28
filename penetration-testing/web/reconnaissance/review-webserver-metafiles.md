@@ -79,6 +79,12 @@ curl $WEBSITE/humans.txt
 curl $WEBSITE/wp-json/wp/v2/users/
 ```
 
+### Swagger API
+
+```bash
+curl $WEBSITE/swagger/v1/swagger.json
+```
+
 ### META tags
 
 ```sh
