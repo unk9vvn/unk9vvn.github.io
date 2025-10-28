@@ -2664,6 +2664,20 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install doltest
+	if [ ! -d "/usr/share/doltest" ]; then
+		name="doltest"
+		apt install -y build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev
+		git clone https://github.com/SysSec-KAIST/DoLTEst /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;mkdir build && cd build;cmake ..;make -j4
+		ln -fs /usr/share/$name/build/srsepc/src/srsepc /usr/bin/srsepc
+		ln -fs /usr/share/$name/build/srsepc/src/srsenb /usr/bin/srsenb
+		chmod +x /usr/bin/srsepc;chmod +x /usr/bin/srsenb
+		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# --------------------------------------IoT-Penetration-Testing-------------------------------------- #"
 
