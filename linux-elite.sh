@@ -59,7 +59,8 @@ APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
 DESKTOP_DIRECTORIES_PATH="$BASE_PATH/.local/share/desktop-directories"
 
 # Display ASCII art logo
-logo() {
+logo()
+{
     reset
     clear
     echo -e  "${GREEN}                            --/osssssssssssso/--                    "
