@@ -1041,7 +1041,7 @@ Patch list
 {% endhint %}
 
 ```bash
-gh pr list --search "security" --state merged --repo $URI
+gh pr list --search "security" --state all --repo $URI
 ```
 
 {% hint style="info" %}
