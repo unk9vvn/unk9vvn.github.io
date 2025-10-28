@@ -119,11 +119,11 @@ Repeat step 3 by adding another space after the email. By consistently adding a 
 
 {% stepper %}
 {% step %}
-Capture the request in Burp. Send the request to Intruder & set the attack type to Cluster Bomb
+Send the request to Intruder and set the attack type to Cluster Bomb
 {% endstep %}
 
 {% step %}
-Add two positions as follows. First to the **endpoint** & second to the **“q”** variable
+Add two positions as follows: the first at the endpoint and the second for the “q” variable
 
 ```http
 POST /users/§reset-password§ HTTP/1.1
@@ -145,11 +145,11 @@ Sec-Fetch-Site: same-site
 {% endstep %}
 
 {% step %}
-The rate limit can be bypassed by changing the endpoint. For example, the original endpoint is ‘reset-password’ & it can be changed to various combinations such as ‘Reset-Password’ & ‘RESET-PASSWORD’, etc
+The rate limit can be bypassed by changing the endpoint. For example, the original endpoint is ‘reset-password,’ and it can be altered to various combinations such as ‘Reset-Password’ and ‘RESET-PASSWORD’
 {% endstep %}
 
 {% step %}
-To generate different combinations of endpoints, you can use **Tinker**(https://github.com/heydc7/Tinker) for parameter tampering
+To generate different combinations of endpoints, you can use Tinker (https://github.com/heydc7/Tinker) for parameter tampering
 {% endstep %}
 
 {% step %}
@@ -184,7 +184,7 @@ Start the attack. The rate limit will be bypassed & you can see 100s of emails i
 {% endstep %}
 
 {% step %}
-To make the attack look more legitimate to WAF, you can additionally set the **Throttle**(Intruder->Options) to 1000 milliseconds(1 Sec)
+To make the attack appear more legitimate to the WAF, you can additionally set the Throttle (Intruder -> Options) to 1000 milliseconds (1 second)
 {% endstep %}
 {% endstepper %}
 
@@ -194,22 +194,22 @@ To make the attack look more legitimate to WAF, you can additionally set the **T
 
 {% stepper %}
 {% step %}
-Set up repeated login attempts: Use an incorrect password and attempt to log in at `https://client.example.com` 16 times using an email like `g4l2562z6v@tidissajiiu.com` (Tip: Send the request to Burp Suite’s Repeater tool for easy replaying of attempts)
+Use an incorrect password and attempt to log in at `https://client.target.com` 16 times using an email like `g4l2562z6v@tidissajiiu.com` (Tip: Send the request to Burp Suite’s Repeater tool for easy replaying of attempts)
 {% endstep %}
 
 {% step %}
-Observe account lockout message: After 16 failed login attempts, the account is locked. Even the correct password won’t work anymore
+After 16 failed login attempts, the account will be locked. Even the correct password won’t work anymore
 
 * Response from Burp Repeater
 * `{ "message": "Request limit exceeded. Please try again later.", "type": "too-many-requests" }`
 {% endstep %}
 
 {% step %}
-Change email character case: Change the case of a character in the email. For example, switch from `g4l2562z6v@tidissajiiu.com` to `g4l2562z6v@tidiSsajiiu.com` (`s` -> `S`)
+Change the case of a character in the email. For example, switch from `g4l2562z6v@tidissajiiu.com` to `g4l2562z6v@tidiSsajiiu.com` (s -> S)
 {% endstep %}
 
 {% step %}
-Resume login attempts with any password. You’ll find that the rate limit doesn’t apply, even after 16 attempts
+Resume login attempts with any password, you’ll find that the rate limit doesn’t apply, even after 16 attempts
 {% endstep %}
 
 {% step %}
