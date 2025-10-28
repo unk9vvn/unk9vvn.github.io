@@ -789,7 +789,9 @@ nmap -p 80,443 -sS -sV --mtu 5000 --script http-waf-fingerprint $WEBSITE
 
 #### [Metasploit](https://www.metasploit.com/)
 
-_Identifying Cloud Based WAFs_
+{% hint style="info" %}
+Identifying Cloud Based WAFs
+{% endhint %}
 
 ```bash
 msfconsole -qx "use auxiliary/gather/cloud_lookup;set HOSTNAME $WEBSITE;run;exit"

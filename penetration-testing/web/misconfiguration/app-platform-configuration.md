@@ -352,6 +352,32 @@ Scan & Enum IIS
 iis_shortname_scanner 2 20 $WEBSITE
 ```
 
+#### Swagger
+
+{% hint style="info" %}
+Scan API
+{% endhint %}
+
+```bash
+sj brute -u $WEBSITE --randomize-user-agent
+```
+
+{% hint style="info" %}
+Scan Permission v1
+{% endhint %}
+
+```bash
+sj automate -u $WEBSITE/swagger/v1/swagger.json --randomize-user-agent
+```
+
+{% hint style="info" %}
+Scan Permission v2
+{% endhint %}
+
+```bash
+sj automate -u $WEBSITE/v2/swagger.json --randomize-user-agent
+```
+
 ### **Comment Review**
 
 #### [Katana](https://github.com/projectdiscovery/katana)
