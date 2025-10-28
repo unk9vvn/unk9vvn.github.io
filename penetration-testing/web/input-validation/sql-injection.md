@@ -364,11 +364,23 @@ Apply the same payload to similar parameters (order, filter) on other database-d
 
 {% stepper %}
 {% step %}
-Navigate to website pages that handle search or data filtering, such as , /publications, /archive, where user inputs are processed for database queries.
+Go to the points on the target site where you can create a list or a book or a quiz Or for example in the `/archive` path, And especially pages where we as a user can publish or search for something
 {% endstep %}
 
 {% step %}
+Locate the authors parameter in the POST request body, used for filtering or querying author-related data, making it a candidate for SQL injection
+{% endstep %}
 
+{% step %}
+Modify the authors parameter with a time-based payload like `Hurlburt'XOR(if(now()=sysdate(),sleep(4),0))OR'` to induce a 4-second delay if the query executes
+{% endstep %}
+
+{% step %}
+And send this request using Burp Suite and check the server response time
+{% endstep %}
+
+{% step %}
+If the server response time is equal to the time specified in the payload, this parameter is vulnerable
 {% endstep %}
 {% endstepper %}
 
