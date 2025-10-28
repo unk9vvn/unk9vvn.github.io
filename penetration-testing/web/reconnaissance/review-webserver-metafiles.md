@@ -94,5 +94,5 @@ curl $WEBSITE/swagger/v1/swagger.json
 ### SharePoint API
 
 ```bash
-curl $WEBSITE/_api/web/
+curl $WEBSITE/_api/web/Folders
 ```
