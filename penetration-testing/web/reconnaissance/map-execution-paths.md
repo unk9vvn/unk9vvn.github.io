@@ -162,7 +162,7 @@ dirsearch -u $WEBSITE \
 
 ### Data Flow&#x20;
 
-#### x8
+#### [x8](https://github.com/Sh1Yo/x8)
 
 {% hint style="info" %}
 Find Parameters
@@ -176,7 +176,7 @@ x8 -u "$WEBSITE" \
    --verify
 ```
 
-#### Burp Suite
+#### [Burp Suite](https://portswigger.net/burp/releases/community/latest)
 
 {% hint style="warning" %}
 Burp Suite > Target > Site map > Analyze Three Domain&#x20;
@@ -184,7 +184,7 @@ Burp Suite > Target > Site map > Analyze Three Domain&#x20;
 
 ### Race
 
-#### Burp Suite
+#### [Burp Suite](https://portswigger.net/burp/releases/community/latest)
 
 {% hint style="warning" %}
 Burp Suite > Target > Right Click on One Domain > Extensions > Turbo intruder > send to turbo intruder > Add to WordList path in line "for word in open('/usr/share/dict/words')" > Attack
