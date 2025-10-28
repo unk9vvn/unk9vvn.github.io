@@ -162,6 +162,20 @@ dirsearch -u $WEBSITE \
 
 ### Data Flow&#x20;
 
+#### x8
+
+{% hint style="info" %}
+Find Parameters
+{% endhint %}
+
+```bash
+x8 -u "$WEBSITE" \
+   -X GET POST \
+   -w /usr/share/x8/smalists/sam-cc-parameters-mixedcase-all.txt \
+   --mimic-browser \
+   --verify
+```
+
 #### Burp Suite
 
 {% hint style="warning" %}
