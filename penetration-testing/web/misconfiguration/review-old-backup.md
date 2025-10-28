@@ -134,9 +134,10 @@ Find Hidden Parameters
 {% endhint %}
 
 ```bash
-x8 --url $WEBSITE \
-   -X GET POST \
-   -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
+x8 -u "$WEBSITE" \
+   -X GET POST PUT OPTIONS \
+   -w /usr/share/x8/smalists/sam-cc-parameters-mixedcase-all.txt \
+   --mimic-browser --verify
 ```
 
 #### [Arjun](https://github.com/s0md3v/Arjun)
