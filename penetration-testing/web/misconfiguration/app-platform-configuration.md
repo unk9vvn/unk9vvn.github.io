@@ -352,7 +352,7 @@ Scan & Enum IIS
 iis_shortname_scanner 2 20 $WEBSITE
 ```
 
-#### Swagger
+#### [Swagger Jacker](https://github.com/BishopFox/sj)
 
 {% hint style="info" %}
 Scan API
