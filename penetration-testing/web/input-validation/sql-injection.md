@@ -18,11 +18,11 @@ Trace the request using Burp Suite and check whether values ​​are sent to th
 {% endstep %}
 
 {% step %}
-Inject a quote mark (unitWeight=10') into a parameter and submit the request, and check if you get any errors from the server side, such as 500 Internal Server Error
+Inject a quote mark (`unitWeight=10'`) into a parameter and submit the request, and check if you get any errors from the server side, such as 500 Internal Server Error
 {% endstep %}
 
 {% step %}
-The next step is to check whether this error is returned by adding another single quote to the parameter (unitWeight=10'')
+The next step is to check whether this error is returned by adding another single quote to the parameter (`unitWeight=10''`)
 {% endstep %}
 
 {% step %}
@@ -35,18 +35,6 @@ If the server responds to you with a delay of 10 seconds, it means the server is
 
 {% step %}
 Inspect cookies by modifying their values with SQL payloads (`cookie=value' OR 1=1`), checking if the server responds differently or exposes sensitive data
-{% endstep %}
-
-{% step %}
-Analyze HTTP headers (`User-Agent` or `Referer`) by injecting SQL payloads, monitoring for errors or delays that suggest header data is used in database queries
-{% endstep %}
-
-{% step %}
-Examine POST request bodies, particularly form submissions, by injecting SQL payloads into fields like username or weight, checking for errors or delayed responses
-{% endstep %}
-
-{% step %}
-Use a proxy tool’s repeater function to systematically test each parameter with SQL payloads, comparing responses to identify injectable points
 {% endstep %}
 {% endstepper %}
 
@@ -338,18 +326,48 @@ IF(SUBSTRING(@@version,1,1)='5',SLEEP(5),0)
 
 ***
 
-####
+#### Time-based blind SQL injection
 
 {% stepper %}
 {% step %}
-###
-
-
+Navigate to pages on the target website that display database-driven results, such as search pages, product listings, or user dashboards, often found at URLs like `/search`, `/results`, `/list`, `/products`, or `/dashboard`. These pages typically use query parameters for sorting or filtering
 {% endstep %}
 
 {% step %}
-###
+Look for query parameters controlling sorting or filtering, such as `sortBy`, order, sort, filter, or column, in the URL or form submissions, as these are often passed directly to SQL queries
+{% endstep %}
 
+{% step %}
+Modify the identified parameter (`sortBy`) with a simple time-based payload like `1 AND SLEEP(5) --` to introduce a 5-second delay if the query executes
+{% endstep %}
+
+{% step %}
+Use a browser or Burp Suite to send the modified request and measure the response time. A \~5-second delay confirms the payload executed in the database
+{% endstep %}
+
+{% step %}
+Send a non-delaying request with the original parameter value (`sortBy=1`) or a neutral payload (`sortBy=1 AND 1=1 --`) to ensure no delay occurs, verifying the injection
+{% endstep %}
+
+{% step %}
+Inject a payload like `1 AND IF(SUBSTRING(DB_NAME(),1,1)='A',SLEEP(5),0) --` to test if the database name starts with 'A', noting a delay for true conditions. Iterate through characters (`A-Z, 0-9`) to extract the name
+{% endstep %}
+
+{% step %}
+Apply the same payload to similar parameters (order, filter) on other database-driven pages (`/products,` `/list`) to identify additional injection points
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Time-Based Blind SQL Injection Testing on Author-Like Parameters
+
+{% stepper %}
+{% step %}
+Navigate to website pages that handle search or data filtering, such as , /publications, /archive, where user inputs are processed for database queries.
+{% endstep %}
+
+{% step %}
 
 {% endstep %}
 {% endstepper %}

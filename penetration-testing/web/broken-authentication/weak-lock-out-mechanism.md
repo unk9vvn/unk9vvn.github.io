@@ -13,7 +13,7 @@
 
 {% stepper %}
 {% step %}
-Attempt Failed Logins Perform 10 consecutive login attempts with incorrect credentials
+Perform 10 consecutive login attempts with incorrect credentials.
 {% endstep %}
 
 {% step %}
@@ -21,7 +21,7 @@ Observe Error Message Change Note the response shifting to "Something went wrong
 {% endstep %}
 
 {% step %}
-Login with Valid Credentials Immediately attempt login with correct credentials from the same IP address Confirm Successful Login
+Login with valid credentials immediately after the failed attempts and confirm a successful login
 {% endstep %}
 
 {% step %}
