@@ -1034,6 +1034,24 @@ gh search code 'path:**/wp-config.php'
 gh search code 'path:*.sql mysql dump'
 ```
 
+#### Vulnerability Management
+
+{% hint style="info" %}
+Patch list
+{% endhint %}
+
+```bash
+gh pr list --search "security" --state merged --repo $URI
+```
+
+{% hint style="info" %}
+View details
+{% endhint %}
+
+```bash
+gh pr view $PR_NUMBER --repo $URI
+```
+
 ### [Censys](https://search.censys.io/) <a href="#censys" id="censys"></a>
 
 #### City
