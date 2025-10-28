@@ -73,6 +73,12 @@ curl $WEBSITE/security.txt
 curl $WEBSITE/humans.txt
 ```
 
+### META tags
+
+```sh
+curl $WEBSITE | grep 'meta'
+```
+
 ### WordPress API
 
 ```sh
@@ -85,8 +91,8 @@ curl $WEBSITE/wp-json/wp/v2/users/
 curl $WEBSITE/swagger/v1/swagger.json
 ```
 
-### META tags
+### SharePoint API
 
-```sh
-curl $WEBSITE | grep 'meta'
+```bash
+curl $WEBSITE/_api/web/
 ```
