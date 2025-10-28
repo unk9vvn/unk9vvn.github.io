@@ -35,23 +35,23 @@ Verify that login is successful despite the triggered lockout Repeat to Validate
 
 {% stepper %}
 {% step %}
-Attempt Failed Logins Perform 5 consecutive login attempts with incorrect passwords using the target endpoint
+Perform 5 consecutive login attempts with incorrect passwords using the target endpoint
 {% endstep %}
 
 {% step %}
-Trigger Account Lockout Observe the account lockout after the 5th failed login attempt
+Observe the account lockout after the 5th failed login attempt
 {% endstep %}
 
 {% step %}
-Send Forgot Password Request Submit a POST request to the forgot password endpoint with the locked account's email
+Submit a POST request to the forgot password endpoint with the email of the locked account
 {% endstep %}
 
 {% step %}
-Verify Account Unlock Attempt login again with a new password to confirm the account is unlocked
+Attempt to log in again with a new password to confirm that the account is unlocked
 {% endstep %}
 
 {% step %}
-Repeat Attack Cycle Continue sending login attempts and forgot password requests after every 5th failed attempt to sustain the attack
+Continue sending login attempts and forgot password requests after every 5th failed attempt to sustain the attack
 {% endstep %}
 {% endstepper %}
 
@@ -61,23 +61,23 @@ Repeat Attack Cycle Continue sending login attempts and forgot password requests
 
 {% stepper %}
 {% step %}
-Attempt Login with Incorrect Credentials Access https://app.example.com/signin and enter a correct email with an incorrect password for testing
+Access https://app.target.com/signin and enter a valid email with an incorrect password for testing
 {% endstep %}
 
 {% step %}
-Capture Request in Burp SuiteUse Burp Suite to intercept the login request sent to POST /auth/identity/callbac\[k]
+Use Burp Suite to intercept the login request sent to POST `/auth/identity/callbac[k]`
 {% endstep %}
 
 {% step %}
-Modify Endpoint Case Change the endpoint to POST /auth/identity/callbac\[K] by altering the last letter's case
+Change the endpoint to POST `/auth/identity/callbac[K]` by altering the case of the last letter
 {% endstep %}
 
 {% step %}
-Perform Brute Force Attack Send the modified request to Burp Intruder and start a brute force attack with a password list
+Send the modified request to Burp Intruder and initiate a brute force attack with a password list
 {% endstep %}
 
 {% step %}
-Verify Rate Limit Bypass and Successful Login Observe no rate limit after 1000 attempts; identify the single 200 response indicating correct email and password
+Observe that there is no rate limit after 1000 attempts; identify the single 200 response indicating a correct email and password
 {% endstep %}
 {% endstepper %}
 
@@ -91,21 +91,25 @@ Intercept the forgot password request
 {% endstep %}
 
 {% step %}
-Send it to repeater, forward it, you will get the response that link to reset is sent ,forward it 4 times more, everything will be fine till here i.e., till now you received 5 password reset links in email. Now send one more time and you will be blocked for 3 minutes
+Send the request to the Repeater and forward it. You will receive a response indicating that the link to reset the password has been sent
 {% endstep %}
 
 {% step %}
-Now add a space after the email&#x20;
+Forward this request 4 more times. At this point, you should have received 5 password reset links in your email. After sending one more request, you will be blocked for 3 minutes
+{% endstep %}
+
+{% step %}
+Modify the request to include a space after the email address
 
 `email=’email@gmail.com ‘ [see the space before the last quote in the email].`
 {% endstep %}
 
 {% step %}
-Send the above request 5 times, you will get 5 more links in the email and after that again you will be blocked
+Send the above request 5 times, and you will receive 5 additional links in your email. After that, you will be blocked again
 {% endstep %}
 
 {% step %}
-Repeat step 3 i.e., add another space and in this way, adding a single space after every 5 attempts we have successfully bypassed the no rate limit
+Repeat step 3 by adding another space after the email. By consistently adding a single space after every 5 attempts, you can successfully bypass the rate limit
 {% endstep %}
 {% endstepper %}
 
