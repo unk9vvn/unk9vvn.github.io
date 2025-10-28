@@ -458,7 +458,7 @@ dnsx -r 8.8.8.8 -l /tmp/subs.txt -ro | naabu -tp 1000 | httpx
 #### [DirB](https://dirb.sourceforge.net/)
 
 ```bash
-dirb $WEBSITE /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
+dirb $WEBSITE
 ```
 
 #### [DirSearch](https://github.com/maurosoria/dirsearch)
@@ -506,11 +506,26 @@ gobuster dir -u $WEBSITE \
 feroxbuster --url $WEBSITE -C 200
 ```
 
-#### [FFUF](https://github.com/ffuf/ffuf) & [Katana](https://github.com/projectdiscovery/katana)
+#### [FFUF](https://github.com/ffuf/ffuf)
+
+{% hint style="info" %}
+Directory Discovery
+{% endhint %}
 
 ```bash
 ffuf -u $WEBSITE/FUZZ \
-     -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
+     -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt \
+     -c -ac -r
+```
+
+{% hint style="info" %}
+API Discovery
+{% endhint %}
+
+```bash
+ffuf -u $WEBSITE/FUZZ \
+     -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+     -c -ac -r
 ```
 
 ### Non-Standard Ports
