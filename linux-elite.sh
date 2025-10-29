@@ -454,6 +454,7 @@ go install github.com/pwnesia/dnstake/cmd/dnstake@latest;ln -fs ~/go/bin/dnstake
 go install github.com/projectdiscovery/uncover/cmd/uncover@latest;ln -fs ~/go/bin/uncover /usr/bin/uncover
 go install github.com/projectdiscovery/dnsprobe@latest;ln -fs ~/go/bin/dnsprobe /usr/bin/dnsprobe
 go install github.com/ryandamour/crlfmap@latest;ln -fs ~/go/bin/crlfmap /usr/bin/crlfmap
+go install github.com/Chocapikk/wpprobe@latest;ln -fs ~/go/bin/wpprobe /usr/bin/wpprobe
 go install github.com/bp0lr/gauplus@latest;ln -fs ~/go/bin/gauplus /usr/bin/gauplus
 go install github.com/tomnomnom/anew@latest;ln -fs ~/go/bin/anew /usr/bin/anew
 go install github.com/hahwul/dalfox/v2@latest;ln -fs ~/go/bin/dalfox /usr/bin/dalfox
