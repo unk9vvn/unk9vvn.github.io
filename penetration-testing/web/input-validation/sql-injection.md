@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### SQL Injection
+#### Change table parameters
 
 {% stepper %}
 {% step %}
@@ -40,7 +40,7 @@ Inspect cookies by modifying their values with SQL payloads (`cookie=value' OR 1
 
 ***
 
-#### SQL Injection On Cookie Parameter
+#### Cookie Parameter
 
 {% stepper %}
 {% step %}
@@ -82,7 +82,7 @@ If the server responds to you with 5 seconds of delay, it means it is vulnerable
 
 ***
 
-#### Time-Based SQL Injection
+#### Time-Based
 
 {% stepper %}
 {% step %}
@@ -136,7 +136,7 @@ Test for additional metadata, such as table names or column names, using payload
 
 ***
 
-#### SQL Injection in Referrer Header&#x20;
+#### Referrer Header&#x20;
 
 {% stepper %}
 {% step %}
@@ -165,7 +165,7 @@ Then check if the server shows any strange behavior after injecting the payload 
 
 ***
 
-#### SQL injection In Refresh Token Parameter
+#### Refresh Token Parameter
 
 {% stepper %}
 {% step %}
@@ -225,7 +225,7 @@ By injecting this code into this parameter, it may give us an error in response,
 
 ***
 
-#### SQL Injection in Fullname Parameter
+#### Fullname Parameter
 
 {% stepper %}
 {% step %}
@@ -255,7 +255,7 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ***
 
-#### SQL injection in X-Forwarded-For Header
+#### X-Forwarded-For Header
 
 {% stepper %}
 {% step %}
@@ -326,7 +326,7 @@ IF(SUBSTRING(@@version,1,1)='5',SLEEP(5),0)
 
 ***
 
-#### Time-based blind SQL injection
+#### Time-based blind
 
 {% stepper %}
 {% step %}
@@ -360,7 +360,7 @@ Apply the same payload to similar parameters (order, filter) on other database-d
 
 ***
 
-#### Time-Based Blind SQL Injection Testing on Author-Like Parameters
+#### Testing on Author-Like Parameters
 
 {% stepper %}
 {% step %}
@@ -386,7 +386,7 @@ If the server response time is equal to the time specified in the payload, this 
 
 ***
 
-#### Time-Based Blind SQL Injection Testing on JSON roleid Parameter
+#### JSON roleid Parameter
 
 {% stepper %}
 {% step %}
@@ -448,7 +448,7 @@ Send a non-delaying request with the original roleid value (`{"roleid": 1}`) or 
 
 ***
 
-#### SQL Injection in Filename Parameter
+#### Filename Parameter
 
 {% stepper %}
 {% step %}
@@ -469,6 +469,44 @@ Now put `--sleep(15).png` in the payload file name and then check the server res
 
 {% step %}
 If the server response takes 15 seconds, the SQL Injection vulnerability in the file name is confirmed and it is vulnerable
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Signup Process
+
+{% stepper %}
+{% step %}
+Enter a username and email in the Signup form and submit it, capturing the request with Burp Suite to inspect field validation and database behavior
+{% endstep %}
+
+{% step %}
+Locate the email or username parameter in the POST request body, noting if the application allows duplicate usernames with unique emails, indicating potential truncation
+{% endstep %}
+
+{% step %}
+Create a second account with the same username and a modified email (`r3dbuck3t@bucket.com+++++hacker`), intercepting the request with Burp Suite to add encoded spaces and extra characters.
+{% endstep %}
+
+{% step %}
+Send the request and check for a 200 response, confirming the account was created despite the extra characters, suggesting truncation occurred
+{% endstep %}
+
+{% step %}
+Log in with the original email (`r3dbuck3t@bucket.com`) and the same password to verify the account authenticates, proving truncation allows duplicate access
+{% endstep %}
+
+{% step %}
+Identify an admin email (`admin@book.htb`) from public pages like Contact Us, then repeat the process with `admin@book.htb++++++hacker` to create a duplicate admin account
+{% endstep %}
+
+{% step %}
+Attempt to log in with the original admin email (`admin@book.htb`) and the new password, checking if it grants user-level access or redirects to an admin portal
+{% endstep %}
+
+{% step %}
+If user access is granted, perform directory enumeration (with `Gobuster`) to find an admin portal (`/admin`), then try logging in again to verify admin privileges
 {% endstep %}
 {% endstepper %}
 
