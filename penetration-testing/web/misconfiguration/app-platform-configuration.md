@@ -262,6 +262,16 @@ Enum Config Backups
 wpscan --url $WEBSITE --rua --api-token $TOKEN -e cb, dbe, tt
 ```
 
+#### [WPProbe](https://github.com/Chocapikk/wpprobe)
+
+{% hint style="info" %}
+Enum Plugins
+{% endhint %}
+
+```bash
+sudo wpprobe scan -u $WEBSITE --mode hybrid
+```
+
 #### [Joomscan](https://github.com/OWASP/joomscan)
 
 {% hint style="info" %}
