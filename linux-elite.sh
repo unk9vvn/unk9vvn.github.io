@@ -1,6 +1,15 @@
 #!/bin/bash
 ver="5.0"
 
+# Global variables
+GOPROXY="https://goproxy.cn,direct"
+USERS=$(ls /home | head -1)
+LAN=$(hostname -I | awk '{print $1}')
+BASE="/home/$USERS"
+CONFIG_MENU="$BASE/.config/menus"
+IMAGES="$BASE/.local/share/images"
+APPLICATIONS="$BASE/.local/share/applications"
+DESKTOP_DIRECTORIES="$BASE/.local/share/desktop-directories"
 
 # Color definitions
 readonly GREEN="\033[32m"
@@ -12,12 +21,31 @@ readonly CYAN="\033[36m"
 readonly MAGENTA="\033[35m"
 readonly RESET="\033[0m"
 
+# Message display functions
+error()
+{
+    echo -e "${RED}[-] Error: $1${RESET}" >&2
+    exit 1
+}
+
+success()
+{
+    echo -e "${GREEN}[+] $1${RESET}"
+}
+
+warning()
+{
+    echo -e "${YELLOW}[!] $1${RESET}"
+}
+
+info()
+{
+    echo -e "${BLUE}[*] $1${RESET}"
+}
 
 # Check if the script is run as root
-if [ "$(id -u)" != "0" ]; then
-    echo -e "${RED}[X] Please run as ROOT...\n"
-    echo -e "${GREEN}[*] sudo linux-elite\n${RESET}"
-    exit 0
+if [[ $EUID -ne 0 ]]; then
+    error "This script must be run as root..."
 else
     # Required packages
     REQUIRED_PACKAGES=(
@@ -28,35 +56,23 @@ else
     # Check if apt cache is older than 7 days
     APT_CACHE="/var/lib/apt/periodic/update-success-stamp"
     if [ ! -f "$APT_CACHE" ] || [ "$(find "$APT_CACHE" -mtime +6 2>/dev/null)" ]; then
-        echo -e "${GREEN}[*] System not updated in the last 7 days. Updating now...${RESET}"
+        success "System not updated in the last 7 days. Updating now."
         apt update;apt upgrade -qy;apt dist-upgrade -qy;apt autoremove -qy;apt autoclean
     else
-        echo -e "${GREEN}[*] System is up-to-date (within 7 days). Skipping update.${RESET}"
+        success "System is up-to-date (within 7 days). Skipping update."
     fi
 
     # Install missing packages only
-    echo -e "${GREEN}[*] Checking and installing required packages...${RESET}"
+    success "Checking and installing required packages."
     for pkg in "${REQUIRED_PACKAGES[@]}"; do
         if ! dpkg -s "$pkg" &>/dev/null; then
-            echo -e "${GREEN}[+] Installing missing package: $pkg${RESET}"
+            success "Installing missing package: $pkg"
             apt install -qy "$pkg"
         else
-            echo -e "${GREEN}[-] Package already installed: $pkg${RESET}"
+            success "Package already installed: $pkg"
         fi
     done
 fi
-
-# Get USER and LAN IP and GOPROXY
-export GOPROXY="https://goproxy.cn,direct"
-USERS=$(cd /home;ls | awk '{print $1}')
-LAN=$(hostname -I | awk '{print $1}')
-
-# Global variables
-BASE_PATH="/home/$USERS"
-CONFIG_MENU_PATH="$BASE_PATH/.config/menus"
-IMAGES_PATH="$BASE_PATH/.local/share/images"
-APPLICATIONS_PATH="$BASE_PATH/.local/share/applications"
-DESKTOP_DIRECTORIES_PATH="$BASE_PATH/.local/share/desktop-directories"
 
 # Display ASCII art logo
 logo()
@@ -108,17 +124,17 @@ create_menu()
     local SUB_MENU_ITEMS=($@)
 
     # Download the main icon
-    curl -s -o "$IMAGES_PATH/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
+    curl -s -o "$IMAGES/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
 
     # Create the main menu folder
-    mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU"
+    mkdir -p "$APPLICATIONS/Unk9vvN/$SUB_MENU"
 
     # Create the .directory file for the main menu
-    cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}.directory" << EOF
+    cat > "$DESKTOP_DIRECTORIES/${SUB_MENU}.directory" << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
 Comment=${TOPIC_MENU}
-Icon=$IMAGES_PATH/${SUB_MENU}.png
+Icon=$IMAGES/${SUB_MENU}.png
 Type=Directory
 EOF
 
@@ -127,15 +143,15 @@ EOF
         -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Name" -v "$SUB_MENU" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}.directory" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
 
     # Create separate submenu for each item
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
-        mkdir -p "$APPLICATIONS_PATH/Unk9vvN/$SUB_MENU/$ITEM"
+        mkdir -p "$APPLICATIONS/Unk9vvN/$SUB_MENU/$ITEM"
         
         # Create directory file for each submenu
-        cat > "$DESKTOP_DIRECTORIES_PATH/${SUB_MENU}-${ITEM}.directory" << EOF
+        cat > "$DESKTOP_DIRECTORIES/${SUB_MENU}-${ITEM}.directory" << EOF
 [Desktop Entry]
 Name=${ITEM}
 Comment=${SUB_MENU}
@@ -150,8 +166,8 @@ EOF
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Include" -v "" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     done
 
     # Add Layout to the main menu
@@ -159,41 +175,41 @@ EOF
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
 
     # Include each submenu item in the layout
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         xmlstarlet ed \
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     done
 
     # Add final Merge to the layout
     xmlstarlet ed \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
 }
 
 # main menu
 menu()
 {
-    mkdir -p "$IMAGES_PATH"
-    mkdir -p "$CONFIG_MENU_PATH"
-    mkdir -p "$APPLICATIONS_PATH"
-    mkdir -p "$DESKTOP_DIRECTORIES_PATH"
+    mkdir -p "$IMAGES"
+    mkdir -p "$CONFIG_MENU"
+    mkdir -p "$APPLICATIONS"
+    mkdir -p "$DESKTOP_DIRECTORIES"
 
     # Initialize Unk9vvN menu
-    if [ ! -f "$CONFIG_MENU_PATH/xfce-applications.menu" ]; then
+    if [ ! -f "$CONFIG_MENU/xfce-applications.menu" ]; then
 	# If the menu file does not exist, copy it from the system default file
 	if [ -f "/etc/xdg/menus/xfce-applications.menu" ]; then
-            cp "/etc/xdg/menus/xfce-applications.menu" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            cp "/etc/xdg/menus/xfce-applications.menu" "$CONFIG_MENU/xfce-applications.menu"
         else
 	    # If the default file doesn't exist, create a simple menu file
-	    cat > "$CONFIG_MENU_PATH/xfce-applications.menu" << EOF
+	    cat > "$CONFIG_MENU/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
 <!DOCTYPE Menu
   PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
@@ -242,36 +258,36 @@ menu()
 EOF
         fi
         
-        chmod 664 $CONFIG_MENU_PATH/xfce-applications.menu
+        chmod 664 $CONFIG_MENU/xfce-applications.menu
     fi
 
     # Initialize Unk9vvN menu
-    curl -s -o "$IMAGES_PATH/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
-    mkdir -p "$APPLICATIONS_PATH/Unk9vvN"
-    cat > "$DESKTOP_DIRECTORIES_PATH/Unk9vvN.directory" << EOF
+    curl -s -o "$IMAGES/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
+    mkdir -p "$APPLICATIONS/Unk9vvN"
+    cat > "$DESKTOP_DIRECTORIES/Unk9vvN.directory" << EOF
 [Desktop Entry]
 Name=Unk9vvN
 Comment=unk9vvn.github.io
-Icon=$IMAGES_PATH/unk9vvn-logo.jpg
+Icon=$IMAGES/unk9vvn-logo.jpg
 Type=Directory
 EOF
 
     # Add Unk9vvN menu to menu file
-    if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+    if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']" "$CONFIG_MENU/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "/Menu" -t elem -n "Menu" -v "" \
             -s "/Menu/Menu[last()]" -t elem -n "Name" -v "Unk9vvN" \
             -s "/Menu/Menu[last()]" -t elem -n "Directory" -v "Unk9vvN.directory" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     fi
 
     # Add the Unk9vvN menu to the Layout section of the menu file
-    if ! xmlstarlet sel -Q -t -v "/Menu/Layout/Menuname[text()='Unk9vvN']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+    if ! xmlstarlet sel -Q -t -v "/Menu/Layout/Menuname[text()='Unk9vvN']" "$CONFIG_MENU/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "/Menu/Layout" -t elem -n "Menuname" -v "Unk9vvN" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     fi
 
     # Initialize additional menus
@@ -292,7 +308,7 @@ menu_entry()
     local command="$4"
 
     # Create the .desktop file for the tool
-    cat > "$APPLICATIONS_PATH/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
+    cat > "$APPLICATIONS/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
 [Desktop Entry]
 Name=${tool}
 Exec=${command}
@@ -306,19 +322,19 @@ EOF
     local menu_path="/Menu/Menu[Name='Unk9vvN']/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
     
     # Check if Include element exists in the correct path
-    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include" "$CONFIG_MENU/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "${menu_path}" -t elem -n "Include" -v "" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     fi
 
     # Add the tool to the existing Include section if it doesn't already exist
-    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include/Filename[text()='${tool}.desktop']" "$CONFIG_MENU_PATH/xfce-applications.menu"; then
+    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include/Filename[text()='${tool}.desktop']" "$CONFIG_MENU/xfce-applications.menu"; then
         xmlstarlet ed \
             -s "${menu_path}/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-            "$CONFIG_MENU_PATH/xfce-applications.menu" > "$CONFIG_MENU_PATH/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU_PATH/xfce-applications.tmp" "$CONFIG_MENU_PATH/xfce-applications.menu"
+            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
     fi
 }
 
