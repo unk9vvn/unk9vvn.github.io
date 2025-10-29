@@ -1223,6 +1223,21 @@ EOF
 		printf "$GREEN"  "[*] Successfully Installed $name"
 	fi
 
+	# install asminject
+	if [ ! -d "/usr/share/asminject" ]; then
+		name="asminject"
+		git clone https://github.com/BishopFox/asminject /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 asminject.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		printf "$GREEN"  "[*] Successfully Installed $name"
+	fi
+
 	# install asnlookup
 	if [ ! -d "/usr/share/asnlookup" ]; then
 		name="asnlookup"
