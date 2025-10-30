@@ -457,7 +457,7 @@ if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null
 fi
 
-sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+sudo multitor --init 10 --user debian-tor --socks-port 9000 --control-port 9900 --proxy socks
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
@@ -656,7 +656,7 @@ if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null
 fi
 
-sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+sudo multitor --init 10 --user debian-tor --socks-port 9000 --control-port 9900 --proxy socks
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
@@ -908,7 +908,7 @@ if command -v multitor &>/dev/null; then
     multitor -k &>/dev/null
 fi
 
-sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
+sudo multitor --init 10 --user debian-tor --socks-port 9000 --control-port 9900 --proxy socks
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
