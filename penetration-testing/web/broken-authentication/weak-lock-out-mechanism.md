@@ -395,10 +395,15 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils haproxy privoxy golang-go ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
 
 # Install Packages
 for pkg in $DEPS; do
@@ -449,7 +454,7 @@ fi
 
 # Start multitor
 if command -v multitor &>/dev/null; then
-    multitor -k &>/dev/null || true
+    multitor -k &>/dev/null
 fi
 
 sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
@@ -536,21 +541,17 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
 ```
@@ -592,10 +593,15 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils haproxy privoxy go-golang ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
 
 # Install Packages
 for pkg in $DEPS; do
@@ -646,7 +652,7 @@ fi
 
 # Start multitor
 if command -v multitor &>/dev/null; then
-    multitor -k &>/dev/null || true
+    multitor -k &>/dev/null
 fi
 
 sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
@@ -782,25 +788,21 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
-         -w "/tmp/forwarded.txt:FUZZ4" \
+         -w "/tmp/forwarded.txt:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "FUZZ4" \
-         -H "User-Agent:FUZZ3" \
+         -H "FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
-         -w "/tmp/forwarded.txt:FUZZ4" \
+         -w "/tmp/forwarded.txt:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "FUZZ4" \
-         -H "User-Agent:FUZZ3" \
+         -H "FUZZ3" \
          "${HEADERS[@]}"
 fi
 ```
@@ -842,10 +844,15 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils go-golang haproxy privoxy ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
 
 # Install Packages
 for pkg in $DEPS; do
@@ -896,7 +903,7 @@ fi
 
 # Start multitor
 if command -v multitor &>/dev/null; then
-    multitor -k &>/dev/null || true
+    multitor -k &>/dev/null
 fi
 
 sudo multitor --init 20 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy
@@ -982,21 +989,17 @@ if [[ "$METHOD" == "get" ]]; then
     ffuf -u "$FFUF_URL" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X GET \
          -ac -c -r -mc 200 \
-         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
          -w "$USERLIST:FUZZ1" \
          -w "$PASSLIST:FUZZ2" \
-         -w "$UA:FUZZ3" \
          -x "socks5://127.0.0.1:16379" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
-         -H "User-Agent:FUZZ3" \
          "${HEADERS[@]}"
 fi
 ```
