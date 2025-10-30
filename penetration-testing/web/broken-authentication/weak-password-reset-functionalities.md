@@ -132,7 +132,7 @@ If the request parameter contains a site path, change that parameter to the `att
 
 ***
 
-#### s
+#### Account Take Over Via Redirect Parameters
 
 {% stepper %}
 {% step %}
