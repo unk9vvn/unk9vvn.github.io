@@ -13,7 +13,7 @@
 
 {% stepper %}
 {% step %}
-For the first step, we can view default usernames and passwords in the list of these lists using Github repositories
+For the first step, we can view default usernames and passwords in the list of these lists using GitHub repositories
 {% endstep %}
 
 {% step %}
@@ -114,9 +114,12 @@ sudo nano default-bruteforce.sh
 ```bash
 #!/bin/bash
 
-# Config
-USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
-PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
+# Config & Colors
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
+
+# Root Check
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
 # Input Check
 if [ $# -lt 1 ]; then
@@ -125,6 +128,23 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
+USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
+PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
+DEPS="git seclists go-golang ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+# Install Packages
+for pkg in $DEPS; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        color_print YELLOW "[!] Installing $pkg..."
+        apt install -y "$pkg"
+    fi
+done
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \

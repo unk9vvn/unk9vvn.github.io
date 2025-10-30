@@ -522,6 +522,7 @@ DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
 HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
@@ -720,6 +721,7 @@ DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
 HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
   -H "Content-Type: application/x-www-form-urlencoded"
@@ -971,6 +973,7 @@ DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2&${CAPTCHA}"
 COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
 
 HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
   -H "Content-Type: application/x-www-form-urlencoded"
