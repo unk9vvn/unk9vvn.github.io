@@ -398,7 +398,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -435,7 +435,16 @@ fi
 
 # Ensure Tor service is running
 if ! systemctl is-active --quiet tor; then
-    service tor start
+    tee -a /etc/tor/torrc > /dev/null <<'EOF'
+UseBridges 1
+ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+
+Bridge obfs4 185.177.207.108:12346 90F67B8B09B66CF21E3FE73135F90FEAA4637B9B cert=p9L6+25s8bnfkye1ZxFeAE4mAGY7DH4Gaj7dxngIIzP9BtqrHHwZXdjMK0RVIQ34C7aqZw iat-mode=2
+Bridge obfs4 66.179.241.33:4443 08BB8323DBA94BC5CC92F3F29D055AB6DC154682 cert=ffMu7MGljgKTcpZi0K0n70LBnXEnRl+4aWJ4t2SuLbpQ50kvYz/UkZEodii8lQzVxUqzJA iat-mode=0
+EOF
+    systemctl start tor@default
+    sleep 60
+    proxychains curl -sS https://check.torproject.org | grep -i "Congratulations\|not using tor"
 fi
 
 # Start multitor
@@ -586,7 +595,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -623,7 +632,16 @@ fi
 
 # Ensure Tor service is running
 if ! systemctl is-active --quiet tor; then
-    service tor start
+    tee -a /etc/tor/torrc > /dev/null <<'EOF'
+UseBridges 1
+ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+
+Bridge obfs4 185.177.207.108:12346 90F67B8B09B66CF21E3FE73135F90FEAA4637B9B cert=p9L6+25s8bnfkye1ZxFeAE4mAGY7DH4Gaj7dxngIIzP9BtqrHHwZXdjMK0RVIQ34C7aqZw iat-mode=2
+Bridge obfs4 66.179.241.33:4443 08BB8323DBA94BC5CC92F3F29D055AB6DC154682 cert=ffMu7MGljgKTcpZi0K0n70LBnXEnRl+4aWJ4t2SuLbpQ50kvYz/UkZEodii8lQzVxUqzJA iat-mode=0
+EOF
+    systemctl start tor@default
+    sleep 60
+    proxychains curl -sS https://check.torproject.org | grep -i "Congratulations\|not using tor"
 fi
 
 # Start multitor
@@ -827,7 +845,7 @@ URL="$1"
 UA="/usr/share/seclists/Fuzzing/User-Agents/UserAgents.fuzz.txt"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor npm proxychains nodejs obfs4proxy dnsutils bind9-utils haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils bind9-utils haproxy privoxy ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -864,7 +882,16 @@ fi
 
 # Ensure Tor service is running
 if ! systemctl is-active --quiet tor; then
-    service tor start
+    tee -a /etc/tor/torrc > /dev/null <<'EOF'
+UseBridges 1
+ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+
+Bridge obfs4 185.177.207.108:12346 90F67B8B09B66CF21E3FE73135F90FEAA4637B9B cert=p9L6+25s8bnfkye1ZxFeAE4mAGY7DH4Gaj7dxngIIzP9BtqrHHwZXdjMK0RVIQ34C7aqZw iat-mode=2
+Bridge obfs4 66.179.241.33:4443 08BB8323DBA94BC5CC92F3F29D055AB6DC154682 cert=ffMu7MGljgKTcpZi0K0n70LBnXEnRl+4aWJ4t2SuLbpQ50kvYz/UkZEodii8lQzVxUqzJA iat-mode=0
+EOF
+    systemctl start tor@default
+    sleep 60
+    proxychains curl -sS https://check.torproject.org | grep -i "Congratulations\|not using tor"
 fi
 
 # Start multitor
