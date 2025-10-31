@@ -2401,9 +2401,24 @@ EOF
 	# install multitor
 	if [ ! -d "/usr/share/multitor" ]; then
 		local name="multitor"
+		apt install -y tor torsocks obfs4proxy npm proxychains nodejs dnsutils haproxy privoxy3
+		npm install -g multitor http-proxy-to-socks
+		wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
+		chmod +x /tmp/polipo_amd64.deb;dpkg -i /tmp/polipo_amd64.deb;rm -f /tmp/polipo_amd64.deb
+		tee -a /etc/tor/torrc > /dev/null <<'EOF'
+UseBridges 1
+ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+Bridge obfs4 42.188.96.115:4000 870F26082914EAC71791341013CC646E81B4B140 cert=0FCqRLXHkFCD9UQ1PfuiIMGcmPVntTehCuWfT1e7sQs12d08HOcu03gLrW3/f7HtHdWRXw iat-mode=0
+Bridge obfs4 217.154.17.223:9003 62226AAB4E627E67D1909827DBE0050EADE5B281 cert=ZO+dyJRGDHe9TV0marIF/lmtxnKg4vqzT+U2K29fQl7Y+zX2p+DojhHgYjLGOalGudhheA iat-mode=0
+Bridge obfs4 51.83.248.35:25981 D08B4760D128C1A65506577E063D9D26C2A71815 cert=UJWUh+sIDdOKja/byBM2+qP9AFNl86hkGRFJ/lM1GWKP79eCu3PT4WTXI2gdXYULbQ0EMg iat-mode=0
+Bridge obfs4 49.13.131.4:52272 34EC2B21400195274E390E9EA564439C9DBB4E36 cert=g6Raa9uydXdmtQ545qtRpw2PoTwRrHN7y9Wv83uCjaLko3JGSLhnHeB08JDqHZFSALLTCw iat-mode=0
+EOF
 		git clone https://github.com/trimstray/multitor /usr/share/$name
-		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;./setup.sh install
+		chmod +x /usr/share/$name/*
+		cd /usr/share/$name && sudo ./setup.sh install
+		chmod 700 /var/lib/$name
+		chmod /usr/local/bin/$name
+		chown debian-tor:debian-tor /var/lib/$name
 		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
 		success "Successfully Installed $name"
 	fi
