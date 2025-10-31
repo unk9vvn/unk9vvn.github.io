@@ -4106,7 +4106,9 @@ EOF
 		cd /usr/share/$name;make server;make extenders;make client
 		cd /usr/share/$name/extension-kit;make
 		ln -fs /usr/share/$name/dist/adaptixserver /usr/bin/adaptixserver
+		ln -fs /usr/share/$name/dist/AdaptixClient /usr/bin/adaptixclient
 		chmod +x /usr/bin/adaptixserver
+		chmod +x /usr/bin/adaptixclient
 		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
 		success "Successfully Installed $name"
 	fi
