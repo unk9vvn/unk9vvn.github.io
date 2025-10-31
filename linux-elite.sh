@@ -4095,6 +4095,22 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+	# install adaptixc2
+	if [ ! -d "/usr/share/adaptixc2" ]; then
+		local name="adaptixc2"
+		apt install -y gcc g++ build-essential make cmake mingw-w64 g++-mingw-w64 libssl-dev qt6-base-dev qt6-base-private-dev libxkbcommon-dev qt6-websockets-dev qt6-declarative-dev
+		git clone https://github.com/Adaptix-Framework/AdaptixC2 /usr/share/$name
+		git clone https://github.com/Adaptix-Framework/Extension-Kit /usr/share/$name/extension-kit
+		chmod 755 /usr/share/$name/*
+		chmod 755 /usr/share/$name/extension-kit/*
+		cd /usr/share/$name;make server;make extenders;make client
+		cd /usr/share/$name/extension-kit;make
+		ln -fs /usr/share/$name/dist/adaptixserver /usr/bin/adaptixserver
+		chmod +x /usr/bin/adaptixserver
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		success "Successfully Installed $name"
+	fi
+
 	# install eggshell
 	if [ ! -d "/usr/share/eggshell" ]; then
 		local name="eggshell"
