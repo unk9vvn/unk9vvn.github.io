@@ -86,7 +86,6 @@ Content-Disposition: form-data; name="file_upload"; filename="test.txt"
 Content-Type: text/plain
 
 test
-
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="formats"
 
@@ -117,10 +116,6 @@ Content-Disposition: form-data; name="file_upload"; filename="test.txt"
 Content-Type: text/plain
 
 test
-
------------------------------327175120238370517612522354688
-Content-Disposition: form-data; name="versions"
-
 -----------------------------327175120238370517612522354688
 Content-Disposition: form-data; name="thumb_size"
 
