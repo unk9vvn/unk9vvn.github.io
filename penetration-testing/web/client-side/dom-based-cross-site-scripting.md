@@ -82,6 +82,48 @@ https://example.org/search?q=@<script>prompt(1337)</script>gmail.com
 
 ***
 
+#### SPA Sites
+
+{% stepper %}
+{% step %}
+Find any JavaScript-heavy site or SPA with client-side rendering
+{% endstep %}
+
+{% step %}
+Check the page source or dev tools to locate JS code using `innerHTML`, `document.write`, `insertAdjacentHTML`, or `outerHTML`
+{% endstep %}
+
+{% step %}
+Make a normal interaction (`search`, `profile`, `settings`) and use Elements tab to see if user input (`URL param`, form, `localStorage`) flows into these DOM sinks
+{% endstep %}
+
+{% step %}
+Then inject a test payload like  into the input source (`URL`, `field`, `hash`)
+{% endstep %}
+
+{% step %}
+Example URL
+
+```
+https://target.com/search?q=<img src=x onerror=alert(1)>
+```
+{% endstep %}
+
+{% step %}
+Example Hash
+
+```
+#<svg onload=alert(1)>
+```
+{% endstep %}
+
+{% step %}
+If the payload appears in DOM and alert fires without server response change, DOM XSS is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
