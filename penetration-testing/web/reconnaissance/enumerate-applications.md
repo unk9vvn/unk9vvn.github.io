@@ -404,7 +404,7 @@ Subdomain New Gen
 cat /tmp/subdomains.txt | alterx -o /tmp/gen-subdomains.txt
 ```
 
-#### [Httpx-Toolkit](https://github.com/projectdiscovery/httpx)
+#### [Httpx](https://github.com/projectdiscovery/httpx)
 
 {% hint style="info" %}
 Resolve Live Subdomains
@@ -504,6 +504,16 @@ gobuster dir -u $WEBSITE \
 
 ```sh
 feroxbuster --url $WEBSITE -C 200
+```
+
+#### [TLDFinder](https://github.com/projectdiscovery/tldfinder)
+
+{% hint style="info" %}
+Find all tlds
+{% endhint %}
+
+```bash
+tldfinder -d $WEBSITE -dm domain -all
 ```
 
 #### [FFUF](https://github.com/ffuf/ffuf)

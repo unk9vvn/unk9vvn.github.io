@@ -87,7 +87,6 @@
   * [Server Side Request Forgery](web/input-validation/server-side-request-forgery.md)
   * [Mass Assignment](web/input-validation/mass-assignment.md)
   * [Regular Expression DoS](web/input-validation/regular-expression-dos.md)
-  * [PHP Type Juggling](web/input-validation/php-type-juggling.md)
 * [Error Handling](web/error-handling/README.md)
   * [Improper Error Handling](web/error-handling/improper-error-handling.md)
   * [Stack Traces](web/error-handling/stack-traces.md)

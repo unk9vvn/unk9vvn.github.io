@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://swisskyrepo.github.io/PayloadsAllTheThings/Mass%20Assignment/)
 
 #### HTTP Method Override (PUT) in User APIs
 
