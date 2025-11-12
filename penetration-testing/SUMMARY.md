@@ -16,7 +16,7 @@
   * [Infrastructure](web/open-source-intelligence/infrastructure.md)
   * [People Investigation](web/open-source-intelligence/people-investigation.md)
 * [Misconfiguration](web/misconfiguration/README.md)
-  * [Network Configuration](web/misconfiguration/network-configuration.md)
+  * [Network Infrastructure Configuration](web/misconfiguration/network-configuration.md)
   * [App Platform Configuration](web/misconfiguration/app-platform-configuration.md)
   * [File Extensions Handling](web/misconfiguration/file-extensions-handling.md)
   * [Review Old Backup](web/misconfiguration/review-old-backup.md)
