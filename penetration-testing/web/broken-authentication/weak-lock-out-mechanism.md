@@ -397,7 +397,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils haproxy privoxy golang-go ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -597,7 +597,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils haproxy privoxy go-golang ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -850,7 +850,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs dnsutils go-golang haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
