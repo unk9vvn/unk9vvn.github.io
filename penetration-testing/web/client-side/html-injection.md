@@ -352,9 +352,9 @@ Generate the PDF again and open it, If `/etc/passwd` or `system.ini` contents ar
 {% step %}
 Then read other sensitive files
 
-* file:///etc/hosts
-* file:///proc/version
-* file:///var/www/html/config.php
+* `file:///etc/hosts`
+* `file:///proc/version`
+* `file:///var/www/html/config.php`
 {% endstep %}
 {% endstepper %}
 
