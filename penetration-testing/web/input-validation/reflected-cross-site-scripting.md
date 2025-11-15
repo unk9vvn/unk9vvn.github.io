@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### XSS Reflected
+#### [XSS Reflected](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#common-payloads)
 
 {% stepper %}
 {% step %}
@@ -46,7 +46,7 @@ If the system is vulnerable, the JavaScript code will execute (e.g., an `alert(1
 
 ***
 
-#### XSS IN Email
+#### [XSS IN Email](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#common-payloads)
 
 {% stepper %}
 {% step %}
@@ -99,7 +99,7 @@ Repeat with the alternative payload examples from the report (iframe-based spoof
 
 ***
 
-#### Reflected XSS In Marketing Reports Page
+#### [Reflected XSS In Marketing Reports Page](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#wrapper-javascript)
 
 {% stepper %}
 {% step %}
@@ -129,7 +129,7 @@ If it is implemented, we hit a vulnerability
 
 ***
 
-#### Reflected cross site scripting (XSS) attacks
+#### [Reflected Cross Site Scripting (XSS) Attacks](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#common-payloads)
 
 {% stepper %}
 {% step %}
@@ -155,7 +155,7 @@ errmsg = [https://102.176.160.119:10443/remote/error?errmsg=ABABAB--%3E%3Cscript
 
 ***
 
-#### DOM XSS
+#### [DOM XSS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#dom-based-xss)
 
 {% stepper %}
 {% step %}
@@ -177,7 +177,7 @@ https://www.example.com/#<img src=x onerror=alert('XSS')>
 
 ***
 
-#### DOMXSS in redirect param
+#### [DOM XSS in redirect param](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#dom-based-xss)
 
 {% stepper %}
 {% step %}
@@ -203,7 +203,7 @@ Log in through email
 
 ***
 
-#### XSS Reflected in Redirect\_url
+#### [XSS Reflected in Redirect\_url](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#xss-in-wrappers-for-uri)
 
 {% stepper %}
 {% step %}
@@ -229,7 +229,7 @@ If the code is reflected, the vulnerability has occurred
 
 ***
 
-#### Payload For WAF Bypass
+#### [Payload For WAF Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/XSS%20Injection/3%20-%20XSS%20Common%20WAF%20Bypass.md)
 
 {% stepper %}
 {% step %}
@@ -253,7 +253,7 @@ https://www.starbucks.com.br/testing%80%2522%2520accesskey='x'%2520onclick='conf
 
 ***
 
-#### Location Information Parameter&#x20;
+#### [Location Information Parameter ](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/XSS%20Injection/2%20-%20XSS%20Polyglot.md#polyglot-xss)
 
 {% stepper %}
 {% step %}

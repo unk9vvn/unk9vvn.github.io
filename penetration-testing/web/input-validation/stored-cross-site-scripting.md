@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### Blind XSS
+#### [Blind XSS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#blind-xss)
 
 {% stepper %}
 {% step %}
@@ -40,6 +40,8 @@ Open or refresh the support chat page; when the filename containing the payload 
 
 ***
 
+#### [XSS in Private Messaging](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#common-payloads)
+
 {% stepper %}
 {% step %}
 Go to another users profile
@@ -72,7 +74,7 @@ Wait for the victim to read the message
 
 ***
 
-#### XSS In JSON Parameter
+#### [XSS In JSON Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#common-payloads)
 
 {% stepper %}
 {% step %}
@@ -113,7 +115,7 @@ After sending the request to the server, it may give us an error code 400 in the
 
 ***
 
-#### localStorage Data Exfiltration To An Attacker Server Via XSS
+#### [localStorage Data Exfiltration To An Attacker Server Via XSS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#xss-in-wrappers-for-uri)
 
 {% stepper %}
 {% step %}

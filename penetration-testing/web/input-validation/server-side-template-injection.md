@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#inject-template-syntax)
 
 #### Server‑Side Template Injection (SSTI) in Next.js
 

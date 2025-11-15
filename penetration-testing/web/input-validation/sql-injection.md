@@ -40,7 +40,7 @@ Inspect cookies by modifying their values with SQL payloads (`cookie=value' OR 1
 
 ***
 
-#### Cookie Parameter
+#### [Cookie Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#time-based-injection)
 
 {% stepper %}
 {% step %}
@@ -82,7 +82,7 @@ If the server responds to you with 5 seconds of delay, it means it is vulnerable
 
 ***
 
-#### [Time-Based](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/#time-based-injection)
+#### [Time-Based](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#time-based-injection)
 
 {% stepper %}
 {% step %}
@@ -136,7 +136,7 @@ Test for additional metadata, such as table names or column names, using payload
 
 ***
 
-#### Referrer Header&#x20;
+#### [Referrer Header ](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
 
 {% stepper %}
 {% step %}
@@ -165,7 +165,7 @@ Then check if the server shows any strange behavior after injecting the payload 
 
 ***
 
-#### Refresh Token Parameter
+#### [Refresh Token Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/MSSQL%20Injection.md#mssql-time-based)
 
 {% stepper %}
 {% step %}
@@ -224,7 +224,7 @@ By injecting this code into this parameter, it may give us an error in response,
 
 ***
 
-#### Fullname Parameter
+#### [Fullname Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
 
 {% stepper %}
 {% step %}
@@ -254,7 +254,7 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ***
 
-#### X-Forwarded-For Header
+#### [X-Forwarded-For Header](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
 
 {% stepper %}
 {% step %}
@@ -325,7 +325,7 @@ IF(SUBSTRING(@@version,1,1)='5',SLEEP(5),0)
 
 ***
 
-#### [Time-based Blind](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/#blind-injection)
+#### [Time-based blind](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#blind-injection)
 
 {% stepper %}
 {% step %}
@@ -359,7 +359,7 @@ Apply the same payload to similar parameters (order, filter) on other database-d
 
 ***
 
-#### Testing on Author-Like Parameters
+#### [Testing on Author-Like Parameters](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#time-based-injection)
 
 {% stepper %}
 {% step %}
@@ -385,7 +385,7 @@ If the server response time is equal to the time specified in the payload, this 
 
 ***
 
-#### JSON roleid Parameter
+#### [JSON roleid Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#time-based-injection)
 
 {% stepper %}
 {% step %}
@@ -447,7 +447,7 @@ Send a non-delaying request with the original roleid value (`{"roleid": 1}`) or 
 
 ***
 
-#### Filename Parameter
+#### [Filename Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#time-based-injection)
 
 {% stepper %}
 {% step %}

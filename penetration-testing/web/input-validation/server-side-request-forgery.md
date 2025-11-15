@@ -6,13 +6,15 @@
 
 ### Black Box
 
+#### SSRF In Next.js
+
 {% stepper %}
 {% step %}
 Go to the site that uses Next Js technology, right click and select View Page Source
 {% endstep %}
 
 {% step %}
-Search for /\_next/image?url= and see if you see anything
+Search for `/_next/image?url=` and see if you see anything
 {% endstep %}
 
 {% step %}
@@ -34,7 +36,7 @@ Check if the server has hit our server or not, if it has hit, the vulnerability 
 
 {% stepper %}
 {% step %}
-A common one. Think about functions where the application fetches something based on a URL — maybe an image importer or data fetcher. If the app is grabbing content from an external URL, you can bet it might be susceptible to SSRF, especially if there’s no proper validation. The idea here is to try feeding internal URLs like http://localhost or http://127.0.0.1
+A common one. Think about functions where the application fetches something based on a URL — maybe an image importer or data fetcher. If the app is grabbing content from an external URL, you can bet it might be susceptible to SSRF, especially if there’s no proper validation. The idea here is to try feeding internal URLs like `http://localhost` or `http://127.0.0.1`
 {% endstep %}
 
 {% step %}
@@ -64,7 +66,7 @@ Path Parameters and Host Headers: Pay close attention to how path parameters and
 
 {% stepper %}
 {% step %}
-Login to Platform Access https://example.com/ and sign in with valid credentials
+Login to Platform Access `https://example.com/` and sign in with valid credentials
 {% endstep %}
 
 {% step %}
@@ -108,7 +110,7 @@ Wait 3 minutes and check timing server logs for exfiltrated data like SSH keys, 
 
 ***
 
-#### SSRF via remote\_attachment\_url injection in Export/Import mechanism
+#### SSRF via Remote\_Attachment\_Url injection in Export/Import Mechanism
 
 {% stepper %}
 {% step %}
@@ -146,7 +148,7 @@ On the attacker-controlled server, check logs or callbacks to confirm the target
 
 ***
 
-#### Webhook-based SSRF via DNS rebinding
+#### Webhook-Based SSRF via DNS Rebinding
 
 {% stepper %}
 {% step %}
@@ -188,7 +190,7 @@ Inspect attacker-controlled server logs to confirm the target server fetched the
 
 ***
 
-#### Full-read SSRF — Local file read and AWS metadata (IMDS) exfiltration via Base64-encoded path parameter
+#### Full-Read SSRF — Local File Read And AWS Metadata (IMDS) Exfiltration via Base64-Encoded Path Parameter
 
 {% stepper %}
 {% step %}
@@ -240,7 +242,7 @@ Verify Internal Access Check response for AWS metadata contents, confirming SSRF
 
 ***
 
-#### SSRF in graphQL query
+#### SSRF in GraphQL Query
 
 {% stepper %}
 {% step %}
@@ -274,7 +276,7 @@ Use SSRF to map open ports and internal services for further vulnerability disco
 
 ***
 
-#### Image-proxy SSRF
+#### Image-Proxy SSRF
 
 {% stepper %}
 {% step %}
@@ -308,7 +310,7 @@ Document successful internal service interactions confirming cross-origin port s
 
 ***
 
-#### SSRF chained to hit internal host leading to another SSRF which allows to read internal images
+#### SSRF Chained To Hit Internal Host Leading To Another SSRF Which Allows to Read Internal Images
 
 {% stepper %}
 {% step %}
@@ -348,7 +350,7 @@ Document flow: image.api.np.km.playstation.net fetches from dis.api.np.playstati
 
 ***
 
-#### SSRF in url parameter
+#### SSRF in Url Parameter
 
 {% stepper %}
 {% step %}
@@ -428,7 +430,7 @@ Listen on `118.89.198.146:8000` and confirm incoming reverse shell from GitLab s
 
 ***
 
-#### Blind SSRF — image/URL-downloader endpoint
+#### [Blind SSRF — image/URL-Downloader Endpoint](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#blind-exploitation)
 
 {% stepper %}
 {% step %}
@@ -533,7 +535,7 @@ Content-Length: 261
 
 ***
 
-#### SSRF — timing-based/internal port-scanning via URL-input endpoints
+#### SSRF — Timing-Based/Internal Port-Scanning via URL-Input Endpoints
 
 {% stepper %}
 {% step %}
@@ -541,7 +543,7 @@ Identify URL Input Endpoint
 {% endstep %}
 
 {% step %}
-Locate API endpoint accepting user-supplied URLs (e.g., POST /api/profile/upload\_picture with "picture\_url" parameter)
+Locate API endpoint accepting user-supplied URLs (`POST /api/profile/upload_picture with "picture_url"` parameter)
 {% endstep %}
 
 {% step %}
@@ -549,7 +551,7 @@ Submit Malicious Localhost URL
 {% endstep %}
 
 {% step %}
-Send request with: {"picture\_url": "http://localhost:8080"}
+Send request with: `{"picture_url": "http://localhost:8080"}`
 {% endstep %}
 
 {% step %}
@@ -557,7 +559,7 @@ Measure Response Time
 {% endstep %}
 
 {% step %}
-Record time taken for server response to determine if port 8080 is open
+Record time taken for server response to determine if port `8080` is open
 {% endstep %}
 
 {% step %}
@@ -565,7 +567,7 @@ Test Multiple Ports
 {% endstep %}
 
 {% step %}
-Submit requests with "http://localhost:PORT" for ports 22, 25, 80, 443, 3000, 8080, 6379
+Submit requests with `"http://localhost:PORT"` for ports `22`, `25`, `80`, `443`, `3000`, `8080`, `6379`
 {% endstep %}
 
 {% step %}
@@ -573,17 +575,17 @@ Submit `"http://127.0.0.1:PORT"`, `"http://169.254.169.254/latest/meta-data/"`, 
 {% endstep %}
 
 {% step %}
-Document open ports based on response times (<2s = open, >10s = filtered, timeout = closed)
+Document open ports based on response times `(<2s = open, >10s = filtered, timeout = closed`)
 {% endstep %}
 
 {% step %}
-Confirm response contains AWS/GCP metadata when using "http://169.254.169.254" or equivalent
+Confirm response contains AWS/GCP metadata when using `"http://169.254.169.254"` or equivalent
 {% endstep %}
 {% endstepper %}
 
 ***
 
-#### Bypassing SSRF Protection
+#### [Bypassing SSRF Protection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypass-using-different-encoding)
 
 {% stepper %}
 {% step %}
@@ -633,7 +635,7 @@ Hypothesize blacklist logic (e.g., regex for 127.0.0.1), design bypasses for ass
 
 ***
 
-#### SSRF via service-import with 303-redirect bypass to exfiltrate AWS IMDS
+#### [SSRF via Service-Import With 303-Redirect Bypass to Exfiltrate AWS IMDS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypassing-filters)
 
 {% stepper %}
 {% step %}
@@ -695,7 +697,7 @@ Use extracted credentials to attempt AWS CLI commands like ec2 stop-instances --
 
 {% stepper %}
 {% step %}
-Send GET request to https://abc.victim.com/ with X-Forwarded-Host: a.com and confirm 500 Internal Server Error
+Send GET request to `https://abc.victim.com/` with `X-Forwarded-Host: A.com` and confirm 500 Internal Server Error
 {% endstep %}
 
 {% step %}
@@ -711,7 +713,7 @@ Send GET https://abc.victim.com/ with X-Forwarded-Host: attacker.com and confirm
 {% endstep %}
 
 {% step %}
-Identify SSRF request with JSON {"type": "user"}, change to {"type": "admin"} on attacker.com server
+Identify SSRF request with JSON `{"type": "user"}`, change to `{"type": "admin"}` on attacker.com server
 {% endstep %}
 
 {% step %}
@@ -767,7 +769,7 @@ Note that localhost port scanning causes denial of service and cease further sca
 
 ***
 
-#### DNS‑rebinding‑assisted Blind SSRF
+#### [DNS‑Rebinding‑Assisted Blind SSRF](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypass-using-dns-rebinding)
 
 {% stepper %}
 {% step %}
@@ -872,7 +874,7 @@ Document DNS resolutions and connection attempts to internal IPs/ports confirmin
 
 ***
 
-#### Full‑read SSRF via PDF generation endpoint
+#### Full‑Read SSRF via PDF Generation Endpoint
 
 {% stepper %}
 {% step %}
@@ -902,7 +904,7 @@ Submit `url=http://169.254.169.254/latest/meta-data/identity-credentials/ec2/sec
 
 ***
 
-####
+#### [Blind SSRF with DNS Rebinding](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#blind-exploitation)
 
 {% stepper %}
 {% step %}
@@ -910,7 +912,7 @@ Examine Burp Suite HTTP History for sensitive GraphQL requests after initial tes
 {% endstep %}
 
 {% step %}
-Locate POST `/agw/graphql?op=UrlReachableVerifierQuery` with variables: `{"url": "http://example.com/"}`
+Locate POST `/agw/graphql?op=UrlReachableVerifierQuery` with variables`{"url": "http://example.com/"}`
 {% endstep %}
 
 {% step %}

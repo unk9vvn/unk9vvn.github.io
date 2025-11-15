@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection)
 
-#### s
+#### Reflected Command Injection In an Embedded Cloud Shell
 
 {% stepper %}
 {% step %}
@@ -43,7 +43,7 @@ inject `project=asd''';import os;os.system("id");print(''` , Reload and check te
 
 ***
 
-#### Blind injection
+#### XML field
 
 {% stepper %}
 {% step %}
@@ -63,7 +63,7 @@ Send a baseline request with normal input and record the average response time (
 {% endstep %}
 
 {% step %}
-Inject a cross-platform time-delay payload into the field using command chaining to force a \~10–15 second delay:
+Inject a cross-platform time-delay payload into the field using command chaining to force a `~10–15` second delay:
 
 ```bash
 <Number>|ping -n 11 127.0.0.1||ping -c 11 127.0.0.1</Number>

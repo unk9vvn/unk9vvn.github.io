@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### HRS With Content-Length And Transfer-Encoding
+#### [HRS With Content-Length And Transfer-Encoding](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Request%20Smuggling#clte-vulnerabilities)
 
 {% stepper %}
 {% step %}
@@ -30,7 +30,7 @@ Check if the response indicates the backend processed the smuggled `GET /admin` 
 
 ***
 
-#### HTTP/2 To HTTP/1.1 Downgrade
+#### [HTTP/2 To HTTP/1.1 Downgrade](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Request%20Smuggling#http2-request-smuggling)
 
 {% stepper %}
 {% step %}
@@ -54,7 +54,7 @@ Verify if the backend executes the smuggled GET /admin request
 
 ***
 
-#### Multi-Chunked Smuggling
+#### [Multi-Chunked Smuggling](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Request%20Smuggling#tete-vulnerabilities)
 
 {% stepper %}
 {% step %}
@@ -223,7 +223,7 @@ Trace the smuggled request across each hop and check for discrepancies in proces
 
 ***
 
-#### Basic CRLF Injection
+#### [Basic CRLF Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#carriage-return-line-feed)
 
 {% stepper %}
 {% step %}
@@ -245,7 +245,7 @@ The important thing is that if you inject the payload and get a 400 in response,
 
 ***
 
-#### Cookie Injection
+#### [Cookie Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#session-fixation)
 
 {% stepper %}
 {% step %}
@@ -263,7 +263,7 @@ Verify if the response includes the injected cookie `(hacked=true)` or affects s
 
 ***
 
-#### Redirection/phishing
+#### [Redirection/phishing](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#open-redirect)
 
 {% stepper %}
 {% step %}
@@ -281,7 +281,7 @@ Observe if the browser redirects to phishing page
 
 ***
 
-#### Open Redirect
+#### [Open Redirect](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#open-redirect)
 
 {% stepper %}
 {% step %}
@@ -317,7 +317,7 @@ By injecting %0d%0a (Carriage Return + Line Feed), an attacker can split the ser
 
 ***
 
-#### Test XSS Protection Bypass
+#### [Test XSS Protection Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#cross-site-scripting)
 
 {% stepper %}
 {% step %}
@@ -335,7 +335,7 @@ Verify if the response includes X-XSS-Protection: 0 and the script executes
 
 ***
 
-#### Test GBK-Encoded CRLF Bypass
+#### [Test GBK-Encoded CRLF Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CRLF%20Injection#filter-bypass)
 
 {% stepper %}
 {% step %}
