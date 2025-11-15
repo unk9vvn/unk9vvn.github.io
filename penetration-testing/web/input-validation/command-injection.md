@@ -77,6 +77,36 @@ Measure the response time; if it increases significantly (`~11,876 ms`), it conf
 
 ***
 
+#### Language Parameter
+
+{% stepper %}
+{% step %}
+Log in to the target site
+{% endstep %}
+
+{% step %}
+Then use the burp suite tool to inspect the requests and identify the endpoints
+{% endstep %}
+
+{% step %}
+Then, check in the identified endpoints whether there is a parameter called `language=` or a parameter that specifies the language
+{% endstep %}
+
+{% step %}
+Then send the request to the repeater and replace the language parameter value with the following content and if the send method was `GET`, change it to `POST`
+
+```
+{${system("cat+/etc/passwd"J)}}
+```
+{% endstep %}
+
+{% step %}
+Send the request and then check whether the server's response shows the sensitive file content
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
