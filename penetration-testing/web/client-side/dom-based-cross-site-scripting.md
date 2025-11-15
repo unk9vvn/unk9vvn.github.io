@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### DOM in URL Parameter
+#### [DOM in URL Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#dom-based-xss)
 
 {% stepper %}
 {% step %}
@@ -44,7 +44,7 @@ Common vulnerable paths include `/msrc/blog/search`, `/security/blog`, `/vulnera
 
 ***
 
-#### DOM in Search Bar
+#### [DOM in Search Bar](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#dom-based-xss)
 
 {% stepper %}
 {% step %}

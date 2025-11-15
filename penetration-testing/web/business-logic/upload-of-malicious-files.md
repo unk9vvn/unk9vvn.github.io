@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### XSS Stored via Upload avatar PNG \[HTML]
+#### [XSS Stored via Upload avatar PNG \[HTML\]](https://raw.githubusercontent.com/swisskyrepo/PayloadsAllTheThings/master/XSS%20Injection/Files/xss_comment_exif_metadata_double_quote.png)
 
 {% stepper %}
 {% step %}
@@ -14,11 +14,7 @@ Create Malicious PNG Payload&#x20;
 {% endstep %}
 
 {% step %}
-Download the XSS payload PNG from&#x20;
-
-[https://raw.githubusercontent.com/swisskyrepo/PayloadsAllTheThings/master/XSS%20Injection/Files/xss\_comment\_exif\_metadata\_double\_quote.png](https://raw.githubusercontent.com/swisskyrepo/PayloadsAllTheThings/master/XSS%20Injection/Files/xss_comment_exif_metadata_double_quote.png)
-
-or use exiftool to embed
+Download the XSS payload PNG or use exiftool to embed
 
 ```bash
 exiftool -Comment="">alert(prompt('XSS BY ZEROX4'))" xss_comment_exif_metadata_double_quote.pn
@@ -84,7 +80,7 @@ Using NTFS alternate data stream (ADS) in Windows. In this case, a colon charact
 
 ***
 
-#### EXIF Metadata Webshell
+#### [EXIF Metadata Webshell](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files#upload-insecure-files)
 
 {% stepper %}
 {% step %}
@@ -116,7 +112,7 @@ Use the timestamp to find your shell
 
 ***
 
-#### Polyglot File Upload
+#### [Polyglot File Upload](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files#upload-insecure-files)
 
 {% stepper %}
 {% step %}
@@ -171,7 +167,7 @@ Result: The server accepted the modified file and returned 200 OK
 
 ***
 
-#### GIF Image Carving (PHP Payload Injection)
+#### [GIF Image Carving (PHP Payload Injection)](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files#upload-insecure-files)
 
 {% stepper %}
 {% step %}

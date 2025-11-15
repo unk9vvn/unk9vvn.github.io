@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### Stored Cross-Site Scripting (Stored XSS) via SVG Upload
+#### [Stored Cross-Site Scripting (Stored XSS) via SVG Upload](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/XSS%20Injection/Files/SVG_XSS1.svg)
 
 {% stepper %}
 {% step %}
@@ -44,7 +44,7 @@ Click forward the request and after creating the image, open it and Check if an 
 
 ***
 
-#### File Extension Filter Bypass
+#### [File Extension Filter Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files#upload-tricks)
 
 {% stepper %}
 {% step %}
