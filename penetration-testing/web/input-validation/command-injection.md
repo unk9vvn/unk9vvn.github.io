@@ -95,7 +95,7 @@ Then, check in the identified endpoints whether there is a parameter called `lan
 {% step %}
 Then send the request to the repeater and replace the language parameter value with the following content and if the send method was `GET`, change it to `POST`
 
-```
+```bash
 {${system("cat+/etc/passwd"J)}}
 ```
 {% endstep %}
