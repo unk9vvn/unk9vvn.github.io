@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### Redirection via /logout <a href="#b309" id="b309"></a>
+#### [Redirection via /logout](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Open%20Redirect#redirect-methods) <a href="#b309" id="b309"></a>
 
 {% stepper %}
 {% step %}
@@ -36,7 +36,7 @@ Upon visiting this URL, you will be `redirected to` without any validation or wa
 
 ***
 
-#### Open Redirect via Duplicate parameter
+#### [Open Redirect via Duplicate parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Open%20Redirect#common-query-parameters)
 
 {% stepper %}
 {% step %}
@@ -115,7 +115,7 @@ So now go to Collaborator in burp suite and check if a request has been sent or 
 
 ***
 
-#### Account Takeover
+#### [Account Takeover](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Open%20Redirect#filter-bypass)
 
 {% stepper %}
 {% step %}

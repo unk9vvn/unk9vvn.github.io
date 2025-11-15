@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Web%20Sockets#web-sockets)
 
 #### Hijacking Private Data Leak
 
