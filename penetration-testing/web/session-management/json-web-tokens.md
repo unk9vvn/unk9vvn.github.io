@@ -40,14 +40,21 @@ and payload&#x20;
 {% endstep %}
 
 {% step %}
-Create this exact JWT (no signature needed):
+Create this exact JWT (no signature needed)
 
 ```json
 {
   "alg": "none",
-  "typ": "JWT"
+  typ": "JWT"
 }
 ```
+
+We can write none payloads in uppercase and lowercase, like this
+
+* none
+* None
+* NONE
+* nOnE
 {% endstep %}
 
 {% step %}
@@ -66,7 +73,7 @@ Now inject the word admin in the payload request as follows
 {% step %}
 Now convert the request to base64 and replace the previous Jwt token
 
-Base64URL encode header like → eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0
+Base64URL encode header like → `eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0`
 {% endstep %}
 
 {% step %}
@@ -177,6 +184,118 @@ Verify if the application validates the token using the injected string as the s
 
 {% step %}
 If access is granted, the kid parameter is vulnerable to SQL injection, allowing arbitrary key manipulation
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### JWT Forging via Default Secret Exploitation
+
+{% stepper %}
+{% step %}
+Sign up and log in to the target application while proxying traffic through Burp Suite
+{% endstep %}
+
+{% step %}
+Capture the /api/auth/login (equivalent) POST request and its response containing the JWT token
+{% endstep %}
+
+{% step %}
+Decode the JWT using [jwt.io](https://jwt.io) or [token.dev](https://token.dev/)
+{% endstep %}
+
+{% step %}
+Observe the payload contains `sub`, `role`, `role_id`, `exp`
+{% endstep %}
+
+{% step %}
+Check Burp Suite’s **Issues** tab for a warning `JWT signed with default secret: CHANGE_ME`
+{% endstep %}
+
+{% step %}
+Confirm the application uses `HMAC` with the hardcoded secret `CHANGE_ME`
+{% endstep %}
+
+{% step %}
+Create a forged payload targeting admin access like
+
+```json
+{
+  "sub": "1",
+  "role": "admin",
+  "role_id": 1,
+  "exp": 9999999999
+}
+```
+{% endstep %}
+
+{% step %}
+Sign the token using HS256 and the secret CHANGE\_ME
+{% endstep %}
+
+{% step %}
+In Burp Suite, configure Match and Replace rule
+{% endstep %}
+
+{% step %}
+Forward all subsequent requests with the forged token
+{% endstep %}
+
+{% step %}
+If you see the following values ​​in the server response, it means you have access to the admin dashboard or sensitive data
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### JWT Refresh Token Association Bypass
+
+{% stepper %}
+{% step %}
+Register Test Account A and Test Account B on the target platform
+{% endstep %}
+
+{% step %}
+Log in to each account separately to obtain
+
+* Access Token A + Refresh Token A
+* Access Token B + Refresh Token B
+{% endstep %}
+
+{% step %}
+From Test Account A, trigger a token refresh
+
+```http
+POST /auth/refresh HTTP/1.1
+Authorization: Bearer [Access_Token_A]
+Content-Type: application/json
+
+{"refresh_token": "Refresh_Token_A"}
+```
+{% endstep %}
+
+{% step %}
+Capture the new access token returned
+{% endstep %}
+
+{% step %}
+Use Test Account B’s refresh token with Test Account A’s access token
+
+```http
+POST /auth/refresh HTTP/1.1
+Authorization: Bearer [Access_Token_A]
+Content-Type: application/json
+
+{"refresh_token": "Refresh_Token_B"}
+```
+{% endstep %}
+
+{% step %}
+Send the request
+{% endstep %}
+
+{% step %}
+If response contains a new valid access token with Test Account A’s identity → Association bypass confirmed
 {% endstep %}
 {% endstepper %}
 
