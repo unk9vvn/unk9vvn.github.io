@@ -224,36 +224,6 @@ By injecting this code into this parameter, it may give us an error in response,
 
 ***
 
-#### [Fullname Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
-
-{% stepper %}
-{% step %}
-Navigate to the SignUp page of the target website, typically located at a URL like `/signup` or `/register` Open https://example.com/signup in the browser
-{% endstep %}
-
-{% step %}
-Identify the “Full Name” input field in the SignUp form, which is prone to processing user input directly into database queries Find the text box labeled “Full Name” in the form
-{% endstep %}
-
-{% step %}
-Enter the payload `' OR 1=1 --` into the Full Name field to attempt bypassing the query’s conditions and access unauthorized data Input `John' OR 1=1 --` in the Full Name field
-{% endstep %}
-
-{% step %}
-Click the `“Sign Up”` button to send the payload to the server via a <sub>POST</sub> request
-{% endstep %}
-
-{% step %}
-Look for a generic error (“Invalid input”) or a `400`/`500` status code, indicating the payload was blocked, or unexpected success, suggesting a vulnerability
-{% endstep %}
-
-{% step %}
-If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again. Compare responses: if `' OR 1=1 --` allows form submission or data access (account creation without valid input) while `' OR 1=2 --` fails, it confirms SQL injection, as the true condition (`1=1`) altered the query’s logic
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### [X-Forwarded-For Header](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
 
 {% stepper %}

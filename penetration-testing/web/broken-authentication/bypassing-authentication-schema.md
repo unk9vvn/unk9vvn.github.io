@@ -42,7 +42,7 @@ If the user information is displayed in the server response, the authentication 
 
 ***
 
-####
+#### Email Domain Validation Bypass
 
 {% stepper %}
 {% step %}
@@ -79,6 +79,108 @@ Receive verification email at `bishal0x01@bugcrowdninja.com`
 
 {% step %}
 Click link, Account activated
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Change The Letter Case
+
+{% stepper %}
+{% step %}
+Use the [enumerate Application](https://unk9vvn.gitbook.io/penetration-testing/web/reconnaissance/enumerate-applications) command to perform the identification process and obtain the sensitive paths of the admin panel
+{% endstep %}
+
+{% step %}
+Access known admin path
+
+```http
+GET /admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+If it gives you a 403 error with a 401 in response, then send the following request
+
+```http
+GET /AdMiN HTTP/1.1
+GET /ADMIN HTTP/1.1
+GET /aDmIn HTTP/1.1
+GET /Admin HTTP/1.1
+GET /aDMIN HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+If any variation returns 200 OK, Case sensitivity bypass confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### HTTP Method Bypass Auth
+
+{% stepper %}
+{% step %}
+Make a request to the admin panel and check if it gives you a 403 in response
+{% endstep %}
+
+{% step %}
+If it gives you a 403 error with a 401 then change the HTTP method to PUT or Patch or ...
+
+```http
+PATCH /admin HTTP/1.1
+HEAD /admin HTTP/1.1
+PUT /admin HTTP/.1.1
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Path Confusion Auth Bypass
+
+{% stepper %}
+{% step %}
+Request a sensitive route like the panel or admin route and if it gives you a 403, try to mislead the route using the payload below
+
+```http
+GET /%2e%2e/admin HTTP/1.1
+```
+{% endstep %}
+
+{% step %}
+If the server response shows login or admin information, the vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [Fullname Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
+
+{% stepper %}
+{% step %}
+Navigate to the SignUp page of the target website, typically located at a URL like `/signup` or `/register` Open https://example.com/signup in the browser
+{% endstep %}
+
+{% step %}
+Identify the “Full Name” input field in the SignUp form, which is prone to processing user input directly into database queries Find the text box labeled “Full Name” in the form
+{% endstep %}
+
+{% step %}
+Enter the payload `' OR 1=1 --` into the Full Name field to attempt bypassing the query’s conditions and access unauthorized data Input `John' OR 1=1 --` in the Full Name field
+{% endstep %}
+
+{% step %}
+Click the `“Sign Up”` button to send the payload to the server via a <sub>POST</sub> request
+{% endstep %}
+
+{% step %}
+Look for a generic error (“Invalid input”) or a `400`/`500` status code, indicating the payload was blocked, or unexpected success, suggesting a vulnerability
+{% endstep %}
+
+{% step %}
+If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again. Compare responses: if `' OR 1=1 --` allows form submission or data access (account creation without valid input) while `' OR 1=2 --` fails, it confirms SQL injection, as the true condition (`1=1`) altered the query’s logic
 {% endstep %}
 {% endstepper %}
 
