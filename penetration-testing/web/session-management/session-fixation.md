@@ -66,6 +66,104 @@ Replace the 400 Bad Request response with the previously captured legitimate log
 
 ***
 
+#### Improper Session Invalidation Allows Account Access After Logout
+
+{% stepper %}
+{% step %}
+Login with a valid account
+{% endstep %}
+
+{% step %}
+Capture the login HTTP 302 Found response using a proxy tool like Burp Suite
+{% endstep %}
+
+{% step %}
+Log out from the account
+{% endstep %}
+
+{% step %}
+Clear browser cookies
+{% endstep %}
+
+{% step %}
+Attempt to log in as a different user
+{% endstep %}
+
+{% step %}
+During login, replace the server response with the earlier captured 302 response
+{% endstep %}
+
+{% step %}
+The application logs you into the original session (`victim@example.com`), not the new user
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Account Takeover
+
+{% stepper %}
+{% step %}
+Visit the target site without logging in
+{% endstep %}
+
+{% step %}
+Check cookies, URL parameters, hidden fields, or response headers for a session identifier (`PHPSESSID`, `JSESSIONID`, `session_id=abc123`)
+{% endstep %}
+
+{% step %}
+Open two different browsers/incognito windows
+{% endstep %}
+
+{% step %}
+Visit the site, Note the session ID is generated and sent before login
+{% endstep %}
+
+{% step %}
+Verify the same session ID persists after refresh or navigation
+{% endstep %}
+
+{% step %}
+Create a login link containing the attacker-controlled session ID like
+
+```hurl
+https://target.com/login
+https://target.com/?PHPSESSID=attacker123
+https://target.com/dashboard;jsessionid=attacker123
+```
+{% endstep %}
+
+{% step %}
+Send the malicious link via email, chat, or phishing page (victim trusts the domain)
+{% endstep %}
+
+{% step %}
+Victim clicks the link → Lands on site with attacker’s session ID
+{% endstep %}
+
+{% step %}
+Victim enters valid credentials and logs in successfully
+{% endstep %}
+
+{% step %}
+Application does NOT issue a new session ID after successful authentication, `Same attacker123` remains active
+{% endstep %}
+
+{% step %}
+Attacker visits the site using the same session ID
+
+```hurl
+https://target.com/?PHPSESSID=attacker123
+```
+{% endstep %}
+
+{% step %}
+Instantly logged in as the victim, Full session takeover
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
