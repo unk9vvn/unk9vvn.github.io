@@ -301,6 +301,33 @@ If response contains a new valid access token with Test Account Aâ€™s identity â
 
 ***
 
+#### Replay Attack
+
+{% stepper %}
+{% step %}
+Log in to the target application
+{% endstep %}
+
+{% step %}
+Capture a valid JWT from `Authorization: Bearer` header or response body
+{% endstep %}
+
+{% step %}
+Browse the app and trigger actions like Profile update
+{% endstep %}
+
+{% step %}
+In Burp Repeater Copy a state-changing request (`POST /api/user/update`), Do not modify any parameter or timestamp, Send multiple times with the same JWT
+{% endstep %}
+
+{% step %}
+If each replay executes the action again (`profile updated 5 times, 5 emails sent`)\
+,Replay attack confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
