@@ -635,6 +635,20 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+ 	# install 403-bypass
+	if [ ! -d "/usr/share/403-bypass" ]; then
+		local name="403-bypass"
+		git clone https://github.com/Dheerajmadhukar/4-ZERO-3 /usr/share/4-ZERO-3
+		chmod 755 /usr/share/4-ZERO-3/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/4-ZERO-3;./403-bypass.sh "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		success "Successfully Installed $name"
+	fi
+
  	# install gitdorker
 	if [ ! -d "/usr/share/gitdorker" ]; then
 		local name="gitdorker"
