@@ -957,6 +957,21 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+  	# install getallparams
+	if [ ! -d "/usr/share/getallparams" ]; then
+		local name="getallparams"
+		git clone https://github.com/xnl-h4ck3r/GAP-Burp-Extension /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 GAP.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		success "Successfully Installed $name"
+	fi
+
 	# install x8
 	if [ ! -d "/usr/share/x8" ]; then
 		local name="x8"
