@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#idor-tips)
 
 {% stepper %}
 {% step %}
@@ -86,7 +86,7 @@ GET /file?id=302
 {% endstep %}
 
 {% step %}
-#### Missing Function Level Acess Control and changes Charachter path
+#### [Missing Function Level Acess Control and changes Charachter path](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#wildcard-parameter)
 
 ```
 GET /admin/profile -> 401

@@ -78,7 +78,7 @@ Attempt to log in to the victim’s account with the new password to confirm ful
 
 ***
 
-#### Array Of Email Addresses Instead Of a Single Email Address.
+#### [Array Of Email Addresses Instead Of a Single Email Address](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Account%20Takeover#password-reset-via-email-parameter)
 
 {% stepper %}
 {% step %}
@@ -110,7 +110,7 @@ Attempt to log in to the victim’s account with the new password to confirm ful
 
 ***
 
-#### Account Take Over
+#### Account Takeover
 
 {% stepper %}
 {% step %}
@@ -132,7 +132,7 @@ If the request parameter contains a site path, change that parameter to the `att
 
 ***
 
-#### Account Take Over Via Redirect Parameters
+#### Account Takeover Via Redirect Parameters
 
 {% stepper %}
 {% step %}
@@ -158,7 +158,7 @@ Submit the crafted link to reset the target user’s password, then attempt to l
 
 ***
 
-#### Account Take Over via Token Parameter
+#### Account Takeover via Token Parameter
 
 {% stepper %}
 {% step %}
@@ -184,7 +184,7 @@ Attempt to log in to the admin account with the new password to verify full acco
 
 ***
 
-#### Open Redirect Account Take Over
+#### Open Redirect Account Takeover
 
 {% stepper %}
 {% step %}
@@ -235,6 +235,36 @@ Attempt to log in with the new password to confirm the account takeover via the 
 
 {% step %}
 Test email or related parameters (`username, user_id`) on other password reset-related endpoints like `/reset`, `/password-reset`, `/account/recovery`, or `/user/reset`, as these often handle token expiration and may share similar flaws
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [Token Leak via Referrer](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Account%20Takeover#password-reset-feature)
+
+{% stepper %}
+{% step %}
+Request password reset to your email address
+{% endstep %}
+
+{% step %}
+Click on the password reset link
+{% endstep %}
+
+{% step %}
+Don't change password
+{% endstep %}
+
+{% step %}
+Click any 3rd party websites(Facebook, X)
+{% endstep %}
+
+{% step %}
+Intercept the request in Burp Suite proxy
+{% endstep %}
+
+{% step %}
+Check if the referer header is leaking password reset token
 {% endstep %}
 {% endstepper %}
 

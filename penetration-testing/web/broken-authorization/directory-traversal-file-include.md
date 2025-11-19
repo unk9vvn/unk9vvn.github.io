@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### Directory Traversal (Local File Inclusion)
+#### [Directory Traversal (Local File Inclusion)](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion#local-file-inclusion)
 
 {% stepper %}
 {% step %}
@@ -189,7 +189,7 @@ Check persistence of vulnerability with different file extensions and URL encodi
 
 ***
 
-#### Path Traversal Filter Bypass
+#### [Path Traversal Filter Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion#null-byte)
 
 {% stepper %}
 {% step %}
