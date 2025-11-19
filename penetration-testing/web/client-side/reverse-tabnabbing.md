@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### Reverse Tab-Nabbing
+#### [Reverse Tab-Nabbing](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Tabnabbing#exploit)
 
 {% stepper %}
 {% step %}

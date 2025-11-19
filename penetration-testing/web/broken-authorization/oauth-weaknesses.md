@@ -235,7 +235,7 @@ If Authorization Code is exchanged for an Access Token, invalidate the Authoriza
 
 ***
 
-#### OAuth Open Redirect
+#### [OAuth Open Redirect](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/OAuth%20Misconfiguration#grabbing-oauth-token-via-redirect_uri)
 
 {% stepper %}
 {% step %}
@@ -331,7 +331,7 @@ Check the output of the Intruder for any suspicious responses
 
 ***
 
-#### XSS IN OAuth Flow
+#### [XSS IN OAuth Flow](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/OAuth%20Misconfiguration#executing-xss-via-redirect_uri)
 
 {% stepper %}
 {% step %}

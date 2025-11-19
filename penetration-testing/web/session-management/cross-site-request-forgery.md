@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Cross-Site%20Request%20Forgery#cross-site-request-forgery)
 
 #### Session Riding
 
@@ -338,7 +338,7 @@ If victim’s email/phone instantly changes → OTP bypass confirmed
 
 ***
 
-#### CSRF via Content-Type + Method Downgrade Bypass
+#### [CSRF via Content-Type + Method Downgrade Bypass](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Cross-Site%20Request%20Forgery#html-get---requiring-user-interaction)
 
 {% stepper %}
 {% step %}
