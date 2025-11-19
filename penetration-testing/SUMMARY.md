@@ -42,7 +42,7 @@
   * [Bypassing Authentication Schema](web/broken-authentication/bypassing-authentication-schema.md)
   * [Vulnerable Remember Password](web/broken-authentication/vulnerable-remember-password.md)
   * [Browser Cache Weaknesses](web/broken-authentication/browser-cache-weaknesses.md)
-  * [Weak Password Policy](web/broken-authentication/weak-password-policy.md)
+  * [Weak Authentication Methods](web/broken-authentication/weak-authentication-methods.md)
   * [Weak Security Question Answer](web/broken-authentication/weak-security-question-answer.md)
   * [Weak Password Reset Functionalities](web/broken-authentication/weak-password-reset-functionalities.md)
   * [Weaker Authentication in Alternative Channel](web/broken-authentication/weaker-authentication-in-alternative-channel.md)
