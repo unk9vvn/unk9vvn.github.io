@@ -119,7 +119,7 @@ GET /api_v1/messages?user_id=victim_uuid -> 200
 {% endstep %}
 
 {% step %}
-HTTP Parameter POllution Give mult value for same parameter
+HTTP Parameter Pollution Give mult value for same parameter
 
 ```http
 GET /api_v1/messages?user_id=attacker_id&user_id=victim_id

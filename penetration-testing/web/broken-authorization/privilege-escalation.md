@@ -54,6 +54,28 @@ Send the modified request and check the account status after registration; if it
 
 ***
 
+#### Setpermission API\`s&#x20;
+
+{% stepper %}
+{% step %}
+Log in to the target site and use [Recon](https://unk9vvn.gitbook.io/penetration-testing/web/reconnaissance/enumerate-applications) to obtain the API paths and API documentation
+{% endstep %}
+
+{% step %}
+Then look for APIs that perform an access level process
+{% endstep %}
+
+{% step %}
+Then create two accounts, one with Chrome and one with Firefox
+{% endstep %}
+
+{% step %}
+Then check whether the access level can be changed by replacing the victim's ID, which is a Chrome account, with the hacker's ID, which is a Firefox account. If it changes, the vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet

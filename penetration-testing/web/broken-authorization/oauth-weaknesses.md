@@ -164,8 +164,8 @@ initiate the proccess of Attaching the socail media account&#x20;
 {% step %}
 On the request with the linking code
 
-* if it is a <sub>GET</sub> Request , then copy the whole URL
-* if it is a <sub>POST</sub> Request , generate a CSRF Poc using Burp Suite
+* if it is a GET Request , then copy the whole URL
+* if it is a POST Request , generate a CSRF Poc using Burp Suite
 {% endstep %}
 
 {% step %}

@@ -6,11 +6,28 @@
 
 ## Methodology
 
-#### Path Confusion
+#### WAF Bypass Via Path Confustion
 
 {% stepper %}
 {% step %}
-Using the following script, we can create confusion on a sensitive path using the Path Confusion technique. Using this script, we can basically find sensitive files or sensitive paths. Using the symbols specified in the script, we can confuse the path on the sensitive path and access this sensitive path
+Log in to the site Send a request with a malicious payload at an entry point
+{% endstep %}
+
+{% step %}
+Check if the server is blocking you and giving a 403 error
+{% endstep %}
+
+{% step %}
+If the server returns a 403, send the request using the `?` or `%3f` character\
+like the following request like
+
+```hurl
+https://target.com/search?q=1%3f<script>alert(1)</script>
+```
+{% endstep %}
+
+{% step %}
+If the server does not give us a 403 in response and the vulnerability is implemented, it means that the waf bypass has been confirmed
 {% endstep %}
 {% endstepper %}
 

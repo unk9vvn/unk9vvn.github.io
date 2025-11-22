@@ -42,27 +42,11 @@ Attempt access to build files with `/assets/../build.sbt` or `/assets/../pom.xml
 {% endstep %}
 
 {% step %}
-Target application configuration via `/assets/../application.conf` or `/assets/../conf/routes`
-{% endstep %}
-
-{% step %}
 Test traversal to root directory files like `/assets/../../../../../etc/passwd`
 {% endstep %}
 
 {% step %}
 Verify Windows environments with `/assets/../../../../../windows/win.ini`
-{% endstep %}
-
-{% step %}
-Check response headers and body for file contents outside assets directory
-{% endstep %}
-
-{% step %}
-Confirm successful read by presence of expected file markers like \[core] in `.git/config`
-{% endstep %}
-
-{% step %}
-Document full request URL and response snippet showing sensitive data
 {% endstep %}
 
 {% step %}
@@ -79,14 +63,6 @@ Verify if trailing slash affects traversal like `/assets/../build.sbt/`
 
 {% step %}
 Test null byte injection with `/assets/../build.sbt%00.png` if language supports it
-{% endstep %}
-
-{% step %}
-Check if file extension enforcement can be bypassed by appending `.png` to traversal payload
-{% endstep %}
-
-{% step %}
-Assess depth of traversal needed based on directory structure from valid assets
 {% endstep %}
 {% endstepper %}
 
