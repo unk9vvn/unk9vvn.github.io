@@ -34,7 +34,7 @@ Retrieve Required Tokens (`CSRF Tokens, Auth Tokens`)  Most APIs require securit
 {% endstep %}
 
 {% step %}
-Construct the Exploit Request Using the retrieved tokens, craft an HTTP request (typically `PUT` or `PATCH`) to change the user’s role from low privilege to a higher privilege role (such as Administrator) Include all necessary headers such as `X-Csrf-Token and Content-Type: application/json`Prepare the request body (JSON) with the updated role information
+Construct the Exploit Request Using the retrieved tokens, craft an HTTP request (typically `PUT` or `PATCH`) to change the user’s role from low privilege to a higher privilege role (such as Administrator) Include all necessary headers such as `X-Csrf-Token and Content-Type: application/json`Prepare the request body (`JSON`) with the updated role information
 {% endstep %}
 
 {% step %}
@@ -46,7 +46,7 @@ The attacker logs in using a low-privileged account Now check the API documentat
 {% endstep %}
 
 {% step %}
-Read Other Users’ Data By changing the conversation ID, they can view other users’ (including admin) conversations: Using different methods (PUT, PATCH , DELETE) We are investigating whether we can use different HTTP methods to influence sensitive API paths that contain IDs and thereby gain unauthorized access To test in Burp, we take the request and change the desired method
+Read Other Users’ Data By changing the conversation ID, they can view other users’ (including admin) conversations: Using different methods (`PUT`, `PATCH` , `DELETE`) We are investigating whether we can use different HTTP methods to influence sensitive API paths that contain IDs and thereby gain unauthorized access To test in Burp, we take the request and change the desired method
 {% endstep %}
 {% endstepper %}
 

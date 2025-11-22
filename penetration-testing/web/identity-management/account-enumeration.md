@@ -9,7 +9,7 @@
 
 ### Black Box
 
-#### **Account enumeration via the “Forgot Password”**
+#### **Account Enumeration Via The “Forgot Password”**
 
 {% stepper %}
 {% step %}
@@ -23,7 +23,7 @@ When you click on `Forgot Password` the site asks for your email or phone number
 
 ***
 
-#### **Account enumeration via the registration flow**
+#### **Account Enumeration Via The Registration Flow**
 
 {% stepper %}
 {% step %}

@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### The Exploitation Potential of IDOR in Password Recovery
+#### The Exploitation Potential Of IDOR In Password Recovery
 
 {% stepper %}
 {% step %}
@@ -34,7 +34,7 @@ If login triggers an OTP request (`6-digit code`), note this as the final authen
 {% endstep %}
 
 {% step %}
-Use Burp Suite’s Intruder to send multiple POST requests with the login endpoint (e.g., /login), iterating through 6-digit OTP combinations (`000000` to `999999`) in the OTP field, monitoring for a 200 OK response
+Use Burp Suite’s Intruder to send multiple POST requests with the login endpoint (`/login`), iterating through `6-digit` OTP combinations (`000000` to `999999`) in the OTP field, monitoring for a 200 OK response
 {% endstep %}
 
 {% step %}

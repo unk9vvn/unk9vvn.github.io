@@ -14,7 +14,7 @@ Go to accounts settings
 {% endstep %}
 
 {% step %}
-Add an email address to the email which we have access to(Remember adding an email doesn't require you to re-enter password but changing password does)
+Add an email address to the email which we have access to (Remember adding an email doesn't require you to re-enter password but changing password does)
 {% endstep %}
 
 {% step %}
@@ -40,7 +40,7 @@ Register or log in normally
 {% endstep %}
 
 {% step %}
-Tick "Remember me", "Stay logged in", or use "Sign in with this device"
+Tick "`Remember me`", "`Stay logged in`", or use "`Sign in with this device`"
 {% endstep %}
 
 {% step %}

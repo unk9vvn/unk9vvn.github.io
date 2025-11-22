@@ -5,7 +5,7 @@
 * [ ] Verify that the identity requirements for user registration are aligned with business and security requirements.
 * [ ] Validate the registration process.
 
-## Methodology
+## Methodology&#x20;
 
 ### Black Box
 
@@ -13,13 +13,11 @@
 
 {% stepper %}
 {% step %}
-Register Normal Account Go to target signup page and create account with normal email like <sub>security@gmail.com</sub> Use Burp Collaborator domain as callback: <sub>security@gmail.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.co</sub> Log in to validate account works, then logout
-
-
+Register Normal Account Go to target signup page and create account with normal email like `security@gmail.com` Use Burp Collaborator domain as callback: `security@gmail.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.co` Log in to validate account works, then logout
 {% endstep %}
 
 {% step %}
-Generate Punycode Email Use Punycode generator (punycoder.com or custom script) to replace domain chars, e.g., "a" with "à" in gmail.com Result: <sub>security@gmàil.com</sub> → <sub>security@xn--gml-hoa.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.com</sub>
+Generate Punycode Email Use Punycode generator (punycoder.com or custom script) to replace domain chars, "`a`" with "`à`" in gmail.com Result: `security@gmàil.com` → `security@xn--gml-hoa.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.com`
 {% endstep %}
 
 {% step %}
@@ -27,11 +25,11 @@ Intercept Signup with Punycode Turn on Burp interception Attempt signup with Pun
 {% endstep %}
 
 {% step %}
-Trigger Password Reset with Punycode Go to forgot password page Intercept request, enter Punycode email: <sub>security@gmàil.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.com</sub> Forward and monitor Burp Collaborator for <sub>SMTP</sub> callback with reset link
+Trigger Password Reset with Punycode Go to forgot password page Intercept request, enter Punycode email: `security@gmàil.com.bcrkly6yl8ke552nzjt7jtu52w8nwdk2.oastify.com` Forward and monitor Burp Collaborator for <sub>SMTP</sub> callback with reset link
 {% endstep %}
 
 {% step %}
-Reset and Takeover Copy reset link from Collaborator, open in browser and set new password Logout, then login with original normal email (security@gmail.com) and new password Access confirmed: account hijacked Advanced: Punycode in Username (Local-Part) Repeat steps but modify username part: e.g., signup with ṡecurity@gmail.com (Punycode: xn--security-7ca@gmail.com) Intercept/modify as before For reset, use normal username: security@gmail.com If callback received, reset and login with original full email for zero-click takeover Bonus: If 2FA enabled, register Punycode variant, setup attacker's 2FA, then use it to access victim's original email account via normalization flaw
+Reset and Takeover Copy reset link from Collaborator, open in browser and set new password Logout, then login with original normal email (security@gmail.com) and new password Access confirmed: account hijacked Advanced: Punycode in Username (Local-Part) Repeat steps but modify username part: signup with `ṡecurity@gmail.com` (Punycode: `xn--security-7ca@gmail.com`) Intercept/modify as before For reset, use normal username: `security@gmail.com` If callback received, reset and login with original full email for zero-click takeover Bonus: If 2FA enabled, register Punycode variant, setup attacker's 2FA, then use it to access victim's original email account via normalization flaw
 {% endstep %}
 {% endstepper %}
 

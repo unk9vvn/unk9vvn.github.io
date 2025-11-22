@@ -36,7 +36,7 @@ Best practice Avoid `unsafe-inline` in `script-src` to reduce XSS attack surface
 
 {% stepper %}
 {% step %}
-Appending % or %" to the URL endpoint causes the browser to misinterpret or relax CSP enforcement
+Appending `%` or `%` to the URL endpoint causes the browser to misinterpret or relax CSP enforcement
 {% endstep %}
 
 {% step %}

@@ -143,23 +143,11 @@ Check HTTP response status codes for successful access such as 200 OK
 {% endstep %}
 
 {% step %}
-Attempt traversal to application-specific files like `config.php` or database credentials
-{% endstep %}
-
-{% step %}
 Test across different traversal depths by adding more `../` sequences
 {% endstep %}
 
 {% step %}
 Verify vulnerability on Unix/Linux by targeting `/etc/passwd` and on Windows by targeting files like `C:/Windows/system.ini`
-{% endstep %}
-
-{% step %}
-Test parameters across all HTTP methods like GET and POST if applicable
-{% endstep %}
-
-{% step %}
-Check persistence of vulnerability with different file extensions and URL encodings
 {% endstep %}
 {% endstepper %}
 

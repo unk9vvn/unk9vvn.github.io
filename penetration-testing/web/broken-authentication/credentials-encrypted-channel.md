@@ -17,11 +17,11 @@ Using the first command that is entered by the cURL tool, get the SSL versions o
 {% endstep %}
 
 {% step %}
-Then, check the server service on each port for TLS/SSL support using the next command
+Then, check the server service on each port for `TLS/SSL` support using the next command
 {% endstep %}
 
 {% step %}
-Then, using the Nuclei tool, we check the presence of vulnerabilities in TLS/SSL, and if it is vulnerable, we detect MITM vulnerabilities using the created script
+Then, using the Nuclei tool, we check the presence of vulnerabilities in `TLS/SSL`, and if it is vulnerable, we detect MITM vulnerabilities using the created script
 {% endstep %}
 {% endstepper %}
 

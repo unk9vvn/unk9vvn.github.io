@@ -194,44 +194,6 @@ Checking if Old OTP is Still Valid Some systems allow the reuse of old OTPs Test
 
 ***
 
-#### **Rate Limiting Attack on OTP Verification**
-
-{% stepper %}
-{% step %}
-Navigate to the OTP verification endpoint
-
-```
-https://abc.target.com/verify/phoneno
-```
-{% endstep %}
-
-{% step %}
-Enter an invalid OTP (e.g., `000000`)
-{% endstep %}
-
-{% step %}
-Intercept the request and send it to Intruder
-{% endstep %}
-
-{% step %}
-Set the OTP field as the payload position
-{% endstep %}
-
-{% step %}
-Use payload type: numbers and define a range (000000 - 999999)
-{% endstep %}
-
-{% step %}
-Start the attack
-{% endstep %}
-
-{% step %}
-Identify a **response length change**, which may indicate the correct OTP
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### OTP Bypassed By Using Luck Infused Logical Thinking <a href="#id-0112" id="id-0112"></a>
 
 {% stepper %}
@@ -318,7 +280,7 @@ Create attacker account
 {% endstep %}
 
 {% step %}
-Visit https://www.example.com/account/register/ and register a new account using attacker@example.com
+Visit `https://www.example.com/account/register/` and register a new account using `attacker@example.com`
 {% endstep %}
 
 {% step %}
@@ -338,11 +300,11 @@ Change account email to victim email
 {% endstep %}
 
 {% step %}
-While still in the same session, go to https://www.example.com/account/details/
+While still in the same session, go to `https://www.example.com/account/details/`
 {% endstep %}
 
 {% step %}
-Change the account email from attacker@example.com to victim@example.com
+Change the account email from `attacker@example.com` to `victim@example.com`
 {% endstep %}
 
 {% step %}
@@ -350,7 +312,7 @@ Complete any required confirmation steps for the email change (for example, ente
 {% endstep %}
 
 {% step %}
-After the change, the attacker’s current trusted session is now associated with victim@example.com
+After the change, the attacker’s current trusted session is now associated with `victim@example.com`
 {% endstep %}
 
 {% step %}
@@ -378,7 +340,7 @@ To persist the bypass beyond the 1-month trust window, repeat
 {% endstep %}
 
 {% step %}
-a. Change the email back to the attacker’s email (attacker@example.com)
+a. Change the email back to the attacker’s email (`attacker@example.com`)
 {% endstep %}
 
 {% step %}
@@ -386,7 +348,7 @@ b. Re-verify the attacker email by completing the OTP and selecting “Trust thi
 {% endstep %}
 
 {% step %}
-c. Change the email back to victim@example.com and confirm
+c. Change the email back to `victim@example.com` and confirm
 {% endstep %}
 
 {% step %}
@@ -404,13 +366,13 @@ Enable MFA for the account (if not already)
 {% endstep %}
 
 {% step %}
-Start login with username/password so that the MFA challenge page appears (e.g., SMS or email OTP)
+Start login with username/password so that the MFA challenge page appears (SMS or email OTP)
 {% endstep %}
 
 {% step %}
-Intercept the login POST request to
+Intercept the login `POST` request to
 
-POST https://auth.example.com/v3/api/login
+`POST https://auth.example.com/v3/api/login`
 {% endstep %}
 
 {% step %}
@@ -430,9 +392,9 @@ Inspect the JSON body and locate fields similar to
 {% step %}
 Modify the request body before forwarding
 
-Change "mode":"sms" → "mode":"email"
+Change `"mode":"sms"` → `"mode":"email"`
 
-Change "secureLogin": true → "secureLogin": false
+Change `"secureLogin": true` → `"secureLogin": false`
 {% endstep %}
 
 {% step %}
@@ -454,7 +416,7 @@ The client will be logged into the account without providing the MFA code
 
 {% stepper %}
 {% step %}
-In a controlled and authorized testing environment (e.g., a test account or a program that permits testing), log into the target account and open account settings
+In a controlled and authorized testing environment (a test account or a program that permits testing), log into the target account and open account settings
 {% endstep %}
 
 {% step %}
@@ -466,7 +428,7 @@ Log out of the account
 {% endstep %}
 
 {% step %}
-Log back in using valid credentials (username/password)
+Log back in using valid credentials `(username`/`password`)
 {% endstep %}
 
 {% step %}
@@ -718,49 +680,6 @@ Content-Type: application/json
 
 ***
 
-#### JS File Analysis
-
-{% stepper %}
-{% step %}
-Assume you are testing a web application, and you suspect that a JavaScript file may contain information about the 2FA implementation
-{% endstep %}
-
-{% step %}
-Request
-
-```http
-GET /path/to/suspected-js-file.js HTTP/1.1
-Host: example.com
-```
-{% endstep %}
-
-{% step %}
-Response
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/javascript
-```
-
-{% hint style="info" %}
-Sample JavaScript file\
-This file may contain information about the 2FA implementation
-{% endhint %}
-{% endstep %}
-
-{% step %}
-var twoFactorEnabled = true
-
-var twoFactorMethod = "SMS"
-{% endstep %}
-
-{% step %}
-You can then further analyze the JavaScript code to determine if there are any vulnerabilities or issues related to the 2FA implementation
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### Lack of Brute-Force Protection
 
 {% stepper %}
@@ -805,27 +724,6 @@ Content-Type: application/json
 
 ***
 
-#### CSRF On 2FA Disabling
-
-{% stepper %}
-{% step %}
-Take advantage of the absence of CSRF protection to disable 2FA without the user’s knowledge
-{% endstep %}
-
-{% step %}
-```http
-POST /disable-2fa
-Content-Type: application/json
-
-{
-"disable": true
-}
-```
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### Bypass 2FA Using The “Remember Me” Functionality
 
 {% stepper %}
@@ -844,6 +742,10 @@ Content-Type: application/json
 }
 ```
 {% endstep %}
+
+{% step %}
+If you select this option and log in with the correct 2FA code for the first time, the system will create a long-term token or cookie; from then on, you can log in directly without the need for a 2FA code, even with a new device or browser
+{% endstep %}
 {% endstepper %}
 
 ***
@@ -860,6 +762,10 @@ Navigate to an authenticated page and, if unsuccessful, change the Referer heade
 GET /authenticated-page
 Referer: https://example.com/2fa
 ```
+{% endstep %}
+
+{% step %}
+If the application only checks whether the user has passed 2FA based on the Referer header, this change will take you directly to the protected page and bypass 2FA
 {% endstep %}
 {% endstepper %}
 
@@ -957,16 +863,6 @@ Content-Type: application/json
     "2fa": "123456", // make it "2fa": "00000"
 }
 ```
-{% endstep %}
-{% endstepper %}
-
-***
-
-#### Password Reset/Email Change Disable 2FA
-
-{% stepper %}
-{% step %}
-After resetting the user’s password or changing their email, the 2FA might automatically be disabled, which could be exploited
 {% endstep %}
 {% endstepper %}
 

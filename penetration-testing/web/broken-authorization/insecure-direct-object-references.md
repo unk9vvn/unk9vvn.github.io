@@ -8,31 +8,31 @@
 
 {% stepper %}
 {% step %}
-Create two accounts if possible or else enumerate users first
+Log in to the target site and track requests using the Burp Suite tool
 {% endstep %}
 
 {% step %}
-Check if the endpoint is private or public and does it contains any kind of id param
+Complete the authentication process then log in to your profile
 {% endstep %}
 
 {% step %}
-Try changing the param value to some other user and see if does anything to their account
+Perform a process that deletes a photo or account. Trace the request using Burp suite
 {% endstep %}
 
 {% step %}
-change HTTP method like this
+After intercepting the request, check if there is a number in the request that means the user ID, then change it to another account
+{% endstep %}
+
+{% step %}
+After changing the request, check the server response and see if it is 403 or 404
+{% endstep %}
+
+{% step %}
+If it gives 404 or 403 then change the method if it is POST to GET and if it is GET to POST like the following request
 
 ```http
 GET /users/delete/victim_id -> 403
 POST /users/delete/victim_id -> 200
-```
-{% endstep %}
-
-{% step %}
-Try replacing parameter names instead of this
-
-```http
-GET /api/albums?album_id= <album id>
 ```
 {% endstep %}
 
@@ -43,16 +43,20 @@ Try This
 Tip: There is a Burp extension called Paramalyzer which\
 will help with this by remembering all the parameters you have passed to a host
 {% endhint %}
-
-```http
-GET /api/albums?account_id= <account id>
-```
 {% endstep %}
 
 {% step %}
 #### Path Traversal IN users Path
 
-if request like this
+Register two accounts, one in the attacker's name in the Firefox browser and the other in the victim's name using the Chrome browser on the target page
+{% endstep %}
+
+{% step %}
+Create both accounts and log in to the profile page, then click Delete Account with the attacker's account and track the request using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Then check if there is an id or number inside the request that indicates the user account id. If there is, change the id to the victim account that we created with the Chrome browser and check the server response to see if it is 403 or not
 
 ```http
 POST /users/delete/victim_id -> 403
@@ -60,117 +64,143 @@ POST /users/delete/victim_id -> 403
 {% endstep %}
 
 {% step %}
-change request to this&#x20;
+If it does not allow, we replace the path traversal payload with something like the following request
 
 ```http
 POST /users/delete/my_id/..victim_id -> 200
 ```
 {% endstep %}
+{% endstepper %}
 
-{% step %}
-change request content-type
+***
 
-```http
-Content-Type: application/xml
-Content-Type: application/json
-```
-{% endstep %}
-
-{% step %}
-#### swap non-numeric with numeric id
-
-```http
-GET /file?id=90djbkdbkdbd29dd
-GET /file?id=302
-```
-{% endstep %}
-
-{% step %}
 #### [Missing Function Level Acess Control and changes Charachter path](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#wildcard-parameter)
 
-```
+{% stepper %}
+{% step %}
+Reconcile the target site using the complete [cheat sheet](https://unk9vvn.gitbook.io/penetration-testing/web/reconnaissance/enumerate-applications)
+{% endstep %}
+
+{% step %}
+Then look for sensitive paths like admin paths
+{% endstep %}
+
+{% step %}
+Send the request to this route and check if the server response is incoming or returns 401
+
+```http
 GET /admin/profile -> 401
+```
+{% endstep %}
+
+{% step %}
+Then change the admin request to uppercase like the following request and check if the server allows us to log in. If it does, the vulnerability is confirmed
+
+```http
 GET /Admin/profile -> 200
 GET /ADMIN/profile -> 200
 ```
 {% endstep %}
+{% endstepper %}
+
+***
+
+#### Objected JSON Parameter
+
+{% stepper %}
+{% step %}
+Complete the authentication process on the target site
+{% endstep %}
 
 {% step %}
-send wildcard instead of an id
+Log in to your profile and go to the profile settings section
+{% endstep %}
+
+{% step %}
+Make a change to your profile. Trace the request using Burp suite before hitting the save button
+{% endstep %}
+
+{% step %}
+Then click the save button and check whether the request you received is in json format or not
+{% endstep %}
+
+{% step %}
+Identify the userid parameter inside it, change it, and check if the server gives you a 403 or not
+
+```json
+{"userid":123} -> 401
+```
+{% endstep %}
+
+{% step %}
+If it gives an error, send the request as a JSON object, like the following request
+
+```json
+{"userid":{"userid":123}} -> 200
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Using the \* character instead of the user ID
+
+{% stepper %}
+{% step %}
+Log into the target site and intercept requests using the Burp suite tool
+{% endstep %}
+
+{% step %}
+Then identify the requests related to the user's API routes, such as the following route request
 
 ```http
 GET /api/users/user_id 
-changes to this
+```
+{% endstep %}
+
+{% step %}
+Then change the request for the user `id` in the user path to `*` and check if the server accepts it or not
+
+```http
 GET /api/users/*
 ```
 {% endstep %}
 
 {% step %}
-Never ignore encoded/hashed ID for hashed ID ,create multiple accounts and understand the pattern application users to allot an iD&#x20;
+If it shows user information after sending the request, the vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### s
+
+{% stepper %}
+{% step %}
+Log in to the target site and complete the authentication process
 {% endstep %}
 
 {% step %}
-Bypass object level authorization Add parameter onto the endpoit if not present by defualt
-
-```
-GET /api_v1/messages -> 200
-GET /api_v1/messages?user_id=victim_uuid -> 200
-```
+Then register. After registration, log out
 {% endstep %}
 
 {% step %}
-HTTP Parameter Pollution Give mult value for same parameter
-
-```http
-GET /api_v1/messages?user_id=attacker_id&user_id=victim_id
-GET /api_v1/messages?user_id=victim_id&user_id=attacker_id
-```
+Then go to Login and enter the correct username and password. Then use the Burp suite tool to intercept the requests and click the Login button
 {% endstep %}
 
 {% step %}
-change file type
-
-```http
-GET /user_data/2341 -> 401
-GET /user_data/2341.json -> 200
-GET /user_data/2341.xml -> 200
-GET /user_data/2341.config -> 200
-GET /user_data/2341.txt -> 200
-```
-{% endstep %}
-
-{% step %}
-json parameter pollution
-
-```json
-{"userid":1234,"userid":2542}
-```
-{% endstep %}
-
-{% step %}
-Wrap the ID with an array in the body
+Get the login request. If the userid exists, change it to another id. Check whether you are logging into another account or not
 
 ```json
 {"userid":123} -> 401
+```
+{% endstep %}
+
+{% step %}
+If you are not logged into another user account, repeat the login process and instead of changing the id in the parameters similar to userid, convert it to an array as follows
+
+```json
 {"userid":[123]} -> 200
-```
-{% endstep %}
-
-{% step %}
-c wrap the id with a json objec
-
-```json
-{"userid":123} -> 401
-{"userid":{"userid":123}} -> 200
-```
-{% endstep %}
-
-{% step %}
-Test an outdata API version
-
-```http
-GET /v3/users_data/1234 -> 401
-GET /v1/users_data/1234 -> 200
 ```
 {% endstep %}
 {% endstepper %}

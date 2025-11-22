@@ -16,7 +16,7 @@ Prepare target URL and optional Auth cookie
 {% endstep %}
 
 {% step %}
-Identify routes and endpoints using scripts written, combine and deduplicate Katana and FFUF outputs into one file (/tmp/all\_endpoints.txt)
+Identify routes and endpoints using scripts written, combine and deduplicate Katana and FFUF outputs into one file (`/tmp/all_endpoints.txt`)
 {% endstep %}
 
 {% step %}

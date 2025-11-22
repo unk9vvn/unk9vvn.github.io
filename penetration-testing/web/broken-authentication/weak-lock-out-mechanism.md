@@ -31,7 +31,7 @@ Verify that login is successful despite the triggered lockout Repeat to Validate
 
 ***
 
-#### Account Lockout Bypass via Password Reset
+#### Account Lockout Bypass Via Password Reset
 
 {% stepper %}
 {% step %}
@@ -57,7 +57,7 @@ Continue sending login attempts and forgot password requests after every 5th fai
 
 ***
 
-#### Rate Limit Bypass via Endpoint Case Manipulation
+#### Rate Limit Bypass Via Endpoint Case Manipulation
 
 {% stepper %}
 {% step %}
@@ -190,7 +190,7 @@ To make the attack appear more legitimate to the WAF, you can additionally set t
 
 ***
 
-#### Account Lockout Bypass via Email Case Variation
+#### Account Lockout Bypass Via Email Case Variation
 
 {% stepper %}
 {% step %}

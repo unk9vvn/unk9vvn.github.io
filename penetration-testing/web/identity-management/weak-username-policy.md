@@ -9,7 +9,7 @@
 
 ### Black Box
 
-#### Email header injection via CRLF
+#### Email Header Injection Via CRLF
 
 {% stepper %}
 {% step %}
@@ -53,7 +53,7 @@ If a recovery link was sent to your email, change your password and BOOOOM, Acco
 
 ***
 
-#### Password‑reset API bypass
+#### Password‑Reset API Bypass
 
 {% stepper %}
 {% step %}
@@ -91,7 +91,7 @@ The parameters may contain an ID, username, or email. Replace these parameters w
 
 ***
 
-#### Account enumeration via weak username policy
+#### Account Enumeration Via Weak Username Policy
 
 {% stepper %}
 {% step %}
@@ -117,7 +117,7 @@ Change the forgotten password path to `/api/users,`If it shows the records and u
 
 ***
 
-#### **Username enumeration & 2FA bypass via error message differences and JSON response manipulation**
+#### **Username Enumeration & 2FA Bypass Via Error Message Differences And JSON Response Manipulation**
 
 {% stepper %}
 {% step %}
@@ -125,7 +125,7 @@ First of all, go to the registration section of the site and complete the regist
 {% endstep %}
 
 {% step %}
-For example, a username could be jac1234, and it can be found using brute-force techniques After you understand the username pattern for each account after registration, Start testing the login page to see how the system responds to both unsuccessful and successful logins
+For example, a username could be `jac1234`, and it can be found using brute-force techniques After you understand the username pattern for each account after registration, Start testing the login page to see how the system responds to both unsuccessful and successful logins
 {% endstep %}
 
 {% step %}
