@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### Black Box
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/JSON%20Web%20Token)
 
 #### **None Algorithm**
 
