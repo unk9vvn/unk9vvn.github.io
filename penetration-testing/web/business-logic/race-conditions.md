@@ -4,7 +4,9 @@
 
 ## Cheat Sheet
 
-### Methodology (Black Box)
+## Methodology&#x20;
+
+### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Race%20Condition)
 
 #### Race Condition / Concurrency Testing
 
@@ -20,8 +22,7 @@ Navigate to the section offering “Claim Free \<resource>” or “Purchase \<i
 {% step %}
 Trigger the action and observe the redirect or request to
 
-`https:///api//start?item=<resource_name>`\
-
+`https:///api//start?item=<resource_name>`<br>
 {% endstep %}
 
 {% step %}
