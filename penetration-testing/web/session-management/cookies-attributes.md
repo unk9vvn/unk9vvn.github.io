@@ -6,7 +6,7 @@
 
 ### Black Box
 
-####
+#### Insecure Cookie Exposure
 
 {% stepper %}
 {% step %}
