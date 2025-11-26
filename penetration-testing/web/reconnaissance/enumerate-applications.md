@@ -280,6 +280,44 @@ Fetch historical URLs for the target domain from an archival service, identifyin
 
 ***
 
+#### ASN-Based Infrastructure
+
+{% stepper %}
+{% step %}
+Search the company name on [bgpview.io](https://bgpview.io/) to discover all associated ASNs
+{% endstep %}
+
+{% step %}
+Run the following command to extract CIDRs and find live IPs within the discovered ASNs
+
+```bash
+whois -h whois.radb.net -- '-i origin $ASN' | grep -Eo "([0-9.]+){4}/[0-9]+" | uniq | mapcidr -silent | httpx
+```
+{% endstep %}
+
+{% step %}
+Review the list of discovered IPs and select targets that appear to be admin panels or internal tools
+{% endstep %}
+
+{% step %}
+Use Wappalyzer or built-in browser tools to confirm the target is built with PHP
+{% endstep %}
+
+{% step %}
+Perform directory and file fuzzing on the document root using ffuf
+{% endstep %}
+
+{% step %}
+Identify the directory like `/Config/` returning `HTTP 401` Unauthorized
+{% endstep %}
+
+{% step %}
+Access `/Config/` in the browser and test default credentials `admin:admin` → successful login
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Different URL
