@@ -1602,6 +1602,21 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+	# install firesploit
+	if [ ! -d "/usr/share/firesploit" ]; then
+		local name="firesploit"
+		git clone https://github.com/secshubhamsharma/FireSploit /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		pip3 install -r /usr/share/$name/requirements.txt
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 firesploit.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		success "Successfully Installed $name"
+	fi
+
 	# install gitgot
 	if [ ! -d "/usr/share/gitgot" ]; then
 		local name="gitgot"
