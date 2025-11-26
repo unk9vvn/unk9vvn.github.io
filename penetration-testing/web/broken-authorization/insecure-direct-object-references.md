@@ -518,6 +518,59 @@ If another file with other content including user information or sensitive infor
 
 ***
 
+#### Access to Unpublished
+
+{% stepper %}
+{% step %}
+Create an account on the target platform
+{% endstep %}
+
+{% step %}
+Create at least two blog posts:
+
+* One published/public
+* One unpublished or set as “Private” / “Draft” / “Hidden”
+{% endstep %}
+
+{% step %}
+While creating or editing the private post, intercept all requests with Burp Suite
+{% endstep %}
+
+{% step %}
+Identify the endpoint that loads a single post, usually one of these patterns
+
+```hurl
+/post/123  
+/api/posts/123  
+/blog/view?id=123  
+/api/v1/articles/123  
+/content/123
+```
+{% endstep %}
+
+{% step %}
+Note the numeric or alphanumeric ID of your public post and your private post
+{% endstep %}
+
+{% step %}
+Log out or open an incognito window (or use a second account that should NOT have access)
+{% endstep %}
+
+{% step %}
+Manually send a direct request to the private post ID like&#x20;
+
+```hurl
+https://weblog-builder.target.com/post/456
+```
+{% endstep %}
+
+{% step %}
+If the full private post content loads → vulnerability confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
