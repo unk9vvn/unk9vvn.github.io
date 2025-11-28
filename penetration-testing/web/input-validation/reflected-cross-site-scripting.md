@@ -283,6 +283,32 @@ https://example.com/user/dashboards/live
 
 ***
 
+#### Reflected In ContactForm
+
+{% stepper %}
+{% step %}
+Log in to the target site and find the contact support feature
+{% endstep %}
+
+{% step %}
+Then, using the Burp suite tool, make a request to this page and use the `GAP` extension to identify all the parameters of this page
+{% endstep %}
+
+{% step %}
+Then you can identify the parameters of the support contact page using the x8 tool and the following command
+
+```bash
+x8 -u "https://target.com/ContactForm" -w wordlists_parameter.txt -m 25
+```
+{% endstep %}
+
+{% step %}
+If a parameter is found that is reflected, run the XSS tests. If it is executed, the vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
