@@ -4043,6 +4043,21 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+	# install adbasher
+	if [ ! -d "/usr/share/adbasher" ]; then
+		local name="adbasher"
+		git clone https://github.com/Shiva108/ADBasher /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cd /usr/share/$name;sudo ./install.sh
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 server.py --insecure "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Collection" "Red-Team" "$name" "$exec_shell '$name'"
+		success "Successfully Installed $name"
+	fi
+
 
 	printf "$YELLOW"  "# ------------------------------------Command-and-Control-Red-Team----------------------------------- #"
 
