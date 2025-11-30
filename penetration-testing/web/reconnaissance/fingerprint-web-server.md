@@ -129,37 +129,37 @@ nmap -sS -sV -Pn --mtu 5000 \
 Server Header
 
 ```bash
-uncover -cs 'services.http.response.headers.server: "nginx"'
+services.http.response.headers.server: "nginx"
 ```
 
 SSL Certificate SHA-1 Fingerprint
 
 ```bash
-uncover -cs 'services.tls.certificates.leaf_data.fingerprint_sha1: $HASH'
+services.tls.certificates.leaf_data.fingerprint_sha1: $HASH
 ```
 
 SSL Certificate SHA-256 Fingerprint
 
 ```bash
-uncover -cs 'services.tls.certificates.leaf_data.fingerprint_sha256: $HASH'
+services.tls.certificates.leaf_data.fingerprint_sha256: $HASH
 ```
 
 Common Name (CN) in SSL Certificate
 
 ```bash
-uncover -cs 'services.tls.certificates.leaf_data.subject.common_name: "$WEBSITE"'
+services.tls.certificates.leaf_data.subject.common_name: "$WEBSITE"
 ```
 
 Operating System
 
 ```bash
-uncover -cs 'services.http.response.headers: (key: "OS" and value.headers: "Linux")'
+services.http.response.headers: (key: "OS" and value.headers: "Linux")
 ```
 
 Powered By Header
 
 ```bash
-uncover -cs 'services.http.response.headers.x_powered_by: "PHP/7.4.9"'
+services.http.response.headers.x_powered_by: "PHP/7.4.9"
 ```
 
 ### Using Automated Scanning Tools <a href="#using-automated-scanning-tools" id="using-automated-scanning-tools"></a>
