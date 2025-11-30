@@ -112,8 +112,7 @@ curl -I $WEBSITE
 
 ```bash
 nmap -sS -sV -Pn --mtu 5000 \
-     --script http-title,http-headers,http-server-header,http-security-headers \
-     http-methods,http-put,http-robots.txt,http-favicon \
+     --script http-title,http-headers,http-server-header,http-security-headers,http-methods,http-put,http-robots.txt,http-favicon \
      $WEBSITE
 ```
 
