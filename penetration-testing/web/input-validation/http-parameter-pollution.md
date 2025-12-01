@@ -16,7 +16,7 @@ To test for SSPP in query strings, you can insert query syntax characters like `
 {% step %}
 Consider a vulnerable application that searches for users based on their username. The request might look like this
 
-```url
+```http
 GET /usernameSearch?name=jack&returningPath=/main
 ```
 {% endstep %}
@@ -55,7 +55,7 @@ username=admin&password=wrongpassword
 {% step %}
 Send the request with multiple password values
 
-```
+```http
 POST /login
 username=admin&password=wrongpassword&password=correctpassword
 ```
@@ -78,7 +78,7 @@ Identify the endpoint that reads id and returns a user profile (e.g., `/profile?
 {% step %}
 Record a normal request and note the response
 
-```
+```http
 GET /profile?id=1
 ```
 {% endstep %}
@@ -86,7 +86,7 @@ GET /profile?id=1
 {% step %}
 Send a request with duplicated id parameters
 
-```
+```http
 GET /profile?id=1&id=2
 ```
 {% endstep %}
@@ -98,7 +98,7 @@ GET /profile?id=1&id=2
 
 {% stepper %}
 {% step %}
-Identify an API endpoint using apikey for authentication (e.g., `/api/data?user=123&apikey=...`)
+Identify an API endpoint using apikey for authentication ( `/api/data?user=123&apikey=...`)
 {% endstep %}
 
 {% step %}

@@ -6,6 +6,8 @@
 
 ### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#idor-tips)
 
+#### HTTP Methods
+
 {% stepper %}
 {% step %}
 Log in to the target site and track requests using the Burp Suite tool
