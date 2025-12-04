@@ -4282,6 +4282,19 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+ 	# isntall reverse_ssh
+	if [ ! -d "/usr/share/reverse_ssh" ]; then
+		local name="reverse_ssh"
+  		mkdir -p /usr/share/$name
+		wget https://github.com/NHAS/reverse_ssh/releases/download/client -O /usr/share/$name/client
+		wget https://github.com/NHAS/reverse_ssh/releases/download/server -O /usr/share/$name/server
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/client /usr/bin/rversesshc;ln -fs /usr/share/$name/server /usr/bin/rversesshs
+		chmod +x /usr/bin/rversesshc;chmod +x /usr/bin/rversesshs
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		success "Successfully Installed $name"
+	fi
+
 	# isntall ahmyth
 	if [ ! -f "/usr/bin/ahmyth" ]; then
 		local name="ahmyth"
