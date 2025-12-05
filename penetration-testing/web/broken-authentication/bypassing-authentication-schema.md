@@ -387,3 +387,31 @@ sudo chmod +x auth-bypass-sqli.sh;sudo ./auth-bypass-sqli.sh $WEBSITE
 ```
 
 #### PHP Loose Comparison <a href="#php-loose-comparison" id="php-loose-comparison"></a>
+
+#### [Katana ](https://github.com/projectdiscovery/katana)& [FFUF](https://github.com/ffuf/ffuf)
+
+{% hint style="info" %}
+Create Script
+{% endhint %}
+
+```bash
+sudo nano auth-bypass-tj.sh
+```
+
+```bash
+aaaa
+a
+a
+a
+a
+a
+a
+```
+
+{% hint style="info" %}
+Run Script
+{% endhint %}
+
+```bash
+sudo chmod +x auth-bypass-tj.sh;sudo ./auth-bypass-tj.sh $WEBSITE
+```
