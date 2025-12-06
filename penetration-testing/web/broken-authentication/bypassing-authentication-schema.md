@@ -190,15 +190,15 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ## Cheat Sheet
 
-#### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
+### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
 
 
 
-#### Session ID Prediction <a href="#session-id-prediction" id="session-id-prediction"></a>
+### Session ID Prediction <a href="#session-id-prediction" id="session-id-prediction"></a>
 
 
 
-#### SQL Injection (HTML Form Authentication) <a href="#sql-injection-html-form-authentication" id="sql-injection-html-form-authentication"></a>
+### SQL Injection (HTML Form Authentication) <a href="#sql-injection-html-form-authentication" id="sql-injection-html-form-authentication"></a>
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [SQLMap](https://github.com/sqlmapproject/sqlmap)
 
@@ -386,7 +386,7 @@ Run Script
 sudo chmod +x auth-bypass-sqli.sh;sudo ./auth-bypass-sqli.sh $WEBSITE
 ```
 
-#### PHP Loose Comparison <a href="#php-loose-comparison" id="php-loose-comparison"></a>
+### PHP Loose Comparison <a href="#php-loose-comparison" id="php-loose-comparison"></a>
 
 #### [Katana ](https://github.com/projectdiscovery/katana)& [FFUF](https://github.com/ffuf/ffuf)
 
