@@ -2046,7 +2046,7 @@ EOF
 	apt install -qy awscli trivy s3scanner gsutil cloudbrute 
 
 	# install Python3 pip
-	cloud_pip="sceptre aclpwn cloudshovel cloudshovel powerpwn ggshield pacu whispers kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
+	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
 	pip_installer "Cloud" "Penetration-Testing" "$cloud_pip"
 
 	# install Nodejs NPM
@@ -2128,7 +2128,7 @@ EOF
 		local name="cloud_enum"
 		git clone https://github.com/initstring/cloud_enum /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloud_enum.py "\$@"
