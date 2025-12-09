@@ -479,6 +479,7 @@ go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jslui
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
+go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/KathanP19/cf-hero@latest;ln -fs ~/go/bin/cf-hero /usr/bin/cf-hero
 go install github.com/bountysecurity/gbounty/cmd/gbounty@latest;ln -fs ~/go/bin/gbounty /usr/bin/gbounty
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
