@@ -573,6 +573,36 @@ If the full private post content loads → vulnerability confirmed
 
 ***
 
+#### IDOR In Reset Password Functionality
+
+{% stepper %}
+{% step %}
+Log in to the target site then use 2 accounts
+{% endstep %}
+
+{% step %}
+One account is `attacker@gmail.com` and the other is `vitcim@gmail.com`, which takes us to the forgotten password page
+{% endstep %}
+
+{% step %}
+With the second account, `vitcim@gmail.com`, we complete the forgotten password process, then after changing the password, we check whether the link has been used and whether it can be used again
+{% endstep %}
+
+{% step %}
+Then check the link to see if there is any base64 encoded data at the end or middle of the URL. If there is, decode it
+{% endstep %}
+
+{% step %}
+Then check if your userid and gmail show in decrypted mode
+{% endstep %}
+
+{% step %}
+If it shows, then enter the email and userid of the first account, that is, `attacker@gmail.com`, and use the link again. Then, after completing the forgotten password process, check whether the user's email password has been changed on the site. If it has been changed, the vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
