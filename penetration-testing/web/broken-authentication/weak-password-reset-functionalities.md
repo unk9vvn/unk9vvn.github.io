@@ -270,6 +270,24 @@ Check if the referer header is leaking password reset token
 
 ***
 
+#### s
+
+{% stepper %}
+{% step %}
+###
+
+
+{% endstep %}
+
+{% step %}
+###
+
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet

