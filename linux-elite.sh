@@ -1414,6 +1414,20 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
+	# install nextrce
+	if [ ! -d "/usr/share/nextrce" ]; then
+		local name="nextrce"
+		git clone https://github.com/ynsmroztas/NextRce /usr/share/$name
+		chmod 755 /usr/share/$name/*
+		cat > /usr/bin/$name << EOF
+#!/bin/bash
+cd /usr/share/$name;python3 nextrce.py "\$@"
+EOF
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		success "Successfully Installed $name"
+	fi
+
 	# install subdominator
 	if [ ! -d "/usr/share/subdominator" ]; then
 		local name="subdominator"
