@@ -30,6 +30,8 @@ If after sending all 200 requests, you get a status code of 200 in response to t
 {% endstep %}
 {% endstepper %}
 
+***
+
 ### White Box
 
 ## Cheat Sheet
