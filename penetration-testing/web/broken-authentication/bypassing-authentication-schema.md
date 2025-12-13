@@ -217,7 +217,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists go-golang ffuf"
+DEPS="git seclists golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -400,7 +400,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists go-golang ffuf sqlmap"
+DEPS="git seclists golang ffuf sqlmap"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -583,7 +583,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists go-golang ffuf"
+DEPS="git seclists golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
