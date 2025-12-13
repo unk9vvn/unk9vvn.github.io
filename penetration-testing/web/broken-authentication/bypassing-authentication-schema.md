@@ -485,7 +485,7 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
 fi
 
 # Prepre POST Data
-DATA="${USERNAME_FIELD}=testtesttest&${PASSWORD_FIELD}=testtesttest"
+DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=admin12341234"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # Extract Cookies
@@ -538,7 +538,7 @@ else
         --headers="$SQLMAP_HEADERS" \
         --cookie="$COOKIES" \
         --batch --level=5 --risk=3 -v 3 \
-        --user-random-agent --threads=10 \
+        --random-agent --threads=10 \
         --tamper=space2comment,randomcmase \
         --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
