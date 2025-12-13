@@ -251,7 +251,7 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
 # CAPTCHA check
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
-    color_print RED "[!] CAPTCHA detected. Brute-force aborted."
+    color_print RED "[!] CAPTCHA detected."
     exit 1
 fi
 
@@ -436,7 +436,7 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 # CAPTCHA / reCAPTCHA Check
 CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
 if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
-    echo "[!] CAPTCHA detected on login page. Brute-force aborted."
+    echo "[!] CAPTCHA detected on login page."
     exit 1
 fi
 
@@ -636,7 +636,7 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 # CAPTCHA / reCAPTCHA Check
 CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
 if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
-    echo "[!] CAPTCHA detected on login page. Brute-force aborted."
+    echo "[!] CAPTCHA detected on login page."
     exit 1
 fi
 
