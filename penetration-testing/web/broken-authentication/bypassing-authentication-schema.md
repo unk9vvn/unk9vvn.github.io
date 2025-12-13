@@ -217,7 +217,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists ffuf"
+DEPS="git seclists go-golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -400,7 +400,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git sqlmap"
+DEPS="git seclists go-golang ffuf sqlmap"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -420,7 +420,7 @@ done
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
 grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
-sed 's:[/?]*$::' | sed 's:$:/:')
+sed 's:[/?]*$::' | sed 's:$:/:' | head -n 1)
 
 if [ -z "$LOGIN" ]; then
     echo "[!] No login page found. Exiting."
@@ -583,7 +583,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git ffuf"
+DEPS="git seclists go-golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -622,7 +622,7 @@ EOF
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
 grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
-sed 's:[/?]*$::' | sed 's:$:/:')
+sed 's:[/?]*$::' | sed 's:$:/:' | head -n 1)
 
 if [ -z "$LOGIN" ]; then
     echo "[!] No login page found. Exiting."

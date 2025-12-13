@@ -150,7 +150,7 @@ done
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
 grep -iE "/(login|signin|sign-in|auth|user/login|admin/login|my-account|account|wp-login\.php)(/)?$" | \
 grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|jpg|png|gif|svg|ico)$" | \
-sed 's:[/?]*$::' | sed 's:$:/:')
+sed 's:[/?]*$::' | sed 's:$:/:' | head -n 1)
 
 if [ -z "$LOGIN" ]; then
     echo "[!] No login page found. Exiting."
