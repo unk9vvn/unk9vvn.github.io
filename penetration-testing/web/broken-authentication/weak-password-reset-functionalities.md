@@ -288,6 +288,26 @@ Check if the referer header is leaking password reset token
 
 ***
 
+#### Chaining password reset link poisoning, IDOR, and information leakage to achieve account takeover
+
+{% stepper %}
+{% step %}
+Log in to the target site using the Burp suite tool. Check for forgotten password requests. Check if it is connected to the endpoint, like the path below
+
+```http
+https://api.redacted.com/v3/users/resetToken?email=foobar@gmail.com
+```
+{% endstep %}
+
+{% step %}
+###
+
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet

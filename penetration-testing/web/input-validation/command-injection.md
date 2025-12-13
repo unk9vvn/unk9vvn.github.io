@@ -43,40 +43,6 @@ inject `project=asd''';import os;os.system("id");print(''` , Reload and check te
 
 ***
 
-#### XML field
-
-{% stepper %}
-{% step %}
-When you identify an XML-based API endpoint (processing user data like number, email, or mobile), test fields such as `<Number>` for Blind OS Command Injection using time-delay payloads to confirm execution without visible output. Focus on common XML processing endpoints across enterprise or government web services
-{% endstep %}
-
-{% step %}
-Capture a legitimate XML request using Burp Suite when submitting personal data through the web service (profile update, form submission)
-{% endstep %}
-
-{% step %}
-Locate the target field (`<Number>1234567890123</Number>`) that accepts user input and is likely passed to a backend shell command
-{% endstep %}
-
-{% step %}
-Send a baseline request with normal input and record the average response time (\~56 ms)
-{% endstep %}
-
-{% step %}
-Inject a cross-platform time-delay payload into the field using command chaining to force a `~10–15` second delay:
-
-```bash
-<Number>|ping -n 11 127.0.0.1||ping -c 11 127.0.0.1</Number>
-```
-{% endstep %}
-
-{% step %}
-Measure the response time; if it increases significantly (`~11,876 ms`), it confirms blind command execution
-{% endstep %}
-{% endstepper %}
-
-***
-
 #### Language Parameter
 
 {% stepper %}

