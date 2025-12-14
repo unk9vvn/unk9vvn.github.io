@@ -920,6 +920,34 @@ Collect non-sensitive evidence (sanitized logs, video of the flow without reveal
 
 ***
 
+#### OTP Bypass Via Internal Paths
+
+{% stepper %}
+{% step %}
+Log in to the target site then complete the authentication process with Account A
+{% endstep %}
+
+{% step %}
+After authentication, note down the internal paths like
+
+```http
+/dashboard
+/settings
+/profile/edit
+```
+{% endstep %}
+
+{% step %}
+Then log out and complete the authentication process with account B until you reach the OTP verification stage
+{% endstep %}
+
+{% step %}
+Do not complete the OTP. On the same OTP verification page, enter one of the internal paths you noted, such as `/profile/edit`. If you enter, the vulnerability will be confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
