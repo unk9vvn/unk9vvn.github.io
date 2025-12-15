@@ -327,7 +327,8 @@ Access `/Config/` in the browser and test default credentials `admin:admin` → 
 #### [DNSEnum](https://github.com/SparrowOchon/dnsenum2)
 
 ```bash
-dnsenum $WEBSITE -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt
+dnsenum $WEBSITE \
+        -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt
 ```
 
 #### [DNSRecon](https://github.com/darkoperator/dnsrecon)
@@ -410,7 +411,10 @@ openssl x509 -inform pem -noout -text
 #### [AssetFinder](https://github.com/tomnomnom/assetfinder) & [HttpX](https://github.com/projectdiscovery/httpx)
 
 ```sh
-assetfinder $WEBSITE | httpx --status-code --title
+assetfinder $WEBSITE | \
+httpx -r 8.8.8.8 -fr -td -ip -ss -sc -cl -ct \
+      -cname -method -cdn -probe -vhost -tls-grab -tls-probe -csp-probe -pipeline \
+      -random-agent -auto-referer -favicon -jarm -title -location
 ```
 
 #### [SubFinder](https://github.com/projectdiscovery/subfinder)
