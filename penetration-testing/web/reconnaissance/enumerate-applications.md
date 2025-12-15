@@ -408,13 +408,19 @@ openssl s_client -showcerts -servername $WEBSITE -connect $IP:443 2>/dev/null | 
 openssl x509 -inform pem -noout -text
 ```
 
-#### [AssetFinder](https://github.com/tomnomnom/assetfinder) & [HttpX](https://github.com/projectdiscovery/httpx)
+#### [AssetFinder](https://github.com/tomnomnom/assetfinder) & [SubFinder](https://github.com/projectdiscovery/subfinder) & [HttpX](https://github.com/projectdiscovery/httpx)
+
+{% hint style="info" %}
+Resolve Live Subdomains
+{% endhint %}
 
 ```sh
-assetfinder $WEBSITE | \
-httpx -r 8.8.8.8 -fr -td -ip -ss -sc -cl -ct \
+assetfinder $WEBSITE | subfinder -d $WEBSITE -all -recursive -o /tmp/subs.txt
+httpx -l /tmp/subs.txt \
+      -r 8.8.8.8 -fr -td -ip -ss -sc -cl -ct \
       -cname -method -cdn -probe -vhost -tls-grab -tls-probe -csp-probe -pipeline \
-      -random-agent -auto-referer -favicon -jarm -title -location
+      -random-agent -auto-referer -favicon -jarm -title -location \
+      -o /tmp/alive-subs.txt
 ```
 
 #### [SubFinder](https://github.com/projectdiscovery/subfinder)
@@ -444,21 +450,6 @@ Subdomain New Gen
 
 ```bash
 cat /tmp/subdomains.txt | alterx -o /tmp/gen-subdomains.txt
-```
-
-#### [Httpx](https://github.com/projectdiscovery/httpx)
-
-{% hint style="info" %}
-Resolve Live Subdomains
-{% endhint %}
-
-```bash
-subfinder -d $WEBSITE -all -recursive -o /tmp/subs.txt
-httpx -l /tmp/subs.txt \
-      -r 8.8.8.8 -fr -td -ip -ss -sc -cl -ct \
-      -cname -method -cdn -probe -vhost -tls-grab -tls-probe -csp-probe -pipeline \
-      -random-agent -auto-referer -favicon -jarm -title -location \
-      -o /tmp/alive-subs.txt
 ```
 
 #### [Puredns](https://github.com/d3mondev/puredns)
