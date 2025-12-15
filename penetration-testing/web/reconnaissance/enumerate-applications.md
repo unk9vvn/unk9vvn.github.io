@@ -906,12 +906,12 @@ amass intel -active -asn $ASN
 #### [Crt](https://crt.sh/)
 
 ```bash
-curl -s "https://crt.sh/?q=$WEBSITE&output=json" | \
+curl -s "https://crt.sh/?q=%25.$WEBSITE&output=json" | \
 jq -r ".[].common_name" | sort -u
 ```
 
 ```bash
-curl -s "https://crt.sh/?q=$WEBSITE&output=json" | \
+curl -s "https://crt.sh/?q=%25.$WEBSITE&output=json" | \
 jq -r ".[].name_value" | sort -u
 ```
 
