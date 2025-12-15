@@ -395,7 +395,9 @@ sudo chmod +x auth-bypass-params.sh;sudo ./auth-bypass-params.sh $WEBSITE
 
 ### Session ID Prediction <a href="#session-id-prediction" id="session-id-prediction"></a>
 
-
+{% hint style="info" %}
+Burpsuite > Intercept Request (Generative Page) > Right Click > Send Sequencer Section > Start Analyze
+{% endhint %}
 
 ### SQL Injection (HTML Form Authentication) <a href="#sql-injection-html-form-authentication" id="sql-injection-html-form-authentication"></a>
 
