@@ -397,7 +397,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -476,7 +476,7 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
 # CAPTCHA check
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
-    color_print RED "[!] CAPTCHA detected. Brute-force aborted."
+    color_print RED "[!] CAPTCHA detected."
     exit 1
 fi
 
@@ -568,7 +568,7 @@ sudo chmod +x multitor-bruteforce.sh;sudo ./multitor-bruteforce.sh $WEBSITE
 
 ### **Unique Lockout Mechanisms**
 
-#### [Katana](https://github.com/projectdiscovery/katana)[ ](https://github.com/trimstray/multitor)& [FFUF](https://github.com/ffuf/ffuf)
+#### [Katana](https://github.com/projectdiscovery/katana) & [FFUF](https://github.com/ffuf/ffuf)
 
 {% hint style="info" %}
 Create Script
@@ -597,7 +597,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -676,7 +676,7 @@ FORM=$(echo "$HTML" | sed -n '/<form/,/<\/form>/p' | head -n 100)
 
 # CAPTCHA check
 if echo "$HTML" | grep -qiE "g-recaptcha|recaptcha|h-captcha|data-sitekey|captcha|grecaptcha.execute|hcaptcha.execute"; then
-    color_print RED "[!] CAPTCHA detected. Brute-force aborted."
+    color_print RED "[!] CAPTCHA detected."
     exit 1
 fi
 
@@ -850,7 +850,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists tor torsocks obfs4proxy npm proxychains nodejs haproxy privoxy ffuf"
+DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
