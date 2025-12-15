@@ -449,10 +449,14 @@ Resolve Live Subdomains
 {% endhint %}
 
 ```bash
-cat /tmp/gen-subdomains.txt | \
-httpx -ports 80,443,8080,8000,8888,8082,8083 \
-      -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0" \
-      > /tmp/alive-subdomains.txt
+subfinder -d $WEBSITE -all -recursive -o /tmp/subs.txt
+httpx -l /tmp/subs.txt \
+      -ports 80,443,8080,8000,8888,8082,8083 \
+      -r 8.8.8.8 -mc 200 \
+      -fr -asn -td -ip -ss -sc -cl -ct \
+      -asn -cname -method -cdn -probe -vhost -tls-grab -tls-probe -csp-probe -pipeline \
+      -random-agent -auto-referer -favicon -jarm -title -location \
+      -o /tmp/alive-subs.txt
 ```
 
 #### [Puredns](https://github.com/d3mondev/puredns)
