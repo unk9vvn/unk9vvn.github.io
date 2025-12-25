@@ -156,7 +156,7 @@ If the server response shows login or admin information, the vulnerability is co
 
 ***
 
-#### [Fullname Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#entry-point-detection)
+#### [Bypass Auth Via SQL injection](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/Intruder/Auth_Bypass.txt)
 
 {% stepper %}
 {% step %}
