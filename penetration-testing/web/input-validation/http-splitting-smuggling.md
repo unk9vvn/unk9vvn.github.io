@@ -379,6 +379,40 @@ set-cookie: crlf=injected; -> vulnerability
 
 ***
 
+#### CRLF Header Injection Via "redirect\_uri" Parameter
+
+{% stepper %}
+{% step %}
+Log in to the target site and review the authentication process
+{% endstep %}
+
+{% step %}
+Then check whether the authentication process is performed using Oauth or not
+{% endstep %}
+
+{% step %}
+If Oauth is used then get the `redirect_uri` parameter in the Burp Suite request and send it to the repeater
+{% endstep %}
+
+{% step %}
+Then test the CRLF Injection tests in this parameter, like below
+
+```
+https://subdomain.example.com/oauth/authorize?client_id=&redirect_uri=%0d%0axxx:something&response_type=code
+```
+{% endstep %}
+
+{% step %}
+Then send the request and inspect the HTTP responses. If you see the following injected value, the vulnerability is confirmed
+
+```http
+location: xxx:something?error=invalid_scope
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
