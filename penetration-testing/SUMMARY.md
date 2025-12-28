@@ -83,6 +83,7 @@
   * [HTTP Splitting Smuggling](web/input-validation/http-splitting-smuggling.md)
   * [HTTP Incoming Requests](web/input-validation/http-incoming-requests.md)
   * [Host Header Injection](web/input-validation/host-header-injection.md)
+  * [Web Cache Poisoning](web/input-validation/web-cache-poisoning.md)
   * [Server Side Template Injection](web/input-validation/server-side-template-injection.md)
   * [Server Side Request Forgery](web/input-validation/server-side-request-forgery.md)
   * [Mass Assignment](web/input-validation/mass-assignment.md)
