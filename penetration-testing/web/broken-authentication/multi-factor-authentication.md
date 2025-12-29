@@ -948,6 +948,69 @@ Do not complete the OTP. On the same OTP verification page, enter one of the int
 
 ***
 
+#### Login Bypassed & MFA Using a Race Condition + JWT Leak
+
+{% stepper %}
+{% step %}
+Navigate to the target application's login page
+{% endstep %}
+
+{% step %}
+Have or create a valid user account with MFA enabled
+{% endstep %}
+
+{% step %}
+Prepare a list of password attempts that includes the correct password
+{% endstep %}
+
+{% step %}
+Using Burp Suite (Repeater or Intruder in parallel mode)
+
+* Send **50+ login requests simultaneously**
+* All requests must use the same email with different passwords
+{% endstep %}
+
+{% step %}
+Launch all requests at the same time to trigger a race condition
+{% endstep %}
+
+{% step %}
+Observe that despite exceeding the failed login threshold:
+
+* The account is not locked
+* The server returns a **valid JWT** in one of the responses
+{% endstep %}
+
+{% step %}
+Decode the returned JWT
+{% endstep %}
+
+{% step %}
+Verify that the JWT contains an `authCode` or OTP-related value
+{% endstep %}
+
+{% step %}
+Proceed to the OTP verification step
+{% endstep %}
+
+{% step %}
+Using the valid JWT:
+
+* Submit any random or incorrect OTP
+{% endstep %}
+
+{% step %}
+Observe that authentication succeeds and
+
+* Login completes without a valid OTP
+* Access to the user account is granted
+
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet

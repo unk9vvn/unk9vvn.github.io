@@ -360,6 +360,34 @@ Then read other sensitive files
 
 ***
 
+#### HTML injection in search UI
+
+{% stepper %}
+{% step %}
+Log in to the application using a low-privilege user account
+{% endstep %}
+
+{% step %}
+Access the "`Contacts`" section and initiate the creation of a new Circle
+{% endstep %}
+
+{% step %}
+When naming the Circle, insert the following payload:
+
+&#x20;`<meta http-equiv="refresh" content="2; https://evil.com/" />`
+{% endstep %}
+
+{% step %}
+Share the Circle with a user account having an `"Admin"` role
+{% endstep %}
+
+{% step %}
+Observe that the browser will redirect to a malicious website within a 2-second timeframe
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
