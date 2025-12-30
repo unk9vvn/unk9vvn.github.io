@@ -548,7 +548,7 @@ TLD Discovery
 {% endhint %}
 
 ```bash
-tldfinder -d $WEBSITE -dm domain -all
+tldfinder -dm tld -d $HOSTNAME -all
 ```
 
 #### [FFUF](https://github.com/ffuf/ffuf)
