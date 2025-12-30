@@ -473,6 +473,7 @@ go install github.com/ryandamour/crlfmap@latest;ln -fs ~/go/bin/crlfmap /usr/bin
 go install github.com/Chocapikk/wpprobe@latest;ln -fs ~/go/bin/wpprobe /usr/bin/wpprobe
 go install github.com/bp0lr/gauplus@latest;ln -fs ~/go/bin/gauplus /usr/bin/gauplus
 go install github.com/tomnomnom/anew@latest;ln -fs ~/go/bin/anew /usr/bin/anew
+go install github.com/projectdiscovery/tldfinder/cmd/tldfinder@latest;;ln -fs ~/go/bin/tldfinder /usr/bin/tldfinder
 go install github.com/hahwul/dalfox/v2@latest;ln -fs ~/go/bin/dalfox /usr/bin/dalfox
 go install github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest;ln -fs ~/go/bin/urlfinder /usr/bin/urlfinder
 go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jsluice /usr/bin/jsluice
