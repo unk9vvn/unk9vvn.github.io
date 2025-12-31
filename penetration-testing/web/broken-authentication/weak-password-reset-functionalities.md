@@ -6,6 +6,32 @@
 
 ### Black Box
 
+#### Reauthentication For Changing Password Bypass
+
+{% stepper %}
+{% step %}
+Go to accounts settings
+{% endstep %}
+
+{% step %}
+Add an email address to the email which we have access to (Remember adding an email doesn't require you to re-enter password but changing password does)
+{% endstep %}
+
+{% step %}
+Confirm the email address
+{% endstep %}
+
+{% step %}
+Make it primary email (Even this doesn't require you to re-enter password)
+{% endstep %}
+
+{% step %}
+Now we can change the password by reseting it through the new ema
+{% endstep %}
+{% endstepper %}
+
+***
+
 #### The Exploitation Potential Of IDOR In Password Recovery
 
 {% stepper %}
