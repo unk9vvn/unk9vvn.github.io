@@ -1,21 +1,15 @@
 # Table of contents
 
-## Harden
+## Model
 
-* [Page 2](README.md)
-
-## Detect
-
-* [Page 1](detect/page-1.md)
-
-## &#x20;Isolate
-
-* [Page 3](isolate/page-3.md)
-
-## Deceive
-
-* [Page 4](deceive/page-4.md)
-
-## Evict
-
-* [Page 5](evict/page-5.md)
+* [Asset Inventory](README.md)
+* [Network Mapping](model/network-mapping.md)
+* [Operational Activity Mapping](model/operational-activity-mapping.md)
+* [System Mapping](model/system-mapping.md)
+* [Harden](model/harden/README.md)
+  * [Agent Authentication](model/harden/agent-authentication.md)
+  * [Application Hardening](model/harden/application-hardening.md)
+  * [Credential Hardening](model/harden/credential-hardening.md)
+  * [Message Hardening](model/harden/message-hardening.md)
+  * [Platform Hardening](model/harden/platform-hardening.md)
+  * [Source Code Hardening](model/harden/source-code-hardening.md)
