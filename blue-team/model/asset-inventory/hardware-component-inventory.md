@@ -1,0 +1,2 @@
+# Hardware Component Inventory
+
