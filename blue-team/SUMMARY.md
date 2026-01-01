@@ -5,6 +5,7 @@
 * [Asset Inventory](README.md)
   * [Asset Vulnerability Enumeration](model/asset-inventory/asset-vulnerability-enumeration.md)
   * [Configuration Inventory](model/asset-inventory/configuration-inventory.md)
+  * [Data Inventory](model/asset-inventory/data-inventory.md)
   * [Hardware Component Inventory](model/asset-inventory/hardware-component-inventory.md)
   * [Network Node Inventory](model/asset-inventory/network-node-inventory.md)
   * [Software Inventory](model/asset-inventory/software-inventory.md)
