@@ -124,7 +124,7 @@ Assess the impact of the race condition, such as unauthorized access, data corru
 
 ***
 
-#### .git File
+#### .Git File
 
 {% stepper %}
 {% step %}
