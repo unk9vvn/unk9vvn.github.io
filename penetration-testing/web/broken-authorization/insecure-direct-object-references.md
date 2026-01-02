@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#idor-tips)
+### Black Box
 
 #### HTTP Methods
 
@@ -145,7 +145,7 @@ If it gives an error, send the request as a JSON object, like the following requ
 
 ***
 
-#### Using the \* character instead of the user ID
+#### [Using the \* character instead of the user ID](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#wildcard-parameter)
 
 {% stepper %}
 {% step %}
@@ -175,7 +175,7 @@ If it shows user information after sending the request, the vulnerability is con
 
 ***
 
-#### JSON Parameter Pollution
+#### [JSON Parameter Pollution](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References#idor-tips)
 
 {% stepper %}
 {% step %}
