@@ -124,6 +124,81 @@ Assess the impact of the race condition, such as unauthorized access, data corru
 
 ***
 
+#### .git File
+
+{% stepper %}
+{% step %}
+Navigate to the target domain in a web browser.
+{% endstep %}
+
+{% step %}
+Directly access the Git configuration file by visiting:
+
+```hurl
+https://example.com/.git/config
+```
+{% endstep %}
+
+{% step %}
+Observe that the server responds with **HTTP 200 OK** and allows the `.git/config` file to be downloaded
+{% endstep %}
+
+{% step %}
+Confirm that the `.git/` directory is publicly accessible.
+{% endstep %}
+
+{% step %}
+Use an automated dumping tool (e.g., git-dumper) to retrieve the exposed repository
+
+```bash
+./git_dumper.py https://victim.com/.git/ /tmp/victim-source
+```
+{% endstep %}
+
+{% step %}
+Wait for the tool to finish downloading the full `.git` directory and reconstruct the repository.
+{% endstep %}
+
+{% step %}
+Navigate to the dumped repository directory
+
+```bash
+cd /tmp/victim-source
+```
+{% endstep %}
+
+{% step %}
+Review the commit history
+
+```bash
+git log
+```
+{% endstep %}
+
+{% step %}
+Inspect source code and commit diffs for sensitive information such as
+
+* API keys
+* Database credentials
+* Access tokens
+* Internal endpoints
+{% endstep %}
+
+{% step %}
+Confirm that sensitive secrets are exposed within the source code or Git history
+{% endstep %}
+
+{% step %}
+Verify that full source code access is achieved without authentication
+{% endstep %}
+
+{% step %}
+Conclude that the exposed `.git/` directory results in full source code disclosure and potential compromise of the application
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Path
