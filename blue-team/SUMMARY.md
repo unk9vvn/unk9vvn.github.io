@@ -207,3 +207,16 @@
   * [Process Suspension](evict/process-eviction/process-suspension.md)
   * [Process Termination](evict/process-eviction/process-termination.md)
   * [Session Termination](evict/process-eviction/session-termination.md)
+
+## Restore
+
+* [Restore Access](restore/restore-access/README.md)
+  * [Reissue Credential](restore/restore-access/reissue-credential.md)
+  * [Restore Network Access](restore/restore-access/restore-network-access.md)
+  * [Restore User Account Access](restore/restore-access/restore-user-account-access.md)
+* [Restore Object](restore/restore-object/README.md)
+  * [Restore Configuration](restore/restore-object/restore-configuration.md)
+  * [Restore Database](restore/restore-object/restore-database.md)
+  * [Restore Disk Image](restore/restore-object/restore-disk-image.md)
+  * [Restore File](restore/restore-object/restore-file.md)
+  * [Restore Software](restore/restore-object/restore-software.md)
