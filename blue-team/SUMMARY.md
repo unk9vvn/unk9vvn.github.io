@@ -175,3 +175,35 @@
   * [DNS Denylisting](isolate/network-isolation/dns-denylisting.md)
   * [Encrypted Tunnels](isolate/network-isolation/encrypted-tunnels.md)
   * [Network Traffic Filtering](isolate/network-isolation/network-traffic-filtering.md)
+
+## Deceive
+
+* [Decoy Environment](deceive/decoy-environment/README.md)
+  * [Connected Honeynet](deceive/decoy-environment/connected-honeynet.md)
+  * [Integrated Honeynet](deceive/decoy-environment/integrated-honeynet.md)
+  * [Standalone Honeynet](deceive/decoy-environment/standalone-honeynet.md)
+* [Decoy Object](deceive/decoy-object/README.md)
+  * [Decoy File](deceive/decoy-object/decoy-file.md)
+  * [Decoy Network Resource](deceive/decoy-object/decoy-network-resource.md)
+  * [Decoy Persona](deceive/decoy-object/decoy-persona.md)
+  * [Decoy Public Release](deceive/decoy-object/decoy-public-release.md)
+  * [Decoy Session Token](deceive/decoy-object/decoy-session-token.md)
+  * [Decoy User Credential](deceive/decoy-object/decoy-user-credential.md)
+
+## Evict
+
+* [Credential Eviction](evict/credential-eviction/README.md)
+  * [Account Locking](evict/credential-eviction/account-locking.md)
+  * [Authentication Cache Invalidation](evict/credential-eviction/authentication-cache-invalidation.md)
+  * [Credential Revocation](evict/credential-eviction/credential-revocation.md)
+* [Object Eviction](evict/object-eviction/README.md)
+  * [Disk Formatting](evict/object-eviction/disk-formatting.md)
+  * [DNS Cache Eviction](evict/object-eviction/dns-cache-eviction.md)
+  * [Domain Registration Takedown](evict/object-eviction/domain-registration-takedown.md)
+  * [File Eviction](evict/object-eviction/file-eviction.md)
+  * [Registry Key Deletion](evict/object-eviction/registry-key-deletion.md)
+* [Process Eviction](evict/process-eviction/README.md)
+  * [Host Shutdown](evict/process-eviction/host-shutdown.md)
+  * [Process Suspension](evict/process-eviction/process-suspension.md)
+  * [Process Termination](evict/process-eviction/process-termination.md)
+  * [Session Termination](evict/process-eviction/session-termination.md)
