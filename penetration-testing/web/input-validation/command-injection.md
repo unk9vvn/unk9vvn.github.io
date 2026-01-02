@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection)
+### Black Box
 
-#### Reflected Command Injection In an Embedded Cloud Shell
+#### [Reflected Command Injection In an Embedded Cloud Shell](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Command%20Injection/Intruder/command_exec.txt)
 
 {% stepper %}
 {% step %}
@@ -43,7 +43,7 @@ inject `project=asd''';import os;os.system("id");print(''` , Reload and check te
 
 ***
 
-#### Language Parameter
+#### [Language Parameter](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Command%20Injection/Intruder/command-execution-unix.txt)
 
 {% stepper %}
 {% step %}

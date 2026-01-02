@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### [Black Box](https://swisskyrepo.github.io/PayloadsAllTheThings/Mass%20Assignment/)
+### Black Box
 
 #### HTTP Method Override (PUT) in User APIs
 
@@ -48,7 +48,7 @@ Then send different numeric or string values ​​such as 1 or Admin into the p
 
 ***
 
-#### Account Takeover via Unvalidated Profile Email Change
+#### [Account Takeover via Unvalidated Profile Email Change](https://swisskyrepo.github.io/PayloadsAllTheThings/Mass%20Assignment/#methodology)
 
 {% stepper %}
 {% step %}

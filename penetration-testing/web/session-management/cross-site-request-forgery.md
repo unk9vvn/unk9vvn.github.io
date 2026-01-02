@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Cross-Site%20Request%20Forgery#cross-site-request-forgery)
+### Black Box
 
 #### Session Riding
 
@@ -70,7 +70,7 @@ If money is transferred → CSRF confirmed
 
 ***
 
-#### Bypass CSRF Protection
+#### [Bypass CSRF Protection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Cross-Site%20Request%20Forgery#json-post---simple-request)
 
 {% stepper %}
 {% step %}

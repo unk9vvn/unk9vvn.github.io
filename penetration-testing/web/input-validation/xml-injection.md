@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XXE%20Injection)
+### Black Box
 
-#### XXE In Filename
+#### [XXE In Filename](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/XXE%20Injection/Intruders/xml-attacks.txt)
 
 {% stepper %}
 {% step %}

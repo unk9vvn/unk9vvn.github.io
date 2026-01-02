@@ -4,7 +4,7 @@
 
 ## Methodology
 
-### [Black Box](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/)
+### Black Box
 
 #### Change Table Parameters
 
@@ -355,6 +355,64 @@ Attempt to log in with the original admin email (`admin@book.htb`) and the new p
 
 {% step %}
 If user access is granted, perform directory enumeration (with `Gobuster`) to find an admin portal (`/admin`), then try logging in again to verify admin privileges
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Blind SQL Injection
+
+{% stepper %}
+{% step %}
+Perform passive reconnaissance to identify application endpoints using tools such as URLFinder
+{% endstep %}
+
+{% step %}
+Locate an endpoint that accepts user-controlled parameters, for example
+
+```hurl
+home.aspx?flag=change_pwd&btnchk=0&txt_userid=770435
+```
+{% endstep %}
+
+{% step %}
+Identify the parameter,like `txt_userid` as a potential injection point
+{% endstep %}
+
+{% step %}
+Inject a Boolean-based Blind SQL Injection payload into the vulnerable parameter
+
+```hurl
+flag=change_pwd&btnchk=0&txt_userid=770435') OR NOT 1=1 AND ('A'='A
+```
+{% endstep %}
+
+{% step %}
+Send the crafted request to the server
+{% endstep %}
+
+{% step %}
+Observe the application’s response and compare it with the normal response
+{% endstep %}
+
+{% step %}
+Confirm the vulnerability by detecting a difference in application behavior when the injected Boolean condition evaluates to false versus a normal request
+{% endstep %}
+
+{% step %}
+After confirming Blind SQL Injection, use an automated exploitation tool such as SQLMap against the vulnerable parameter
+{% endstep %}
+
+{% step %}
+Run `SQLMap` to enumerate database information, starting with listing all available databases
+{% endstep %}
+
+{% step %}
+Verify successful exploitation by confirming database enumeration without authentication
+{% endstep %}
+
+{% step %}
+Conclude that the application is vulnerable to Blind (Boolean-based) SQL Injection, resulting in unauthorized database access
 {% endstep %}
 {% endstepper %}
 

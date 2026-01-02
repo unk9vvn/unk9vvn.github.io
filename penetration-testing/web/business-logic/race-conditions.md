@@ -6,7 +6,7 @@
 
 ## Methodology&#x20;
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Race%20Condition)
+### Black Box
 
 #### Race Condition / Concurrency Testing
 
@@ -16,7 +16,7 @@ Create a free account on target
 {% endstep %}
 
 {% step %}
-Navigate to the section offering “Claim Free \<resource>” or “Purchase \<item>”
+Navigate to the section offering `“Claim Free <resource>”` or `“Purchase <item>”`
 {% endstep %}
 
 {% step %}
@@ -52,7 +52,7 @@ Check if multiple successful transactions occur for the same action
 
 ***
 
-#### Quota‑Limit Bypass via Concurrent Folder‑Creation Requests
+#### [Quota‑Limit Bypass via Concurrent Folder‑Creation Requests](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Race%20Condition#rate-limit-bypass)
 
 {% stepper %}
 {% step %}
@@ -60,7 +60,7 @@ Navigate to the Knowledge section on `<platform>` and select a specific `<knowle
 {% endstep %}
 
 {% step %}
-Create folders until you reach the configured limit `<max_folder_count>` (e.g., 10 folders)
+Create folders until you reach the configured limit `<max_folder_count>` (10 folders)
 {% endstep %}
 
 {% step %}
@@ -72,7 +72,7 @@ Delete one folder so the total count becomes `<max_folder_count - 1>`
 {% endstep %}
 
 {% step %}
-Immediately after deletion, send `N` parallel folder-creation requests (e.g., 2–20) to `POST <folder_creation_endpoint>` with payloads containing `<folder_name>` (use distinct names for each request)
+Immediately after deletion, send `N` parallel folder-creation requests (2–20) to `POST <folder_creation_endpoint>` with payloads containing `<folder_name>` (use distinct names for each request)
 {% endstep %}
 
 {% step %}
@@ -132,11 +132,11 @@ Purchase a Gift Card Buy a gift card on the platform
 {% endstep %}
 
 {% step %}
-Redeem Gift Card Navigate to https://sandbox.reverb.com//redeem and initiate the gift card redemption process
+Redeem Gift Card Navigate to `https://sandbox.reverb.com//redeem` and initiate the gift card redemption process
 {% endstep %}
 
 {% step %}
-Intercept Redemption Request Capture the POST request to /fi/redeem containing utf8, authenticity\_token, token, and commit parameters using Burp Suite Pro
+Intercept Redemption Request Capture the `POST` request to `/fi/redeem` containing utf8, `authenticity_token`, token, and commit parameters using Burp Suite Pro
 {% endstep %}
 
 {% step %}
@@ -144,11 +144,11 @@ Send Request to Turbo Intruder Transfer the intercepted request to Turbo Intrude
 {% endstep %}
 
 {% step %}
-Set External HTTP Header Configure the external HTTP header x-request: %s in Turbo Intruder
+Set External HTTP Header Configure the external HTTP header `x-request: %s` in Turbo Intruder
 {% endstep %}
 
 {% step %}
-Execute the Attack Run the attack in Turbo Intruder and observe multiple 200 OK responses
+Execute the Attack Run the attack in Turbo Intruder and observe multiple `200 OK` responses
 {% endstep %}
 
 {% step %}
@@ -204,7 +204,7 @@ Repeat attempts as needed (race is probabilistic) and log successful JWTs/respon
 
 ***
 
-#### Email‑verification race
+#### Email‑verification Race
 
 {% stepper %}
 {% step %}
@@ -220,7 +220,7 @@ Find and capture the change-email request (the POST that updates the account ema
 {% endstep %}
 
 {% step %}
-Prepare two requests: (A) change-email → set target email (e.g. [victim@domain.com](mailto:victim@domain.com)), (B) verify-email → same valid verification token
+Prepare two requests: (A) change-email → set target email ([victim@domain.com](mailto:victim@domain.com)), (B) verify-email → same valid verification token
 {% endstep %}
 
 {% step %}

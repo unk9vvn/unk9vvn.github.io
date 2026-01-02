@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/HTTP%20Parameter%20Pollution)
+### Black Box
 
-#### Test Query String Pollution
+#### [Test Query String Pollution](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/HTTP%20Parameter%20Pollution#parameter-pollution-payloads)
 
 {% stepper %}
 {% step %}

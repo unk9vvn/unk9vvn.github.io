@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection#dom-based-xss)
+### Black Box
 
-#### CORS Misconfiguration
+#### [CORS Misconfiguration](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CORS%20Misconfiguration#methodology)
 
 {% stepper %}
 {% step %}

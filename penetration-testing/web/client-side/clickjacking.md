@@ -4,9 +4,9 @@
 
 ## Methodology
 
-### [Black Box](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Clickjacking)
+### Black Box
 
-#### UI Redress Attack
+#### [UI Redress Attack](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Clickjacking#ui-redressing)
 
 {% stepper %}
 {% step %}
@@ -37,7 +37,7 @@ confirm that the HTML file is executed in your browser
 
 ***
 
-####
+#### Missing X-Frame-Options
 
 {% stepper %}
 {% step %}
