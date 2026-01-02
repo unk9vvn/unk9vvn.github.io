@@ -35,6 +35,78 @@ Reset and Takeover Copy reset link from Collaborator, open in browser and set ne
 
 ***
 
+#### A Punycode Path to Account Takeover
+
+{% stepper %}
+{% step %}
+Navigate to the target website’s **sign-up** page
+{% endstep %}
+
+{% step %}
+Register a new account using an email address you control, for example via Burp Collaborator
+
+```html
+XYZ@gmail.com.<collaborator-domain>
+```
+{% endstep %}
+
+{% step %}
+Complete the registration process successfully
+{% endstep %}
+
+{% step %}
+Log out of the account
+{% endstep %}
+
+{% step %}
+Go to the **Forgot Password** / password reset page
+{% endstep %}
+
+{% step %}
+Intercept the password reset request using Burp Suite
+{% endstep %}
+
+{% step %}
+Modify the email domain in the request by replacing the ASCII character with a visually similar Unicode character (IDN homograph), for example
+
+```
+@gmail.com
+```
+
+to
+
+```
+@gmàil.com
+```
+{% endstep %}
+
+{% step %}
+Forward the modified request
+{% endstep %}
+
+{% step %}
+Observe that the password reset email is sent to the attacker-controlled inbox (Burp Collaborator)
+{% endstep %}
+
+{% step %}
+Open the password reset link received in the attacker inbox
+{% endstep %}
+
+{% step %}
+Set a new password for the account
+{% endstep %}
+
+{% step %}
+Log in using the new password
+{% endstep %}
+
+{% step %}
+Confirm that full access to the victim account is obtained, resulting in account takeover
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
