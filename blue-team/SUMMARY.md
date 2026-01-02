@@ -141,3 +141,16 @@
   * [User Data Transfer Analysis](detect/user-behavior-analysis/user-data-transfer-analysis.md)
   * [User Geolocation Logon Pattern Analysis](detect/user-behavior-analysis/user-geolocation-logon-pattern-analysis.md)
   * [Web Session Activity Analysis](detect/user-behavior-analysis/web-session-activity-analysis.md)
+
+## Isolate
+
+* [Access Mediation](isolate/access-mediation/README.md)
+  * [Credential Transmission Scoping](isolate/access-mediation/credential-transmission-scoping.md)
+  * [IO Port Restriction](isolate/access-mediation/io-port-restriction.md)
+  * [Network Access Mediation](isolate/access-mediation/network-access-mediation.md)
+  * [Network Resource Access Mediation](isolate/access-mediation/network-resource-access-mediation.md)
+  * [Operating Mode Restriction](isolate/access-mediation/operating-mode-restriction.md)
+  * [OT Variable Access Restriction](isolate/access-mediation/ot-variable-access-restriction.md)
+  * [Physical Access Mediation](isolate/access-mediation/physical-access-mediation.md)
+  * [System Call Filtering](isolate/access-mediation/system-call-filtering.md)
+* [Access Policy Administration](isolate/access-policy-administration.md)
