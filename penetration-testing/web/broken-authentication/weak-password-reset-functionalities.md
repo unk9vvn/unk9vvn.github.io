@@ -296,7 +296,7 @@ Check if the referer header is leaking password reset token
 
 ***
 
-####
+#### 0-Click Full Account Takeover
 
 {% stepper %}
 {% step %}
