@@ -296,39 +296,50 @@ Check if the referer header is leaking password reset token
 
 ***
 
-#### s
+####
 
 {% stepper %}
 {% step %}
-###
-
-
+Navigate to the target application and click on the **Forgot Password** feature
 {% endstep %}
 
 {% step %}
-###
-
-
-{% endstep %}
-{% endstepper %}
-
-***
-
-#### Chaining password reset link poisoning, IDOR, and information leakage to achieve account takeover
-
-{% stepper %}
-{% step %}
-Log in to the target site using the Burp suite tool. Check for forgotten password requests. Check if it is connected to the endpoint, like the path below
-
-```http
-https://api.redacted.com/v3/users/resetToken?email=foobar@gmail.com
-```
+Enter a valid email address and proceed with the password reset flow until you reach the **New Password** submission step
 {% endstep %}
 
 {% step %}
-###
+Intercept the HTTP request that is sent when submitting the new password using an intercepting proxy (Burp Suite)
+{% endstep %}
 
+{% step %}
+Observe that the request contains the following parameters
 
+* User email address
+* Password reset token
+* New password
+{% endstep %}
+
+{% step %}
+Modify the intercepted request as follows
+
+* Change the email parameter to the victim’s email addres.
+* Set the reset token parameter to `null` or an empty value
+{% endstep %}
+
+{% step %}
+Send the modified request to the server
+{% endstep %}
+
+{% step %}
+Observe that the server responds with `HTTP 200 OK` without any validation errors
+{% endstep %}
+
+{% step %}
+Verify that the password for the victim’s account has been successfully changed
+{% endstep %}
+
+{% step %}
+Log in using the victim’s email address and the newly set password to confirm full account takeover
 {% endstep %}
 {% endstepper %}
 
