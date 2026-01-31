@@ -338,13 +338,14 @@ EOF
     fi
 }
 
-# pip3 installer
+# Skip empty installer strings (avoid errors when category has no packages)
 pip_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local pip_string="$3"  # Receive the list of packages as a string
+    local pip_string="${3:-}"  # Receive the list of packages as a string
 
+    [ -z "$pip_string" ] && return 0
     # Iterate over the space-separated packages in the string
     for package in $pip_string; do
         # Add a menu entry for the package
@@ -363,9 +364,9 @@ npm_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local npm_string="$3"  # Receive the list of packages as a string
+    local npm_string="${3:-}"
 
-    # Iterate over the space-separated packages in the string
+    [ -z "$npm_string" ] && return 0
     for package in $npm_string; do
         # Add a menu entry for the package
         menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
@@ -383,9 +384,9 @@ gem_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local gem_string="$3"  # Receive the list of packages as a string
+    local gem_string="${3:-}"
 
-    # Iterate over the space-separated packages in the string
+    [ -z "$gem_string" ] && return 0
     for package in $gem_string; do
         # Add a menu entry for the package
         menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
@@ -403,9 +404,9 @@ go_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local commands="$3"  # Receive the Go commands as a multi-line string
+    local commands="${3:-}"
 
-    # Extract binaries from the Go commands and execute each command
+    [ -z "$commands" ] && return 0
     while IFS= read -r line; do
         # Parse the Go binary name if a symbolic link is present
         if [[ $line == *"ln -fs"* ]]; then
@@ -473,7 +474,7 @@ go install github.com/ryandamour/crlfmap@latest;ln -fs ~/go/bin/crlfmap /usr/bin
 go install github.com/Chocapikk/wpprobe@latest;ln -fs ~/go/bin/wpprobe /usr/bin/wpprobe
 go install github.com/bp0lr/gauplus@latest;ln -fs ~/go/bin/gauplus /usr/bin/gauplus
 go install github.com/tomnomnom/anew@latest;ln -fs ~/go/bin/anew /usr/bin/anew
-go install github.com/projectdiscovery/tldfinder/cmd/tldfinder@latest;;ln -fs ~/go/bin/tldfinder /usr/bin/tldfinder
+go install github.com/projectdiscovery/tldfinder/cmd/tldfinder@latest;ln -fs ~/go/bin/tldfinder /usr/bin/tldfinder
 go install github.com/hahwul/dalfox/v2@latest;ln -fs ~/go/bin/dalfox /usr/bin/dalfox
 go install github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest;ln -fs ~/go/bin/urlfinder /usr/bin/urlfinder
 go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jsluice /usr/bin/jsluice
