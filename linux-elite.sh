@@ -1,7 +1,7 @@
 #!/bin/bash
 ver="5.0"
 
-# Global variables
+# Global variables (menu paths: XDG base dirs, same on Ubuntu and Kali)
 GOPROXY="https://goproxy.cn,direct"
 USERS=$(ls /home | head -1)
 LAN=$(hostname -I | awk '{print $1}')
@@ -48,10 +48,7 @@ if [[ $EUID -ne 0 ]]; then
     warning "This script must be run as root..."
 else
     # Required packages
-    REQUIRED_PACKAGES=(
-        wget curl git net-tools gnupg
-        apt-transport-https alacarte locate
-        debsig-verify xmlstarlet)
+    REQUIRED_PACKAGES=(wget curl git net-tools gnupg apt-transport-https unzip alacarte locate ca-certificates debsig-verify xmlstarlet)
 
     # Check if apt cache is older than 7 days
     APT_CACHE="/var/lib/apt/periodic/update-success-stamp"
@@ -77,8 +74,7 @@ fi
 # Display ASCII art logo
 logo()
 {
-    reset
-    clear
+    reset;clear
     echo -e  "${GREEN}                            --/osssssssssssso/--                    "
     echo -e  "${GREEN}                        -+sss+-+--os.yo:++/.o-/sss+-                "
     echo -e  "${GREEN}                     /sy+++-.h.-dd++m+om/s.h.hy/:+oys/              "
@@ -111,7 +107,7 @@ logo()
     echo -e    "${RED}                            --/osssssssssssso/--                    "
     echo -e   "${BLUE}                                  Unk9vvN                           "
     echo -e "${YELLOW}                             unk9vvn.github.io                      "
-    echo -e   "${CYAN}                              Linux Elite "$ver"                    "
+    echo -e   "${CYAN}                              Linux Elite ${ver}                    "
     echo -e "\n"
 }
 
@@ -121,7 +117,7 @@ create_menu()
     local TOPIC_MENU="$1"
     local SUB_MENU="$2"
     shift 2
-    local SUB_MENU_ITEMS=($@)
+    local SUB_MENU_ITEMS=("$@")
 
     # Download the main icon
     curl -s -o "$IMAGES/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
@@ -137,7 +133,6 @@ Comment=${TOPIC_MENU}
 Icon=$IMAGES/${SUB_MENU}.png
 Type=Directory
 EOF
-
     # Add the main menu to the XML file
     xmlstarlet ed \
         -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
@@ -146,11 +141,10 @@ EOF
         "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
         mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
 
-    # Create separate submenu for each item
+    # Create separate submenu for each item (batch directory files and XML edits)
+    local SUBMENU_ED_OPTS=() LAYOUT_OPTS=()
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         mkdir -p "$APPLICATIONS/Unk9vvN/$SUB_MENU/$ITEM"
-        
-        # Create directory file for each submenu
         cat > "$DESKTOP_DIRECTORIES/${SUB_MENU}-${ITEM}.directory" << EOF
 [Desktop Entry]
 Name=${ITEM}
@@ -158,36 +152,23 @@ Comment=${SUB_MENU}
 Icon=folder
 Type=Directory
 EOF
-
-        # Add each submenu separately to the XML
-        # Ensure we're using consistent naming here
-        xmlstarlet ed \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
+        SUBMENU_ED_OPTS+=(-s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
             -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Include" -v "" \
-            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Include" -v "")
+        LAYOUT_OPTS+=(-s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}")
     done
 
-    # Add Layout to the main menu
+    # Batch add all submenus to XML (one file write instead of N)
+    xmlstarlet ed "${SUBMENU_ED_OPTS[@]}" "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
+        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
+
+    # Add Layout and batch all Menuname entries (one write for Layout, one for all Menunames)
     xmlstarlet ed \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
-        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
-
-    # Include each submenu item in the layout
-    for ITEM in "${SUB_MENU_ITEMS[@]}"; do
-        xmlstarlet ed \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}" \
-            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
-    done
-
-    # Add final Merge to the layout
-    xmlstarlet ed \
+        "${LAYOUT_OPTS[@]}" \
         -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
         -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
         "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
@@ -258,7 +239,7 @@ menu()
 EOF
         fi
         
-        chmod 664 $CONFIG_MENU/xfce-applications.menu
+        chmod 664 "$CONFIG_MENU/xfce-applications.menu"
     fi
 
     # Initialize Unk9vvN menu
@@ -271,7 +252,6 @@ Comment=unk9vvn.github.io
 Icon=$IMAGES/unk9vvn-logo.jpg
 Type=Directory
 EOF
-
     # Add Unk9vvN menu to menu file
     if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']" "$CONFIG_MENU/xfce-applications.menu"; then
         xmlstarlet ed \
@@ -299,7 +279,7 @@ EOF
     create_menu "Defensive-Security" "Security-Audit" "Preliminary-Audit-Assessment Planning-and-Preparation Establishing-Audit-Objectives Performing-the-Review Preparing-the-Audit-Report Issuing-the-Review-Report"
 }
 
-# desktop menu
+# desktop menu (Exec= uses exec_shell: Kali=kali-menu, Ubuntu=ubuntu-menu or fallback)
 menu_entry()
 {
     local sub_category="$1"
@@ -321,8 +301,11 @@ EOF
     # Find the correct menu path for this subcategory
     local menu_path="/Menu/Menu[Name='Unk9vvN']/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
     
-    # Check if Include element exists in the correct path
-    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include" "$CONFIG_MENU/xfce-applications.menu"; then
+    # Check if Include element exists (use count(); empty Include would make -v output nothing and add duplicate)
+    local include_count
+    include_count=$(xmlstarlet sel -Q -t -v "count(${menu_path}/Include)" "$CONFIG_MENU/xfce-applications.menu" 2>/dev/null) || include_count=0
+    [ -z "$include_count" ] && include_count=0
+    if [ "$include_count" -eq 0 ]; then
         xmlstarlet ed \
             -s "${menu_path}" -t elem -n "Include" -v "" \
             "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
@@ -338,7 +321,7 @@ EOF
     fi
 }
 
-# Skip empty installer strings (avoid errors when category has no packages)
+# pip installer
 pip_installer()
 {
     local sub_category="$1"
@@ -349,7 +332,7 @@ pip_installer()
     # Iterate over the space-separated packages in the string
     for package in $pip_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
 
         # Run the pip installation command
         pip3 install --break-system-packages "${package}"
@@ -369,7 +352,7 @@ npm_installer()
     [ -z "$npm_string" ] && return 0
     for package in $npm_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
 
         # Run the npm installation command
         npm install -g "${package}"
@@ -389,7 +372,7 @@ gem_installer()
     [ -z "$gem_string" ] && return 0
     for package in $gem_string; do
         # Add a menu entry for the package
-        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell 'sudo ${package} -h'"
+        menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
 
         # Run the gem installation command
         gem install "${package}"
@@ -416,7 +399,7 @@ go_installer()
             binary=$(basename "$symlink")
 
             # Add a menu entry for the binary
-            menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell 'sudo ${binary} -h'"
+            menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell sudo $binary -h"
 
             # Print a success message for the binary
             success "Successfully Installed ${binary}"
@@ -481,7 +464,6 @@ go install github.com/BishopFox/jsluice/cmd/jsluice@latest;ln -fs ~/go/bin/jslui
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/KathanP19/Gxss@latest;ln -fs ~/go/bin/Gxss /usr/bin/gxss
-go install github.com/glebarez/cero@latest;ln -fs ~/go/bin/cero /usr/bin/cero
 go install github.com/KathanP19/cf-hero@latest;ln -fs ~/go/bin/cf-hero /usr/bin/cf-hero
 go install github.com/bountysecurity/gbounty/cmd/gbounty@latest;ln -fs ~/go/bin/gbounty /usr/bin/gbounty
 go install github.com/003random/getJS@latest;ln -fs ~/go/bin/getJS /usr/bin/getjs
@@ -514,7 +496,7 @@ go install github.com/mlcsec/headi@latest;ln -fs ~/go/bin/headi /usr/bin/headi
 go install github.com/takshal/freq@latest;ln -fs ~/go/bin/freq /usr/bin/freq
 go install github.com/hakluke/hakrevdns@latest;ln -fs ~/go/bin/hakrevdns /usr/bin/hakrevdns
 go install github.com/hakluke/haktldextract@latest;ln -fs ~/go/bin/haktldextract /usr/bin/haktldextract
-go install github.com/Emoe/@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
+go install github.com/Emoe/kxss@latest;ln -fs ~/go/bin/kxss /usr/bin/kxss
 go install github.com/Josue87/gotator@latest;ln -fs ~/go/bin/gotator /usr/bin/gotator
 go install github.com/trap-bytes/gourlex@latest;ln -fs ~/go/bin/gourlex /usr/bin/gourlex
 go install github.com/musana/fuzzuli@latest;ln -fs ~/go/bin/fuzzuli /usr/bin/fuzzuli
@@ -544,10 +526,10 @@ go install github.com/akshaysharma016/aem-detector@latest;ln -fs ~/go/bin/aem-de
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
-	# install cloudbunny
+	# install cloudbunny (official: pip3 install -r requirements.txt, run cloudbunny.py)
 	if [ ! -d "/usr/share/cloudbunny" ]; then
 		local name="cloudbunny"
-		git clone https://github.com/Warflop/CloudBunny /usr/share/$name
+		git clone https://github.com/Warflop/cloudbunny /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
@@ -555,31 +537,32 @@ go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bi
 cd /usr/share/$name;python3 cloudbunny.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
- 	# install ghauri
+ 	# install ghauri (official: pip install -r requirements.txt, then setup.py install or pip install -e .)
 	if [ ! -d "/usr/share/ghauri" ]; then
 		local name="ghauri"
 		git clone https://github.com/r0oth3x49/ghauri /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-		cd /usr/share/$name;python3 setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		python3 -m pip install -r /usr/share/$name/requirements.txt --break-system-packages
+		cd /usr/share/$name && python3 setup.py install
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
-	# install phoneinfoga
+	# install phoneinfoga (official: download binary from releases, or: bash <(curl -sSL .../install))
 	if [ ! -d "/usr/share/phoneinfoga" ]; then
 		local name="phoneinfoga"
 		mkdir -p /usr/share/$name
-		wget https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
-		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		wget -q https://github.com/sundowndev/phoneinfoga/releases/latest/download/phoneinfoga_Linux_x86_64.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xf /tmp/$name.tar.gz -C /usr/share/$name
+		rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/phoneinfoga /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -592,24 +575,25 @@ EOF
 		chmod 755 /usr/share/$name/app/*
 		ln -fs /usr/share/$name/app/$name /usr/bin/postman
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-	# install bkcrack
+	# install bkcrack (official: download prebuilt from releases, latest v1.8.1)
 	if [ ! -d "/usr/share/bkcrack" ]; then
 		local name="bkcrack"
 		mkdir -p /usr/share/$name
-		wget https://github.com/kimci86/bkcrack/releases/download/v1.7.0/bkcrack-1.7.0-Linux.tar.gz -O /tmp/$name.tar.gz
-		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
+		wget -q https://github.com/kimci86/bkcrack/releases/download/v1.8.1/bkcrack-1.8.1-Linux.tar.gz -O /tmp/$name.tar.gz
+		tar --strip-components=1 -xf /tmp/$name.tar.gz -C /usr/share/$name
+		rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/bkcrack /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-	# install spiderfoot
+	# install spiderfoot (official: pip3 install -r requirements.txt, run sf.py -l IP:5001)
 	if [ ! -d "/usr/share/spiderfoot" ]; then
 		local name="spiderfoot"
 		git clone https://github.com/smicallef/spiderfoot /usr/share/$name
@@ -620,7 +604,7 @@ EOF
 cd /usr/share/$name;python3 ./sf.py -l 127.0.0.1:5001 "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -634,11 +618,11 @@ EOF
 cd /usr/share/$name;python3 lostsec.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
- 	# install 403-bypass
+ 	# install 403-bypass (official: git clone, run bash 403-bypass.sh)
 	if [ ! -d "/usr/share/403-bypass" ]; then
 		local name="403-bypass"
 		git clone https://github.com/Dheerajmadhukar/4-ZERO-3 /usr/share/4-ZERO-3
@@ -648,68 +632,67 @@ EOF
 cd /usr/share/4-ZERO-3;./403-bypass.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
- 	# install gitdorker
+ 	# install gitdorker (official: clone, pip3 install -r requirements.txt, run GitDorker.py)
 	if [ ! -d "/usr/share/gitdorker" ]; then
 		local name="gitdorker"
 		git clone https://github.com/obheda12/GitDorker /usr/share/$name
 		chmod 755 /usr/share/$name/*
-        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 GitDorker.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
- 	# install github-dork
+ 	# install github-dork (official: clone, pip install -r requirements.txt, run github-dork.py)
 	if [ ! -d "/usr/share/github-dork" ]; then
 		local name="github-dork"
 		git clone https://github.com/techgaun/github-dorks /usr/share/$name
 		chmod 755 /usr/share/$name/*
-        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
-		cd /usr/share/$name;sudo python3 setup.py install
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 github-dork.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-  	# install changeme
+  	# install changeme (official: clone, pip install -r requirements.txt, run changeme.py)
 	if [ ! -d "/usr/share/changeme" ]; then
 		local name="changeme"
 		git clone https://github.com/ztgrace/changeme /usr/share/$name
 		chmod 755 /usr/share/$name/*
-        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 changeme.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-  	# install sudomy
+  	# install sudomy (official: clone, pip install -r requirements.txt, run sudomy)
 	if [ ! -d "/usr/share/sudomy" ]; then
 		local name="sudomy"
 		git clone https://github.com/screetsec/Sudomy /usr/share/$name
 		chmod 755 /usr/share/$name/*
-        pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;sudo ./sudomy "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -717,7 +700,7 @@ EOF
 	if [ ! -f "/usr/bin/oty" ]; then
 		local name="oty"
 		pip3 install git+https://github.com/1hehaq/oty
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -731,7 +714,7 @@ EOF
 cd /usr/share/$name;./WPXStrike.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -746,7 +729,7 @@ EOF
 cd /usr/share/$name;python3 autoswagger.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -760,7 +743,7 @@ EOF
 cd /usr/share/$name;python3 corstest.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -774,7 +757,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -794,12 +777,12 @@ EOF
         pip3 install --user --upgrade urllib3 charset_normalizer --break-system-packages
         pip3 install "requests==2.31.0" "urllib3<2" "charset_normalizer<3" --break-system-packages
         success "Successfully Installed $name"
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 
         if [ ! -d "/usr/share/$name/PyRoxy" ]; then
             git clone https://github.com/MatrixTM/PyRoxy /usr/share/$name/PyRoxy
-            chmod 755 /usr/share/$name/PyPoxy/*
-            cd /usr/share/$name/PyPoxy;python3 setup.py install
+            chmod 755 /usr/share/$name/PyRoxy/*
+            cd /usr/share/$name/PyRoxy && python3 setup.py install
             pip3 install --user cloudscraper impacket --break-system-packages
         fi
 
@@ -821,13 +804,13 @@ EOF
 		local name="subdomainizer"
 		git clone https://github.com/nsonaniya2010/SubDomainizer /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 SubDomainizer.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -836,13 +819,13 @@ EOF
 		local name="sharpyshell"
 		git clone https://github.com/antonioCoco/SharPyShell /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 SharPyShell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
  
@@ -856,7 +839,7 @@ EOF
 cd /usr/share/$name;python3 loxs.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -865,13 +848,13 @@ EOF
 		local name="passhunt"
 		git clone https://github.com/Viralmaniar/Passhunt /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 passhunt.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -886,7 +869,7 @@ EOF
 cd /usr/share/$name;python2 assets_from_spf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -898,7 +881,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh;ipfs init
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -913,7 +896,7 @@ EOF
 cd /usr/share/$name;python3 CrackQL.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -928,7 +911,7 @@ EOF
 cd /usr/share/$name;python3 fuxploider.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -941,7 +924,7 @@ EOF
   		cd /usr/share/$name;go build doser.go
 		ln -fs /usr/share/$name/doser /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -956,7 +939,7 @@ EOF
 cd /usr/share/$name;python2 SWF-server "\$@"
 EOF
 		chmod +x /usr/bin/swf-server
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -965,13 +948,13 @@ EOF
 		local name="getallparams"
 		git clone https://github.com/xnl-h4ck3r/GAP-Burp-Extension /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 GAP.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -983,7 +966,7 @@ EOF
 		ln -fs /usr/share/$name/target/release/x8 /usr/bin/$name
 		chmod +x /usr/bin/$name
 		git clone https://github.com/the-xentropy/samlists /usr/share/$name/smalists
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -995,7 +978,7 @@ EOF
   		cd /usr/share/$name;cmake CMakeLists.txt;make
 		ln -fs /usr/share/$name/urldedupe /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1004,13 +987,13 @@ EOF
 		local name="snmp-shell"
 		git clone https://github.com/mxrch/snmp-shell /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 shell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1019,7 +1002,7 @@ EOF
 		local name="graphql-playground"
 		wget https://github.com/graphql/graphql-playground/releases/download/v1.8.10/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1031,7 +1014,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/findomain /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1043,7 +1026,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/aquatone /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1059,7 +1042,7 @@ EOF
 cd /usr/share/$name;mono AspDotNetWrapper.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1069,17 +1052,17 @@ EOF
 		git clone https://github.com/EnableSecurity/wafw00f /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python3 setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
   	# install whatwaf
 	if [ ! -d "/usr/share/whatwaf" ]; then
-		local name="wafw00f"
+		local name="whatwaf"
 		git clone https://github.com/Ekultek/WhatWaf /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;python3 setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1088,13 +1071,13 @@ EOF
 		local name="graphpython"
 		git clone https://github.com/mlcsec/Graphpython /usr/share/$name 
 		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;pip install .
+		cd /usr/share/$name && pip3 install . --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 Graphpython.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1108,7 +1091,7 @@ EOF
 cd /usr/share/$name;python3 BypassNeoASPX.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1118,7 +1101,7 @@ EOF
 		wget https://github.com/bee-san/RustScan/releases/download/2.4.1/rustscan.deb.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /tmp;rm -f /tmp/$name.zip
 		chmod +x /tmp/rustscan_2.4.1-1_amd64.deb;dpkg -i /tmp/rustscan_2.4.1-1_amd64.deb;rm -f /tmp/rustscan_2.4.1-1_amd64.deb;rm -f /tmp/rustscan.tmp0-stripped
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1127,7 +1110,7 @@ EOF
 		local name="ronin"
 		curl -o ronin-install.sh https://raw.githubusercontent.com/ronin-rb/scripts/main/ronin-install.sh && bash ronin-install.sh
 		rm -f ronin
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1138,7 +1121,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name
 		make;make install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1149,7 +1132,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name
 		make install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name-bmp --help'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo ${name}-bmp --help"
 		success "Successfully Installed $name"
 	fi
 
@@ -1164,7 +1147,7 @@ EOF
 cd /usr/share/$name;python3 test.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1175,7 +1158,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/webcopilot /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1189,7 +1172,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1203,7 +1186,7 @@ EOF
 cd /usr/share/$name;php gel4y.php "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1218,7 +1201,7 @@ EOF
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1233,7 +1216,7 @@ EOF
 cd /usr/share/$name;python3 blackbird.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1252,7 +1235,7 @@ EOF
 cd /usr/share/$name/singularity;sudo ./singularity-server --HTTPServerPort 8080 "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1267,7 +1250,7 @@ EOF
 cd /usr/share/$name;python3 exchange_proxyshell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1282,7 +1265,7 @@ EOF
 cd /usr/share/$name;python3 asminject.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1297,7 +1280,7 @@ EOF
 cd /usr/share/$name;python3 asnlookup.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1308,7 +1291,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1323,7 +1306,7 @@ EOF
 cd /usr/share/$name;python3 asp-jinja-obfuscator.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1338,7 +1321,7 @@ EOF
 cd /usr/share/$name;python3 waymore.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1353,7 +1336,7 @@ EOF
 cd /usr/share/$name;python3 linkfinder.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1368,7 +1351,7 @@ EOF
 cd /usr/share/$name;java -jar ysoserial-all.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1384,7 +1367,7 @@ EOF
 cd /usr/share/$name/Release;mono ysoserial.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1398,7 +1381,7 @@ EOF
 cd /usr/share/$name;docker-compose up -d "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1412,7 +1395,7 @@ EOF
 cd /usr/share/$name;python3 rsatool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1426,7 +1409,7 @@ EOF
 cd /usr/share/$name;python3 nextrce.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1435,9 +1418,9 @@ EOF
 		local name="subdominator"
 		git clone https://github.com/RevoltSecurities/Subdominator /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cd /usr/share/$name;python3 setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
  
@@ -1451,7 +1434,7 @@ EOF
 cd /usr/share/$name/files;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1464,7 +1447,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/kr /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1478,7 +1461,7 @@ EOF
 cd /usr/share/$name;python3 RsaCtfTool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1489,7 +1472,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		python3 /usr/share/$name/setup.py install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1504,7 +1487,7 @@ EOF
 cd /usr/share/$name;java -jar dtd-finder-all.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1519,7 +1502,7 @@ EOF
 cd /usr/share/$name;python3 docem.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1534,7 +1517,7 @@ EOF
 cd /usr/share/$name;./SpiderSuite_linux.AppImage "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1550,7 +1533,7 @@ EOF
 cd /usr/share/$name;python3 jsa.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1565,7 +1548,7 @@ EOF
 cd /usr/share/$name;python3 smuggle.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1577,7 +1560,7 @@ EOF
 		cd /usr/share/$name;gcc pemcrack.c -o pemcrack -lssl -lcrypto
 		ln -fs /usr/share/$name/pemcrack /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1589,7 +1572,7 @@ EOF
 		cd /usr/share/$name && sudo make
 		ln -fs /usr/share/$name/jwtcrack /usr/bin/jwtcrack
 		chmod +x /usr/bin/jwtcrack
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1601,7 +1584,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/sessionprobe /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1615,7 +1598,7 @@ EOF
 cd /usr/share/$name;python2 dymerge.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1624,13 +1607,13 @@ EOF
 		local name="firesploit"
 		git clone https://github.com/secshubhamsharma/FireSploit /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 firesploit.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1645,7 +1628,7 @@ EOF
 cd /usr/share/$name;python3 gitgot.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1654,13 +1637,13 @@ EOF
 		local name="spartan"
 		git clone https://github.com/sensepost/SPartan /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SPartan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1676,7 +1659,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1691,7 +1674,7 @@ EOF
 cd /usr/share/$name;python3 payloader.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1706,7 +1689,7 @@ EOF
 cd /usr/share/$name;python3 cmseek.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1721,7 +1704,7 @@ EOF
 cd /usr/share/$name;python3 favicon-hashtrick.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1736,7 +1719,7 @@ EOF
 cd /usr/share/$name;python3 xsstrike.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1751,7 +1734,7 @@ EOF
 cd /usr/share/$name;pipenv shell;./w4af_console "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -1765,7 +1748,7 @@ EOF
 cd /usr/share/$name;python3 jwt_tool.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1780,7 +1763,7 @@ EOF
 cd /usr/share/$name;python3 tplmap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1795,7 +1778,7 @@ EOF
 cd /usr/share/$name;python3 sstimap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1809,7 +1792,7 @@ EOF
 cd /usr/share/$name;python3 poodle-exploit.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1823,7 +1806,7 @@ EOF
 cd /usr/share/$name;python2 gopherus.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1838,7 +1821,7 @@ EOF
 cd /usr/share/$name;./Grecon "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1851,7 +1834,7 @@ EOF
 		cd /usr/share/$name;make
 		ln -fs /usr/share/$name/hash_extender /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1865,7 +1848,7 @@ EOF
 cd /usr/share/$name;php rhawk.php "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1879,7 +1862,7 @@ EOF
 cd /usr/share/$name/release;java -jar iis_shortname_scanner.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1889,7 +1872,7 @@ EOF
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
 		tar -xvzf /tmp/$name.tgz -C /usr/local/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/local/bin/ngrok
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1901,7 +1884,7 @@ EOF
 		tar --strip-components=1 -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1915,7 +1898,7 @@ EOF
 cd /usr/share/$name;python3 breacher.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1957,7 +1940,7 @@ EOF
 cd /usr/share/$name;python2 nosqlmap.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -1997,7 +1980,7 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		local name="palera1n"
 		wget https://github.com/palera1n/palera1n/releases/latest/download/palera1n_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2006,34 +1989,34 @@ go install github.com/ndelphit/apkurlgrep@latest;ln -fs ~/go/bin/apkurlgrep /usr
 		local name="sslpindetect"
 		git clone https://github.com/aancw/SSLPinDetect /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 sslpindetect.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
 	# install ideviceinstaller
-	if [ ! -f "/usr/share/ideviceinstaller" ]; then
+	if [ ! -d "/usr/share/ideviceinstaller" ]; then
 		local name="ideviceinstaller"
 		git clone https://github.com/libimobiledevice/ideviceinstaller /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;make;make install
 		ln -fs /usr/share/$name/ideviceinstaller /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
  	# install ipsw
-	if [ ! -f "/usr/share/ipsw" ]; then
+	if ! command -v ipsw &>/dev/null; then
 		local name="ipsw"
 		wget https://github.com/blacktop/ipsw/releases/download/v3.1.569/ipsw_3.1.569_linux_x86_64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2052,7 +2035,7 @@ cd /usr/share/$name;./run.sh > /dev/null &
 sleep 5;firefox --new-tab "http://127.0.0.1:8000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Mobile" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2080,7 +2063,6 @@ go install github.com/koenrh/s3enum@latest;ln -fs ~/go/bin/s3enum /usr/bin/s3enu
 go install github.com/datadog/stratus-red-team/v2/cmd/stratus@latest;ln -fs ~/go/bin/stratus /usr/bin/stratus
 go install github.com/smiegles/mass3@latest;ln -fs ~/go/bin/mass3 /usr/bin/mass3
 go install github.com/mlcsec/clovery@latest;ln -fs ~/go/bin/clovery /usr/bin/clovery
-go install github.com/aquasecurity/tfsec/cmd/tfsec@latest;ln -fs ~/go/bin/tfsec /usr/bin/tfsec
 go install github.com/magisterquis/s3finder@latest;ln -fs ~/go/bin/s3finder /usr/bin/s3finder
 go install github.com/Macmod/goblob@latest;ln -fs ~/go/bin/goblob /usr/bin/goblob
 go install github.com/g0ldencybersec/CloudRecon@latest;ln -fs ~/go/bin/CloudRecon /usr/bin/cloudrecon
@@ -2100,7 +2082,7 @@ go install github.com/Rolix44/Kubestroyer@latest;ln -fs ~/go/bin/Kubestroyer /us
 cd /usr/share/$name;python3 cloudfail.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2112,10 +2094,10 @@ EOF
 		cd /usr/share/$name;npm install
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
-cd /usr/share/$name;npm index.js "\$@"
+cd /usr/share/$name;node index.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2127,16 +2109,16 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/azurehound /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
   	# install grype
-	if [ ! -d "/usr/bin/grype" ]; then
+	if [ ! -f "/usr/bin/grype" ]; then
 		local name="grype"
 		wget https://github.com/anchore/grype/releases/download/v0.89.0/grype_0.89.0_linux_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2151,7 +2133,7 @@ EOF
 cd /usr/share/$name;python3 cloud_enum.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2166,7 +2148,7 @@ EOF
 cd /usr/share/$name;python3 ccat.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2180,7 +2162,7 @@ EOF
 cd /usr/share/$name;pwsh -c "Import-Module ./MicroBurst.psm1; Get-AzureDomainInfo" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2189,13 +2171,13 @@ EOF
 		local name="cloudmapper"
 		git clone https://github.com/duo-labs/cloudmapper /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 cloudmapper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2204,21 +2186,21 @@ EOF
 		local name="cloud-service-enum"
 		git clone https://github.com/NotSoSecure/cloud-service-enum /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/aws_service_enum/requirements.txt
+		pip3 install -r /usr/share/$name/aws_service_enum/requirements.txt --break-system-packages
 		cat > /usr/bin/aws_service_enum << EOF
 #!/bin/bash
 cd /usr/share/$name/aws_service_enum;python3 aws_enum_services.py "\$@"
 EOF
 		chmod +x /usr/bin/aws_service_enum
 		menu_entry "Cloud" "Penetration-Testing" "aws_service_enum" "$exec_shell 'aws_service_enum -h'"
-		pip3 install -r /usr/share/$name/azure_service_enum/requirements.txt
+		pip3 install -r /usr/share/$name/azure_service_enum/requirements.txt --break-system-packages
 		cat > /usr/bin/azure_service_enum << EOF
 #!/bin/bash
 cd /usr/share/$name/azure_service_enum;python3 azure_enum_services.py "\$@"
 EOF
 		chmod +x /usr/bin/azure_service_enum
 		menu_entry "Cloud" "Penetration-Testing" "azure_enum_services" "$exec_shell 'azure_enum_services -h'"
-		pip3 install -r /usr/share/$name/gcp_service_enum/requirements.txt
+		pip3 install -r /usr/share/$name/gcp_service_enum/requirements.txt --break-system-packages
 		cat > /usr/bin/gcp_service_enum << EOF
 #!/bin/bash
 cd /usr/share/$name/gcp_enum_services;python3 gcp_enum_services.py "\$@"
@@ -2233,7 +2215,7 @@ EOF
 		local name="rclone"
 		wget https://downloads.rclone.org/v1.68.2/rclone-v1.68.2-linux-amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2245,7 +2227,7 @@ EOF
 		cd /usr/share/$name;CGO_CFLAGS="-g -O2 -Wno-return-local-addr" go build -ldflags="-s -w" .
 		ln -fs /usr/share/$name/ioxy /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2260,7 +2242,7 @@ EOF
 cd /usr/share/$name;python3 cloudhunter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2275,7 +2257,7 @@ EOF
 cd /usr/share/$name;python3 gcpbucketbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2286,13 +2268,13 @@ EOF
 		chmod 755 /usr/share/$name/*
 		export PURPLEPANDA_NEO4J_URL="bolt://neo4j@localhost:7687"
 		export PURPLEPANDA_PWD="s3cr3tpassword"
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2312,7 +2294,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2324,7 +2306,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/cloudquery /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Cloud" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2355,10 +2337,11 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 	# install hiddify
 	if [ ! -d "/usr/share/hiddify" ]; then
 		local name="hiddify"
-		wget https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$name.deb
+		wget -q https://github.com/hiddify/hiddify-next/releases/latest/download/Hiddify-Debian-x64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-  		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/hiddify" >> /etc/sudoers
-  		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/Hiddify-Cli" >> /etc/sudoers
+		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/hiddify" >> /etc/sudoers
+		echo "root ALL=(ALL:ALL) NOPASSWD: /usr/share/hiddify/Hiddify-Cli" >> /etc/sudoers
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2372,7 +2355,7 @@ go install github.com/Danny-Dasilva/CycleTLS/cycletls@latest;ln -fs ~/go/bin/cyc
 cd /usr/share/$name;python3 snmpbrute.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2388,7 +2371,7 @@ EOF
 cd /usr/share/$name/bin;python3 ivre.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2406,13 +2389,13 @@ EOF
     	chmod +x /usr/bin/$name
     	apt remove -y python3-urllib3
     	pip3 install --user --upgrade urllib3 charset_normalizer --break-system-packages
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 
     	if [ ! -d "/usr/share/$name/PyRoxy" ]; then
         	git clone https://github.com/MatrixTM/PyRoxy /usr/share/$name/PyRoxy
-			chmod 755 /usr/share/$name/PyPoxy/*
-        	cd /usr/share/$name/PyPoxy;python3 setup.py install
+			chmod 755 /usr/share/$name/PyRoxy/*
+        	cd /usr/share/$name/PyRoxy && python3 setup.py install
         	pip3 install --user cloudscraper impacket --break-system-packages
     	fi
 
@@ -2420,7 +2403,7 @@ EOF
         	git clone https://github.com/MatrixTM/SpoofFinder /usr/share/$name/SpoofFinder
         	chmod 755 /usr/share/$name/SpoofFinder/*
         	pip3 install -r /usr/share/$name/SpoofFinder/requirements.txt --break-system-packages
-    	    pip3 install -user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
+    	    pip3 install --user httpx netaddr rich aioconsole git+https://github.com/soxoj/async-search-scraper --break-system-packages
 	        cat > /usr/bin/spoofinder << EOF
 #!/bin/bash
 cd /usr/share/$name/SpoofFinder;python3 spoof_finder.py "\$@"
@@ -2440,7 +2423,7 @@ EOF
 cd /usr/share/$name;python3 mr.sip.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2449,13 +2432,13 @@ EOF
 		local name="changeme"
 		git clone https://github.com/ztgrace/changeme /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 changeme.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2478,9 +2461,9 @@ EOF
 		chmod +x /usr/share/$name/*
 		cd /usr/share/$name && sudo ./setup.sh install
 		chmod 700 /var/lib/$name
-		chmod /usr/local/bin/$name
+		chmod +x /usr/local/bin/$name
 		chown debian-tor:debian-tor /var/lib/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2489,13 +2472,13 @@ EOF
 		local name="passhunt"
 		git clone https://github.com/Viralmaniar/Passhunt /usr/share/$name
 		chmod 755 /usr/share/$name/*
-  		pip3 install -r /usr/share/$name/requirements.txt
+  		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 passhunt.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2540,7 +2523,7 @@ EOF
 cd /usr/share/$name;wine RouterScan.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2548,11 +2531,11 @@ EOF
 	if [ ! -d "/usr/share/pcredz" ]; then
 		local name="pcredz"
 		mkdir -p /usr/share/$name
-		git clone https://github.com/lgandx/PCredz -O /usr/share/$name
+		git clone https://github.com/lgandx/PCredz /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Pcredz /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2565,7 +2548,7 @@ EOF
   		cd /usr/share/$name;go build doser.go
 		ln -fs /usr/share/$name/doser /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2579,7 +2562,7 @@ EOF
 cd /usr/share/$name;python3 pret.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2594,7 +2577,7 @@ EOF
 cd /usr/share/$name;python3 engine.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2609,33 +2592,34 @@ EOF
 cd /usr/share/$name;python3 kraken.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
 	# install pwndbg
-	if [ ! -d "/usr/bin/pwndbg" ]; then
+	if [ ! -f "/usr/bin/pwndbg" ]; then
 		local name="pwndbg"
 		wget https://github.com/pwndbg/pwndbg/releases/download/2024.08.29/pwndbg_2024.08.29_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
  	# install sniffnet
-	if [ ! -d "/usr/bin/sniffnet" ]; then
+	if [ ! -f "/usr/bin/sniffnet" ]; then
 		local name="sniffnet"
 		wget https://github.com/GyulyVGC/sniffnet/releases/download/v1.3.2/Sniffnet_LinuxDEB_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
 	# install ipscan
 	if [ ! -f "/usr/bin/ipscan" ]; then
 		local name="ipscan"
-		wget https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$name.deb
+		wget -q https://github.com/angryip/ipscan/releases/latest/download/ipscan_3.9.1_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -2649,7 +2633,7 @@ EOF
 cd /usr/share/$name;python3 fetch.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2663,7 +2647,7 @@ EOF
 cd /usr/share/$name;python3 siet.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2678,7 +2662,7 @@ EOF
 cd /usr/share/$name;python3 Memcrashed.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2692,7 +2676,7 @@ EOF
 cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2705,7 +2689,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/spoof-dpi /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2718,7 +2702,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/pretender /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Network" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2755,7 +2739,7 @@ EOF
 cd /usr/share/$name;python3 GTScan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2769,7 +2753,7 @@ EOF
 cd /usr/share/$name;python2 hlr-lookups.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2784,7 +2768,7 @@ EOF
 cd /usr/share/$name;python3 geowifi.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2798,7 +2782,7 @@ EOF
 		ln -fs /usr/share/$name/build/srsepc/src/srsepc /usr/bin/srsepc
 		ln -fs /usr/share/$name/build/srsepc/src/srsenb /usr/bin/srsenb
 		chmod +x /usr/bin/srsepc;chmod +x /usr/bin/srsenb
-		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "Wireless" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2835,7 +2819,7 @@ go install github.com/cruise-automation/fwanalyzer@latest;ln -fs ~/go/bin/fwanal
 cd /usr/share/$name;./firmwalker.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2851,7 +2835,7 @@ EOF
 cd /usr/share/$name;python3 ubidump.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2860,8 +2844,8 @@ EOF
 		local name="ubi_reader"
 		git clone https://github.com/onekey-sec/ubi_reader /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip install --user ubi_reader
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		pip3 install --user ubi_reader --break-system-packages
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2870,13 +2854,13 @@ EOF
 		local name="bytesweep"
 		git clone https://gitlab.com/bytesweep/bytesweep /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages;pip3 install .
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages && pip3 install . --break-system-packages
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
 	# install firmware-analysis-toolkit
-	if [ ! -d "/usr/share/firfirmware-analysis-toolkit" ]; then
+	if [ ! -d "/usr/share/firmware-analysis-toolkit" ]; then
 		local name="firmware-analysis-toolkit"
 		git clone https://github.com/attify/firmware-analysis-toolkit /usr/share/$name
 		chmod 755 /usr/share/$name/*
@@ -2886,7 +2870,7 @@ EOF
 cd /usr/share/$name;python3 fat.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2895,13 +2879,13 @@ EOF
 		local name="icspector"
 		git clone https://github.com/microsoft/ics-forensics-tools /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages 2>/dev/null || true
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name/src;python3 driver.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2913,20 +2897,20 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell '$name -h'"
+		menu_entry "IoT" "Penetration-Testing" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
 	exit
 }
 
-# ted team tools
+# red team tools
 red_team()
 {
 	printf "$YELLOW"  "# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #"
 
 	# install Repository Tools
-	apt install -qy emailharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
+	apt install -qy theharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
 
 	# install Python3 pip
 	reconnaissance_pip="censys ggshield bbot raccoon-scanner mailspoof h8mail twint thorndyke gitfive shodan postmaniac socialscan huntsman chiasmodon"
@@ -2962,7 +2946,7 @@ go install github.com/aydinnyunus/PackageSpy@latest;ln -fs ~/go/bin/packagespy /
 cd /usr/share/$name;python3 trape.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2976,7 +2960,7 @@ EOF
 cd /usr/share/$name;./Dracnmap.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -2991,7 +2975,7 @@ EOF
 cd /usr/share/$name;python3 cloakquest3r.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3006,7 +2990,7 @@ EOF
 cd /usr/share/$name;python3 linkedin2username.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3021,7 +3005,7 @@ EOF
 cd /usr/share/$name;python3 thetimemachine.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Reconnaissance" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3057,7 +3041,7 @@ EOF
 cd /usr/share/$name/src;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3071,7 +3055,7 @@ EOF
 cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3085,12 +3069,12 @@ EOF
 cd /usr/share/$name;pwsh -c \"dir\" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Resource-Development" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
 
-	printf "$YELLOW"  "# --------------------------------------Initial-Access-Red-team-------------------------------------- #"
+	printf "$YELLOW"  "# --------------------------------------Initial-Access-Red-Team-------------------------------------- #"
 
 	# install Repository Tools
 	apt install -qy qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
@@ -3110,7 +3094,7 @@ EOF
 	# install Golang
 	initial_access_golang="
 go install github.com/Tylous/ZipExec@latest;ln -fs ~/go/bin/ZipExec /usr/bin/ZipExec
-go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor"
+go install github.com/HuntDownProject/HEDnsExtractor/cmd/hednsextractor@latest;ln -fs ~/go/bin/hednsextractor /usr/bin/hednsextractor"
 	go_installer "Initial-Access" "Red-Team" "$initial_access_golang"
 
 	# install evilginx
@@ -3123,7 +3107,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 		cd /usr/share/$name;./install.sh
 		ln -fs /usr/share/$name/evilginx /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3138,7 +3122,7 @@ go install github.com/HuntDownProject/hednsextractor/cmd/hednsextractor@latest;l
 cd /usr/share/$name;python3 SocialFish.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3152,7 +3136,7 @@ EOF
 cd /usr/share/$name;bash zphisher.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3166,7 +3150,7 @@ EOF
 cd /usr/share/$name;python3 InsertPeIntoPng.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3180,7 +3164,7 @@ EOF
 cd /usr/share/$name;python2 embedInHTML.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3194,7 +3178,7 @@ EOF
 cd /usr/share/$name;python2 badpdf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3208,7 +3192,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3222,7 +3206,7 @@ EOF
 cd /usr/share/$name;./blackeye.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3238,7 +3222,7 @@ EOF
 cd /usr/share/$name;mono PDF-BUILDER.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3254,7 +3238,7 @@ EOF
 cd /usr/share/$name;python3 credsniper.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3268,7 +3252,7 @@ EOF
 cd /usr/share/$name;python3 evilurl.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3282,7 +3266,7 @@ EOF
 cd /usr/share/$name;python2 debinject.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3296,7 +3280,7 @@ EOF
 cd /usr/share/$name;./Brutal.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3310,7 +3294,7 @@ EOF
 cd /usr/share/$name;python3 demiguise.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3325,7 +3309,7 @@ EOF
 cd /usr/share/$name;python3 Dr0p1t.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3334,13 +3318,13 @@ EOF
 		local name="evilpdf"
 		git clone https://github.com/superzerosec/evilpdf /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 evilpdf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3355,7 +3339,7 @@ EOF
 cd /usr/share/$name;./gophish "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Initial-Access" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3391,7 +3375,7 @@ EOF
 cd /usr/share/$name;./venom.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Execution" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Execution" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3405,7 +3389,7 @@ EOF
 cd /usr/share/$name;python2 PowerLessShell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Execution" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3414,13 +3398,13 @@ EOF
 		local name="sharpshooter"
 		git clone https://github.com/mdsecactivebreach/SharpShooter /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 SharpShooter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Execution" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3433,7 +3417,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/donut /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Execution" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Execution" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3466,7 +3450,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Vegile /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3480,7 +3464,7 @@ EOF
 cd /usr/share/$name;python2 smm_backdoor.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3493,7 +3477,7 @@ EOF
 		cd /usr/share/$name;make
 		ln -fs /usr/share/$name/rkload /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Persistence" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3529,7 +3513,7 @@ EOF
 cd /usr/share/$name;python3 mimipenguin.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3545,7 +3529,7 @@ EOF
 cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3560,7 +3544,7 @@ EOF
 cd /usr/share/$name;bash spectre-meltdown-checker.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3570,7 +3554,7 @@ EOF
 		git clone https://github.com/lefayjey/linWinPwn /usr/share/$name
 		chmod 755 /usr/share/$name/*
   		cd /usr/share/$name;./install.sh
-		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3585,7 +3569,7 @@ EOF
 cd /usr/share/$name;mono DeadPotato-NET4.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Privilege-Escalation" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3622,7 +3606,7 @@ EOF
 cd /usr/share/$name;bash ASWCrypter.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3636,7 +3620,7 @@ EOF
 cd /usr/share/$name;python3 unicorn.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3650,7 +3634,7 @@ EOF
 cd /usr/share/$name;python3 edr_blocker.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3664,7 +3648,7 @@ EOF
 cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3678,7 +3662,7 @@ EOF
 cd /usr/share/$name;python3 bin2sc.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3693,7 +3677,7 @@ EOF
 cd /usr/share/$name;wine $name.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3705,7 +3689,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/scarecrow /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3720,7 +3704,7 @@ EOF
 cd /usr/share/$name;python3 syswhispers.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3734,7 +3718,7 @@ EOF
 cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-DOSfuscation.psd1; Invoke-DOSfuscation" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3748,7 +3732,7 @@ EOF
 cd /usr/share/$name;python2 obfuscateCactusTorch.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3762,7 +3746,7 @@ EOF
 cd /usr/share/$name;python3 phantom-evasion.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3771,13 +3755,13 @@ EOF
 		local name="spookflare"
 		git clone https://github.com/hlldz/SpookFlare /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 spookflare.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3791,7 +3775,7 @@ EOF
 cd /usr/share/$name;python2 pazuzu.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3805,7 +3789,7 @@ EOF
 cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-Obfuscation.psd1; Invoke-Obfuscation" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3819,7 +3803,7 @@ EOF
 cd /usr/share/$name;pwsh -c "Import-Module ./Invoke-CradleCrafter.psd1; Invoke-CradleCrafter" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Defense-Evasion" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3856,7 +3840,7 @@ go install github.com/ropnop/kerbrute@latest;ln -fs ~/go/bin/kerbrute /usr/bin/k
 cd /usr/share/$name;python3 kerberoast.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3869,7 +3853,7 @@ EOF
   		chmod 755 /usr/share/$name/*
   		ln -fs /usr/share/$name/hack-browser-data /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3883,7 +3867,7 @@ EOF
 cd /usr/share/$name;python2 ntlmRelayToEWS.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3897,7 +3881,7 @@ EOF
 cd /usr/share/$name;python3 dfscoerce.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -3916,7 +3900,7 @@ EOF
 cd /usr/share/metasploit-framework/modules/post/windows/gather/$name;wine NetRipper.x64.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Credential-Access" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3954,7 +3938,7 @@ EOF
 cd /usr/share/$name;wine ADExplorer.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -3969,7 +3953,7 @@ EOF
 cd /usr/share/$name;wine $name.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Discovery" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4005,7 +3989,7 @@ EOF
 cd /usr/share/$name;wine SCShell.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4019,8 +4003,8 @@ EOF
 cd /usr/share/$name;pwsh -c "Import-Module ./Amnesiac.ps1; Amnesiac" "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell '$name'"
-		success "Successfully Installed  $name"
+		menu_entry "Lateral-Movement" "Red-Team" "$name" "$exec_shell $name"
+		success "Successfully Installed $name"
 	fi
 
 
@@ -4056,7 +4040,7 @@ EOF
 cd /usr/share/$name;python3 server.py --insecure "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Collection" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Collection" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4071,7 +4055,7 @@ EOF
 cd /usr/share/$name;python3 server.py --insecure "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Collection" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Collection" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4108,7 +4092,7 @@ EOF
 cd /usr/share/$name;poetry run phserver "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4123,7 +4107,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4137,7 +4121,7 @@ EOF
 cd /usr/share/$name;python3 ms.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4152,7 +4136,7 @@ EOF
 cd /usr/share/$name;python3 Ninja.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4167,7 +4151,7 @@ EOF
 cd /usr/share/$name;python3 start.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4185,7 +4169,7 @@ EOF
 		ln -fs /usr/share/$name/dist/AdaptixClient /usr/bin/adaptixclient
 		chmod +x /usr/bin/adaptixserver
 		chmod +x /usr/bin/adaptixclient
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4199,7 +4183,7 @@ EOF
 cd /usr/share/$name;python2 eggshell.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4213,7 +4197,7 @@ EOF
 cd /usr/share/$name;python3 server.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4228,7 +4212,7 @@ EOF
 cd /usr/share/$name;python3 c2c.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4243,7 +4227,7 @@ EOF
 cd /usr/share/$name;python3 phonesploitpro.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4257,7 +4241,7 @@ EOF
 cd /usr/share/$name;python3 c2.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4271,35 +4255,35 @@ EOF
 cd /usr/share/$name;python3 gcr.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-	# isntall meetc2
+	# install meetc2
 	if [ ! -d "/usr/share/meetc2" ]; then
 		local name="meetc2"
 		git clone https://github.com/iammaguire/MeetC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/meetc /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
- 	# isntall keyway
+ 	# install keyway
 	if [ ! -d "/usr/share/keyway" ]; then
 		local name="keyway"
-  		mkdir -p /usr/share/$name
-		wget https://github.com/keywa7/keywa7/releases/download/keyway1.0/server
-		wget https://github.com/keywa7/keywa7/releases/download/keyway1.0/agent
+		mkdir -p /usr/share/$name
+		wget -q https://github.com/keywa7/keywa7/releases/download/keyway1.0/server -O /usr/share/$name/server
+		wget -q https://github.com/keywa7/keywa7/releases/download/keyway1.0/agent -O /usr/share/$name/agent
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/server /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
- 	# isntall reverse_ssh
+ 	# install reverse_ssh
 	if [ ! -d "/usr/share/reverse_ssh" ]; then
 		local name="reverse_ssh"
   		mkdir -p /usr/share/$name
@@ -4308,16 +4292,16 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/client /usr/bin/rversesshc;ln -fs /usr/share/$name/server /usr/bin/rversesshs
 		chmod +x /usr/bin/rversesshc;chmod +x /usr/bin/rversesshs
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
-	# isntall ahmyth
+	# install ahmyth
 	if [ ! -f "/usr/bin/ahmyth" ]; then
 		local name="ahmyth"
 		wget https://github.com/Morsmalleo/AhMyth/releases/download/v1.0-beta.5a/AhMyth-Setup_amd64.deb -O /tmp/$name.deb
-		chmod +X /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4330,8 +4314,8 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/client /usr/bin/$name-client;ln -fs /usr/share/$name/server /usr/bin/$name-server
 		chmod +x /usr/bin/$name-client;chmod +x /usr/bin/$name-server
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name-client -h'"
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name-server -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell ${name}-client -h"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell ${name}-server -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4345,7 +4329,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/ligolos /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4373,7 +4357,7 @@ EOF
 cd /usr/share/$name;python3 badrat_server.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell sudo $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4386,8 +4370,8 @@ EOF
 		cd /usr/share/$name/Mythic_CLI/src;make;cd /usr/share/$name/mythic-docker/src;make
 		ln -fs /usr/share/$name/Mythic_CLI/src/mythic-cli /usr/bin/$name-cli;ln -fs /usr/share/$name/mythic-docker/src/mythic_server /usr/bin/$name-server
 		chmod +x /usr/bin/$name-cli;chmod +x /usr/bin/$name-server
-		menu_entry "Command-and-Control" "Red-Team" "$name-cli" "$exec_shell 'sudo $name-cli'"
-		menu_entry "Command-and-Control" "Red-Team" "$name-server" "$exec_shell 'sudo $name-server'"
+		menu_entry "Command-and-Control" "Red-Team" "$name-cli" "$exec_shell sudo ${name}-cli"
+		menu_entry "Command-and-Control" "Red-Team" "$name-server" "$exec_shell sudo ${name}-server"
 		success "Successfully Installed $name"
 	fi
 
@@ -4397,7 +4381,7 @@ EOF
 		git clone https://github.com/EnginDemirbilek/NorthStarC2 /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell sudo $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4412,7 +4396,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4425,7 +4409,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/offensive_notion /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4440,7 +4424,7 @@ EOF
 cd /usr/share/$name;node server.js "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4452,7 +4436,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/TeamServer /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4464,7 +4448,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./emp3r0r --install
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4478,7 +4462,7 @@ EOF
 cd /usr/share/$name;PORT=8080 SQLITE_DATABASE=chaos go run cmd/chaos/main.go "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4490,7 +4474,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/godoh /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4503,7 +4487,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/sliver_server /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4516,7 +4500,7 @@ EOF
 		cd /user/share/$name/teamserver;./install.sh;make
 		ln -fs /user/share/$name/teamserver/teamserver /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Command-and-Control" "Red-Team" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4548,7 +4532,7 @@ EOF
 		wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O /tmp/$name.tgz
 		tar -xvzf /tmp/$name.tgz -C /usr/local/bin;rm -f /tmp/$name.tgz
 		chmod +x /usr/local/bin/ngrok
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4560,7 +4544,7 @@ EOF
 		tar -xzf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4575,7 +4559,7 @@ EOF
 cd /usr/share/$name;python2 dnsexfiltrator.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4589,7 +4573,7 @@ EOF
 cd /usr/share/$name;python3 BobTheSmuggler.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4603,7 +4587,7 @@ EOF
 cd /usr/share/$name;python3 smuggler.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4617,7 +4601,7 @@ EOF
 cd /usr/share/$name;python2 lfisuite.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4631,7 +4615,7 @@ EOF
 cd /usr/share/$name;bash Snake.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4646,7 +4630,7 @@ EOF
 cd /usr/share/$name;./reversessh "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4658,7 +4642,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/transfersh /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4671,7 +4655,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/natpass /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4686,7 +4670,7 @@ EOF
 cd /usr/share/$name;python3 dnslivery.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4700,7 +4684,7 @@ EOF
 cd /usr/share/$name;python3 webDavDelivery.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4713,7 +4697,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/wstunnel /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4725,7 +4709,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./install.sh;ipfs init
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -4737,7 +4721,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/frps /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4750,7 +4734,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/rathole /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4763,7 +4747,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/hfs /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4776,7 +4760,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/proxy /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Exfiltration" "Red-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4839,7 +4823,7 @@ ics_security()
 cd /usr/share/$name;python2 s7scan.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4854,7 +4838,7 @@ EOF
 cd /usr/share/$name;java -jar ModbusPal.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4863,22 +4847,21 @@ EOF
 		local name="isf"
 		git clone https://github.com/dark-lbp/isf /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip2 install -r /usr/share/$name/requirements.txt
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python2 isf.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell '$name -h'"
+		menu_entry "Penetration-Testing" "ICS-Security" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
-	# install redpoint
+	# install redpoint (NSE scripts for ICS; clone to /tmp then copy to nmap scripts)
 	if [ ! -f "/usr/share/nmap/scripts/fox-info.nse" ]; then
 		local name="redpoint"
 		git clone https://github.com/digitalbond/Redpoint /tmp/$name
-		chmod 755 /usr/share/$name/*
-		cd /usr/share/$name;mv * /usr/share/nmap/scripts
+		cp /tmp/$name/*.nse /usr/share/nmap/scripts/ 2>/dev/null || true
 		rm -rf /tmp/$name
 		success "Successfully Installed $name"
 	fi
@@ -4932,13 +4915,13 @@ EOF
 		local name="icspector"
 		git clone https://github.com/microsoft/ics-forensics-tools /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip2 install -r /usr/share/$name/requirements.txt --break-system-packages
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages 2>/dev/null || true
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name/src;python3 driver.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Digital-Forensic" "ICS-Security" "$name" "$exec_shell '$name -h'"
+		menu_entry "Digital-Forensic" "ICS-Security" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -4970,7 +4953,7 @@ EOF
 
 digital_forensic()
 {
-	printf "$YELLOW"  "# --------------------------------Reverse-Engineeting-Digital-Forensic------------------------------- #"
+	printf "$YELLOW"  "# --------------------------------Reverse-Engineering-Digital-Forensic------------------------------- #"
 
 	# install Repository Tools
 	apt install -qy ghidra foremost qpdf kafkacat gdb pspy llvm zydis-tools
@@ -4996,7 +4979,7 @@ digital_forensic()
 		local name="sysmonforlinux"
 		wget https://github.com/Sysinternals/SysmonForLinux/releases/download/1.3.3.0/sysmonforlinux_1.3.3_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5005,7 +4988,7 @@ digital_forensic()
 		local name="bindiff"
 		wget https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5014,7 +4997,7 @@ digital_forensic()
 		local name="ffdec"
 		wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version22.0.2/ffdec_22.0.2.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Reverse-Engineering" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5050,9 +5033,9 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
     		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
 		mkdir -p /etc/apt/keyrings/;mv fpf-apt-tools-archive-keyring.gpg /etc/apt/keyrings
 		apt update;apt install -qy $name
-		success "Sucess installing Dangerzone"
+		success "Success installing Dangerzone"
 	else
-		success "Sucess installed Dangerzone"
+		success "Success installed Dangerzone"
 	fi
 
 	# install stegocracker
@@ -5071,7 +5054,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		local name="openstego"
 		wget https://github.com/syvaidya/openstego/releases/download/openstego-0.8.6/openstego_0.8.6-1_all.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;apt --fix-broken install -qy;rm -f /tmp/$name.deb
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5083,7 +5066,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/stegosaurus /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5095,7 +5078,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/build/hideme /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell 'sudo $name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell sudo $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5109,7 +5092,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 cd /usr/share/$name;python2 lsb.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5124,7 +5107,7 @@ EOF
 cd /usr/share/$name;python3 main.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5139,7 +5122,7 @@ EOF
 cd /usr/share/$name;java -jar XorJ-1.5.2-SNAPSHOT.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5153,7 +5136,7 @@ EOF
 cd /usr/share/$name;./run "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5168,7 +5151,7 @@ EOF
 cd /usr/share/$name;java -jar stegsolve.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5183,7 +5166,7 @@ EOF
 cd /usr/share/$name;wine OpenPuff.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -5197,13 +5180,13 @@ EOF
 cd /usr/share/$name/MP3Stego;wine Encode.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name-encode
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-encode" "$exec_shell '$name-encode'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-encode" "$exec_shell ${name}-encode"
 		cat > /usr/bin/$name-decode << EOF
 #!/bin/bash
 cd /usr/share/$name/MP3Stego;wine Decode.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name-decode
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-decode" "$exec_shell '$name-decode'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name-decode" "$exec_shell ${name}-decode"
 		success "Successfully Installed $name"
 	fi
 
@@ -5218,7 +5201,7 @@ EOF
 cd /usr/share/$name;python3 theZoo.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -5232,7 +5215,7 @@ EOF
 cd /usr/share/$name;python3 Kdrill.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		menu_entry "Malware-Analysis" "Digital-Forensic" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -5319,7 +5302,7 @@ go install github.com/datadog/stratus-red-team/v2/cmd/stratus@latest;ln -fs ~/go
 		local name="matano"
 		wget https://github.com/matanolabs/matano/releases/download/nightly/matano-linux-x64.sh -O /tmp/$name.sh
 		chmod +x /tmp/$name.sh;cd /tmp;bash $name.sh;rm -f $name.sh
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5334,7 +5317,7 @@ go install github.com/datadog/stratus-red-team/v2/cmd/stratus@latest;ln -fs ~/go
 cd /usr/share/$name;python3 APT-Hunter.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5349,7 +5332,7 @@ EOF
 cd /usr/share/$name;docker-compose up -d "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5361,7 +5344,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/pspy64 /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5374,7 +5357,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/vmclarity-cli /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5386,7 +5369,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/velociraptor /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5397,7 +5380,7 @@ EOF
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		ln -fs /usr/share/$name/hayabusa-2.16.0-lin-x64-gnu /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5410,7 +5393,7 @@ EOF
 		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5421,7 +5404,7 @@ EOF
 		wget https://github.com/aquasecurity/tracee/releases/download/v0.22.5/tracee-x86_64.v0.22.5.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/dist/tracee /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5432,7 +5415,7 @@ EOF
 		wget https://github.com/ufrisk/MemProcFS/releases/download/v5.14/MemProcFS_files_and_binaries_v5.14.1-linux_x64-20250119.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/memprocfs /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5441,7 +5424,7 @@ EOF
 		local name="sysinternalsebpf"
 		wget https://github.com/Sysinternals/SysinternalsEBPF/releases/download/1.3.0.0/sysinternalsebpf_1.3.0-0_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5452,7 +5435,7 @@ EOF
   		wget https://github.com/mandiant/capa/releases/download/v9.1.0/capa-v9.1.0-linux.zip -O /tmp/$name.zip
 		unzip /tmp/$name.zip -d /usr/share/$name;rm -f /tmp/$name.zip
 		ln -fs /usr/share/$name/capa /usr/bin/$name
-		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5495,7 +5478,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/fastfinder /usr/bin/$name
   		chmod +x /usr/bin/$name
-  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5515,7 +5498,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/catalyst /usr/bin/$name
   		chmod +x /usr/bin/$name
-  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5526,7 +5509,7 @@ EOF
 		wget https://github.com/tclahr/uac/releases/download/v3.0.0/uac-3.0.0.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/uac /usr/bin/$name
-  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell '$name -h'"
+  		menu_entry "Threat-Hunting" "Digital-Forensic" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5572,7 +5555,7 @@ cd /usr/share/$name/worker;python3 worker.py > /dev/null &
 sleep 5;firefox "http://127.0.0.1:4000" > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -5626,7 +5609,7 @@ sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell '$name'"
+		menu_entry "Threat-Intelligence" "Digital-Forensic" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -5680,18 +5663,19 @@ EOF
 EOF
 		chef-client -z -j /usr/share/chef-os-hardening/node.json
   		ansible-galaxy collection install ansible_hardening.hardening
-		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
  	# install chain-bench
 	if [ ! -d "/usr/share/chain-bench" ]; then
   		local name="chain-bench"
+		mkdir -p /usr/share/$name
 		wget https://github.com/aquasecurity/chain-bench/releases/download/v0.1.10/chain-bench_0.1.10_Linux-64bit.tar.gz -O /tmp/$name.tar.gz
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/chain-bench /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5703,7 +5687,7 @@ EOF
 #!/bin/bash
 cd /usr/share/$name/bin;bash hardening.sh
 EOF
-  		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell '$name -h'"
+  		menu_entry "Harden" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5810,8 +5794,8 @@ sed -i "s|SecRuleEngine On|SecRuleEngine DetectionOnly|g" /etc/modsecurity/modse
 sudo service apache2 stop
 EOF
 		chmod +x /usr/bin/$name-disable;chmod +x /usr/bin/$name-enable
-		menu_entry "Detect" "Blue-Team" "$name-enable" "$exec_shell '$name-enable -h'"
-		menu_entry "Detect" "Blue-Team" "$name-disable" "$exec_shell '$name-disable -h'"
+		menu_entry "Detect" "Blue-Team" "$name-enable" "$exec_shell ${name}-enable -h"
+		menu_entry "Detect" "Blue-Team" "$name-disable" "$exec_shell ${name}-disable -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5826,7 +5810,7 @@ EOF
 cd /usr/share/$name;python3 siegma.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5839,7 +5823,7 @@ EOF
   		cd /usr/share/$name/example;make
 		ln -fs /usr/share/$name/ndpiReader /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5854,7 +5838,7 @@ EOF
 cd /usr/share/$name;wine BLUESPAWN.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5863,22 +5847,23 @@ EOF
 		local name="cve2capec"
 		git clone https://github.com/Galeax/CVE2CAPEC /usr/share/$name
 		chmod 755 /usr/share/$name/*
-		pip3 install -r /usr/share/$name/requirements.txt
+		pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
 		cat > /usr/bin/$name << EOF
 #!/bin/bash
 cd /usr/share/$name;python3 capec2technique.py "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
-	# install ntop
-	if [ ! -d "/usr/share/ntop" ]; then
+	# install ntop (apt repo package)
+	if [ ! -f "/etc/apt/sources.list.d/ntop.list" ] && [ ! -d "/usr/share/ntop" ]; then
 		local name="ntop"
 		apt-get install -y wget add-apt-repository universe
-		wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
-		chmod +x /tmp/apt-ntop-stable.deb;apt install /tmp/apt-ntop-stable.deb 
+		wget -q https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb -O /tmp/apt-ntop-stable.deb
+		dpkg -i /tmp/apt-ntop-stable.deb 2>/dev/null || apt install -y /tmp/apt-ntop-stable.deb
+		rm -f /tmp/apt-ntop-stable.deb
 		success "Successfully Installed $name"
 	fi
 
@@ -5890,7 +5875,7 @@ EOF
 		cd /usr/share/$name;./autogen.sh;./configure;make
 		ln -fs /usr/share/$name/aiengine /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5902,7 +5887,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/hubble /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5923,7 +5908,7 @@ EOF
 		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		ln -fs /usr/share/$name/cilium /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -5938,7 +5923,7 @@ cd /usr/share/$name;docker-compose up -d
 firefox http://127.0.0.1:3001 > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6008,7 +5993,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 	if [ ! -d "/usr/share/jumpserver" ]; then
 		local name="jumpserver"
 		curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
-		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6018,41 +6003,55 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 		wget https://github.com/iann0036/iamlive/releases/download/v1.1.15/iamlive-v1.1.15-linux-amd64.tar.gz -O /tmp/$name.tar.gz
   		tar --strip-components=1 -xvf /tmp/$name.tar.gz -C /usr/share/$name;rm -f /tmp/$name.tar.gz
 		chmod 755 /usr/share/$name/*
-		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Isolate" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
-	# install guacamole
+	# install guacamole (per https://guacamole.apache.org/doc/gug/guacamole-native.html and configuring-guacamole.html)
 	if [ ! -d "/usr/share/guacamole" ]; then
 		local name="guacamole"
-		# server agent
-		wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/source/guacamole-server-1.5.5.tar.gz -O /tmp/$name-server.tar.gz
-		tar --strip-components=1 -xvf /tmp/$name-server.tar.gz -C /usr/share/$name-server;rm -f /tmp/$name-server.tar.gz
-		chmod 755 /usr/share/$name-server/*
-		cd /usr/share/$name-server;./configure --with-init-dir=/etc/init.d
-		make;make install;ldconfig
-		systemctl enable guacd;systemctl start guacd;systemctl restart tomcat9
-		# user agent
-		wget https://apache.org/dyn/closer.lua/guacamole/1.5.5/binary/guacamole-1.5.5.war -O /var/lib/tomcat9/webapps/$name.war
-		mkdir -p /etc/guacamole;mkdir -p /usr/share/tomcat9/.guacamole
-		cat > /etc/guacamole/guacamole.properties << EOF
+		local guac_ver="1.5.5"
+		# Build dependencies for guacamole-server (required: cairo, libjpeg-turbo, libpng, libtool, uuid; optional: freerdp, pango, libssh2, libvncserver for RDP/SSH/VNC)
+		apt install -qy libcairo2-dev libjpeg-turbo8-dev libpng-dev libtool-bin uuid-dev \
+			libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libssl-dev libtelnet-dev
+		# guacamole-server: build from source
+		mkdir -p /usr/share/guacamole-server
+		wget -q "https://archive.apache.org/dist/guacamole/${guac_ver}/source/guacamole-server-${guac_ver}.tar.gz" -O /tmp/guacamole-server.tar.gz
+		tar --strip-components=1 -xzf /tmp/guacamole-server.tar.gz -C /usr/share/guacamole-server
+		rm -f /tmp/guacamole-server.tar.gz
+		cd /usr/share/guacamole-server
+		./configure --with-init-dir=/etc/init.d --with-systemd-dir=/lib/systemd/system
+		make -j"$(nproc)" && make install
+		ldconfig
+		# guacd must be started before Tomcat deploys the web app
+		systemctl daemon-reload
+		systemctl enable guacd
+		systemctl start guacd
+		# guacamole-client: deploy prebuilt .war to Tomcat (CATALINA_HOME/webapps)
+		wget -q "https://archive.apache.org/dist/guacamole/${guac_ver}/binary/guacamole-${guac_ver}.war" -O /var/lib/tomcat10/webapps/guacamole.war
+		# GUACAMOLE_HOME: /etc/guacamole (default) or ~/.guacamole of the user running Tomcat
+		mkdir -p /etc/guacamole
+		mkdir -p /usr/share/tomcat10/.guacamole
+		cat > /etc/guacamole/guacamole.properties << 'GUACPROP'
 guacd-hostname: localhost
 guacd-port: 4822
 user-mapping: /etc/guacamole/user-mapping.xml
-EOF
-		ln -s /etc/guacamole/guacamole.properties /usr/share/tomcat9/.guacamole/
+GUACPROP
+		ln -sf /etc/guacamole/guacamole.properties /usr/share/tomcat10/.guacamole/
+		# user-mapping.xml: username (not userlocal), connection/param use name= (per configuring-guacamole.html)
 		cat > /etc/guacamole/user-mapping.xml << EOF
 <user-mapping>
-    <authorize userlocal name="admin" password="password">
-        <connection local name="MyServer">
+    <authorize username="admin" password="password">
+        <connection name="MyServer">
             <protocol>rdp</protocol>
-            <param local name="hostname">$LAN</param>
-            <param local name="port">3389</param>
+            <param name="hostname">$LAN</param>
+            <param name="port">3389</param>
         </connection>
     </authorize>
 </user-mapping>
 EOF
-		systemctl restart guacd;systemctl restart tomcat9
+		ln -sf /etc/guacamole/user-mapping.xml /usr/share/tomcat10/.guacamole/
+		systemctl restart tomcat10
 		success "Successfully Installed $name"
 	fi
 
@@ -6087,7 +6086,7 @@ EOF
 docker run -p 8022:8022 honeytrap/honeytrap:latest "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6100,7 +6099,7 @@ EOF
 docker run -p 2222:2222 cowrie/cowrie:latest "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6112,7 +6111,7 @@ EOF
 		chmod +x /usr/share/$name/sshesame
 		ln -fs /usr/share/$name/sshesame /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell '$name -h'"
+		menu_entry "Detect" "Blue-Team" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6120,7 +6119,7 @@ EOF
 	if [ ! -d "/home/${USERS}/tpotce" ]; then
 		local name="tpotce"
 		bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
-		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell '$name'"
+		menu_entry "Deceive" "Blue-Team" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6195,7 +6194,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin
 cd /usr/share/$name;java -jar checkstyle.jar "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6205,7 +6204,7 @@ EOF
 		git clone https://github.com/AFLplusplus/AFLplusplus /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make distrib;make install
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name-cc" "$exec_shell '$name-cc -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name-cc" "$exec_shell ${name}-cc -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6218,7 +6217,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/vuls /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6234,7 +6233,7 @@ EOF
 cd /usr/share/$name;ls "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6259,7 +6258,7 @@ EOF
 		chmod 755 /usr/share/$name/*;cd /usr/share/$name;make
 		ln -fs /usr/share/$name/honggfuzz /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6275,7 +6274,7 @@ EOF
 cd /usr/share/$name;wine Cmder.exe "\$@"
 EOF
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6287,7 +6286,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/opa /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6344,7 +6343,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/selefra /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6387,7 +6386,7 @@ sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-  		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+  		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6431,7 +6430,7 @@ sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-    		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+    		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6475,7 +6474,7 @@ sudo service apache2 start;sudo service mysql start
 firefox $name.local > /dev/null &
 EOF
 		chmod +x /usr/bin/$name
-    		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell '$name -h'"
+    		menu_entry "Preliminary-Audit-Assessment" "Security-Audit" "$name" "$exec_shell $name -h"
 		success "Successfully Installed $name"
 	fi
 
@@ -6510,7 +6509,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/Postman /usr/bin/postman
 		chmod +x /usr/bin/$name
-		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell '$name'"
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6520,7 +6519,7 @@ EOF
 		mkdir -p /usr/share/$name
 		wget https://github.com/graphql/graphql-playground/releases/latest/download/graphql-playground-electron_1.8.10_amd64.deb -O /tmp/$name.deb
 		chmod +x /tmp/$name.deb;dpkg -i /tmp/$name.deb;rm -f /tmp/$name.deb
-		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6532,7 +6531,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6544,7 +6543,7 @@ EOF
 		chmod 755 /usr/share/$name/*
 		ln -fs /usr/share/$name/$name /usr/bin/$name
 		chmod +x /usr/bin/$name
-		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell '$name'"
+		menu_entry "Performing-the-Review" "Security-Audit" "$name" "$exec_shell $name"
 		success "Successfully Installed $name"
 	fi
 
@@ -6720,7 +6719,7 @@ main()
 				apt install -qy \
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
 				    mingw-w64 rustup golang qtchooser default-jdk golang \
-				    nodejs npm python3 python3-full python2 pypy3-venv \
+				    nodejs npm python3 python3-full python3-pip python2 pypy3-venv \
 				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
 				# Virtualization and container tools
@@ -6729,7 +6728,7 @@ main()
 
 				# Web servers and database engines
 				apt install -qy \
-				    apache2 mariadb-server php tomcat9
+				    apache2 mariadb-server php tomcat10
 
 				# Multimedia and file analysis tools
 				apt install -qy \
@@ -6784,7 +6783,7 @@ main()
 				apt install -qy \
 				    build-essential g++ gcc clang cmake automake autoconf pkg-config \
 				    mingw-w64 rustup golang qtchooser default-jdk golang \
-				    nodejs npm python3 python3-full python2 pypy3-venv \
+				    nodejs npm python3 python3-full python3-pip python2 pypy3-venv \
 				    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
 
 				# Virtualization and container tools
@@ -6793,7 +6792,7 @@ main()
 
 				# Web servers and database engines
 				apt install -qy \
-				    apache2 mariadb-server php tomcat9
+				    apache2 mariadb-server php tomcat10
 
 				# Multimedia and file analysis tools
 				apt install -qy \
@@ -6817,13 +6816,11 @@ main()
 				fi
 
 				# upgrade pips
-				pip2 install --upgrade pip;pip3 install --upgrade pip
+				pip2 install --upgrade pip;pip3 install --upgrade pip --break-system-packages
 				;;
 			*) error "Unsupported OS detected: $ID"
 			;;
 		esac
-	else
-		warning "/etc/os-release file not found. Cannot determine the OS."
 	fi
 
 	# install linux-elite
@@ -6838,7 +6835,7 @@ cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		success "Successfully Installed $name"
-	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != $ver ]; then
+	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != "$ver" ]; then
 		local name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
@@ -6862,26 +6859,33 @@ select opt in "Penetrating-Testing" "Red-Team" "ICS-Security" "Digital-Forensic"
 do
 	case $opt in
 		"Penetrating-Testing")
-			success "Running Penetrating-Testing..."
-			penetrating_testing;;
+			info "Running Penetrating-Testing..."
+			penetrating_testing
+			;;
 		"Red-Team")
-			success "Running Red-Team..."
-			red_team;;
+			info "Running Red-Team..."
+			red_team
+			;;
 		"ICS-Security")
-			success "Running ICS-Security..."
-			ics_security;;
+			info "Running ICS-Security..."
+			ics_security
+			;;
 		"Digital-Forensic")
-			success "Running Digital-Forensic..."
-			digital_forensic;;
+			info "Running Digital-Forensic..."
+			digital_forensic
+			;;
 		"Blue-Team")
-			success "Running Blue-Team..."
-			blue_team;;
+			info "Running Blue-Team..."
+			blue_team
+			;;
 		"Security-Audit")
-			success "Running Security-Audit..."
-			security_audit;;
+			info "Running Security-Audit..."
+			security_audit
+			;;
 		"Exit")
-			error "Exiting..."
-			break;;
+			info "Exiting..."
+			exit 0
+			;;
 		*) error "invalid option...";;
 	esac
 done
