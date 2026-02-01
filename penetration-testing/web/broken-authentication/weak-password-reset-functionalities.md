@@ -347,4 +347,158 @@ Log in using the victim’s email address and the newly set password to confirm 
 
 ### White Box
 
+#### Unauthenticated Password Change
+
+{% stepper %}
+{% step %}
+Map the entire system using Burp Suite
+{% endstep %}
+
+{% step %}
+Find all endpoints and draw them in XMind
+{% endstep %}
+
+{% step %}
+Decompile the web service
+{% endstep %}
+
+{% step %}
+Then look for endpoints related to password reset and find the initial processing logic of those endpoints in the code
+{% endstep %}
+
+{% step %}
+Check whether the password-forgotten function is marked as `AllowAnonymous` or not, like in the code below
+
+```c#
+[HttpPost]
+[Route("force-reset-password")]
+[AuthenticatedService(AllowAnonymous = true)]
+[CheckInputForNullFilter]
+[ShortDescription("This function will attempt to reset a user's password.")]
+[Description("This function will attempt to reset a user's password and should only be called after a user attempts to login and they receive a ChangePasswordNeeded = true.")]
+public ActionResult<ResetPasswordResult> ForceResetPassword([FromBody] ForceResetPasswordInputs inputs)
+{
+	ActionResult<ResetPasswordResult> result;
+	try
+	{
+		ActionResult<ResetPasswordResult> actionResult = base.ReturnResult<ResetPasswordResult>(delegate()
+		{
+			AuthenticationService instance = AuthenticationService.Instance;
+			ForceResetPasswordInputs inputs2 = inputs;
+			IPAddress clientIPAddress = this.HttpContext.GetClientIPAddress();
+			return instance.ForcePasswordReset(inputs2, (clientIPAddress != null) ? clientIPAddress.ToString() : null);
+		});
+		base.AuditLogSuccess("force-reset-password");
+		result = actionResult;
+	}
+	//...
+}
+```
+{% endstep %}
+
+{% step %}
+During the review, check whether it is possible to change the passwords of high-privilege users, like in the code below
+
+```csharp
+public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs inputs, string hostname)
+{
+	ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
+	try
+	{
+		resetPasswordResult.DebugInfo = "check1" + Environment.NewLine;
+		//...
+		if (inputs.IsSysAdmin)
+		{
+			ResetPasswordResult resetPasswordResult4 = resetPasswordResult;
+		}
+		else
+		{
+			ResetPasswordResult resetPasswordResult9 = resetPasswordResult;
+			//...
+		}
+		//...
+	}
+```
+{% endstep %}
+
+{% step %}
+Then check whether admin account validation is performed during the password-forgotten process or not. If there is no validation, it can be abused, like in the code below
+
+```csharp
+public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs inputs, string hostname)
+{
+	ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
+	try
+	{
+		//...
+		if (inputs.IsSysAdmin)
+		{
+			ResetPasswordResult resetPasswordResult4 = resetPasswordResult;
+			resetPasswordResult4.DebugInfo = resetPasswordResult4.DebugInfo + "check4.2" + Environment.NewLine;
+			db_system_administrator_readonly db_system_administrator_readonly = SystemRepository.Instance.AdministratorGetByUsername(inputs.Username); // [1]
+			if (db_system_administrator_readonly == null)
+			{
+				resetPasswordResult.Success = false;
+				resetPasswordResult.Message = "USER_NOT_FOUND";
+				resetPasswordResult.ResultCode = HttpStatusCode.BadRequest;
+				return resetPasswordResult;
+			}
+			PasswordStrength.FailedRequirementWithVariable requirementCodes = PasswordStrength.GetRequirementCodes(db_system_administrator_readonly, inputs.NewPassword, false);
+			ResetPasswordResult resetPasswordResult5 = resetPasswordResult;
+			resetPasswordResult5.DebugInfo = resetPasswordResult5.DebugInfo + "check5.2" + Environment.NewLine;
+			if (requirementCodes != null)
+			{
+				resetPasswordResult.Success = false;
+				resetPasswordResult.Username = inputs.Username;
+				resetPasswordResult.Message = requirementCodes.Item1;
+				resetPasswordResult.ErrorCode = requirementCodes.Item1;
+				resetPasswordResult.ErrorData = requirementCodes.Item2;
+				resetPasswordResult.ResultCode = HttpStatusCode.BadRequest;
+				PasswordBruteForceDetector.Instance.ResetSource(hostname);
+				return resetPasswordResult;
+			}
+			Dictionary<string, DateTime> dictionary = db_system_administrator_readonly.password_history_hashed_readonly.ToDictionary<string, DateTime>();
+			dictionary.Add(db_system_administrator_readonly.password_hash, DateTime.UtcNow);
+			db_system_administrator item = new db_system_administrator
+			{
+				guid = db_system_administrator_readonly.guid,
+				Password = inputs.NewPassword,
+				password_history_hashed = dictionary
+			}; 
+			ResetPasswordResult resetPasswordResult6 = resetPasswordResult;
+			resetPasswordResult6.DebugInfo = resetPasswordResult6.DebugInfo + "check6.2" + Environment.NewLine;
+			try
+			{
+				SystemRepository.Instance.AdministratorUpdate(item, new bool?(false), new db_system_administrator.Columns[]
+				{
+					db_system_administrator.Columns.password_hash,
+					db_system_administrator.Columns.password_history_hashed
+				});
+			}
+			catch (Exception ex)
+			{
+				resetPasswordResult.Success = false;
+				resetPasswordResult.ResultCode = HttpStatusCode.BadRequest;
+				resetPasswordResult.Message = ex.Message;
+				return resetPasswordResult;
+			}
+			ResetPasswordResult resetPasswordResult7 = resetPasswordResult;
+			resetPasswordResult7.DebugInfo = resetPasswordResult7.DebugInfo + "check7.2" + Environment.NewLine;
+			PasswordBruteForceDetector.Instance.ResetSource(hostname);
+			ResetPasswordResult resetPasswordResult8 = resetPasswordResult;
+			resetPasswordResult8.DebugInfo = resetPasswordResult8.DebugInfo + "check8.2" + Environment.NewLine;
+		}
+		else
+		{
+			ResetPasswordResult resetPasswordResult9 = resetPasswordResult; 
+			//...
+		}
+		//...
+	}
+	//...
+}
+```
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet

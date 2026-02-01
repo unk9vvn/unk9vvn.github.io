@@ -1004,8 +1004,68 @@ Observe that authentication succeeds and
 
 * Login completes without a valid OTP
 * Access to the user account is granted
+{% endstep %}
+{% endstepper %}
 
+***
 
+#### s
+
+{% stepper %}
+{% step %}
+Visit the target platform’s login or signup page as an unauthenticated user
+{% endstep %}
+
+{% step %}
+Enter any arbitrary or fake email address to trigger the platform’s telemetry or tracking endpoint
+{% endstep %}
+
+{% step %}
+Capture the issued **guest JWT token** from browser storage, response headers, or API responses
+{% endstep %}
+
+{% step %}
+Capture the issued **guest JWT token** from browser storage, response headers, or API responses
+{% endstep %}
+
+{% step %}
+Store all collected JWT tokens in a file (`jwt.json`)
+{% endstep %}
+
+{% step %}
+Register a new account using the **victim’s real email address** (`victim@victim.com`) to trigger the OTP email delivery
+{% endstep %}
+
+{% step %}
+Intercept or craft requests to the OTP validation endpoint like
+
+```http
+POST /ups/api/activation/validate
+```
+{% endstep %}
+
+{% step %}
+Send OTP validation requests using one JWT token for up to **10 incorrect OTP attempts**
+{% endstep %}
+
+{% step %}
+Upon receiving an HTTP 429 Too Many Requests response, switch the `Authorization` header to a new JWT token
+{% endstep %}
+
+{% step %}
+Continue sending OTP validation requests while rotating JWT tokens every 10 attempts
+{% endstep %}
+
+{% step %}
+Repeat the process until the correct 6-digit OTP is guessed
+{% endstep %}
+
+{% step %}
+Observe a 200 OK response indicating successful email verification
+{% endstep %}
+
+{% step %}
+Confirm that the victim’s email address is now verified and the account is activated without the attacker ever accessing the victim’s inbox
 {% endstep %}
 {% endstepper %}
 
