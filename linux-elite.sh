@@ -526,7 +526,7 @@ go install github.com/akshaysharma016/aem-detector@latest;ln -fs ~/go/bin/aem-de
 go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest;ln -fs ~/go/bin/mapcidr /usr/bin/mapcidr"
 	go_installer "Web" "Penetration-Testing" "$web_golang"
 
-	# install cloudbunny (official: pip3 install -r requirements.txt, run cloudbunny.py)
+	# install cloudbunny
 	if [ ! -d "/usr/share/cloudbunny" ]; then
 		local name="cloudbunny"
 		git clone https://github.com/Warflop/cloudbunny /usr/share/$name
@@ -541,7 +541,7 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
- 	# install ghauri (official: pip install -r requirements.txt, then setup.py install or pip install -e .)
+ 	# install ghauri
 	if [ ! -d "/usr/share/ghauri" ]; then
 		local name="ghauri"
 		git clone https://github.com/r0oth3x49/ghauri /usr/share/$name
@@ -552,7 +552,7 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
-	# install phoneinfoga (official: download binary from releases, or: bash <(curl -sSL .../install))
+	# install phoneinfoga
 	if [ ! -d "/usr/share/phoneinfoga" ]; then
 		local name="phoneinfoga"
 		mkdir -p /usr/share/$name
@@ -579,7 +579,7 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
-	# install bkcrack (official: download prebuilt from releases, latest v1.8.1)
+	# install bkcrack  latest v1.8.1)
 	if [ ! -d "/usr/share/bkcrack" ]; then
 		local name="bkcrack"
 		mkdir -p /usr/share/$name
@@ -593,7 +593,7 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
-	# install spiderfoot (official: pip3 install -r requirements.txt, run sf.py -l IP:5001)
+	# install spiderfoot
 	if [ ! -d "/usr/share/spiderfoot" ]; then
 		local name="spiderfoot"
 		git clone https://github.com/smicallef/spiderfoot /usr/share/$name
@@ -622,7 +622,7 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
- 	# install 403-bypass (official: git clone, run bash 403-bypass.sh)
+ 	# install 403-bypass
 	if [ ! -d "/usr/share/403-bypass" ]; then
 		local name="403-bypass"
 		git clone https://github.com/Dheerajmadhukar/4-ZERO-3 /usr/share/4-ZERO-3
@@ -636,7 +636,21 @@ EOF
 		success "Successfully Installed $name"
 	fi
 
- 	# install gitdorker (official: clone, pip3 install -r requirements.txt, run GitDorker.py)
+	# install unfurl
+	if [ ! -f "/usr/share/unfurl" ]; then
+		local name="unfurl"
+		mkdir -p /usr/share/$name
+		wget https://github.com/tomnomnom/unfurl/releases/download/v0.4.3/unfurl-linux-amd64-0.4.3.tgz -O /usr/share/$name/$name.tgz
+		cd /usr/share/$name && tar -xvf $name.tgz
+        rm -f /usr/share/$name/$name.tgz
+		chmod 755 /usr/share/$name/*
+		ln -fs /usr/share/$name/$name /usr/bin/$name
+		chmod +x /usr/bin/$name
+		menu_entry "Web" "Penetration-Testing" "$name" "$exec_shell $name"
+		success "Successfully Installed $name"
+	fi
+
+ 	# install gitdorker
 	if [ ! -d "/usr/share/gitdorker" ]; then
 		local name="gitdorker"
 		git clone https://github.com/obheda12/GitDorker /usr/share/$name
