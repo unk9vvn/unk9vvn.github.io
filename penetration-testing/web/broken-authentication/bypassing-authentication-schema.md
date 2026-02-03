@@ -242,6 +242,8 @@ The final request will look like the following
 {% endstep %}
 {% endstepper %}
 
+***
+
 ## Cheat Sheet
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
