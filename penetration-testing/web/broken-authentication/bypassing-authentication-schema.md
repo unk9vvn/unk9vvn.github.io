@@ -188,6 +188,60 @@ If a 400/500 error appears, modify the payload to `' OR 1=2 --` and submit again
 
 ### White Box
 
+#### Bypass Authentication via Path Traversal
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw all endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the web server based on the programming language used
+{% endstep %}
+
+{% step %}
+In the code, look for classes and functions that process authentication endpoints
+{% endstep %}
+
+{% step %}
+Then, in the class that handles the authentication endpoint, look for paths in the code where exceptions exist and authentication is bypassed, like in the code below
+
+```javascript
+String clienturi = URIUtil.getNormalizeURI(request);
+...
+
+if (clienturi.contains("/actuator") || clienturi.endsWith("/v1/ping") ...) {
+    skipAuth = true;
+}
+
+...
+```
+{% endstep %}
+
+{% step %}
+Also review how the request is received and processed
+
+```javascript
+public static String getNormalizeURI(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    return removeExtraSlash(URLDecoder.decode(URI.create(uri).normalize().toString(), StandardCharsets.UTF_8));
+}
+```
+{% endstep %}
+
+{% step %}
+The final request will look like the following
+
+```hurl
+/portalapi/v1/users/username/admin;%2fv1%2fping
+```
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
