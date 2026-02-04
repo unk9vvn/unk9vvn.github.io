@@ -261,4 +261,133 @@ Trigger your RCE via&#x20;
 
 ### White Box
 
+#### Download Remote File in Protocol
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw all endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the web server based on the programming language used
+{% endstep %}
+
+{% step %}
+Look for endpoints that use a protocol and make an external request, such as SFTP
+{% endstep %}
+
+{% step %}
+In the code, find where external requests are processed
+{% endstep %}
+
+{% step %}
+Check whether functions named `getRemoteFileURL` and `handleDownloadFile` exist in the processing logic and whether they allow downloading files from a URL, like in the code below
+
+```php
+function validateContextForAction($actionName, $context) {
+        switch ($actionName) {
+            case 'uploadFile':
+            case 'uploadFileToNewDirectory':
+            case 'uploadArchive':
+                if (isset($context['remotePath'])) {
+                    $validatedPath = InputValidator::validateFilePath($context['remotePath'], true);
+                    // Additional upload-specific validation
+                    if (isset($context['localPath'])) {
+                        InputValidator::validateFileUpload($context['localPath'], $validatedPath);
+                    }
+                }
+                break;
+                
+            case 'downloadFile':
+            case 'fetchFile':
+            case 'getFileContents':
+            case 'deleteFile':
+                if (isset($context['remotePath'])) {
+                    InputValidator::validateFilePath($context['remotePath'], true);
+                }
+                break;
+                
+            .. snip ..
+        }
+```
+{% endstep %}
+
+{% step %}
+Features and functions such as `downloadFile` are highly important; you can see the processing code below
+
+```php
+public function downloadFile($transferOperation) {
+    $this->ensureConnectedAndAuthenticated('DOWNLOAD_OPERATION');
+
+    if (!$this->handleDownloadFile($transferOperation))
+        $this->handleMultiTransferError('DOWNLOAD_OPERATION', $transferOperation);
+}
+```
+{% endstep %}
+
+{% step %}
+After reviewing the function, check whether the file received from the external server is copied directly to the system, what path it is copied to, and whether that path is user-controlled, like in the code below
+
+```php
+protected function handleDownloadFile($transferOperation) {
+    $remoteURL = $this->getRemoteFileURL($transferOperation->getRemotePath());  <---- [0]
+
+     if(copy($remoteURL, $transferOperation->getLocalPath())) <---- [1]
+         return true;
+
+    // Check if remote file exists to provide better error information
+    $statResult = stat($remoteURL);
+    return false; // Copy failed
+}
+```
+
+```php
+public function copy($source, $destination) {
+    $this->ensureConnectedAndAuthenticated('COPY_OPERATION');
+
+    .. snip ..
+
+    for ($i = 0; $i < sizeof($sources); ++$i) {
+        $destinationPath = $destinations[$i];
+        $destinationDir = PathOperations::remoteDirname($destinationPath);
+
+        $sourcePathAndItem = $sources[$i];
+
+        $sourcePath = $sourcePathAndItem[0];
+        $sourceItem = $sourcePathAndItem[1];
+
+        if ($destinationDir != "" && $destinationDir != "/" &&
+            array_search($destinationDir, $destinationDirs) === false) {
+            $destinationDirs[] = $destinationDir;
+            $this->makeDirectoryWithIntermediates($destinationDir);
+        }
+
+        if ($sourceItem === null)
+            $this->handleCopy($sourcePath, $destinationPath);
+        else {
+            if ($sourceItem->isDirectory()) {
+                if (array_search($destinationPath, $destinationDirs) === false) {
+                    $destinationDirs[] = $destinationPath;
+                    $this->makeDirectoryWithIntermediates($destinationPath);
+                }
+            } else {
+                $this->handleCopy($sourcePath, $destinationPath);
+            }
+
+            $newPermissions[$destinationPath] = $sourceItem->getNumericPermissions();
+        }
+    }
+
+    .. snip ..
+ }
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
