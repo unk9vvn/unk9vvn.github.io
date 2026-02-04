@@ -390,4 +390,202 @@ public function copy($source, $destination) {
 
 ***
 
+#### Remote Code Execution Via File Upload (Unauthenticate)
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw all endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the web server based on the programming language used
+{% endstep %}
+
+{% step %}
+In the code, look for the file upload processing logic and check whether it requires authentication or not, like in the code below
+
+```csharp
+[ShortDescription("")]
+[Description("Upload a file chunk.")]
+[AuthenticatedService(AllowAnonymous = true)]
+[Route("")]
+[HttpPost]
+[Returns(typeof(string))]
+public async Task<ActionResult> Upload()
+{
+	ActionResult actionResult;
+	try
+	{
+		StringValues stringValues = base.Request.Form["context"]; // [1]
+		StringValues stringValues2 = base.Request.Form["contextData"]; // [2]
+		if (base.Request.Form.Files.Count == 0) // [3]
+		{
+			actionResult = this.StatusCode(415);
+		}
+		else
+		{
+			//...
+				if (stringValues2 != StringValues.Empty)
+				{
+					pupData.targetData = JsonConvert.DeserializeObject<PostUploadProcessingTargetData>(stringValues2.ToString()); // [4]
+				}
+				//...
+				switch (readPartResult2.status)
+				{
+				case ReadPartStatus.BAD:
+					actionResult = base.CreateStatusCode(HttpStatusCode.InternalServerError, readPartResult2.message);
+					break;
+				case ReadPartStatus.GOOD:
+					actionResult = this.Ok("");
+					break;
+				case ReadPartStatus.DONE:
+				{
+					ResumableConfiguration uploadConfiguration = this.GetUploadConfiguration();
+					FileStream file = FileX.OpenRead(readPartResult2.filePath);
+					object obj = null;
+					SmarterMail.Web.Logic.UploadResult retStatus;
+					try
+					{
+						retStatus = await UploadLogic.ProcessCompletedUpload(this.WebHostEnvironment, base.HttpContext, base.HttpAbsoluteRootPath, base.VirtualAppPath, currentUserTemp, pupData, new SmarterMail.Web.Logic.UploadedFile
+						{
+							fileName = uploadConfiguration.FileName,
+							stream = file
+						});
+					}); // [5]			
+//...
+```
+{% endstep %}
+
+{% step %}
+Review the processing logic in the code (the function that completes the file upload process)
+
+```csharp
+public static async Task<UploadResult> ProcessCompletedUpload(IWebHostEnvironment webHostEnvironment, HttpContext httpContext, string httpAbsoluteRootPath, string virtualAppPath, UserData currentUser, PostUploadProcessing pupData, UploadedFile file)
+{
+	UploadResult uploadResult;
+	try
+	{
+		//...
+		string target = pupData.target;
+		if (target != null)
+		{
+			switch (target.Length)
+			{
+			case 8:
+				if (target == "task-ics")
+				{
+					return UploadLogic.TaskImportIcsFile(currentUser, file, pupData.targetData.source, pupData.targetData.fileId);
+				}
+				break;
+			case 10:
+				if (target == "attachment") // [1]
+				{
+					return await MailLogic.SaveAttachment(webHostEnvironment, httpAbsoluteRootPath, currentUser, file, pupData.targetData.guid, ""); // [2]
+				}
+				break;
+			case 11:
+				if (target == "note-import")
+				{
+					return NoteLogic.ImportNote(currentUser, file, pupData.targetData.source);
+				}
+				break;
+				//...
+			//...
+}
+```
+{% endstep %}
+
+{% step %}
+Check the processing of all file types that can be uploaded, especially files of type `attachment`
+
+```csharp
+public static async Task<UploadResult> SaveAttachment(IWebHostEnvironment _webHostEnvironment, string httpAbsoluteRootPath, UserData currentUser, UploadedFile file, string guid, string contentId = "")
+{
+	//...
+	try
+	{
+		if (file != null && file.stream.Length > 0L)
+		{
+			sanitizedName = AttachmentsHelper.SanitizeFilename(file.fileName); // [1]
+			string text = AttachmentsHelper.FindExtension(sanitizedName); // [2]
+			DirectoryInfoX directoryInfoX = new DirectoryInfoX(PathX.Combine(FileManager.BaseDirectory, "App_Data", "Attachments")); // [3]
+			if (!DirectoryX.Exists(directoryInfoX.ToString()))
+			{
+				DirectoryX.CreateDirectory(directoryInfoX.ToString());
+			}
+			//...
+			lock (attachments)
+			{
+				List<AttachmentInfo> list;
+				AttachmentsHelper.Attachments.TryGetValue(attachguid, out list);
+				if (list != null)
+				{
+					if (list.FirstOrDefault((AttachmentInfo x) => x.Size == attachmentInfo.Size && x.ContentType == attachmentInfo.ContentType && x.ActualFileName == attachmentInfo.ActualFileName) == null)
+					{
+						attachmentInfo.GeneratedFileName = AttachmentsHelper.GenerateFileName(attachguid, list.Count, text); // [4]
+						attachmentInfo.GeneratedFileNameAndLocation = AttachmentsHelper.GenerateFileNameAndLocation(directoryInfoX.ToString(), attachmentInfo.GeneratedFileName); // [5]
+						list.Add(attachmentInfo);
+					}
+				}
+				else
+				{
+					attachmentInfo.GeneratedFileName = AttachmentsHelper.GenerateFileName(attachguid, 0, text); // [6]
+					attachmentInfo.GeneratedFileNameAndLocation = AttachmentsHelper.GenerateFileNameAndLocation(directoryInfoX.ToString(), attachmentInfo.GeneratedFileName); // [7]
+					//...
+				}
+			}
+			if (attachmentInfo.GeneratedFileName != null && attachmentInfo.GeneratedFileName.Length > 0)
+			{
+				using (FileStream fileStream = new FileStream(attachmentInfo.GeneratedFileNameAndLocation, FileMode.Create, FileAccess.Write))
+				{
+					file.stream.CopyTo(fileStream); // [8]
+				}
+				//...
+			}
+		//...
+		}
+	//...
+	}
+	//...
+}
+```
+{% endstep %}
+
+{% step %}
+Examine the function that checks the uploaded file type carefully to see whether it has any protections or not
+
+```csharp
+private static string FindExtension(string fileName)
+		{
+			if (fileName == null || fileName.Length < 1 || !fileName.Contains("."))
+			{
+				return "";
+			}
+			string[] array = fileName.Split('.', StringSplitOptions.None);
+			return array[array.Length - 1];
+```
+{% endstep %}
+
+{% step %}
+Then review how the filename is processed, because even if the filename is filtered and validated, a GUID may still allow a **Path Traversal** vulnerability, like in the code below
+
+```csharp
+private static string GenerateFileName(string attachguid, int count, string extension)
+	{
+		if (extension != null && extension.Length > 0)
+		{
+			return string.Format("att_{0}_{1}.{2}", AttachmentsHelper.<GenerateFileName>g__CleanGuid|20_0(attachguid), count, extension);
+		}
+		return string.Format("att_{0}_{1}", AttachmentsHelper.<GenerateFileName>g__CleanGuid|20_0(attachguid), count);
+	}
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
