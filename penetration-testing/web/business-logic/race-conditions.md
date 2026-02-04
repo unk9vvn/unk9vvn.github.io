@@ -243,3 +243,115 @@ Repeat to verify reproducibility and log any successful attempts
 ***
 
 ### White Box
+
+#### Race Condition / Remote Code Execution
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw all endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the web server based on the programming language used
+{% endstep %}
+
+{% step %}
+Look for endpoints that allow users to upload files
+{% endstep %}
+
+{% step %}
+In the code, review the function that processes the file upload endpoint to understand how the user uses this feature
+{% endstep %}
+
+{% step %}
+Analyze the file upload process and check whether the user’s file is copied directly to the system and whether the uploaded file type is validated or not (like in the code below)
+
+```javascript
+@PostMapping(value = {"spack/upload"}, produces = {"application/json"}, consumes = {"multipart/form-data"})
+@ResponseBody
+@ResponseStatus(HttpStatus.ACCEPTED)
+public ResponseEntity<?> upload(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestParam(name = "spackFile", required = true) MultipartFile spackFile, @RequestParam(name = "spackChecksumFile", required = true) MultipartFile spackChecksumFile, @RequestParam(value = "updatetype", defaultValue = "full") String updateType, @RequestParam(value = "flavour", defaultValue = "premium") String flavour) throws Exception {
+    String spackFilePath = "/var/versa/ecp/share/files/" + spackFile.getOriginalFilename();
+    String spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.getOriginalFilename();
+    try {
+        copyPackage(spackFile, spackFilePath); [1]
+        copyPackage(spackChecksumFile, spackSigFilePath); [2]
+        String bearerToken = UserContextHolder.getContext().getUserAccessTken(); [3]
+        if (bearerToken != null) {
+           ...
+        }
+        Status status = new Status();
+        status.setStatus("Bearer Token empty");
+        return new ResponseEntity<>(status, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+        Files.deleteIfExists(Paths.get(spackFilePath, new String[0])); [4]
+        Files.deleteIfExists(Paths.get(spackSigFilePath, new String[0])); [5]
+        logger.error("Error while uploading Spack", (Throwable) e);
+        return handleException(e, httpRequest);
+    }
+}
+```
+
+```javascript
+private synchronized void copyPackage(MultipartFile uploadFile, String filePath) throws Exception {
+    Files.deleteIfExists(Paths.get(filePath, new String[0])); 
+    InputStream inputStream = uploadFile.getInputStream();
+    try {
+        Files.copy(inputStream, Paths.get(filePath, new String[0]), new CopyOption[0]);
+        if (inputStream != null) {
+            inputStream.close();
+        }
+    } catch (Throwable th) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (Throwable th2) {
+                th.addSuppressed(th2);
+            }
+        }
+        throw th;
+    }
+}
+```
+{% endstep %}
+
+{% step %}
+After the vulnerable code, check whether the uploaded file may be deleted due to security checks such as permission checks, authentication, or user token validation
+{% endstep %}
+
+{% step %}
+If the file is first copied, then security checks are performed, and then the file is deleted, exactly between lines `[1]` to `[5]`, the **Race Condition** vulnerability can be exploited by sending about 1000 simultaneous requests between the vulnerable point and the file deletion point. And the uploaded malicious file can be used
+
+```javascript
+@PostMapping(value = {"spack/upload"}, produces = {"application/json"}, consumes = {"multipart/form-data"})
+@ResponseBody
+@ResponseStatus(HttpStatus.ACCEPTED)
+public ResponseEntity<?> upload(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestParam(name = "spackFile", required = true) MultipartFile spackFile, @RequestParam(name = "spackChecksumFile", required = true) MultipartFile spackChecksumFile, @RequestParam(value = "updatetype", defaultValue = "full") String updateType, @RequestParam(value = "flavour", defaultValue = "premium") String flavour) throws Exception {
+    String spackFilePath = "/var/versa/ecp/share/files/" + spackFile.getOriginalFilename();
+    String spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.getOriginalFilename();
+    try {
+        copyPackage(spackFile, spackFilePath); [1]
+        copyPackage(spackChecksumFile, spackSigFilePath); [2]
+        String bearerToken = UserContextHolder.getContext().getUserAccessTken(); [3]
+        if (bearerToken != null) {
+           ...
+        }
+        Status status = new Status();
+        status.setStatus("Bearer Token empty");
+        return new ResponseEntity<>(status, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+        Files.deleteIfExists(Paths.get(spackFilePath, new String[0])); [4]
+        Files.deleteIfExists(Paths.get(spackSigFilePath, new String[0])); [5]
+        logger.error("Error while uploading Spack", (Throwable) e);
+        return handleException(e, httpRequest);
+    }
+}
+```
+{% endstep %}
+{% endstepper %}
+
+***
