@@ -502,6 +502,20 @@ public static async Task<UploadResult> ProcessCompletedUpload(IWebHostEnvironmen
 {% step %}
 Check the processing of all file types that can be uploaded, especially files of type `attachment`
 
+you can use this regex for find vulnerability
+
+#### VS CODE
+
+```regex
+(?<Source>file\.(fileName|stream))|(?<Sink>FileStream\s+\w*\s*=\s*new\s+FileStream\(|\.CopyTo\()
+```
+
+#### RipGrep
+
+```regex
+(file\.(fileName|stream))|(FileStream\s+\w*\s*=\s*new\s+FileStream\(|\.CopyTo\()
+```
+
 ```csharp
 public static async Task<UploadResult> SaveAttachment(IWebHostEnvironment _webHostEnvironment, string httpAbsoluteRootPath, UserData currentUser, UploadedFile file, string guid, string contentId = "")
 {
@@ -587,5 +601,9 @@ private static string GenerateFileName(string attachguid, int count, string exte
 {% endstepper %}
 
 ***
+
+#### sss
+
+
 
 ## Cheat Sheet
