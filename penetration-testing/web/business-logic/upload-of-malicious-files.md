@@ -390,7 +390,7 @@ public function copy($source, $destination) {
 
 ***
 
-#### Remote Code Execution Via File Upload (Unauthenticate)
+#### Remote Code Execution via File Upload (Unuthenticate)
 
 {% stepper %}
 {% step %}
@@ -504,13 +504,13 @@ Check the processing of all file types that can be uploaded, especially files of
 
 you can use this regex for find vulnerability
 
-#### VS CODE
+**VSCODE**
 
 ```regex
 (?<Source>file\.(fileName|stream))|(?<Sink>FileStream\s+\w*\s*=\s*new\s+FileStream\(|\.CopyTo\()
 ```
 
-#### RipGrep
+**RipGrep**
 
 ```regex
 (file\.(fileName|stream))|(FileStream\s+\w*\s*=\s*new\s+FileStream\(|\.CopyTo\()
