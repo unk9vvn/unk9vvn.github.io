@@ -270,6 +270,53 @@ In the code, review the function that processes the file upload endpoint to unde
 {% step %}
 Analyze the file upload process and check whether the user’s file is copied directly to the system and whether the uploaded file type is validated or not (like in the code below)
 
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost("spack/upload")]
+[Consumes("multipart/form-data")]
+[Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status202Accepted)]
+public IActionResult Upload(
+    HttpRequest httpRequest,
+    HttpResponse httpResponse,
+    IFormFile spackFile,
+    IFormFile spackChecksumFile,
+    string updatetype = "full",
+    string flavour = "premium")
+{
+    string spackFilePath = "/var/versa/ecp/share/files/" + spackFile.FileName;
+    string spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.FileName;
+
+    try
+    {
+        CopyPackage(spackFile, spackFilePath); // [1]
+        CopyPackage(spackChecksumFile, spackSigFilePath); // [2]
+
+        string bearerToken = UserContextHolder.GetContext().GetUserAccessTken(); // [3]
+        if (bearerToken != null)
+        {
+            ...
+        }
+
+        Status status = new Status();
+        status.SetStatus("Bearer Token empty");
+        return StatusCode(StatusCodes.Status500InternalServerError, status);
+    }
+    catch (Exception e)
+    {
+        System.IO.File.Delete(spackFilePath); // [4]
+        System.IO.File.Delete(spackSigFilePath); // [5]
+        logger.LogError(e, "Error while uploading Spack");
+        return HandleException(e, httpRequest);
+    }
+}
+```
+
+
+{% endtab %}
+
+{% tab title="JavaScript" %}
 ```javascript
 @PostMapping(value = {"spack/upload"}, produces = {"application/json"}, consumes = {"multipart/form-data"})
 @ResponseBody
@@ -295,7 +342,159 @@ public ResponseEntity<?> upload(HttpServletRequest httpRequest, HttpServletRespo
     }
 }
 ```
+{% endtab %}
 
+{% tab title="PHP" %}
+```php
+public function upload(Request $request)
+{
+    $spackFile = $request->files->get('spackFile');
+    $spackChecksumFile = $request->files->get('spackChecksumFile');
+    $updateType = $request->get('updatetype', 'full');
+    $flavour = $request->get('flavour', 'premium');
+
+    $spackFilePath = "/var/versa/ecp/share/files/" . $spackFile->getClientOriginalName();
+    $spackSigFilePath = "/var/versa/ecp/share/files/" . $spackChecksumFile->getClientOriginalName();
+
+    try {
+        copyPackage($spackFile, $spackFilePath); // [1]
+        copyPackage($spackChecksumFile, $spackSigFilePath); // [2]
+
+        $bearerToken = UserContextHolder::getContext()->getUserAccessTken(); // [3]
+        if ($bearerToken !== null) {
+            ...
+        }
+
+        $status = new Status();
+        $status->setStatus("Bearer Token empty");
+        return new ResponseEntity($status, 500);
+
+    } catch (Exception $e) {
+        @unlink($spackFilePath); // [4]
+        @unlink($spackSigFilePath); // [5]
+        $logger->error("Error while uploading Spack", [$e]);
+        return $this->handleException($e, $request);
+    }
+}
+
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+async function upload(req, res) {
+    const spackFile = req.files.spackFile;
+    const spackChecksumFile = req.files.spackChecksumFile;
+    const updateType = req.body.updatetype || "full";
+    const flavour = req.body.flavour || "premium";
+
+    const spackFilePath = "/var/versa/ecp/share/files/" + spackFile.originalname;
+    const spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.originalname;
+
+    try {
+        copyPackage(spackFile, spackFilePath); // [1]
+        copyPackage(spackChecksumFile, spackSigFilePath); // [2]
+
+        const bearerToken = UserContextHolder.getContext().getUserAccessTken(); // [3]
+        if (bearerToken !== null) {
+            ...
+        }
+
+        const status = new Status();
+        status.setStatus("Bearer Token empty");
+        return res.status(500).json(status);
+
+    } catch (e) {
+        fs.unlinkSync(spackFilePath); // [4]
+        fs.unlinkSync(spackSigFilePath); // [5]
+        logger.error("Error while uploading Spack", e);
+        return handleException(e, req, res);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+**VSCode**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(?<Source>IFormFile|OpenReadStream\s*\(|Request\.Form\.Files)|(?<Sink>File(Stream|\.Copy|\.Delete)\s*\()
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(?<Source>MultipartFile|\w+\.getInputStream\s*\()|(?<Sink>Files\.(copy|deleteIfExists)\s*\(|Paths\.get\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(?<Source>\$_FILES|\['tmp_name'\])|(?<Sink>move_uploaded_file|copy\s*\(|unlink\s*\()
+```
+{% endtab %}
+
+{% tab title="Node JS Regex" %}
+```regex
+(?<Source>req\.files|multer|file\.path)|(?<Sink>fs\.(createWriteStream|copyFile|unlink))
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(IFormFile|OpenReadStream\s*\(|Request\.Form\.Files)|(File(Stream|\.Copy|\.Delete)\s*\()
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(MultipartFile|\w+\.getInputStream\s*\()|(Files\.(copy|deleteIfExists)\s*\(|Paths\.get\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(\$_FILES|\['tmp_name'\])|(move_uploaded_file|copy\s*\(|unlink\s*\()
+```
+{% endtab %}
+
+{% tab title="Node JS Regex" %}
+```regex
+(req\.files|multer|file\.path)|(fs\.(createWriteStream|copyFile|unlink))
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private void CopyPackage(IFormFile uploadFile, string filePath)
+{
+    lock (_lock)
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+
+        using (Stream inputStream = uploadFile.OpenReadStream())
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+        {
+            inputStream.CopyTo(fileStream);
+        }
+    }
+}
+
+```
+{% endtab %}
+
+{% tab title="JavaScript" %}
 ```javascript
 private synchronized void copyPackage(MultipartFile uploadFile, String filePath) throws Exception {
     Files.deleteIfExists(Paths.get(filePath, new String[0])); 
@@ -317,6 +516,51 @@ private synchronized void copyPackage(MultipartFile uploadFile, String filePath)
     }
 }
 ```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function copyPackage($uploadFile, $filePath)
+{
+    if (file_exists($filePath)) {
+        unlink($filePath);
+    }
+
+    $inputStream = fopen($uploadFile['tmp_name'], 'rb');
+    try {
+        $outputStream = fopen($filePath, 'wb');
+        stream_copy_to_stream($inputStream, $outputStream);
+        fclose($outputStream);
+        fclose($inputStream);
+    } catch (Throwable $th) {
+        if (is_resource($inputStream)) {
+            fclose($inputStream);
+        }
+        throw $th;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```javascript
+async function copyPackage(uploadFile, filePath) {
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+
+    const readStream = uploadFile.stream;
+    const writeStream = fs.createWriteStream(filePath);
+
+    await new Promise((resolve, reject) => {
+        readStream.pipe(writeStream);
+        writeStream.on('finish', resolve);
+        writeStream.on('error', reject);
+    });
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
@@ -326,6 +570,53 @@ After the vulnerable code, check whether the uploaded file may be deleted due to
 {% step %}
 If the file is first copied, then security checks are performed, and then the file is deleted, exactly between lines `[1]` to `[5]`, the **Race Condition** vulnerability can be exploited by sending about 1000 simultaneous requests between the vulnerable point and the file deletion point. And the uploaded malicious file can be used
 
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost("spack/upload")]
+[Produces("application/json")]
+[Consumes("multipart/form-data")]
+[ProducesResponseType(StatusCodes.Status202Accepted)]
+public async Task<IActionResult> Upload(
+    HttpRequest httpRequest,
+    HttpResponse httpResponse,
+    IFormFile spackFile,
+    IFormFile spackChecksumFile,
+    string updatetype = "full",
+    string flavour = "premium")
+{
+    string spackFilePath = "/var/versa/ecp/share/files/" + spackFile.FileName;
+    string spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.FileName;
+
+    try
+    {
+        CopyPackage(spackFile, spackFilePath); // [1]
+        CopyPackage(spackChecksumFile, spackSigFilePath); // [2]
+
+        string bearerToken = UserContextHolder.GetContext().GetUserAccessToken(); // [3]
+        if (bearerToken != null)
+        {
+            // ...
+        }
+
+        var status = new Status();
+        status.StatusValue = "Bearer Token empty";
+        return StatusCode(StatusCodes.Status500InternalServerError, status);
+    }
+    catch (Exception e)
+    {
+        if (System.IO.File.Exists(spackFilePath))
+            System.IO.File.Delete(spackFilePath); // [4]
+
+        if (System.IO.File.Exists(spackSigFilePath))
+            System.IO.File.Delete(spackSigFilePath); // [5]
+
+        logger.LogError(e, "Error while uploading Spack");
+
+```
+{% endtab %}
+
+{% tab title="JavaScript" %}
 ```javascript
 @PostMapping(value = {"spack/upload"}, produces = {"application/json"}, consumes = {"multipart/form-data"})
 @ResponseBody
@@ -351,6 +642,75 @@ public ResponseEntity<?> upload(HttpServletRequest httpRequest, HttpServletRespo
     }
 }
 ```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function upload(Request $request)
+{
+    $spackFile = $request->file('spackFile');
+    $spackChecksumFile = $request->file('spackChecksumFile');
+
+    $spackFilePath = "/var/versa/ecp/share/files/" . $spackFile->getClientOriginalName();
+    $spackSigFilePath = "/var/versa/ecp/share/files/" . $spackChecksumFile->getClientOriginalName();
+
+    try {
+        $this->copyPackage($spackFile, $spackFilePath); // [1]
+        $this->copyPackage($spackChecksumFile, $spackSigFilePath); // [2]
+
+        $bearerToken = UserContextHolder::getContext()->getUserAccessToken(); // [3]
+        if ($bearerToken !== null) {
+            // ...
+        }
+
+        return response()->json(['status' => 'Bearer Token empty'], 500);
+    } catch (Exception $e) {
+        if (file_exists($spackFilePath))
+            unlink($spackFilePath); // [4]
+
+        if (file_exists($spackSigFilePath))
+            unlink($spackSigFilePath); // [5]
+
+        logger()->error("Error while uploading Spack", [$e]);
+        return $this->handleException($e, $request);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+fastify.post('/spack/upload', async (request, reply) => {
+    const spackFile = request.body.spackFile;
+    const spackChecksumFile = request.body.spackChecksumFile;
+
+    const spackFilePath = "/var/versa/ecp/share/files/" + spackFile.filename;
+    const spackSigFilePath = "/var/versa/ecp/share/files/" + spackChecksumFile.filename;
+
+    try {
+        await copyPackage(spackFile, spackFilePath); // [1]
+        await copyPackage(spackChecksumFile, spackSigFilePath); // [2]
+
+        const bearerToken = UserContextHolder.getContext().getUserAccessToken(); // [3]
+        if (bearerToken != null) {
+            // ...
+        }
+
+        return reply.code(500).send({ status: "Bearer Token empty" });
+    } catch (e) {
+        if (fs.existsSync(spackFilePath))
+            fs.unlinkSync(spackFilePath); // [4]
+
+        if (fs.existsSync(spackSigFilePath))
+            fs.unlinkSync(spackSigFilePath); // [5]
+
+        request.log.error(e, "Error while uploading Spack");
+        return handleException(e, request, reply);
+    }
+});
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 {% endstepper %}
 
