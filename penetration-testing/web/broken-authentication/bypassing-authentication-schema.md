@@ -244,6 +244,244 @@ The final request will look like the following
 
 ***
 
+#### Authentication Bypass via Error Dispatcher
+
+{% stepper %}
+{% step %}
+Map the entire target system using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Map the entry points and endpoints in Xmind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Note all pre-login endpoints and license-related endpoints in the code and configuration that make security decisions based on the **URL path**, such as the path below
+
+```hurl
+/license/Unlicensed.xhtml
+```
+{% endstep %}
+
+{% step %}
+Intentionally add invalid paths to the URL and send requests to trigger error handling
+
+```
+/license/Unlicensed.xhtml/x
+```
+{% endstep %}
+
+{% step %}
+Then review this path in the code under the error-handling logic to check whether an unauthenticated user is given a session for communication or not
+
+**VSCode**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(?<Source>HttpContext\.Items|Request\.(Query|Params))|(?<Sink>StartsWith\s*\(|Activate|License|Admin)
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(?<Source>getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(?<Sink>startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(?<Source>\$_(GET|REQUEST|SERVER))|(?<Sink>strpos\s*\(|activate|license|admin)
+```
+{% endtab %}
+
+{% tab title="Node Js Regex" %}
+```regex
+(?<Source>req\.(query|originalUrl|headers))|(?<Sink>startsWith\s*\(|activate|license|admin)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(HttpContext\.Items|Request\.(Query|Params))|(StartsWith\s*\(|Activate|License|Admin)
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(\$_(GET|REQUEST|SERVER))|(strpos\s*\(|activate|license|admin)
+```
+{% endtab %}
+
+{% tab title="Node Js Regex" %}
+```regex
+(req\.(query|originalUrl|headers))|(startsWith\s*\(|activate|license|admin)
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+protected void DoGet(HttpRequest request, HttpResponse response)
+{
+    int? statusCode = request.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error is HttpException httpEx ? (int?)httpEx.StatusCode : null;
+    string message = request.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error?.Message;
+    Type exceptionType = request.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error?.GetType();
+    string requestUri = request.Path;
+    Exception exception = request.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
+    string remoteAddr = request.HttpContext.Connection.RemoteIpAddress?.ToString();
+    string gaRequestAction = request.Query["GARequestAction"];
+
+    if (statusCode == null && exceptionType == null && exception == null)
+    {
+        response.StatusCode = 404;
+    }
+    else if (!BypassHandling(statusCode, requestUri))
+    {
+        if (requestUri.StartsWith(request.PathBase + "/license/Unlicensed.xhtml")) // [1]
+        {
+            if (!string.IsNullOrEmpty(gaRequestAction) && gaRequestAction.Equals("activate", StringComparison.OrdinalIgnoreCase))
+            {
+                string token = SessionUtilities.GenerateLicenseRequestToken(request.HttpContext.Session); // [2]
+                try
+                {
+                    LicenseUtilities.RequestOnlineActivation(request, response, token); // [3]
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    LOGGER.LogError(ex, ex.Message);
+                }
+            }
+
+            response.Redirect(requestUri);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="JavaScript" %}
+```js
+async function doGet(req, res) {
+    const statusCode = req.statusCode || null;
+    const message = req.message || null;
+    const exceptionType = req.error?.constructor || null;
+    const requestUri = req.path;
+    const exception = req.error || null;
+    const remoteAddr = req.ip;
+    const gaRequestAction = req.query.GARequestAction;
+
+    if (!statusCode && !exceptionType && !exception) {
+        res.status(404).send('Not Found');
+    } else if (!bypassHandling(statusCode, requestUri)) {
+        if (requestUri.startsWith(req.baseUrl + "/license/Unlicensed.xhtml")) { // [1]
+            if (gaRequestAction && gaRequestAction.toLowerCase() === "activate") {
+                const token = SessionUtilities.generateLicenseRequestToken(req.session); // [2]
+                try {
+                    await LicenseUtilities.requestOnlineActivation(req, res, token); // [3]
+                    return;
+                } catch (err) {
+                    console.error(err.message, err);
+                }
+            }
+
+            res.redirect(requestUri);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function doGet(Request $request, Response $response)
+{
+    $statusCode = $request->attributes->get('javax.servlet.error.status_code');
+    $message = $request->attributes->get('javax.servlet.error.message');
+    $exceptionType = $request->attributes->get('javax.servlet.error.exception_type');
+    $requestUri = $request->attributes->get('javax.servlet.error.request_uri');
+    $exception = $request->attributes->get('javax.servlet.error.exception');
+    $remoteAddr = $request->ip();
+    $gaRequestAction = $request->query('GARequestAction');
+
+    if ($statusCode === null && $exceptionType === null && $exception === null) {
+        return response()->setStatusCode(404);
+    } elseif (!$this->bypassHandling($statusCode, $requestUri)) {
+        if (str_starts_with($requestUri, $request->getBasePath() . "/license/Unlicensed.xhtml")) { // [1]
+            if (!empty($gaRequestAction) && strcasecmp($gaRequestAction, "activate") === 0) {
+                $token = SessionUtilities::generateLicenseRequestToken($request->session()); // [2]
+                try {
+                    LicenseUtilities::requestOnlineActivation($request, $response, $token); // [3]
+                    return;
+                } catch (\Exception $e) {
+                    $this->LOGGER->error($e->getMessage(), ['exception' => $e]);
+                }
+            }
+
+            return redirect($requestUri);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+async function doGet(req, reply) {
+    const statusCode = req.statusCode || null;
+    const message = req.message || null;
+    const exceptionType = req.error?.constructor || null;
+    const requestUri = req.url;
+    const exception = req.error || null;
+    const remoteAddr = req.ip;
+    const gaRequestAction = req.query.GARequestAction;
+
+    if (!statusCode && !exceptionType && !exception) {
+        reply.status(404).send('Not Found');
+    } else if (!bypassHandling(statusCode, requestUri)) {
+        if (requestUri.startsWith(req.routerPath + "/license/Unlicensed.xhtml")) { // [1]
+            if (gaRequestAction && gaRequestAction.toLowerCase() === "activate") {
+                const token = SessionUtilities.generateLicenseRequestToken(req.session); // [2]
+                try {
+                    await LicenseUtilities.requestOnlineActivation(req, reply, token); // [3]
+                    return;
+                } catch (err) {
+                    req.log.error(err.message, err);
+                }
+            }
+
+            reply.redirect(requestUri);
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Finally, by abusing the path error, it is possible to obtain a session for connection and interaction
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>

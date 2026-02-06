@@ -62,4 +62,192 @@ Error 500: javax.servlet.ServletException: java.util.HashMap incompatible with [
 
 ### White Box
 
+#### Insecure Deserialization (Trusted & Untrusted Signed Object Confusion)
+
+{% stepper %}
+{% step %}
+Map the entire target system using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Map the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Then review the endpoint process responsible for generating, processing, validating, or receiving **License / Activation / Trial** data in the code logic, and check whether it uses `getObject` and `deserialize`, like in the code below
+
+**VSCode**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(?<Source>byte\[\]|Stream)|(?<Sink>BinaryFormatter|NetDataContractSerializer|Deserialize\s*\()
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(?<Source>byte\[\]\s+\w+)|(?<Sink>deserialize(UntrustedSignedObject)?\s*\(|ObjectInputStream|readObject\s*\(|SignedObject|getObject\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(?<Source>\$_(GET|POST|REQUEST)|\$[a-zA-Z0-9_]+)|(?<Sink>unserialize\s*\(|__wakeup|__destruct)
+```
+{% endtab %}
+
+{% tab title="Node Js Regex" %}
+```regex
+(?<Source>Buffer|req\.body)|(?<Sink>JSON\.parse\s*\(|deserialize\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep**
+
+{% tabs %}
+{% tab title="C# Regex" %}
+```regex
+(byte\[\]|Stream)|(BinaryFormatter|NetDataContractSerializer|Deserialize\s*\()
+```
+{% endtab %}
+
+{% tab title="JavaScript Regex" %}
+```regex
+(byte\[\]\s+\w+)|(deserialize(UntrustedSignedObject)?\s*\(|ObjectInputStream|readObject\s*\(|SignedObject|getObject\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP Regex" %}
+```regex
+(\$_(GET|POST|REQUEST)|\$[a-zA-Z0-9_]+)|(unserialize\s*\(|__wakeup|__destruct)
+```
+{% endtab %}
+
+{% tab title="Node JS Regex" %}
+```regex
+(Buffer|req\.body)|(JSON\.parse\s*\(|deserialize\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private static byte[] Verify(byte[] data, KeyConfig keyConfig)
+{
+    string algorithm = keyConfig.Version == "2" ? "SHA512withRSA" : "SHA1withDSA";
+
+    using var publicKey = GetPublicKey(keyConfig);
+    using var signature = System.Security.Cryptography.SignatureAlgorithm.Create(algorithm); // placeholder, باید mapping دقیق RSA/DSA داشته باشه
+
+    var signedObject = (SignedObject)JavaSerializationUtilities.Deserialize(data, typeof(SignedObject), new Type[] { typeof(byte[]) }); // [1]
+
+    if (keyConfig.IsServer)
+    {
+        var container = (SignedContainer)JavaSerializationUtilities.DeserializeUntrustedSignedObject(signedObject, typeof(SignedContainer), new Type[] { typeof(byte[]) });
+        return container.Data;
+    }
+    else
+    {
+        bool verified = signedObject.Verify(publicKey, signature); // [2]
+        if (!verified)
+        {
+            throw new IOException("Unable to verify signature!");
+        }
+        var signedContainer = (SignedContainer)signedObject.Object; // [3]
+        return signedContainer.Data;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="JavaScript" %}
+```js
+function verify(data, keyConfig) {
+    let algorithm = keyConfig.version === "2" ? "RSA-SHA512" : "DSA-SHA1";
+
+    const publicKey = getPublicKey(keyConfig);
+
+    const signedObject = JavaSerializationUtilities.deserialize(data, SignedObject); // [1]
+
+    if (keyConfig.isServer) {
+        const container = JavaSerializationUtilities.deserializeUntrustedSignedObject(signedObject, SignedContainer);
+        return container.getData();
+    } else {
+        const verifier = crypto.createVerify(algorithm);
+        const verified = signedObject.verify(publicKey, verifier); // [2]
+        if (!verified) {
+            throw new Error("Unable to verify signature!");
+        }
+        const signedContainer = signedObject.getObject(); // [3]
+        return signedContainer.getData();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function verify($data, $keyConfig) {
+    $algorithm = ($keyConfig->getVersion() === "2") ? "SHA512" : "SHA1";
+
+    $publicKey = getPublicKey($keyConfig);
+
+    $signedObject = JavaSerializationUtilities::deserialize($data, SignedObject::class, [ 'byte[]' ]); // [1]
+
+    if ($keyConfig->isServer()) {
+        $container = JavaSerializationUtilities::deserializeUntrustedSignedObject($signedObject, SignedContainer::class, [ 'byte[]' ]);
+        return $container->getData();
+    } else {
+        $verified = $signedObject->verify($publicKey, $algorithm); // [2]
+        if (!$verified) {
+            throw new \Exception("Unable to verify signature!");
+        }
+        $signedContainer = $signedObject->getObject(); // [3]
+        return $signedContainer->getData();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+async function verify(data, keyConfig) {
+    const algorithm = keyConfig.version === "2" ? "RSA-SHA512" : "DSA-SHA1";
+
+    const publicKey = getPublicKey(keyConfig);
+
+    const signedObject = await JavaSerializationUtilities.deserialize(data, SignedObject); // [1]
+
+    if (keyConfig.isServer) {
+        const container = await JavaSerializationUtilities.deserializeUntrustedSignedObject(signedObject, SignedContainer);
+        return container.getData();
+    } else {
+        const verifier = crypto.createVerify(algorithm);
+        const verified = signedObject.verify(publicKey, verifier); // [2]
+        if (!verified) {
+            throw new Error("Unable to verify signature!");
+        }
+        const signedContainer = signedObject.getObject(); // [3]
+        return signedContainer.getData();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Then send a license request with a malicious serialized payload and record the vulnerability
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
