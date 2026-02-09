@@ -278,7 +278,7 @@ Intentionally add invalid paths to the URL and send requests to trigger error ha
 {% step %}
 Then review this path in the code under the error-handling logic to check whether an unauthenticated user is given a session for communication or not
 
-**VSCode**
+**VSCode (Regex Detection**)
 
 {% tabs %}
 {% tab title="C# Regex" %}
@@ -306,19 +306,21 @@ Then review this path in the code under the error-handling logic to check whethe
 {% endtab %}
 {% endtabs %}
 
-**RipGrep**
+**RipGrep (Regex Detection**)
 
 {% tabs %}
-{% tab title="C# Regex" %}
+{% tab title="C#" %}
 ```regex
 (HttpContext\.Items|Request\.(Query|Params))|(StartsWith\s*\(|Activate|License|Admin)
 ```
 {% endtab %}
 
-{% tab title="JavaScript Regex" %}
+{% tab title="Java" %}
 ```regex
 (getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
 ```
+
+
 {% endtab %}
 
 {% tab title="PHP Regex" %}
@@ -333,6 +335,8 @@ Then review this path in the code under the error-handling logic to check whethe
 ```
 {% endtab %}
 {% endtabs %}
+
+**Vulnerable Code Patterns**
 
 {% tabs %}
 {% tab title="C#" %}

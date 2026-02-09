@@ -369,6 +369,8 @@ Then look for endpoints related to password reset and find the initial processin
 {% step %}
 Check whether the password-forgotten function is marked as `AllowAnonymous` or not, like in the code below
 
+{% tabs %}
+{% tab title="C#" %}
 ```c#
 [HttpPost]
 [Route("force-reset-password")]
@@ -394,12 +396,96 @@ public ActionResult<ResetPasswordResult> ForceResetPassword([FromBody] ForceRese
 	//...
 }
 ```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping("force-reset-password")
+@AuthenticatedService(allowAnonymous = true)
+@CheckInputForNullFilter
+@ShortDescription("This function will attempt to reset a user's password.")
+@Description("This function will attempt to reset a user's password and should only be called after a user attempts to login and they receive a ChangePasswordNeeded = true.")
+public ResponseEntity<ResetPasswordResult> forceResetPassword(
+        @RequestBody ForceResetPasswordInputs inputs,
+        HttpServletRequest request) {
+
+    ResponseEntity<ResetPasswordResult> result;
+    try {
+        ResponseEntity<ResetPasswordResult> actionResult = returnResult(() -> {
+            AuthenticationService instance = AuthenticationService.getInstance();
+            ForceResetPasswordInputs inputs2 = inputs;
+            String clientIPAddress = request.getRemoteAddr();
+            return instance.forcePasswordReset(inputs2, clientIPAddress);
+        });
+
+        auditLogSuccess("force-reset-password");
+        result = actionResult;
+    }
+    // ...
+    return result;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+/
+ * @AuthenticatedService(AllowAnonymous=true)
+ * @CheckInputForNullFilter
+ * @ShortDescription("This function will attempt to reset a user's password.")
+ * @Description("This function will attempt to reset a user's password and should only be called after a user attempts to login and they receive a ChangePasswordNeeded = true.")
+ */
+public function forceResetPassword(Request $request)
+{
+    try {
+        $result = $this->returnResult(function () use ($request) {
+            $instance = AuthenticationService::getInstance();
+            $inputs = $request->input();
+            $clientIPAddress = $request->ip();
+            return $instance->forcePasswordReset(
+                $inputs,
+                $clientIPAddress !== null ? $clientIPAddress : null
+            );
+        });
+
+        $this->auditLogSuccess("force-reset-password");
+        return $result;
+    }
+    // ...
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post('/force-reset-password', async (req, res) => {
+    try {
+        const result = await returnResult(async () => {
+            const instance = AuthenticationService.getInstance();
+            const inputs = req.body;
+            const clientIPAddress = req.ip;
+            return instance.forcePasswordReset(
+                inputs,
+                clientIPAddress ? clientIPAddress : null
+            );
+        });
+
+        auditLogSuccess("force-reset-password");
+        res.send(result);
+    }
+    // ...
+});
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
 During the review, check whether it is possible to change the passwords of high-privilege users, like in the code below
 
-```csharp
+{% tabs %}
+{% tab title="C#" %}
+```c#
 public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs inputs, string hostname)
 {
 	ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
@@ -419,12 +505,83 @@ public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs input
 		//...
 	}
 ```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public ResetPasswordResult forcePasswordReset(ForceResetPasswordInputs inputs, String hostname) {
+    ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
+    try {
+        resetPasswordResult.setDebugInfo("check1" + System.lineSeparator());
+        //...
+        if (inputs.isSysAdmin()) {
+            ResetPasswordResult resetPasswordResult4 = resetPasswordResult;
+        } else {
+            ResetPasswordResult resetPasswordResult9 = resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return resetPasswordResult;
+}
+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function forcePasswordReset($inputs, $hostname)
+{
+    $resetPasswordResult = new ResetPasswordResult();
+    try {
+        $resetPasswordResult->DebugInfo = "check1" . PHP_EOL;
+        //...
+        if ($inputs->IsSysAdmin) {
+            $resetPasswordResult4 = $resetPasswordResult;
+        } else {
+            $resetPasswordResult9 = $resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return $resetPasswordResult;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function forcePasswordReset(inputs, hostname) {
+    const resetPasswordResult = new ResetPasswordResult();
+    try {
+        resetPasswordResult.debugInfo = "check1\n";
+        //...
+        if (inputs.isSysAdmin) {
+            const resetPasswordResult4 = resetPasswordResult;
+        } else {
+            const resetPasswordResult9 = resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return resetPasswordResult;
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
 Then check whether admin account validation is performed during the password-forgotten process or not. If there is no validation, it can be abused, like in the code below
 
-```csharp
+
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
 public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs inputs, string hostname)
 {
 	ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
@@ -498,6 +655,289 @@ public new ResetPasswordResult ForcePasswordReset(ForceResetPasswordInputs input
 	//...
 }
 ```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public ResetPasswordResult forcePasswordReset(ForceResetPasswordInputs inputs, String hostname) {
+    ResetPasswordResult resetPasswordResult = new ResetPasswordResult();
+    try {
+        //...
+        if (inputs.isSysAdmin()) {
+            ResetPasswordResult resetPasswordResult4 = resetPasswordResult;
+            resetPasswordResult4.setDebugInfo(
+                resetPasswordResult4.getDebugInfo() + "check4.2" + System.lineSeparator()
+            );
+
+            db_system_administrator_readonly adminReadonly =
+                SystemRepository.getInstance().administratorGetByUsername(inputs.getUsername()); // [1]
+
+            if (adminReadonly == null) {
+                resetPasswordResult.setSuccess(false);
+                resetPasswordResult.setMessage("USER_NOT_FOUND");
+                resetPasswordResult.setResultCode(HttpStatus.BAD_REQUEST);
+                return resetPasswordResult;
+            }
+
+            PasswordStrength.FailedRequirementWithVariable requirementCodes =
+                PasswordStrength.getRequirementCodes(
+                    adminReadonly,
+                    inputs.getNewPassword(),
+                    false
+                );
+
+            ResetPasswordResult resetPasswordResult5 = resetPasswordResult;
+            resetPasswordResult5.setDebugInfo(
+                resetPasswordResult5.getDebugInfo() + "check5.2" + System.lineSeparator()
+            );
+
+            if (requirementCodes != null) {
+                resetPasswordResult.setSuccess(false);
+                resetPasswordResult.setUsername(inputs.getUsername());
+                resetPasswordResult.setMessage(requirementCodes.getItem1());
+                resetPasswordResult.setErrorCode(requirementCodes.getItem1());
+                resetPasswordResult.setErrorData(requirementCodes.getItem2());
+                resetPasswordResult.setResultCode(HttpStatus.BAD_REQUEST);
+                PasswordBruteForceDetector.getInstance().resetSource(hostname);
+                return resetPasswordResult;
+            }
+
+            Map<String, LocalDateTime> dictionary =
+                new HashMap<>(adminReadonly.getPasswordHistoryHashedReadonly());
+
+            dictionary.put(adminReadonly.getPasswordHash(), LocalDateTime.now(ZoneOffset.UTC));
+
+            db_system_administrator item = new db_system_administrator();
+            item.setGuid(adminReadonly.getGuid());
+            item.setPassword(inputs.getNewPassword());
+            item.setPasswordHistoryHashed(dictionary);
+
+            ResetPasswordResult resetPasswordResult6 = resetPasswordResult;
+            resetPasswordResult6.setDebugInfo(
+                resetPasswordResult6.getDebugInfo() + "check6.2" + System.lineSeparator()
+            );
+
+            try {
+                SystemRepository.getInstance().administratorUpdate(
+                    item,
+                    Boolean.FALSE,
+                    new db_system_administrator.Columns[] {
+                        db_system_administrator.Columns.password_hash,
+                        db_system_administrator.Columns.password_history_hashed
+                    }
+                );
+            } catch (Exception ex) {
+                resetPasswordResult.setSuccess(false);
+                resetPasswordResult.setResultCode(HttpStatus.BAD_REQUEST);
+                resetPasswordResult.setMessage(ex.getMessage());
+                return resetPasswordResult;
+            }
+
+            ResetPasswordResult resetPasswordResult7 = resetPasswordResult;
+            resetPasswordResult7.setDebugInfo(
+                resetPasswordResult7.getDebugInfo() + "check7.2" + System.lineSeparator()
+            );
+
+            PasswordBruteForceDetector.getInstance().resetSource(hostname);
+
+            ResetPasswordResult resetPasswordResult8 = resetPasswordResult;
+            resetPasswordResult8.setDebugInfo(
+                resetPasswordResult8.getDebugInfo() + "check8.2" + System.lineSeparator()
+            );
+        } else {
+            ResetPasswordResult resetPasswordResult9 = resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return resetPasswordResult;
+}
+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function forcePasswordReset($inputs, $hostname)
+{
+    $resetPasswordResult = new ResetPasswordResult();
+    try {
+        //...
+        if ($inputs->IsSysAdmin) {
+            $resetPasswordResult4 = $resetPasswordResult;
+            $resetPasswordResult4->DebugInfo .= "check4.2" . PHP_EOL;
+
+            $adminReadonly =
+                SystemRepository::getInstance()
+                    ->administratorGetByUsername($inputs->Username); // [1]
+
+            if ($adminReadonly === null) {
+                $resetPasswordResult->Success = false;
+                $resetPasswordResult->Message = "USER_NOT_FOUND";
+                $resetPasswordResult->ResultCode = 400;
+                return $resetPasswordResult;
+            }
+
+            $requirementCodes =
+                PasswordStrength::getRequirementCodes(
+                    $adminReadonly,
+                    $inputs->NewPassword,
+                    false
+                );
+
+            $resetPasswordResult5 = $resetPasswordResult;
+            $resetPasswordResult5->DebugInfo .= "check5.2" . PHP_EOL;
+
+            if ($requirementCodes !== null) {
+                $resetPasswordResult->Success = false;
+                $resetPasswordResult->Username = $inputs->Username;
+                $resetPasswordResult->Message = $requirementCodes[0];
+                $resetPasswordResult->ErrorCode = $requirementCodes[0];
+                $resetPasswordResult->ErrorData = $requirementCodes[1];
+                $resetPasswordResult->ResultCode = 400;
+                PasswordBruteForceDetector::getInstance()->resetSource($hostname);
+                return $resetPasswordResult;
+            }
+
+            $dictionary = $adminReadonly->password_history_hashed_readonly;
+            $dictionary[$adminReadonly->password_hash] = gmdate('c');
+
+            $item = new db_system_administrator();
+            $item->guid = $adminReadonly->guid;
+            $item->Password = $inputs->NewPassword;
+            $item->password_history_hashed = $dictionary;
+
+            $resetPasswordResult6 = $resetPasswordResult;
+            $resetPasswordResult6->DebugInfo .= "check6.2" . PHP_EOL;
+
+            try {
+                SystemRepository::getInstance()->administratorUpdate(
+                    $item,
+                    false,
+                    [
+                        db_system_administrator::Columns_password_hash,
+                        db_system_administrator::Columns_password_history_hashed
+                    ]
+                );
+            } catch (Exception $ex) {
+                $resetPasswordResult->Success = false;
+                $resetPasswordResult->ResultCode = 400;
+                $resetPasswordResult->Message = $ex->getMessage();
+                return $resetPasswordResult;
+            }
+
+            $resetPasswordResult7 = $resetPasswordResult;
+            $resetPasswordResult7->DebugInfo .= "check7.2" . PHP_EOL;
+
+            PasswordBruteForceDetector::getInstance()->resetSource($hostname);
+
+            $resetPasswordResult8 = $resetPasswordResult;
+            $resetPasswordResult8->DebugInfo .= "check8.2" . PHP_EOL;
+        } else {
+            $resetPasswordResult9 = $resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return $resetPasswordResult;
+}
+
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function forcePasswordReset(inputs, hostname) {
+    const resetPasswordResult = new ResetPasswordResult();
+    try {
+        //...
+        if (inputs.isSysAdmin) {
+            const resetPasswordResult4 = resetPasswordResult;
+            resetPasswordResult4.debugInfo += "check4.2\n";
+
+            const adminReadonly =
+                SystemRepository.getInstance()
+                    .administratorGetByUsername(inputs.username); // [1]
+
+            if (adminReadonly === null) {
+                resetPasswordResult.success = false;
+                resetPasswordResult.message = "USER_NOT_FOUND";
+                resetPasswordResult.resultCode = 400;
+                return resetPasswordResult;
+            }
+
+            const requirementCodes =
+                PasswordStrength.getRequirementCodes(
+                    adminReadonly,
+                    inputs.newPassword,
+                    false
+                );
+
+            const resetPasswordResult5 = resetPasswordResult;
+            resetPasswordResult5.debugInfo += "check5.2\n";
+
+            if (requirementCodes !== null) {
+                resetPasswordResult.success = false;
+                resetPasswordResult.username = inputs.username;
+                resetPasswordResult.message = requirementCodes[0];
+                resetPasswordResult.errorCode = requirementCodes[0];
+                resetPasswordResult.errorData = requirementCodes[1];
+                resetPasswordResult.resultCode = 400;
+                PasswordBruteForceDetector.getInstance().resetSource(hostname);
+                return resetPasswordResult;
+            }
+
+            const dictionary = {
+                ...adminReadonly.password_history_hashed_readonly
+            };
+            dictionary[adminReadonly.password_hash] = new Date().toISOString();
+
+            const item = {
+                guid: adminReadonly.guid,
+                Password: inputs.newPassword,
+                password_history_hashed: dictionary
+            };
+
+            const resetPasswordResult6 = resetPasswordResult;
+            resetPasswordResult6.debugInfo += "check6.2\n";
+
+            try {
+                SystemRepository.getInstance().administratorUpdate(
+                    item,
+                    false,
+                    [
+                        "password_hash",
+                        "password_history_hashed"
+                    ]
+                );
+            } catch (ex) {
+                resetPasswordResult.success = false;
+                resetPasswordResult.resultCode = 400;
+                resetPasswordResult.message = ex.message;
+                return resetPasswordResult;
+            }
+
+            const resetPasswordResult7 = resetPasswordResult;
+            resetPasswordResult7.debugInfo += "check7.2\n";
+
+            PasswordBruteForceDetector.getInstance().resetSource(hostname);
+
+            const resetPasswordResult8 = resetPasswordResult;
+            resetPasswordResult8.debugInfo += "check8.2\n";
+        } else {
+            const resetPasswordResult9 = resetPasswordResult;
+            //...
+        }
+        //...
+    }
+    //...
+    return resetPasswordResult;
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 {% endstepper %}
 
