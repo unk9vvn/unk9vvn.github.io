@@ -80,56 +80,56 @@ Decompile the application based on the programming language used
 {% step %}
 Then review the endpoint process responsible for generating, processing, validating, or receiving **License / Activation / Trial** data in the code logic, and check whether it uses `getObject` and `deserialize`, like in the code below
 
-**VSCode**
+**VSCode (Regex Detection)**
 
 {% tabs %}
-{% tab title="C# Regex" %}
+{% tab title="C# " %}
 ```regex
 (?<Source>byte\[\]|Stream)|(?<Sink>BinaryFormatter|NetDataContractSerializer|Deserialize\s*\()
 ```
 {% endtab %}
 
-{% tab title="JavaScript Regex" %}
+{% tab title="Java" %}
 ```regex
-(?<Source>byte\[\]\s+\w+)|(?<Sink>deserialize(UntrustedSignedObject)?\s*\(|ObjectInputStream|readObject\s*\(|SignedObject|getObject\s*\()
+(?<Source>byte\[\]\s+\w+)|(?<Sink>deserialize(UntrustedSignedObject)?\s*\(|SignedObject\s*\.\s*getObject\s*\(|getObject\s*\()
 ```
 {% endtab %}
 
-{% tab title="PHP Regex" %}
+{% tab title="PHP " %}
 ```regex
 (?<Source>\$_(GET|POST|REQUEST)|\$[a-zA-Z0-9_]+)|(?<Sink>unserialize\s*\(|__wakeup|__destruct)
 ```
 {% endtab %}
 
-{% tab title="Node Js Regex" %}
+{% tab title="Node.js" %}
 ```regex
 (?<Source>Buffer|req\.body)|(?<Sink>JSON\.parse\s*\(|deserialize\s*\()
 ```
 {% endtab %}
 {% endtabs %}
 
-**RipGrep**
+**RipGrep (Regex Detection (Linux))**
 
 {% tabs %}
-{% tab title="C# Regex" %}
+{% tab title="C#" %}
 ```regex
 (byte\[\]|Stream)|(BinaryFormatter|NetDataContractSerializer|Deserialize\s*\()
 ```
 {% endtab %}
 
-{% tab title="JavaScript Regex" %}
+{% tab title="Java" %}
 ```regex
-(byte\[\]\s+\w+)|(deserialize(UntrustedSignedObject)?\s*\(|ObjectInputStream|readObject\s*\(|SignedObject|getObject\s*\()
+(?<Source>byte\[\]\s+\w+)|(?<Sink>deserialize(UntrustedSignedObject)?\s*\(|SignedObject\s*\.\s*getObject\s*\(|getObject\s*\()
 ```
 {% endtab %}
 
-{% tab title="PHP Regex" %}
+{% tab title="PHP" %}
 ```regex
 (\$_(GET|POST|REQUEST)|\$[a-zA-Z0-9_]+)|(unserialize\s*\(|__wakeup|__destruct)
 ```
 {% endtab %}
 
-{% tab title="Node JS Regex" %}
+{% tab title="Node.js" %}
 ```regex
 (Buffer|req\.body)|(JSON\.parse\s*\(|deserialize\s*\()
 ```
@@ -168,24 +168,28 @@ private static byte[] Verify(byte[] data, KeyConfig keyConfig)
 {% endtab %}
 
 {% tab title="JavaScript" %}
-```js
-function verify(data, keyConfig) {
-    let algorithm = keyConfig.version === "2" ? "RSA-SHA512" : "DSA-SHA1";
+```java
+public static Object verify(byte[] data, KeyConfig keyConfig) throws Exception {
+    String algorithm = "2".equals(keyConfig.getVersion()) ? "RSA-SHA512" : "DSA-SHA1";
 
-    const publicKey = getPublicKey(keyConfig);
+    PublicKey publicKey = getPublicKey(keyConfig);
 
-    const signedObject = JavaSerializationUtilities.deserialize(data, SignedObject); // [1]
+    SignedObject signedObject =
+            JavaSerializationUtilities.deserialize(data, SignedObject.class); // [1]
 
-    if (keyConfig.isServer) {
-        const container = JavaSerializationUtilities.deserializeUntrustedSignedObject(signedObject, SignedContainer);
+    if (keyConfig.isServer()) {
+        SignedContainer container =
+                JavaSerializationUtilities.deserializeUntrustedSignedObject(
+                        signedObject, SignedContainer.class);
         return container.getData();
     } else {
-        const verifier = crypto.createVerify(algorithm);
-        const verified = signedObject.verify(publicKey, verifier); // [2]
+        Signature verifier = Signature.getInstance(algorithm);
+        boolean verified = signedObject.verify(publicKey, verifier); // [2]
         if (!verified) {
-            throw new Error("Unable to verify signature!");
+            throw new Exception("Unable to verify signature!");
         }
-        const signedContainer = signedObject.getObject(); // [3]
+        SignedContainer signedContainer =
+                (SignedContainer) signedObject.getObject(); // [3]
         return signedContainer.getData();
     }
 }

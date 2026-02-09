@@ -210,27 +210,175 @@ In the code, look for classes and functions that process authentication endpoint
 {% step %}
 Then, in the class that handles the authentication endpoint, look for paths in the code where exceptions exist and authentication is bypassed, like in the code below
 
-```javascript
-String clienturi = URIUtil.getNormalizeURI(request);
-...
+**VSCode (Regex Detection)**
 
-if (clienturi.contains("/actuator") || clienturi.endsWith("/v1/ping") ...) {
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(?<Source>Request\.(Path|PathBase|RawUrl))|(?<Sink>Contains\s*\(\s*"/(actuator|admin|health)"\s*\)|EndsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(?<Source>getNormalizeURI\s*\(|getRequestURI\s*\(|getPathInfo\s*\()|(?<Sink>contains\s*\(\s*"/(actuator|admin|health)"\s*\)|endsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(?<Source>\$_SERVER\['REQUEST_URI'\])|(?<Sink>strpos\s*\(|preg_match\s*\(|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(?<Source>req\.(originalUrl|url|path))|(?<Sink>includes\s*\(\s*"/(actuator|admin|health)"\s*\)|endsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+{% endtabs %}
+
+RipGrep (Regex Detection (Linux))
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(Request\.(Path|PathBase|RawUrl))|(Contains\s*\(\s*"/(actuator|admin|health)"\s*\)|EndsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(getNormalizeURI\s*\(|getRequestURI\s*\(|getPathInfo\s*\()|(contains\s*\(\s*"/(actuator|admin|health)"\s*\)|endsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(\$_SERVER\['REQUEST_URI'\])|(strpos\s*\(|preg_match\s*\(|skipAuth\s*=\s*true)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.(originalUrl|url|path))|(includes\s*\(\s*"/(actuator|admin|health)"\s*\)|endsWith\s*\(\s*"/v1/ping"\s*\)|skipAuth\s*=\s*true)
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+string clienturi = URIUtil.GetNormalizeURI(request);
+// ...
+
+if (clienturi.Contains("/actuator") || clienturi.EndsWith("/v1/ping") /* ... */)
+{
     skipAuth = true;
 }
-
-...
 ```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+String clienturi = URIUtil.getNormalizeURI(request);
+// ...
+
+if (clienturi.contains("/actuator") || clienturi.endsWith("/v1/ping") /* ... */) {
+    skipAuth = true;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$clienturi = URIUtil::getNormalizeURI($request);
+// ...
+
+if (strpos($clienturi, "/actuator") !== false || str_ends_with($clienturi, "/v1/ping") /* ... */) {
+    $skipAuth = true;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const clienturi = URIUtil.getNormalizeURI(request);
+// ...
+
+if (clienturi.includes("/actuator") || clienturi.endsWith("/v1/ping") /* ... */) {
+    skipAuth = true;
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
 Also review how the request is received and processed
 
-```javascript
-public static String getNormalizeURI(HttpServletRequest request) {
-    String uri = request.getRequestURI();
-    return removeExtraSlash(URLDecoder.decode(URI.create(uri).normalize().toString(), StandardCharsets.UTF_8));
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static string GetNormalizeURI(HttpRequest request)
+{
+    string uri = request.Path.Value;
+    return RemoveExtraSlash(
+        Uri.UnescapeDataString(
+            new Uri(uri, UriKind.RelativeOrAbsolute)
+                .Normalize()
+                .ToString()
+        )
+    );
 }
 ```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public static String getNormalizeURI(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    return removeExtraSlash(
+        URLDecoder.decode(
+            URI.create(uri).normalize().toString(),
+            StandardCharsets.UTF_8
+        )
+    );
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public static function getNormalizeURI($request)
+{
+    $uri = $request->getRequestUri();
+    return self::removeExtraSlash(
+        urldecode(
+            (new \GuzzleHttp\Psr7\Uri($uri))
+                ->normalize()
+                ->__toString()
+        )
+    );
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+function getNormalizeURI(request) {
+    const uri = request.url;
+    return removeExtraSlash(
+        decodeURIComponent(
+            new URL(uri, 'http://localhost').pathname
+        )
+    );
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
@@ -281,32 +429,32 @@ Then review this path in the code under the error-handling logic to check whethe
 **VSCode (Regex Detection**)
 
 {% tabs %}
-{% tab title="C# Regex" %}
+{% tab title="C#" %}
 ```regex
 (?<Source>HttpContext\.Items|Request\.(Query|Params))|(?<Sink>StartsWith\s*\(|Activate|License|Admin)
 ```
 {% endtab %}
 
-{% tab title="JavaScript Regex" %}
+{% tab title="Java" %}
 ```regex
 (?<Source>getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(?<Sink>startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
 ```
 {% endtab %}
 
-{% tab title="PHP Regex" %}
+{% tab title="PHP" %}
 ```regex
 (?<Source>\$_(GET|REQUEST|SERVER))|(?<Sink>strpos\s*\(|activate|license|admin)
 ```
 {% endtab %}
 
-{% tab title="Node Js Regex" %}
+{% tab title="Node.js" %}
 ```regex
 (?<Source>req\.(query|originalUrl|headers))|(?<Sink>startsWith\s*\(|activate|license|admin)
 ```
 {% endtab %}
 {% endtabs %}
 
-**RipGrep (Regex Detection**)
+**RipGrep (Regex Detection (Linux)**)
 
 {% tabs %}
 {% tab title="C#" %}
@@ -317,19 +465,17 @@ Then review this path in the code under the error-handling logic to check whethe
 
 {% tab title="Java" %}
 ```regex
-(getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
+(?<Source>getAttribute\s*\(\s*"javax\.servlet\.error\.[^"]+"\s*\)|getParameter\s*\()|(?<Sink>startsWith\s*\(|requestOnlineActivation\s*\(|activate|Unlicensed\.xhtml)
 ```
-
-
 {% endtab %}
 
-{% tab title="PHP Regex" %}
+{% tab title="PHP" %}
 ```regex
 (\$_(GET|REQUEST|SERVER))|(strpos\s*\(|activate|license|admin)
 ```
 {% endtab %}
 
-{% tab title="Node Js Regex" %}
+{% tab title="Node.js" %}
 ```regex
 (req\.(query|originalUrl|headers))|(startsWith\s*\(|activate|license|admin)
 ```
@@ -380,32 +526,36 @@ protected void DoGet(HttpRequest request, HttpResponse response)
 ```
 {% endtab %}
 
-{% tab title="JavaScript" %}
-```js
-async function doGet(req, res) {
-    const statusCode = req.statusCode || null;
-    const message = req.message || null;
-    const exceptionType = req.error?.constructor || null;
-    const requestUri = req.path;
-    const exception = req.error || null;
-    const remoteAddr = req.ip;
-    const gaRequestAction = req.query.GARequestAction;
+{% tab title="Java" %}
+```java
+public static void doGet(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    Integer statusCode = req.getStatus() != 0 ? req.getStatus() : null;
+    String message = req.getAttribute("message") != null ? req.getAttribute("message").toString() : null;
+    Class<?> exceptionType = req.getAttribute("error") != null
+            ? req.getAttribute("error").getClass()
+            : null;
+    String requestUri = req.getRequestURI();
+    Object exception = req.getAttribute("error");
+    String remoteAddr = req.getRemoteAddr();
+    String gaRequestAction = req.getParameter("GARequestAction");
 
-    if (!statusCode && !exceptionType && !exception) {
-        res.status(404).send('Not Found');
+    if (statusCode == null && exceptionType == null && exception == null) {
+        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        res.getWriter().write("Not Found");
     } else if (!bypassHandling(statusCode, requestUri)) {
-        if (requestUri.startsWith(req.baseUrl + "/license/Unlicensed.xhtml")) { // [1]
-            if (gaRequestAction && gaRequestAction.toLowerCase() === "activate") {
-                const token = SessionUtilities.generateLicenseRequestToken(req.session); // [2]
+        if (requestUri.startsWith(req.getContextPath() + "/license/Unlicensed.xhtml")) { // [1]
+            if (gaRequestAction != null && gaRequestAction.toLowerCase().equals("activate")) {
+                String token = SessionUtilities.generateLicenseRequestToken(req.getSession()); // [2]
                 try {
-                    await LicenseUtilities.requestOnlineActivation(req, res, token); // [3]
+                    LicenseUtilities.requestOnlineActivation(req, res, token); // [3]
                     return;
-                } catch (err) {
-                    console.error(err.message, err);
+                } catch (Exception err) {
+                    System.err.println(err.getMessage());
+                    err.printStackTrace();
                 }
             }
 
-            res.redirect(requestUri);
+            res.sendRedirect(requestUri);
         }
     }
 }

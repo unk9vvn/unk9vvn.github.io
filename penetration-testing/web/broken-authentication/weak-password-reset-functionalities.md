@@ -369,6 +369,62 @@ Then look for endpoints related to password reset and find the initial processin
 {% step %}
 Check whether the password-forgotten function is marked as `AllowAnonymous` or not, like in the code below
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(?<Source>AllowAnonymous\s*=\s*true|\[FromBody\])|(?<Sink>ForceResetPassword|ResetPassword|IsSysAdmin|administratorUpdate|PasswordHash)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(?<Source>@RequestBody|inputs\.isSysAdmin\s*\()|(?<Sink>forcePasswordReset|administratorGetByUsername|administratorUpdate|setPassword\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(?<Source>\$_(POST|REQUEST)|isSysAdmin)|(?<Sink>resetPassword|updatePassword|password_hash\s*=)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(?<Source>req\.body|isSysAdmin)|(?<Sink>resetPassword|updatePassword|bcrypt|passwordHash)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(AllowAnonymous\s*=\s*true|\[FromBody\])|(ForceResetPassword|ResetPassword|IsSysAdmin|administratorUpdate|PasswordHash)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(@RequestBody|inputs\.isSysAdmin\s*\()|(forcePasswordReset|administratorGetByUsername|administratorUpdate|setPassword\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(\$_(POST|REQUEST)|isSysAdmin)|(resetPassword|updatePassword|password_hash\s*=)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.body|isSysAdmin)|(resetPassword|updatePassword|bcrypt|passwordHash)
+```
+{% endtab %}
+{% endtabs %}
+
 {% tabs %}
 {% tab title="C#" %}
 ```c#
@@ -576,8 +632,6 @@ function forcePasswordReset(inputs, hostname) {
 
 {% step %}
 Then check whether admin account validation is performed during the password-forgotten process or not. If there is no validation, it can be abused, like in the code below
-
-
 
 {% tabs %}
 {% tab title="C#" %}
