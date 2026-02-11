@@ -243,4 +243,134 @@ Attempt to access additional sensitive files like `/etc/group`, `/etc/hosts`, `/
 
 ### White Box
 
+#### Path Injection
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite tools
+{% endstep %}
+
+{% step %}
+Map start and end points in Xmind
+{% endstep %}
+
+{% step %}
+Decompile the program into the language it was written in
+{% endstep %}
+
+{% step %}
+Look for file receiving parameters in the endpoints, such as path or filename parameters
+{% endstep %}
+
+{% step %}
+Then, in the file reception processing logic, check whether the process reads the file directly or not, like the code below
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(?<Source>Request\.(Query|Params|RouteValues))|(?<Sink>HttpClient\s*\(|GetAsync\s*\(|WebRequest\.Create)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(?<Source>request\.getParameter|@PathVariable|@RequestParam)|(?<Sink>HttpClient|HttpURLConnection|\.openConnection\s*\(|\.execute\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(?<Source>\$_(GET|POST|REQUEST))|(?<Sink>curl_exec|file_get_contents\s*\(|fsockopen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(?<Source>req\.(params|query|body))|(?<Sink>http\.get\s*\(|axios\s*\(|fetch\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(Request\.(Query|Params|RouteValues))|(HttpClient\s*\(|GetAsync\s*\(|WebRequest\.Create)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(request\.getParameter|@PathVariable|@RequestParam)|(HttpClient|HttpURLConnection|\.openConnection\s*\(|\.execute\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(\$_(GET|POST|REQUEST))|(curl_exec|file_get_contents\s*\(|fsockopen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.(params|query|body))|(http\.get\s*\(|axios\s*\(|fetch\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+string apiBase = "https://my.api/api/v1";
+string orderApi = apiBase + "/order/get";
+
+string apiUrl = orderApi + request.Params["orderId"];
+
+var response = http.Get(apiUrl);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+String apiBase = "https://my.api/api/v1";
+String orderApi = apiBase + "/order/get";
+
+String apiUrl = orderApi + request.getParameter("orderId");
+
+HttpResponse<String> response = http.get(apiUrl);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$apiBase = "https://my.api/api/v1";
+$orderApi = $apiBase . "/order/get";
+
+$apiUrl = $orderApi . $request->params['orderId'];
+
+$response = $http->get($apiUrl);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const apiBase = "https://my.api/api/v1";
+const orderApi = apiBase + "/order/get";
+
+const apiUrl = orderApi + request.params.orderId;
+
+const response = http.get(apiUrl);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
