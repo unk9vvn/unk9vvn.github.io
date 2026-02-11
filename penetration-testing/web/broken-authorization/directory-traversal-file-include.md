@@ -373,4 +373,294 @@ const response = http.get(apiUrl);
 
 ***
 
+#### Path Traversal + SSRF
+
+{% stepper %}
+{% step %}
+Map the entire target system using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Look for features that allow downloading files from an external source
+{% endstep %}
+
+{% step %}
+Then review the method or function that processes the endpoint of this feature, like in the code below
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(?<Source>Request\.(Query|Form|Params))|(?<Sink>WebRequest\.Create\s*\(|HttpClient\s*\(|GetStreamAsync\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(?<Source>@RequestParam|@PathVariable|request\.getParameter|\bString\s+\w+\s*\))|(?<Sink>new\s+URL\s*\(|\.openStream\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(?<Source>\$_(GET|POST|REQUEST))|(?<Sink>file_get_contents\s*\(|curl_exec\s*\(|fopen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(?<Source>req\.(query|params|body))|(?<Sink>http\.get\s*\(|https\.get\s*\(|axios\s*\(|fetch\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(Request\.(Query|Form|Params))|(WebRequest\.Create\s*\(|HttpClient\s*\(|GetStreamAsync\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(@RequestParam|@PathVariable|request\.getParameter|\bString\s+\w+\s*\))|(new\s+URL\s*\(|\.openStream\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(\$_(GET|POST|REQUEST))|(file_get_contents\s*\(|curl_exec\s*\(|fopen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.(query|params|body))|(http\.get\s*\(|https\.get\s*\(|axios\s*\(|fetch\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void DownloadSubtitles(string subtitleName, string url, string subtitleLanguage, object videoId)
+{
+    // ...
+    using (var outStream = new FileStream(filePath, FileMode.Create))
+    using (var webStream = new System.Net.WebClient().OpenRead(url)) // Oops, user controls this URL
+    {
+        int b;
+        while ((b = webStream.ReadByte()) != -1)
+        {
+            outStream.WriteByte((byte)b);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void downloadSubtitles(String subtitleName, String url, String subtitleLanguage, Object videoId) throws Exception {
+    // ...
+    try (FileOutputStream out = new FileOutputStream(filePath);
+         InputStream in = new URL(url).openStream()) { // Oops, user controls this URL
+
+        int b;
+        while ((b = in.read()) != -1) {
+            out.write(b);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function downloadSubtitles($subtitleName, $url, $subtitleLanguage, $videoId)
+{
+    // ...
+    $out = fopen($filePath, 'w');
+    $in = fopen($url, 'r'); // Oops, user controls this URL
+
+    while (!feof($in)) {
+        fwrite($out, fgetc($in));
+    }
+
+    fclose($in);
+    fclose($out);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+
+function downloadSubtitles(subtitleName, url, subtitleLanguage, videoId) {
+    // ...
+    const file = fs.createWriteStream(filePath);
+
+    const client = url.startsWith('https') ? https : http;
+
+    client.get(url, (response) => { // Oops, user controls this URL
+        response.on('data', (chunk) => {
+            file.write(chunk);
+        });
+
+        response.on('end', () => {
+            file.end();
+        });
+    });
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+After downloading the file, check in the code whether it calls functions that perform extraction, such as unzip methods or similar functions
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(?<Source>Request\.(Query|Form|Params))|(?<Sink>FileStream\s*\(|File\.WriteAll|Path\.Combine)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(?<Source>@RequestParam|@PathVariable|request\.getParameter|\bString\s+\w+File(Name)?\b)|(?<Sink>new\s+FileOutputStream\s*\(|Files\.write\s*\(|new\s+File\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(?<Source>\$_(GET|POST|FILES|REQUEST))|(?<Sink>fopen\s*\(|file_put_contents\s*\(|move_uploaded_file)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(?<Source>req\.(body|query|params|files))|(?<Sink>fs\.writeFile|fs\.createWriteStream|path\.join)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(Request\.(Query|Form|Params))|(FileStream\s*\(|File\.WriteAll|Path\.Combine)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(@RequestParam|@PathVariable|request\.getParameter|\bString\s+\w+File(Name)?\b)|(new\s+FileOutputStream\s*\(|Files\.write\s*\(|new\s+File\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(\$_(GET|POST|FILES|REQUEST))|(fopen\s*\(|file_put_contents\s*\(|move_uploaded_file)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.(body|query|params|files))|(fs\.writeFile|fs\.createWriteStream|path\.join)
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static string UnzipFile(string stagingDir, string zipFileName, string originalFileName)
+{
+    // ...
+    var fos = new FileStream($"{stagingDir}/{originalFileName}", FileMode.Create); // User controls originalFileName
+
+    // Write the file...
+
+    // Later, it gets renamed, but the damage is already done
+    File.Move(filePath, newFilePath);
+
+    return newFilePath;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+static String unzipFile(String stagingDir, String zipFileName, String originalFileName) throws Exception {
+    // ...
+    FileOutputStream fos = new FileOutputStream(stagingDir + "/" + originalFileName);  // User controls originalFileName
+
+    // Write the file...
+
+    // Later, it gets renamed, but the damage is already done
+    file.renameTo(newFile);
+
+    return newFile.getPath();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public static function unzipFile($stagingDir, $zipFileName, $originalFileName)
+{
+    // ...
+    $fos = fopen($stagingDir . "/" . $originalFileName, 'w'); // User controls originalFileName
+
+    // Write the file...
+
+    // Later, it gets renamed, but the damage is already done
+    rename($filePath, $newFilePath);
+
+    return $newFilePath;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function unzipFile(stagingDir, zipFileName, originalFileName) {
+    // ...
+    const fos = fs.createWriteStream(`${stagingDir}/${originalFileName}`); // User controls originalFileName
+
+    // Write the file...
+
+    // Later, it gets renamed, but the damage is already done
+    fs.renameSync(filePath, newFilePath);
+
+    return newFilePath;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
