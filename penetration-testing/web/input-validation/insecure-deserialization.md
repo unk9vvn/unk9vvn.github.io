@@ -254,4 +254,451 @@ Then send a license request with a malicious serialized payload and record the v
 
 ***
 
+#### Deserialize Cookie Data
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+In the system or product, look for the main entry point and the update management/distribution page that is responsible for receiving updates
+{% endstep %}
+
+{% step %}
+On this page, look for endpoints that use SOAP
+{% endstep %}
+
+{% step %}
+After mapping all endpoints, search for endpoint names such as `Token`, `Authorize`, `Authenticate`, or `GetCookie`
+{% endstep %}
+
+{% step %}
+Then find and review the function in the code that processes the cookie endpoint, like in the code below
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public Cookie GetCookie(AuthorizationCookie[] authCookies, Cookie oldCookie, DateTime lastChange, DateTime currentTime, string protocolVersion)
+{
+    if (Client.clientImplementation == null)
+    {
+        Client.CreateClientImplementation();
+    }
+
+    string ipaddress = this.GetIPAddress();
+
+    return Client.clientImplementation.GetCookie(
+        authCookies,
+        oldCookie,
+        lastChange,
+        currentTime,
+        protocolVersion,
+        ipaddress
+    );
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public Cookie getCookie(AuthorizationCookie[] authCookies,
+                        Cookie oldCookie,
+                        Date lastChange,
+                        Date currentTime,
+                        String protocolVersion) {
+
+    if (Client.clientImplementation == null) {
+        Client.createClientImplementation();
+    }
+
+    String ipaddress = this.getIPAddress();
+
+    return Client.clientImplementation.getCookie(
+            authCookies,
+            oldCookie,
+            lastChange,
+            currentTime,
+            protocolVersion,
+            ipaddress
+    );
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function getCookie($authCookies, $oldCookie, $lastChange, $currentTime, $protocolVersion)
+{
+    if (Client::$clientImplementation === null) {
+        Client::createClientImplementation();
+    }
+
+    $ipaddress = $this->getIPAddress();
+
+    return Client::$clientImplementation->getCookie(
+        $authCookies,
+        $oldCookie,
+        $lastChange,
+        $currentTime,
+        $protocolVersion,
+        $ipaddress
+    );
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function getCookie(authCookies, oldCookie, lastChange, currentTime, protocolVersion) {
+
+    if (Client.clientImplementation == null) {
+        Client.createClientImplementation();
+    }
+
+    const ipaddress = this.getIPAddress();
+
+    return Client.clientImplementation.getCookie(
+        authCookies,
+        oldCookie,
+        lastChange,
+        currentTime,
+        protocolVersion,
+        ipaddress
+    );
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the processing flow, the code execution goes to the `CrackAuthorizationCookie` method. Then the data is processed inside the `UnencryptedAuthorizationCookieData` and `CrackAuthorizationCookie` classes. In the `DecryptData` method, the main data processing happens, and based on a condition in the code, the data is passed to a `deserialize` function using `BinaryFormatter`
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(BinaryFormatter\s+\w+\s*=\s*new\s+BinaryFormatter\s*\(\))|(\.Deserialize\s*\()|(NetDataContractSerializer\s*\()|(LosFormatter\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(ObjectInputStream\s*\()|(\.readObject\s*\()|(XMLDecoder\s*\()|(readUnshared\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(unserialize\s*\()|(yaml_parse\s*\()|(igbinary_unserialize\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(serialize\.(unserialize|deserialize)\s*\()|(JSON\.parse\s*\()|(v8\.deserialize\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+BinaryFormatter\s+\w+\s*=\s*new\s+BinaryFormatter\s*\(\)|\.Deserialize\s*\(|NetDataContractSerializer\s*\(|LosFormatter\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+ObjectInputStream\s*\(|\.readObject\s*\(|XMLDecoder\s*\(|readUnshared\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+unserialize\s*\(|yaml_parse\s*\(|igbinary_unserialize\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+serialize\.(unserialize|deserialize)\s*\(|JSON\.parse\s*\(|v8\.deserialize\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+internal object DecryptData(byte[] cookieData)
+{
+    if (cookieData == null)
+    {
+        throw new LoggedArgumentNullException("cookieData");
+    }
+
+    ICryptoTransform cryptoTransform = this.cryptoServiceProvider.CreateDecryptor();
+    byte[] array;
+
+    try
+    {
+        if (cookieData.Length % cryptoTransform.InputBlockSize != 0 || cookieData.Length <= cryptoTransform.InputBlockSize)
+        {
+            throw new LoggedArgumentException(
+                "Can't decrypt bogus cookieData; data is size, " + cookieData.Length + 
+                ", which is not a multiple of " + cryptoTransform.InputBlockSize,
+                "cookieData"
+            );
+        }
+
+        array = new byte[cookieData.Length - cryptoTransform.InputBlockSize];
+        cryptoTransform.TransformBlock(cookieData, 0, cryptoTransform.InputBlockSize, EncryptionHelper.scratchBuffer, 0);
+        cryptoTransform.TransformBlock(cookieData, cryptoTransform.InputBlockSize, cookieData.Length - cryptoTransform.InputBlockSize, array, 0);
+    }
+    finally
+    {
+        cryptoTransform.Dispose();
+    }
+
+    object obj = null;
+
+    if (this.classType == typeof(UnencryptedCookieData))
+    {
+        UnencryptedCookieData unencryptedCookieData = new UnencryptedCookieData();
+        try
+        {
+            unencryptedCookieData.Deserialize(array);
+        }
+        catch (Exception ex)
+        {
+            if (ex is OutOfMemoryException) throw;
+            throw new LoggedArgumentException(ex.ToString(), "cookieData");
+        }
+        obj = unencryptedCookieData;
+    }
+    else
+    {
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        MemoryStream memoryStream = new MemoryStream(array);
+        try
+        {
+            obj = binaryFormatter.Deserialize(memoryStream);
+        }
+        catch (Exception ex2)
+        {
+            if (ex2 is OutOfMemoryException) throw;
+            throw new LoggedArgumentException(ex2.ToString(), "cookieData");
+        }
+
+        if (obj.GetType() != this.classType)
+        {
+            throw new LoggedArgumentException(
+                "Decrypted cookie has the wrong data type. Expected type = " + this.classType +
+                ", actual type = " + obj.GetType(),
+                "cookieData"
+            );
+        }
+    }
+
+    return obj;
+}
+
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+protected Object decryptData(byte[] cookieData) throws Exception {
+    if (cookieData == null) {
+        throw new LoggedArgumentNullException("cookieData");
+    }
+
+    Cipher cryptoTransform = this.cryptoServiceProvider.createDecryptor();
+    byte[] array;
+
+    try {
+        int blockSize = cryptoTransform.getBlockSize();
+        if (cookieData.length % blockSize != 0 || cookieData.length <= blockSize) {
+            throw new LoggedArgumentException(
+                "Can't decrypt bogus cookieData; data is size, " + cookieData.length +
+                ", which is not a multiple of " + blockSize,
+                "cookieData"
+            );
+        }
+
+        array = new byte[cookieData.length - blockSize];
+        cryptoTransform.update(cookieData, 0, blockSize, EncryptionHelper.scratchBuffer, 0);
+        cryptoTransform.update(cookieData, blockSize, cookieData.length - blockSize, array, 0);
+    } finally {
+        cryptoTransform.doFinal();
+    }
+
+    Object obj = null;
+
+    if (this.classType == UnencryptedCookieData.class) {
+        UnencryptedCookieData unencryptedCookieData = new UnencryptedCookieData();
+        try {
+            unencryptedCookieData.deserialize(array);
+        } catch (Exception ex) {
+            throw new LoggedArgumentException(ex.toString(), "cookieData");
+        }
+        obj = unencryptedCookieData;
+    } else {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(array);
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
+
+            obj = ois.readObject();
+        } catch (Exception ex2) {
+            throw new LoggedArgumentException(ex2.toString(), "cookieData");
+        }
+
+        if (!obj.getClass().equals(this.classType)) {
+            throw new LoggedArgumentException(
+                "Decrypted cookie has the wrong data type. Expected type = " + this.classType +
+                ", actual type = " + obj.getClass(),
+                "cookieData"
+            );
+        }
+    }
+
+    return obj;
+}
+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function decryptData($cookieData)
+{
+    if ($cookieData === null) {
+        throw new LoggedArgumentNullException("cookieData");
+    }
+
+    $cryptoTransform = $this->cryptoServiceProvider->createDecryptor();
+    $array = null;
+
+    try {
+        $blockSize = $cryptoTransform->getBlockSize();
+        if (strlen($cookieData) % $blockSize != 0 || strlen($cookieData) <= $blockSize) {
+            throw new LoggedArgumentException(
+                "Can't decrypt bogus cookieData; data is size, " . strlen($cookieData) .
+                ", which is not a multiple of " . $blockSize,
+                "cookieData"
+            );
+        }
+
+        $array = substr($cookieData, $blockSize);
+        $cryptoTransform->transformBlock(substr($cookieData, 0, $blockSize), EncryptionHelper::$scratchBuffer);
+        $cryptoTransform->transformBlock($array, $array);
+    } finally {
+        $cryptoTransform->dispose();
+    }
+
+    $obj = null;
+
+    if ($this->classType === UnencryptedCookieData::class) {
+        $unencryptedCookieData = new UnencryptedCookieData();
+        try {
+            $unencryptedCookieData->deserialize($array);
+        } catch (Exception $ex) {
+            throw new LoggedArgumentException($ex->getMessage(), "cookieData");
+        }
+        $obj = $unencryptedCookieData;
+    } else {
+        try {
+            $obj = unserialize($array);
+        } catch (Exception $ex2) {
+            throw new LoggedArgumentException($ex2->getMessage(), "cookieData");
+        }
+
+        if (get_class($obj) !== $this->classType) {
+            throw new LoggedArgumentException(
+                "Decrypted cookie has the wrong data type. Expected type = " . $this->classType .
+                ", actual type = " . get_class($obj),
+                "cookieData"
+            );
+        }
+    }
+
+    return $obj;
+}
+
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function decryptData(cookieData) {
+    if (!cookieData) {
+        throw new LoggedArgumentNullException("cookieData");
+    }
+
+    const cryptoTransform = this.cryptoServiceProvider.createDecryptor();
+    let array;
+
+    try {
+        const blockSize = cryptoTransform.getBlockSize();
+        if (cookieData.length % blockSize !== 0 || cookieData.length <= blockSize) {
+            throw new LoggedArgumentException(
+                `Can't decrypt bogus cookieData; data is size, ${cookieData.length}, which is not a multiple of ${blockSize}`,
+                "cookieData"
+            );
+        }
+
+        array = cookieData.slice(blockSize);
+        cryptoTransform.transformBlock(cookieData.slice(0, blockSize), EncryptionHelper.scratchBuffer);
+        cryptoTransform.transformBlock(array, array);
+    } finally {
+        cryptoTransform.dispose();
+    }
+
+    let obj = null;
+
+    if (this.classType === UnencryptedCookieData) {
+        const unencryptedCookieData = new UnencryptedCookieData();
+        try {
+            unencryptedCookieData.deserialize(array);
+        } catch (ex) {
+            throw new LoggedArgumentException(ex.toString(), "cookieData");
+        }
+        obj = unencryptedCookieData;
+    } else {
+        try {
+            obj = JSON.parse(array); // Node.js approximation for BinaryFormatter
+        } catch (ex2) {
+            throw new LoggedArgumentException(ex2.toString(), "cookieData");
+        }
+
+        if (obj.constructor !== this.classType) {
+            throw new LoggedArgumentException(
+                `Decrypted cookie has the wrong data type. Expected type = ${this.classType}, actual type = ${obj.constructor}`,
+                "cookieData"
+            );
+        }
+    }
+
+    return obj;
+}
+
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
