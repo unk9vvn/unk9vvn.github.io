@@ -1033,4 +1033,567 @@ For maximum impact – chain with file disclosure
 
 ### White Box
 
+#### SSRF to Chaning Path Traversal (ZIP File To RCE)
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw all entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Look for the application’s configuration file where paths are defined (for example, `server.xml`)
+
+```xml
+Context path="" docBase="F:/Program Files/Commvault/ContentStore/Apache/webapps/ROOT" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/console" docBase="F:/Program Files/Commvault/ContentStore/GUI" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/downloads/sqlscripts" docBase="F:/Program Files/Commvault/ContentStore/Metrics/scripts" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/publicdownloads/sqlscripts" docBase="F:/Program Files/Commvault/ContentStore/Metrics/public" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/commandcenter" docBase="F:/Program Files/Commvault/ContentStore/AdminConsole" reloadable="false">
+          <Manager pathname=""/>
+          <Resource name="BeanManager" auth="Container" type="javax.enterprise.inject.spi.BeanManager" factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+        </Context>
+        <Context path="/identity" docBase="F:/Program Files/Commvault/ContentStore/identity" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/CustomReportsEngine" docBase="F:/Program Files/Commvault/ContentStore/CustomReportsEngine" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/reports" docBase="F:/Program Files/Commvault/ContentStore/Reports" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+      </Host> 
+    </Engine>
+```
+{% endstep %}
+
+{% step %}
+In the application structure, find the file that defines or lists the paths that are accessible without authentication.
+{% endstep %}
+
+{% step %}
+In these paths and endpoints, look for names related to processes that deploy a package, such as `deployWebpackage`
+
+```
+legalNotice.do
+ssoLogin.do
+login.do
+feedback.do
+contact.do
+[..Truncated..]
+metricsUpload.do
+webpackage.do
+deployWebpackage.do
+deployServiceCommcell.do
+```
+{% endstep %}
+
+{% step %}
+Review the processing function of this endpoint and check what actions it performs. As shown in the code, the user-controlled input is directly placed into a request inside the code
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(HttpClient\s*\.\s*GetAsync)|(WebRequest\.Create)|(Download(File|Data))|(ZipArchive\s*\()|(ExtractToDirectory\s*\()|(FileStream\s*\()|(File\.WriteAll)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(Http(Get|Post)\s*\(\s*".*"\s*\+\s*\w+)|(client\.execute\s*\()|(getEntity\(\)\.getContent\s*\()|(FileOutputStream\s*\()|(unzip(File|.*)\s*\()|(ZipInputStream\s*\()|(new\s+File\s*\(\s*.*\+\s*\w+)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(file_get_contents\s*\(\s*http)|(curl_exec\s*\()|(ZipArchive\s*\()|(extractTo\s*\()|(fopen\s*\()|(file_put_contents\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(axios\.get\s*\()|(http\.get\s*\()|(https\.get\s*\()|(fs\.writeFile)|(fs\.createWriteStream)|(adm-zip)|(extractAllTo)|(unzipper\.Extract)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+HttpClient\s*\.\s*GetAsync|WebRequest\.Create|Download(File|Data)|ZipArchive\s*\(|ExtractToDirectory\s*\(|FileStream\s*\(|File\.WriteAll
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+Http(Get|Post)\s*\(\s*".*"\s*\+\s*\w+|client\.execute\s*\(|getEntity\(\)\.getContent\s*\(|FileOutputStream\s*\(|unzip(File|.*)\s*\(|ZipInputStream\s*\(|new\s+File\s*\(\s*.*\+\s*\w+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+file_get_contents\s*\(\s*http|curl_exec\s*\(|ZipArchive\s*\(|extractTo\s*\(|fopen\s*\(|file_put_contents\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+axios\.get\s*\(|http\.get\s*\(|https\.get\s*\(|fs\.writeFile|fs\.createWriteStream|adm-zip|extractAllTo|unzipper\.Extract
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+public void DeployWebPackage(string commcellName, string servicePack, string version)
+{
+    HttpClient client = null;
+
+    try
+    {
+        if (this.cvConfig.GetDisableSSLForCCPackageDeploy())
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+
+            client = new HttpClient(handler);
+        }
+        else
+        {
+            client = new HttpClient();
+        }
+
+        string BASE_PATH = this.ExtractPath(this.fileZipUtil.GetResourcePath(""), false);
+
+        var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            "https://" + commcellName + "/commandcenter/webpackage.do"
+        ); // <---- [0]
+
+        request.Headers.Add("Accept", "application/octet-stream");
+
+        var response = client.Send(request); // <---- [1]
+    }
+    finally
+    {
+        client?.Dispose();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void deployWebPackage(String commcellName, String servicePack, String version) throws Exception {
+        CloseableHttpClient client = null;
+
+        try {
+            if (this.cvConfig.getDisableSSLForCCPackageDeploy()) {
+                client = HttpClientBuilder.create().setSSLContext((new SSLContextBuilder()).loadTrustMaterial((KeyStore)null, (x509Certificates, s) -> {
+                    return true;
+                }).build()).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
+            } else {
+                client = HttpClients.createDefault();
+            }
+
+            String BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+            HttpGet request = new HttpGet("https://" + commcellName + "/commandcenter/webpackage.do"); <---- [0]
+            request.addHeader("Accept", "application/octet-stream");
+            CloseableHttpResponse response = client.execute(request); <---- [1]
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function deployWebPackage($commcellName, $servicePack, $version)
+{
+    $client = null;
+
+    try {
+        if ($this->cvConfig->getDisableSSLForCCPackageDeploy()) {
+            $client = new \GuzzleHttp\Client([
+                'verify' => false
+            ]);
+        } else {
+            $client = new \GuzzleHttp\Client();
+        }
+
+        $BASE_PATH = $this->extractPath($this->fileZipUtil->getResourcePath(""), false);
+
+        $response = $client->request(
+            'GET',
+            "https://" . $commcellName . "/commandcenter/webpackage.do",
+            [
+                'headers' => [
+                    'Accept' => 'application/octet-stream'
+                ]
+            ]
+        ); // <---- [1]
+    }
+    finally {
+        // Guzzle doesn't require explicit close
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+    async function deployWebPackage(commcellName, servicePack, version) {
+
+    let client;
+
+    if (this.cvConfig.getDisableSSLForCCPackageDeploy()) {
+        const agent = new https.Agent({
+            rejectUnauthorized: false
+        });
+
+        client = axios.create({ httpsAgent: agent });
+    } else {
+        client = axios.create();
+    }
+
+    const BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+
+    const response = await client.get(
+        `https://${commcellName}/commandcenter/webpackage.do`,
+        {
+            headers: {
+                'Accept': 'application/octet-stream'
+            }
+        }
+    ); // <---- [1]
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether multiple file-writing functions are called, such as `FileOutputStream` and `BufferedOutputStream`, for example
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+try
+{
+    Stream inStream = response.Content.ReadAsStream(); // <---- [2]
+
+    string confPath = BASE_PATH + Path.DirectorySeparatorChar + "Apache" +
+                      Path.DirectorySeparatorChar + "conf" +
+                      Path.DirectorySeparatorChar + "ccPackages" +
+                      Path.DirectorySeparatorChar;
+
+    string distCCPath = BASE_PATH + Path.DirectorySeparatorChar + "AdminConsole" +
+                        Path.DirectorySeparatorChar + "dist-cc-sps" +
+                        Path.DirectorySeparatorChar;
+
+    DirectoryInfo confDirectory = this.CreateDirectory(confPath + servicePack); // <---- [3]
+
+    string absPath = confDirectory.FullName;
+    FileInfo versionFile = new FileInfo(absPath + Path.DirectorySeparatorChar + "version.txt");
+    File.WriteAllText(versionFile.FullName, version, Encoding.UTF8);
+
+    this.CreateDirectory(distCCPath);
+
+    BufferedStream bis = new BufferedStream(inStream); // <---- [4]
+
+    using (FileStream fos = new FileStream(
+        Path.Combine(confDirectory.FullName, "dist-cc.zip"),
+        FileMode.Create)) // <---- [5]
+    {
+        using (BufferedStream bos = new BufferedStream(fos))
+        {
+            byte[] buffer = new byte[1024];
+            int read;
+
+            while ((read = bis.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                bos.Write(buffer, 0, read);
+            }
+        }
+    }
+
+    bis.Close();
+
+    this.DeployCCPackage(servicePack); // <---- [6]
+
+    logger.Info("Deployed web package successfully");
+}
+catch (Exception)
+{
+    throw;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+try {
+      InputStream in = response.getEntity().getContent();  <---- [2]
+      String confPath = BASE_PATH + File.separator + "Apache" + File.separator + "conf" + File.separator + "ccPackages" + File.separator;
+      String distCCPath = BASE_PATH + File.separator + "AdminConsole" + File.separator + "dist-cc-sps" + File.separator;
+      File confDirectory = this.createDirectory(confPath + servicePack); <---- [3]
+      String var10002 = confDirectory.getAbsolutePath();
+      File versionFile = new File(var10002 + File.separator + "version.txt");
+      FileUtils.writeStringToFile(versionFile, version, StandardCharsets.UTF_8, false);
+      this.createDirectory(distCCPath);
+      BufferedInputStream bis = new BufferedInputStream(in); <---- [4]
+
+      try {
+          FileOutputStream fos = new FileOutputStream(new File(confDirectory, "dist-cc.zip")); <---- [5]
+
+          try {
+              BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+              try {
+                  byte[] buffer = new byte[1024];
+
+                  int read;
+                  while((read = bis.read(buffer)) != -1) {
+                      bos.write(buffer, 0, read);
+[...Truncated...]
+
+      bis.close();
+      this.deployCCPackage(servicePack); <---- [6]
+      logger.info("Deployed web package successfully");
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+try {
+    $in = $response->getBody(); // <---- [2]
+
+    $confPath = $BASE_PATH . DIRECTORY_SEPARATOR . "Apache" .
+                DIRECTORY_SEPARATOR . "conf" .
+                DIRECTORY_SEPARATOR . "ccPackages" .
+                DIRECTORY_SEPARATOR;
+
+    $distCCPath = $BASE_PATH . DIRECTORY_SEPARATOR . "AdminConsole" .
+                  DIRECTORY_SEPARATOR . "dist-cc-sps" .
+                  DIRECTORY_SEPARATOR;
+
+    $confDirectory = $this->createDirectory($confPath . $servicePack); // <---- [3]
+
+    $absPath = $confDirectory;
+    $versionFile = $absPath . DIRECTORY_SEPARATOR . "version.txt";
+    file_put_contents($versionFile, $version);
+
+    $this->createDirectory($distCCPath);
+
+    $bis = $in; // <---- [4]
+
+    $zipPath = $confDirectory . DIRECTORY_SEPARATOR . "dist-cc.zip"; // <---- [5]
+    $fos = fopen($zipPath, "w");
+
+    while (!feof($bis)) {
+        fwrite($fos, fread($bis, 1024));
+    }
+
+    fclose($fos);
+
+    $this->deployCCPackage($servicePack); // <---- [6]
+
+    $logger->info("Deployed web package successfully");
+
+} catch (Exception $e) {
+    throw $e;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+try {
+    const inStream = response.data; // <---- [2]
+
+    const confPath = BASE_PATH + path.sep + "Apache" +
+                     path.sep + "conf" +
+                     path.sep + "ccPackages" +
+                     path.sep;
+
+    const distCCPath = BASE_PATH + path.sep + "AdminConsole" +
+                       path.sep + "dist-cc-sps" +
+                       path.sep;
+
+    const confDirectory = this.createDirectory(confPath + servicePack); // <---- [3]
+
+    const absPath = confDirectory;
+    const versionFile = path.join(absPath, "version.txt");
+    fs.writeFileSync(versionFile, version);
+
+    this.createDirectory(distCCPath);
+
+    const bis = inStream; // <---- [4]
+
+    const zipPath = path.join(confDirectory, "dist-cc.zip"); // <---- [5]
+    const fos = fs.createWriteStream(zipPath);
+
+    bis.on('data', chunk => {
+        fos.write(chunk);
+    });
+
+    bis.on('end', () => {
+        fos.end();
+        this.deployCCPackage(servicePack); // <---- [6]
+        logger.info("Deployed web package successfully");
+    });
+
+} catch (e) {
+    throw e;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+After receiving the file and writing it to the specified path, the application downloads a ZIP file from the attacker’s server and extracts it into a temporary path defined by the user. An attacker can place a malicious file inside the ZIP file, which will then be extracted and used in the specified path on the server
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+private void DeployCCPackage(string servicePack)
+{
+    string BASE_PATH = this.ExtractPath(this.fileZipUtil.GetResourcePath(""), false);
+
+    string CC_DEPLOY_PATH = BASE_PATH + Path.DirectorySeparatorChar + "Apache" +
+                            Path.DirectorySeparatorChar + "conf" +
+                            Path.DirectorySeparatorChar + "ccPackages" +
+                            Path.DirectorySeparatorChar;
+
+    string DIST_CC_PATH = BASE_PATH + Path.DirectorySeparatorChar + "AdminConsole" +
+                          Path.DirectorySeparatorChar + "dist-cc-sps" +
+                          Path.DirectorySeparatorChar;
+
+    string TEMP_DIR = servicePack + ".tmp" + Path.DirectorySeparatorChar + "dist-cc";
+
+    string SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; // <---- [7]
+
+    DirectoryInfo dir = new DirectoryInfo(SERVICEPACK_DEPLOY_PATH);
+
+    if (dir.Exists)
+    {
+        dir.Delete(true);
+    }
+
+    this.fileZipUtil.UnzipFileWrtAbsPath(
+        CC_DEPLOY_PATH + servicePack + Path.DirectorySeparatorChar + "dist-cc.zip",
+        DIST_CC_PATH + TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private void deployCCPackage(String servicePack) throws IOException {
+    String BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+    String CC_DEPLOY_PATH = BASE_PATH + File.separator + "Apache" + File.separator + "conf" + File.separator + "ccPackages" + File.separator;
+    String DIST_CC_PATH = BASE_PATH + File.separator + "AdminConsole" + File.separator + "dist-cc-sps" + File.separator;
+    String TEMP_DIR = servicePack + ".tmp" + File.separator + "dist-cc";
+    String SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; <---- [7]
+    File dir = new File(SERVICEPACK_DEPLOY_PATH);
+    if (dir.exists()) {
+        FileUtils.deleteDirectory(dir);
+    }
+
+    this.fileZipUtil.unzipFileWrtAbsPath(CC_DEPLOY_PATH + servicePack + File.separator + "dist-cc.zip", DIST_CC_PATH + TEMP_DIR); <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function deployCCPackage($servicePack)
+{
+    $BASE_PATH = $this->extractPath($this->fileZipUtil->getResourcePath(""), false);
+
+    $CC_DEPLOY_PATH = $BASE_PATH . DIRECTORY_SEPARATOR . "Apache" .
+                      DIRECTORY_SEPARATOR . "conf" .
+                      DIRECTORY_SEPARATOR . "ccPackages" .
+                      DIRECTORY_SEPARATOR;
+
+    $DIST_CC_PATH = $BASE_PATH . DIRECTORY_SEPARATOR . "AdminConsole" .
+                    DIRECTORY_SEPARATOR . "dist-cc-sps" .
+                    DIRECTORY_SEPARATOR;
+
+    $TEMP_DIR = $servicePack . ".tmp" . DIRECTORY_SEPARATOR . "dist-cc";
+
+    $SERVICEPACK_DEPLOY_PATH = $DIST_CC_PATH . $servicePack . ".tmp"; // <---- [7]
+
+    if (file_exists($SERVICEPACK_DEPLOY_PATH)) {
+        // Recursive delete
+        exec("rm -rf " . escapeshellarg($SERVICEPACK_DEPLOY_PATH));
+    }
+
+    $this->fileZipUtil->unzipFileWrtAbsPath(
+        $CC_DEPLOY_PATH . $servicePack . DIRECTORY_SEPARATOR . "dist-cc.zip",
+        $DIST_CC_PATH . $TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function deployCCPackage(servicePack) {
+
+    const BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+
+    const CC_DEPLOY_PATH = BASE_PATH + path.sep + "Apache" +
+                           path.sep + "conf" +
+                           path.sep + "ccPackages" +
+                           path.sep;
+
+    const DIST_CC_PATH = BASE_PATH + path.sep + "AdminConsole" +
+                         path.sep + "dist-cc-sps" +
+                         path.sep;
+
+    const TEMP_DIR = servicePack + ".tmp" + path.sep + "dist-cc";
+
+    const SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; // <---- [7]
+
+    if (fs.existsSync(SERVICEPACK_DEPLOY_PATH)) {
+        fs.rmSync(SERVICEPACK_DEPLOY_PATH, { recursive: true, force: true });
+    }
+
+    this.fileZipUtil.unzipFileWrtAbsPath(
+        CC_DEPLOY_PATH + servicePack + path.sep + "dist-cc.zip",
+        DIST_CC_PATH + TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
