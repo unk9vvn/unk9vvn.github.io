@@ -233,17 +233,12 @@ sudo nano beef-csp-bypass.sh
 ```bash
 #!/bin/bash
 
-RED='\e[1;31m'
-GREEN='\e[1;32m'
-YELLOW='\e[1;33m'
-CYAN='\e[1;36m'
-RESET='\e[0m'
+# Config & Colors
+RED='\e[1;31m'; GREEN='\e[1;32m'; YELLOW='\e[1;33m'; CYAN='\e[1;36m'; RESET='\e[0m'
+color_print() { printf "${!1}%b${RESET}\n" "$2"; }
 
-# Check for ROOT
-if [[ "$(id -u)" -ne 0 ]]; then
-    printf "${RED}[X] Please run as ROOT...\n"
-    exit 1
-fi
+# Root Check
+[[ "$(id -u)" -ne 0 ]] && { color_print RED "[X] Please run as ROOT."; exit 1; }
 
 # Get LAN and WAN IP addresses
 LAN=$(hostname -I | awk '{print $1}')

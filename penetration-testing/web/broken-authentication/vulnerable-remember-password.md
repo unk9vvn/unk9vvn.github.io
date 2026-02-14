@@ -1,6 +1,8 @@
 # Vulnerable Remember Password
 
-heck List
+## Check List
+
+* [ ] Validate that the generated session is managed securely and do not put the user’s credentials in danger.
 
 ## Methodology
 
