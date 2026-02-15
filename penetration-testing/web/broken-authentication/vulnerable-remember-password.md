@@ -58,7 +58,7 @@ Frame the login/auto-auth page
 {% endstep %}
 
 {% step %}
-If auto-login triggers in iframe → Clickjacking possible
+If auto-login triggers in iframe → Clickjacking Possible
 {% endstep %}
 {% endstepper %}
 
