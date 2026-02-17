@@ -48,6 +48,32 @@ If the user is transferred to the wrong organization or a global error occurs, a
 
 ***
 
+#### TLS Misconfiguration
+
+{% stepper %}
+{% step %}
+Log in to the target site's authentication page
+{% endstep %}
+
+{% step %}
+Then, on the target site's authentication page, look for sub-communication channels for authentication (such as `sso` or `auth` subdomains)
+{% endstep %}
+
+{% step %}
+Look for the `sitemap.xml` file and within this file look for communication channels for authentication
+{% endstep %}
+
+{% step %}
+Then, after checking the subdomain, enter the subdomain and check whether it uses `http` or `https`
+{% endstep %}
+
+{% step %}
+If a subdomain that used HTTP for authentication subchannels has a TLS Misconfiguration vulnerability
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
