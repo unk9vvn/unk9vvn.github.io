@@ -85,3 +85,19 @@ If victim visits → Automatically logged in as you → CSRF confirmed
 ### White Box
 
 ## Cheat Sheet
+
+### Click Jacking <a href="#parameter-modification" id="parameter-modification"></a>
+
+#### [Katana ](https://github.com/projectdiscovery/katana)& cURL
+
+{% hint style="info" %}
+Create Script
+{% endhint %}
+
+```bash
+sudo nano rp-clickjacking.sh
+```
+
+```bash
+// Some code
+```

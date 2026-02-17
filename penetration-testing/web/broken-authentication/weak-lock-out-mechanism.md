@@ -399,12 +399,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
-# Install Katana
-if ! command -v katana &>/dev/null; then
-    color_print GREEN "[*] Installing katana ..."
-    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -413,8 +407,15 @@ for pkg in $DEPS; do
     fi
 done
 
-# install polipo
-if ! command -v "polipo" >/dev/null 2>&1; then
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go env -w GO111MODULE=on
+    go env -w GOPROXY=https://goproxy.cn,direct
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+ if ! command -v "polipo" >/dev/null 2>&1; then
     wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
     chmod +x /tmp/polipo_amd64.deb
     dpkg -i /tmp/polipo_amd64.deb
@@ -599,12 +600,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
-# Install Katana
-if ! command -v katana &>/dev/null; then
-    color_print GREEN "[*] Installing katana ..."
-    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -613,8 +608,15 @@ for pkg in $DEPS; do
     fi
 done
 
-# install polipo
-if ! command -v "polipo" >/dev/null 2>&1; then
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go env -w GO111MODULE=on
+    go env -w GOPROXY=https://goproxy.cn,direct
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
+ if ! command -v "polipo" >/dev/null 2>&1; then
     wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
     chmod +x /tmp/polipo_amd64.deb
     dpkg -i /tmp/polipo_amd64.deb
@@ -852,12 +854,6 @@ USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
 DEPS="git seclists tor torsocks curl obfs4proxy golang npm proxychains nodejs haproxy privoxy ffuf"
 
-# Install Katana
-if ! command -v katana &>/dev/null; then
-    color_print GREEN "[*] Installing katana ..."
-    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
-fi
-
 # Install Packages
 for pkg in $DEPS; do
     if ! dpkg -s "$pkg" &>/dev/null; then
@@ -866,7 +862,14 @@ for pkg in $DEPS; do
     fi
 done
 
-# install polipo
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go env -w GO111MODULE=on
+    go env -w GOPROXY=https://goproxy.cn,direct
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
+
 if ! command -v "polipo" >/dev/null 2>&1; then
     wget http://archive.ubuntu.com/ubuntu/pool/universe/p/polipo/polipo_1.1.1-8_amd64.deb -O /tmp/polipo_amd64.deb
     chmod +x /tmp/polipo_amd64.deb
@@ -885,7 +888,7 @@ if [ ! -d "/usr/share/multitor" ]; then
     git clone https://github.com/trimstray/multitor /usr/share/multitor
     chmod +x /usr/share/multitor/*
     cd /usr/share/multitor && sudo ./setup.sh install
-    sudo chown debian-tor:debian-tor /var/lib/multitor
+    sudo chmod 700 /var/lib/multitor
     sudo chmod /usr/local/bin/multitor
     sudo chown debian-tor:debian-tor /var/lib/multitor
     color_print GREEN "[*] Successfully Installed multitor"
