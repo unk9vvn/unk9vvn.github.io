@@ -130,13 +130,7 @@ fi
 URL="$1"
 USERLIST="/usr/share/seclists/Usernames/top-usernames-shortlist.txt"
 PASSLIST="/usr/share/seclists/Passwords/Common-Credentials/10k-most-common.txt"
-DEPS="git seclists go-golang ffuf"
-
-# Install Katana
-if ! command -v katana &>/dev/null; then
-    color_print GREEN "[*] Installing katana ..."
-    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
-fi
+DEPS="git seclists golang ffuf"
 
 # Install Packages
 for pkg in $DEPS; do
@@ -145,6 +139,14 @@ for pkg in $DEPS; do
         apt install -y "$pkg"
     fi
 done
+
+# Install Katana
+if ! command -v katana &>/dev/null; then
+    color_print GREEN "[*] Installing katana ..."
+    go env -w GO111MODULE=on
+    go env -w GOPROXY=https://goproxy.cn,direct
+    go install github.com/projectdiscovery/katana/cmd/katana@latest;sudo ln -fs ~/go/bin/katana /usr/bin/katana
+fi
 
 # Find Login Page
 LOGIN=$(katana -u "$URL" -depth 3 -silent | \

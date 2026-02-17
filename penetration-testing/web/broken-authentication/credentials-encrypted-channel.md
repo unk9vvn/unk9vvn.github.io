@@ -95,10 +95,12 @@ ICON_URL="https://9to5google.com/wp-content/client-mu-plugins/9to5-core/includes
 RTLO=$'\xE2\x80\xAE'
 DEPS="bettercap arp-scan openssl imagemagick wine winetricks rar apache2 python3 python3-pip"
 
-# Install Dependencies
-color_print CYAN "[*] Checking and installing dependencies..."
+# Install Packages
 for pkg in $DEPS; do
-    dpkg -s "$pkg" &>/dev/null || { color_print YELLOW "[!] Installing $pkg ..."; apt install -y "$pkg"; }
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        color_print YELLOW "[!] Installing $pkg..."
+        apt install -y "$pkg"
+    fi
 done
 
 # PyInstaller on Wine
