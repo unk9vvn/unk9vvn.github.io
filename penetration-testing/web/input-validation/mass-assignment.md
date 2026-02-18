@@ -450,4 +450,6 @@ If the response stores the HTML without stripping, mass assignment to HTML sink 
 
 ### White Box
 
+#### Mass-Assignment To Command Injection&#x20;
+
 ## Cheat Sheet
