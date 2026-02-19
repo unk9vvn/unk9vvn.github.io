@@ -69,8 +69,6 @@ Conclude that the application is vulnerable to SSI Injection if server-side dire
 
 ***
 
-####
-
 ### White Box
 
 ## Cheat Sheet
