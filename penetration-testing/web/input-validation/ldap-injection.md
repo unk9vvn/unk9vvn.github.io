@@ -11,14 +11,38 @@
 {% stepper %}
 {% step %}
 Navigate to the registration page and begin a new registration using normal, valid data
+
+```http
+POST /register HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+firstName=Ali&lastName=Rezaei&email=ali.rezaei@test.com&password=Test@123
+```
 {% endstep %}
 
 {% step %}
 Capture the registration request using an intercepting proxy and resend it, confirming that the server processes the standard input without errors
+
+```http
+POST /register HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+firstName=Ali&lastName=Rezaei&email=ali.rezaei2@test.com&password=Test@123
+```
 {% endstep %}
 
 {% step %}
 Start a second registration attempt and modify the request so that the first name field contains an invalid LDAP-related character, such as a double quote `"`, before submitting it to the same endpoint
+
+```http
+POST /register HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+firstName=Ali"&lastName=Rezaei&email=ali.rezaei3@test.com&password=Test@123
+```
 {% endstep %}
 
 {% step %}

