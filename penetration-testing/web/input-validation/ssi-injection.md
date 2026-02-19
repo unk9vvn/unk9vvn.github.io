@@ -40,7 +40,7 @@ Then, check the server response to see if the payloads we injected are displayed
 
 ***
 
-#### Serer Side Including via HTTP Header&#x20;
+#### Sever Side Including in HTTP Header&#x20;
 
 {% stepper %}
 {% step %}
