@@ -395,7 +395,7 @@ Create Script
 sudo nano rp-csrf.sh
 ```
 
-```
+```bash
 #!/bin/bash
 
 # Config & Colors
@@ -675,7 +675,3 @@ Run Script
 ```bash
 sudo chmod +x rp-csrf.sh;sudo ./rp-csrf.sh $WEBSITE $USER $PASS
 ```
-
-### Click Jacking
-
-#### FFUF & Katana &&#x20;
