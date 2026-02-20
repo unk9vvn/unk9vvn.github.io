@@ -6,7 +6,7 @@
 
 ### Black Box
 
-#### ss
+#### Web Cache Poisoning via X-Forwarded-Host Header Injection
 
 {% stepper %}
 {% step %}
@@ -53,7 +53,7 @@ If the injected payload is stored in the cache and executed for other users, the
 
 ***
 
-####
+#### Web Cache Poisoning via Unkeyed Header Injection
 
 {% stepper %}
 {% step %}
@@ -134,6 +134,40 @@ Observe the server response and verify whether the injected payload is served fr
 
 {% step %}
 If the payload is cached and executed for multiple users until the cache expires, the Web Cache Poisoning vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Web Cache Poisoning via Path Normalization Discrepancy
+
+{% stepper %}
+{% step %}
+Go to the target site.
+{% endstep %}
+
+{% step %}
+Intercept a legitimate request to a JavaScript file
+{% endstep %}
+
+{% step %}
+Replace forward slashes with backslashes in the path
+{% endstep %}
+
+{% step %}
+Add a cache buster parameter (`?test=123`) to avoid affecting live traffic
+{% endstep %}
+
+{% step %}
+Send the malformed request multiple times until cached
+{% endstep %}
+
+{% step %}
+Result: The 404 response gets cached, causing DoS for all subsequent requests
+{% endstep %}
+
+{% step %}
+You can use double slash `(//)` techniques or Unicode characters
 {% endstep %}
 {% endstepper %}
 
