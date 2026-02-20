@@ -84,22 +84,6 @@ Observe the server response and check whether a **500 Internal Server Error** is
 {% step %}
 Scroll through the stack trace output and identify any exposed sensitive information such as Framework name or Internal file paths and ...
 {% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
 {% endstepper %}
 
 ***

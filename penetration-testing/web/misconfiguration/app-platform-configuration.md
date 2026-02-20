@@ -8,6 +8,8 @@
 
 ## Methodology
 
+### Black Box
+
 #### TOR Technique for Finding Sensitive Routes
 
 {% stepper %}
@@ -41,6 +43,63 @@ And then using the Dirsearch tool command, which we run on all the subdomains th
 
 {% step %}
 Using the Nuclei command, we can find vulnerabilities and <sub>CVEs</sub> on the target to identify the presence of vulnerabilities, and using the next commands, we can run commands related to the target's use of different <sub>CMSs</sub> on the target
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Information Disclosure via Exposed `.env` File
+
+{% stepper %}
+{% step %}
+Navigate to the target web application and identify whether sensitive configuration files such as `.env` are publicly accessible, Send a request directly to the potential file location
+
+```http
+GET /.env HTTP/1.1
+Host: company.com
+```
+{% endstep %}
+
+{% step %}
+Observe the server response and check whether the file contents are returned in plaintext
+
+```
+MAIL_HOST=mail.company.com
+MAIL_USERNAME=admin@company.com
+MAIL_PASSWORD=AdminPass2024!
+DATABASE_URL=postgresql://user:pass@host/db
+AWS_ACCESS_KEY_ID=AKIA...
+STRIPE_SECRET_KEY=sk_live_...
+```
+{% endstep %}
+
+{% step %}
+Verify the finding by accessing the file from a different session or device to confirm no authentication is required
+{% endstep %}
+
+{% step %}
+Analyze the contents for sensitive credentials such as (SMTP credentials, Database connection strings)
+{% endstep %}
+
+{% step %}
+Test potential impact by carefully verifying what access the disclosed credentials allow, such as (Logging into admin email accounts, Sending emails as the admin user, Accessing customer data or voucher codes)
+{% endstep %}
+
+{% step %}
+Check for other common sensitive endpoints that may expose additional information
+
+```
+/.env
+/.env.backup
+/.git/config
+/config.php
+/.aws/credentials
+/phpinfo.php
+```
+{% endstep %}
+
+{% step %}
+If sensitive information is accessible without authentication and can be used to compromise administrative functions, the Information Disclosure vulnerability is confirmed
 {% endstep %}
 {% endstepper %}
 
