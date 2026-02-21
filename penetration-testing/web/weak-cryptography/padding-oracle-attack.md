@@ -54,7 +54,7 @@ copy either part of the padding response, or the full padding response from the 
 {% endstep %}
 
 {% step %}
-To escalate to admin privileges, we will need to modify the plaintext to {“userid”:”100",”isAdmin”:”True”} and convert it to a hexadecimal value
+To escalate to admin privileges, we will need to modify the plaintext to `{“userid”:”100",”isAdmin”:”True”}` and convert it to a hexadecimal value
 {% endstep %}
 
 {% step %}
