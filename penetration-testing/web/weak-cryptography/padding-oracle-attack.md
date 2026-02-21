@@ -94,6 +94,50 @@ copy either part of the padding response, or the full padding response from the 
 
 ***
 
+#### Padding Attack with Padbuster
+
+{% stepper %}
+{% step %}
+log into the target site and intercept requests using the burp suite tool
+{% endstep %}
+
+{% step %}
+Identify a target endpoint that uses encrypted parameters in the request
+
+```http
+GET /home.jsp?UID=7B216A634951170FF851D6CC68FC9537858795A28ED4AAC6 HTTP/1.1
+Host: sampleapp
+```
+{% endstep %}
+
+{% step %}
+confirm that the encrypted value is included in the URL, POST data, or cookies
+{% endstep %}
+
+{% step %}
+run PadBuster with the required arguments, example command for uppercase HEX encoding
+
+```bash
+padBuster.pl http://sampleapp/home.jsp?UID=7B216A634951170FF851D6CC68FC9537858795A28ED4AAC6 \
+7B216A634951170FF851D6CC68FC9537858795A28ED4AAC6 8 -encoding 2
+```
+{% endstep %}
+
+{% step %}
+allow PadBuster to analyze the first `0–256` response cycle and select the response pattern that corresponds to the padding error
+{% endstep %}
+
+{% step %}
+Once selected, observe how PadBuster Iterates through each ciphertext block, Brute forces each plaintext byte (maximum 256 requests per byte), Displays intermediary byte values, Displays the recovered plaintext
+{% endstep %}
+
+{% step %}
+If plaintext is successfully recovered block by block, the Padding Oracle vulnerability is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
