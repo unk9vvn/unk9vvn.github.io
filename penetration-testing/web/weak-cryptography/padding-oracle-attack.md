@@ -10,47 +10,47 @@
 
 {% stepper %}
 {% step %}
-Log in to the target site and upload it to your system using Burp Suite software
+log in to the target site and upload it to your system using burp suite software
 {% endstep %}
 
 {% step %}
-In the program, go to the add plugin section and download the Padding Oracle Hunter plugin
+in the program, go to the add plugin section and download the padding oracle hunter plugin
 {% endstep %}
 
 {% step %}
-Then intercept a request, right-click and select the Padding Oracle Hunter plugin in the plugins section. Select a test type between `PKCS#7` and `PKCS#1.5` Go to the plugin page
+then intercept a request, right-click and select the padding oracle hunter plugin in the plugins section. select a test type between `PKCS#7` and `PKCS#1.5` go to the plugin page
 {% endstep %}
 
 {% step %}
-The important point is that the `PKCS#7` type has a different GUI page than the `PKCS#1.5` type
+the important point is that the `PKCS#7` type has a different GUI page than the `PKCS#1.5` type
 {% endstep %}
 
 {% step %}
-In the `PKCS#7` test page, there is an HTTP request at the beginning of the page. At the bottom of the request section, there are 4 options: Payload, format, url encoded, and clear section
+In the `PKCS#7` test page, there is an HTTP request at the beginning of the page. at the bottom of the request section, there are 4 options: payload, format, URL encoded, and clear section
 {% endstep %}
 
 {% step %}
-In the middle of the page there are 4 entries called Threads, Block Size, Response Padding and Plain Text
+In the middle of the page there are 4 entries called threads, block dize, response padding and plain text
 {% endstep %}
 
 {% step %}
-At the bottom of the page there is a section called output. Under output there are 4 buttons called test, encrypt, decrypt, and stop
+at the bottom of the page there is a section called output. under output there are 4 buttons called test, encrypt, decrypt, and stop
 {% endstep %}
 
 {% step %}
-Pipe the request through Extensions -> Padding Oracle Hunter -> PKCS#7
+pipe the request through extensions -> padding oracle hunter -> PKCS#7
 {% endstep %}
 
 {% step %}
-Select the ciphertext value in the Request window, click Select Payload with Hex format, and uncheck Url Encoded. The payload will be enclosed within the `§` symbo
+select the ciphertext value in the request window, click delect payload with hex format, and uncheck URL encoded. the payload will be enclosed within the `§` symbol
 {% endstep %}
 
 {% step %}
-Click the **Test** button and it will provide a summary which will indicate if the server is vulnerable to the padding oracle attack with its corresponding invalid/valid padding payload and response
+click the test button and it will provide a summary which will indicate if the server is vulnerable to the padding oracle attack with its corresponding invalid/valid padding payload and response
 {% endstep %}
 
 {% step %}
-Copy either part of the padding response, or the full padding response from the Output window and put it in the Padding Response textbox. You can choose to use either the valid or invalid padding response. Click the Decrypt button to recover the plaintext
+copy either part of the padding response, or the full padding response from the output window and put it in the padding response textbox. you can choose to use either the valid or invalid padding response. click the decrypt button to recover the plaintext
 {% endstep %}
 
 {% step %}
@@ -58,11 +58,11 @@ To escalate to admin privileges, we will need to modify the plaintext to {“use
 {% endstep %}
 
 {% step %}
-Copy the modified hexadecimal value to the Plaintext textbox and click the Encrypt button to compute the corresponding ciphertext
+copy the modified hexadecimal value to the plaintext textbox and click the encrypt button to compute the corresponding ciphertext
 {% endstep %}
 
 {% step %}
-Update the http request with the newly computed ciphertext and send the request to the server. Notice that we are now logged in as an admin
+update the http request with the newly computed ciphertext and send the request to the server. notice that we are now logged in as an admin
 {% endstep %}
 {% endstepper %}
 
@@ -72,23 +72,23 @@ Update the http request with the newly computed ciphertext and send the request 
 
 {% stepper %}
 {% step %}
-Pipe the request through Extensions -> Padding Oracle Hunter -> PKCS#1 v1.5
+pipe the request through extensions -> padding oracle hunter -> PKCS#1 v1.5
 {% endstep %}
 
 {% step %}
-Select the ciphertext value in the Request window, click Select Payload with Hex format, and uncheck Url Encoded. The payload will be enclosed within the `§` symbol
+select the ciphertext value in the request window, click select payload with Hex format, and uncheck URL encoded. The payload will be enclosed within the `§` symbol
 {% endstep %}
 
 {% step %}
-Fill in the public key parameters with public exponent: `65537` and modulus: `91150209829916536965146520317827566881182630249923637533035630164622161072289`
+fill in the public key parameters with public exponent: `65537` and modulus: `91150209829916536965146520317827566881182630249923637533035630164622161072289`
 {% endstep %}
 
 {% step %}
-Click the **Test** button, and it will provide a summary which will indicate if the server is vulnerable to a padding oracle attack with its corresponding invalid/valid padding payload and response
+click the test button, and it will provide a summary which will indicate if the server is vulnerable to a padding oracle attack with its corresponding invalid/valid padding payload and response
 {% endstep %}
 
 {% step %}
-Copy either part of the padding response, or the full padding response from the **Output** window and put it in the Padding Response textbox. You can choose to use either the valid or invalid padding response. Click the **Decrypt** button, and the plaintext will be recovered after about `50k` requests
+copy either part of the padding response, or the full padding response from the output window and put it in the padding response textbox. you can choose to use either the valid or invalid padding response. click the decrypt button, and the plaintext will be recovered after about `50k` requests
 {% endstep %}
 {% endstepper %}
 
