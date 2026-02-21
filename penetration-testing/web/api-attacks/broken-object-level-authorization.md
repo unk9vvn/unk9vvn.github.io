@@ -39,6 +39,96 @@ If you can view, modify, or delete Account A’s resource → BOLA confirmed
 
 ***
 
-### White Box
+#### Updating Another User’s Object
+
+{% stepper %}
+{% step %}
+Login as a normal user
+{% endstep %}
+
+{% step %}
+Intercept profile update request
+
+```http
+PUT /api/users/1024 HTTP/1.1
+Host: target.com
+Authorization: Bearer user_token_1024
+Content-Type: application/json
+
+{"phone":"9999999999"}
+```
+{% endstep %}
+
+{% step %}
+Modify object ID
+
+```http
+PUT /api/users/1025 HTTP/1.1
+Host: target.com
+Authorization: Bearer user_token_1024
+Content-Type: application/json
+
+{"phone":"8888888888"}
+```
+{% endstep %}
+
+{% step %}
+Forward the request
+{% endstep %}
+
+{% step %}
+If another user’s profile is updated successfully, write-level object authorization is missing
+{% endstep %}
+
+{% step %}
+If no ownership validation is enforced server-side, BOLA vulnerability is confirmed.
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Accessing Files via Object Key Manipulation
+
+{% stepper %}
+{% step %}
+Login normally
+{% endstep %}
+
+{% step %}
+Access file endpoint
+
+```http
+GET /api/files/INV-2024-001.pdf HTTP/1.1
+Host: target.com
+Authorization: Bearer token_userA
+```
+{% endstep %}
+
+{% step %}
+Modify file identifier
+
+```http
+GET /api/files/INV-2024-002.pdf HTTP/1.1
+Host: target.com
+Authorization: Bearer token_userA
+```
+{% endstep %}
+
+{% step %}
+Send request
+{% endstep %}
+
+{% step %}
+If unauthorized file belonging to another account is returned, object-level access control is missing
+{% endstep %}
+
+{% step %}
+If file retrieval is based solely on predictable object keys, BOLA is confirmed
+{% endstep %}
+{% endstepper %}
+
+***
+
+### White Bo
 
 ## Cheat Sheet
