@@ -663,4 +663,30 @@ function unzipFile(stagingDir, zipFileName, originalFileName) {
 
 ***
 
+#### Path Traversal to RCE
+
+{% stepper %}
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
