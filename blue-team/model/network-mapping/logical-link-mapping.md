@@ -12,7 +12,7 @@
 Map Layer-3 Paths using subnet
 {% endhint %}
 
-```
+```bash
 nmap -sn --traceroute 192.168.1.0/24
 ```
 
