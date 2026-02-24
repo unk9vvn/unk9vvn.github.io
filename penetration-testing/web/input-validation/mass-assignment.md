@@ -821,6 +821,66 @@ function doRemoteCSLogin(loginRequest, loginResponse) {
 {% step %}
 Enter the function and check whether the inputs and arguments used for `QLogin` are placed directly into command instructions. (In the example below, `commserver`, which is user input, is used as `text` and `text2` in the code above
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(string\.Format\s*\()|(\$\s*".*-\w+\s*\{.*\}")|(Process(StartInfo)?\s*\()|(handleQAPIReq\s*\()|(Split\s*\(\s*['"].\*['"])
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(String\.format\s*\()|(\$\s*".*-\w+\s*\{.*\}")|(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(sprintf\s*\()|(`.*\$\w+.*`)|(shell_exec\s*\()|(exec\s*\()|(system\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(exec\s*\()|(spawn\s*\()|(child_process)|(template\s*string\s*`.*-\w+\$\{.*\}`)
+```
+
+
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+string\.Format\s*\(|\$\s*".*-\w+\s*\{.*\}"|Process(StartInfo)?\s*\(|handleQAPIReq\s*\(|Split\s*\(\s*['"].\*['"]
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+String\.format\s*\(|\$\s*".*-\w+\s*\{.*\}"|Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+sprintf\s*\(|`.*\$\w+.*`|shell_exec\s*\(|exec\s*\(|system\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+exec\s*\(|spawn\s*\(|child_process|`.*-\w+\$\{.*\}`
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
