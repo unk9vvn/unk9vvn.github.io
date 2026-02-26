@@ -2,6 +2,8 @@
 
 ## Cheat Sheet
 
+#### [Nmap](https://nmap.org/) & [naabu](https://github.com/projectdiscovery/naabu)
+
 {% hint style="info" %}
 Scan to find live IPs and Ports
 {% endhint %}
@@ -92,6 +94,47 @@ Run Script
 
 ```bash
 sudo nano subnet-scan.sh;sudo ./subnet-scan.sh $TARGET
+```
+
+### SNMP
+
+#### [nmap](https://github.com/nmap/nmap)
+
+{% hint style="info" %}
+Identify SNMP
+{% endhint %}
+
+```bash
+nmap -p 161 -sU -sV –mtu 5000 –script=snmp-info $TARGET
+```
+
+{% hint style="info" %}
+Enumerate SNMP OIDs with community string
+{% endhint %}
+
+```bash
+snmpwalk -v 1 -c public $TARGET > /tmp/snmpv1-current.txt
+```
+
+```bash
+snmpwalk -v 2c -c public $TARGET > /tmp/snmpv2c-current.txt
+```
+
+```bash
+snmpwalk -v3 -u snmpuser -l authPriv -a SHA -A AUTH_PASS \
+-x AES -X PRIV_PASS $TARGET > /tmp/snmpv3-current.txt
+```
+
+{% hint style="info" %}
+Drift Detection
+{% endhint %}
+
+```bash
+diff snmpv1-baseline.txt /tmp/snmpv1-current.txt
+```
+
+```bash
+diff snmpv2c-baseline.txt /tmp/snmpv2c-current.txt
 ```
 
 ### Windows Management Instrumentation (WMI)
