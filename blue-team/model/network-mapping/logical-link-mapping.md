@@ -13,15 +13,7 @@ Map Layer-3 Paths using subnet
 {% endhint %}
 
 ```bash
-nmap -sn --traceroute 192.168.1.0/24
-```
-
-{% hint style="info" %}
-Detect Firewall Boundaries using subnet
-{% endhint %}
-
-```bash
-nmap -sS -Pn 192.168.1.0/24
+nmap -sn -Pn --traceroute 192.168.1.0/24
 ```
 
 #### Ping Scan
