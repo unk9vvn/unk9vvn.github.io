@@ -24,48 +24,16 @@ Detect Firewall Boundaries using subnet
 nmap -sS -Pn 192.168.1.0/24
 ```
 
-### TCP
+### Ping Scan
 
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
-TCP SYN Ping
+TCP SYN & ACK & UDP & ICMP Ping
 {% endhint %}
 
 ```bash
-nmap -sn -PS $TARGET
-```
-
-{% hint style="info" %}
-TCP ACK Ping
-{% endhint %}
-
-```bash
-nmap -sn -PA $TARGET
-```
-
-### UDP
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-UDP Ping
-{% endhint %}
-
-```bash
-nmap -sn -PU $TARGET
-```
-
-### ICMP
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-ICMP Ping using subnet
-{% endhint %}
-
-```bash
-nmap -sn -PE -PP -PM 192.168.1.0/24 
+nmap -sn -PS -PA -PU -PE -PP -PM $TARGET
 ```
 
 #### Ping
@@ -78,29 +46,18 @@ Ping for live host
 ping $TARGET
 ```
 
-### DHCP
+### Discovery
 
 #### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
-Discover DHCP IPv4 servers
+Discover DHCP & IGMP & OSPF & PPPoE & RIPv2
 {% endhint %}
 
 ```bash
-sudo nmap –script broadcast-dhcp-discover
+sudo nmap \
+    --script=broadcast-dhcp-discover,broadcast-dhcp6-discover,broadcast-igmp-discovery,broadcast-ospf2-discover,broadcast-pppoe-discover,broadcast-rip-discover
 ```
-
-{% hint style="info" %}
-Discover DHCP IPv6 servers
-{% endhint %}
-
-```bash
-sudo nmap –script broadcast-dhcp6-discover
-```
-
-### EIGRP
-
-#### [Nmap](https://nmap.org/)
 
 {% hint style="info" %}
 Network discovery and routing information gathering through EIGRP
@@ -108,78 +65,6 @@ Network discovery and routing information gathering through EIGRP
 
 ```bash
 nmap --script=broadcast-eigrp-discovery  $TARGET
-```
-
-{% hint style="info" %}
-Network discovery and routing information gathering through EIGRP using a specific interface
-{% endhint %}
-
-```bash
-nmap --script=broadcast-eigrp-discovery  $TARGET -e wlan0
-```
-
-### IGMP
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-Discover targets with IGMP Multicast membership
-{% endhint %}
-
-```bash
-nmap --script broadcast-igmp-discovery
-```
-
-{% hint style="info" %}
-Discover targets with IGMP Multicast membership using a specific interface
-{% endhint %}
-
-```bash
-nmap --script broadcast-igmp-discovery -e wlan0
-```
-
-### OSPF
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-Discover OSPF IPv4 networks
-{% endhint %}
-
-```bash
-nmap –script=broadcast-ospf2-discover
-```
-
-{% hint style="info" %}
-Discover OSPF IPv4 networks using a specific interface
-{% endhint %}
-
-```bash
-nmap --script=broadcast-ospf2-discover -e wlan0
-```
-
-### PPPoE
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-Discover PPPoE servers
-{% endhint %}
-
-```bash
-nmap --script broadcast-pppoe-discover
-```
-
-### RIPv2
-
-#### [Nmap](https://nmap.org/)
-
-{% hint style="info" %}
-Discover host and routing information from devices running RIPv2
-{% endhint %}
-
-```bash
-nmap --script broadcast-rip-discover
 ```
 
 ### Traceroute
@@ -224,8 +109,20 @@ mtr $TARGET
 
 ### Passive Logical Link Mapping
 
-### [Wireshark](https://www.wireshark.org/download.html)
+#### [Wireshark](https://www.wireshark.org/download.html)
 
 1. Open Wireshark
 2. Capture traffic on a specific interface
 3. Filter layer 3 protocols: dhcp or icmp or igmp or ospf or bgp or eigrp or rip or glbp or hsrp or vrrp
+
+#### [tshark](https://tshark.dev/)
+
+{% hint style="info" %}
+Passive layer-3 packet capture
+{% endhint %}
+
+```bash
+sudo tshark -i eth0 \
+    -Y "dhcp or icmp or igmp or ospf or bgp or eigrp or rip or glbp or hsrp or vrrp" \
+    > capture.txt
+```
