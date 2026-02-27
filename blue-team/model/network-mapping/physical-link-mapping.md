@@ -52,6 +52,18 @@ sudo arp-scan -I eth0 192.168.1.0/24
 
 3\. Filter layer 2 protocols: arp or lldp or cdp or stp or l2tp
 
+#### [tshark](https://tshark.dev/)
+
+{% hint style="info" %}
+Passive layer-2 packet capture
+{% endhint %}
+
+```bash
+sudo tshark -i eth0 \
+    -Y "arp or lldp or cdp or stp or l2tp" \
+    > capture-layer2.txt
+```
+
 #### [Netdiscover](https://github.com/netdiscover-scanner/netdiscover)
 
 {% hint style="info" %}
@@ -70,12 +82,4 @@ Sniffs the network for incoming broadcast communication
 
 ```bash
 nmap –script broadcast-listener
-```
-
-{% hint style="info" %}
-Sniffs the network for incoming broadcast communication using a specific interface
-{% endhint %}
-
-```bash
-nmap –script broadcast-listener -e eth0
 ```
