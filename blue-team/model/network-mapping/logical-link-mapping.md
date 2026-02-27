@@ -4,7 +4,7 @@
 
 ### Active Logical Link Mapping
 
-### Map Layer-3
+#### Map Layer-3
 
 #### [Nmap](https://nmap.org/)
 
@@ -24,7 +24,7 @@ Detect Firewall Boundaries using subnet
 nmap -sS -Pn 192.168.1.0/24
 ```
 
-### Ping Scan
+#### Ping Scan
 
 #### [Nmap](https://nmap.org/)
 
@@ -46,7 +46,7 @@ Ping for live host
 ping $TARGET
 ```
 
-### Discovery
+#### Discovery
 
 #### [Nmap](https://nmap.org/)
 
@@ -67,7 +67,7 @@ Network discovery and routing information gathering through EIGRP
 nmap --script=broadcast-eigrp-discovery  $TARGET
 ```
 
-### Traceroute
+#### Traceroute
 
 #### [traceroute](https://www.kali.org/tools/traceroute/)
 
