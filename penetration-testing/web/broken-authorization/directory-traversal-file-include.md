@@ -887,7 +887,7 @@ qoperation execute -file F:\Program Files\Commvault\ContentStore\Apache\webapps\
 {% endstep %}
 
 {% step %}
-At this stage, the output content must be controlled. Look for switches in the `qoperation execute` command that accept input and execute it. In this example, the `af-` switch places operations inside an XML file, passes it to the command, and executes it
+At this stage, the output content must be controlled. Look for switches in the `qoperation execute` command that accept input and execute it. In this example, the `-af` switch places operations inside an XML file, passes it to the command, and executes it
 {% endstep %}
 
 {% step %}
@@ -974,7 +974,7 @@ Content-Length: 270
 {% step %}
 If, after executing the command, the characters `“` and `>` in the `wT-poc.jsp` output file are HTML-encoded and this breaks the shell execution
 
-```
+```bash
 qoperation execute -af F:\Program Files\Commvault\ContentStore\Reports\MetricsUpload\Upload\ABC1234\rekt.xml -file F:\Program Files\Commvault\ContentStore\Apache\webapps\ROOT\wT-poc.jsp
 ```
 
@@ -1023,6 +1023,881 @@ HTTP/1.1 200
 
 Operation Successful.Results written to [F:\Program Files\Commvault\ContentStore\Apache\webapps\ROOT\wT-poc.jsp].
 ```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Path Traversal (ZIP Slip variant)
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+In the service, look for endpoints named import, Restore, or Upload
+{% endstep %}
+
+{% step %}
+Find the processing logic of these endpoints in the code and check under what conditions the code reaches the file processing stage
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+protected override void OnLoad(EventArgs e)
+{
+	base.OnLoad(e);
+	if (base.IsEvent)
+	{
+		return;
+	}
+	if (base.Request.Files.Count <= 0)
+	{
+		return;
+	}
+	UrlHandle urlHandle;
+	if (!UrlHandle.TryGetHandle(out urlHandle) || urlHandle == null) // [1]
+	{
+		SecurityException ex = new SecurityException("Upload handle invalid");
+		Log.Error("File upload handle not found. Path: " + base.Request.Form["Path"], ex, this);
+		throw ex;
+	}
+	string folder = urlHandle["Path"]; // [2]
+	string text = urlHandle["Item"];
+	string name = urlHandle["Language"];
+	bool overwrite = urlHandle["Overwrite"] == "1";
+	bool unpack = urlHandle["Unzip"] == "1";
+	bool versioned = urlHandle["Versioned"] == "1";
+	string allowedFileTypes = urlHandle["AllowedFileTypes"];
+	UrlHandle.DisposeHandle(urlHandle);
+	UploadArgs uploadArgs = new UploadArgs // [3]
+	{
+		Files = base.Request.Files,
+		Overwrite = overwrite,
+		Unpack = unpack,
+		Versioned = versioned,
+		Language = Language.Parse(name),
+		AllowedFileTypes = allowedFileTypes
+	};
+	if (!string.IsNullOrEmpty(text)) // [4]
+	{
+		uploadArgs.Folder = text;
+		uploadArgs.Destination = UploadDestination.Database;
+	}
+	else
+	{
+		uploadArgs.Folder = folder;
+		uploadArgs.Destination = UploadDestination.File;
+		uploadArgs.FileOnly = true; // [5]
+	}
+	Pipeline pipeline = PipelineFactory.GetPipeline("uiUpload"); // [6]
+	pipeline.Start(uploadArgs);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Override
+protected void onLoad(EventArgs e) {
+    super.onLoad(e);
+
+    if (this.isEvent()) {
+        return;
+    }
+
+    if (this.getRequest().getFiles().size() <= 0) {
+        return;
+    }
+
+    UrlHandle urlHandle;
+    if (!UrlHandle.tryGetHandle(urlHandleHolder -> urlHandle = urlHandleHolder) || urlHandle == null) {
+        SecurityException ex = new SecurityException("Upload handle invalid");
+        Log.error("File upload handle not found. Path: " + this.getRequest().getForm().get("Path"), ex, this);
+        throw ex;
+    }
+
+    String folder = urlHandle.get("Path");
+    String text = urlHandle.get("Item");
+    String name = urlHandle.get("Language");
+    boolean overwrite = "1".equals(urlHandle.get("Overwrite"));
+    boolean unpack = "1".equals(urlHandle.get("Unzip"));
+    boolean versioned = "1".equals(urlHandle.get("Versioned"));
+    String allowedFileTypes = urlHandle.get("AllowedFileTypes");
+
+    UrlHandle.disposeHandle(urlHandle);
+
+    UploadArgs uploadArgs = new UploadArgs();
+    uploadArgs.setFiles(this.getRequest().getFiles());
+    uploadArgs.setOverwrite(overwrite);
+    uploadArgs.setUnpack(unpack);
+    uploadArgs.setVersioned(versioned);
+    uploadArgs.setLanguage(Language.parse(name));
+    uploadArgs.setAllowedFileTypes(allowedFileTypes);
+
+    if (text != null && !text.isEmpty()) {
+        uploadArgs.setFolder(text);
+        uploadArgs.setDestination(UploadDestination.Database);
+    } else {
+        uploadArgs.setFolder(folder);
+        uploadArgs.setDestination(UploadDestination.File);
+        uploadArgs.setFileOnly(true);
+    }
+
+    Pipeline pipeline = PipelineFactory.getPipeline("uiUpload");
+    pipeline.start(uploadArgs);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function onLoad($e)
+{
+    parent::onLoad($e);
+
+    if ($this->isEvent()) {
+        return;
+    }
+
+    if (count($this->request->files) <= 0) {
+        return;
+    }
+
+    $urlHandle = null;
+    if (!UrlHandle::tryGetHandle($urlHandle) || $urlHandle == null) {
+        $ex = new SecurityException("Upload handle invalid");
+        Log::error("File upload handle not found. Path: " . $this->request->form["Path"], $ex, $this);
+        throw $ex;
+    }
+
+    $folder = $urlHandle["Path"];
+    $text = $urlHandle["Item"];
+    $name = $urlHandle["Language"];
+    $overwrite = $urlHandle["Overwrite"] === "1";
+    $unpack = $urlHandle["Unzip"] === "1";
+    $versioned = $urlHandle["Versioned"] === "1";
+    $allowedFileTypes = $urlHandle["AllowedFileTypes"];
+
+    UrlHandle::disposeHandle($urlHandle);
+
+    $uploadArgs = new UploadArgs();
+    $uploadArgs->Files = $this->request->files;
+    $uploadArgs->Overwrite = $overwrite;
+    $uploadArgs->Unpack = $unpack;
+    $uploadArgs->Versioned = $versioned;
+    $uploadArgs->Language = Language::parse($name);
+    $uploadArgs->AllowedFileTypes = $allowedFileTypes;
+
+    if (!empty($text)) {
+        $uploadArgs->Folder = $text;
+        $uploadArgs->Destination = UploadDestination::Database;
+    } else {
+        $uploadArgs->Folder = $folder;
+        $uploadArgs->Destination = UploadDestination::File;
+        $uploadArgs->FileOnly = true;
+    }
+
+    $pipeline = PipelineFactory::getPipeline("uiUpload");
+    $pipeline->start($uploadArgs);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function onLoad(e) {
+    base.onLoad(e);
+
+    if (this.isEvent()) {
+        return;
+    }
+
+    if (!this.request.files || this.request.files.length <= 0) {
+        return;
+    }
+
+    let urlHandle = null;
+
+    if (!UrlHandle.tryGetHandle((handle) => { urlHandle = handle; }) || urlHandle == null) {
+        let ex = new SecurityException("Upload handle invalid");
+        Log.error("File upload handle not found. Path: " + this.request.form["Path"], ex, this);
+        throw ex;
+    }
+
+    let folder = urlHandle["Path"];
+    let text = urlHandle["Item"];
+    let name = urlHandle["Language"];
+    let overwrite = urlHandle["Overwrite"] === "1";
+    let unpack = urlHandle["Unzip"] === "1";
+    let versioned = urlHandle["Versioned"] === "1";
+    let allowedFileTypes = urlHandle["AllowedFileTypes"];
+
+    UrlHandle.disposeHandle(urlHandle);
+
+    let uploadArgs = new UploadArgs();
+    uploadArgs.Files = this.request.files;
+    uploadArgs.Overwrite = overwrite;
+    uploadArgs.Unpack = unpack;
+    uploadArgs.Versioned = versioned;
+    uploadArgs.Language = Language.parse(name);
+    uploadArgs.AllowedFileTypes = allowedFileTypes;
+
+    if (text && text.length > 0) {
+        uploadArgs.Folder = text;
+        uploadArgs.Destination = UploadDestination.Database;
+    } else {
+        uploadArgs.Folder = folder;
+        uploadArgs.Destination = UploadDestination.File;
+        uploadArgs.FileOnly = true;
+    }
+
+    let pipeline = PipelineFactory.getPipeline("uiUpload");
+    pipeline.start(uploadArgs);
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+If the processing flow reaches a pipeline, map and analyze the pipeline flow, and trace the data flow until the method that finally saves the uploaded file to the system (Note: Pipelines are usually defined in configuration files and contain step-by-step processing methods)
+
+```xml
+<uiUpload>
+  <processor mode="on" type="Sitecore.Pipelines.Upload.CheckPermissions, Sitecore.Kernel" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.ValidateContentType, Sitecore.Kernel" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.CheckSize, Sitecore.Kernel" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.CheckSvgForJs, Sitecore.Kernel" resolve="true" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.ResolveFolder, Sitecore.Kernel" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.Save, Sitecore.Kernel" />
+  <processor mode="on" type="Sitecore.Pipelines.Upload.Done, Sitecore.Kernel" />
+</uiUpload>
+```
+{% endstep %}
+
+{% step %}
+After reaching the final file-saving method, check whether there is a separate upload path that directly processes `ZIP` or `TAR` files. If yes, target the archive handling functionality
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void Process(UploadArgs args)
+{
+	Assert.ArgumentNotNull(args, "args");
+	for (int i = 0; i < args.Files.Count; i++)
+	{
+		HttpPostedFile httpPostedFile = args.Files[i];
+		if (!string.IsNullOrEmpty(httpPostedFile.FileName))
+		{
+			try
+			{
+				bool flag = UploadProcessor.IsUnpack(args, httpPostedFile);
+				if (args.FileOnly)
+				{
+					if (flag)
+					{
+						Save.UnpackToFile(args, httpPostedFile); // [1]
+					}
+					else
+					{
+						string filename = this.UploadToFile(args, httpPostedFile); // [2]
+						if (i == 0)
+						{
+							args.Properties["filename"] = FileHandle.GetFileHandle(filename);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void process(UploadArgs args) {
+    Assert.argumentNotNull(args, "args");
+
+    for (int i = 0; i < args.getFiles().size(); i++) {
+        HttpPostedFile httpPostedFile = args.getFiles().get(i);
+
+        if (httpPostedFile.getFileName() != null && !httpPostedFile.getFileName().isEmpty()) {
+            try {
+                boolean flag = UploadProcessor.isUnpack(args, httpPostedFile);
+
+                if (args.isFileOnly()) {
+                    if (flag) {
+                        Save.unpackToFile(args, httpPostedFile);
+                    } else {
+                        String filename = this.uploadToFile(args, httpPostedFile);
+
+                        if (i == 0) {
+                            args.getProperties().put("filename", FileHandle.getFileHandle(filename));
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                throw ex;
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function process($args)
+{
+    Assert::argumentNotNull($args, "args");
+
+    for ($i = 0; $i < count($args->Files); $i++) {
+
+        $httpPostedFile = $args->Files[$i];
+
+        if (!empty($httpPostedFile->FileName)) {
+
+            try {
+                $flag = UploadProcessor::isUnpack($args, $httpPostedFile);
+
+                if ($args->FileOnly) {
+
+                    if ($flag) {
+                        Save::unpackToFile($args, $httpPostedFile);
+                    } else {
+                        $filename = $this->uploadToFile($args, $httpPostedFile);
+
+                        if ($i == 0) {
+                            $args->Properties["filename"] = FileHandle::getFileHandle($filename);
+                        }
+                    }
+                }
+
+            } catch (Exception $ex) {
+                throw $ex;
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+process(args) {
+    Assert.argumentNotNull(args, "args");
+
+    for (let i = 0; i < args.Files.length; i++) {
+
+        let httpPostedFile = args.Files[i];
+
+        if (httpPostedFile.FileName && httpPostedFile.FileName.length > 0) {
+
+            try {
+                let flag = UploadProcessor.isUnpack(args, httpPostedFile);
+
+                if (args.FileOnly) {
+
+                    if (flag) {
+                        Save.unpackToFile(args, httpPostedFile);
+                    } else {
+                        let filename = this.uploadToFile(args, httpPostedFile);
+
+                        if (i === 0) {
+                            args.Properties["filename"] = FileHandle.getFileHandle(filename);
+                        }
+                    }
+                }
+
+            } catch (ex) {
+                throw ex;
+            }
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Analyze the flow of the method that processes the ZIP file
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private static void UnpackToFile(UploadArgs args, HttpPostedFile file)
+{
+    string filename = FileUtil.MapPath(TempFolder.GetFilename("temp.zip"));
+    file.SaveAs(filename);
+
+    using (ZipArchive zipArchive = new ZipArchive(file.InputStream))
+    {
+        string invalidEntryName;
+
+        if (!Save.VerifyArchiveFilesName(args, zipArchive.Entries, file.FileName, out invalidEntryName))
+        {
+            Save.AbortPipeline(args, file.FileName, invalidEntryName);
+        }
+        else
+        {
+            Save.SaveUnpackedFiles(args, zipArchive.Entries);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private static void unpackToFile(UploadArgs args, HttpPostedFile file) throws Exception {
+
+    String filename = FileUtil.mapPath(TempFolder.getFilename("temp.zip"));
+    file.saveAs(filename);
+
+    try (ZipInputStream zipArchive = new ZipInputStream(file.getInputStream())) {
+
+        List<ZipEntry> entries = new ArrayList<>();
+        ZipEntry entry;
+
+        while ((entry = zipArchive.getNextEntry()) != null) {
+            entries.add(entry);
+        }
+
+        String[] invalidEntryName = new String[1];
+
+        if (!Save.verifyArchiveFilesName(args, entries, file.getFileName(), invalidEntryName)) {
+            Save.abortPipeline(args, file.getFileName(), invalidEntryName[0]);
+        } else {
+            Save.saveUnpackedFiles(args, entries);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private static function unpackToFile($args, $file)
+{
+    $filename = FileUtil::mapPath(TempFolder::getFilename("temp.zip"));
+    $file->saveAs($filename);
+
+    $zipArchive = new ZipArchive();
+    $zipArchive->open($file->InputStream);
+
+    $entries = [];
+    for ($i = 0; $i < $zipArchive->numFiles; $i++) {
+        $entries[] = $zipArchive->statIndex($i);
+    }
+
+    $invalidEntryName = null;
+
+    if (!Save::verifyArchiveFilesName($args, $entries, $file->FileName, $invalidEntryName)) {
+        Save::abortPipeline($args, $file->FileName, $invalidEntryName);
+    } else {
+        Save::saveUnpackedFiles($args, $entries);
+    }
+
+    $zipArchive->close();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+static unpackToFile(args, file) {
+
+    let filename = FileUtil.mapPath(TempFolder.getFilename("temp.zip"));
+    file.saveAs(filename);
+
+    let zipArchive = new AdmZip(file.InputStream);
+    let entries = zipArchive.getEntries();
+
+    let invalidEntryName = null;
+
+    if (!Save.verifyArchiveFilesName(args, entries, file.FileName, (name) => { invalidEntryName = name; })) {
+        Save.abortPipeline(args, file.FileName, invalidEntryName);
+    } else {
+        Save.saveUnpackedFiles(args, entries);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify the method that finalizes the filename before saving (Normalize / Sanitize / Unique Name Generator)
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(ZipArchiveEntry\s*\.)|(ExtractToDirectory\s*\()|(FileStream\s*\()|(File\.WriteAll)|(Path\.Combine\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(ZipEntry\s*\.\s*getName\s*\()|(getNextEntry\s*\()|(new\s+File\s*\()|(FileOutputStream\s*\()|(Files\.write\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(ZipArchive\s*\()|(extractTo\s*\()|(fopen\s*\()|(file_put_contents\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(entryName)|(getData\s*\()|(createFile\s*\()|(fs\.writeFile)|(extract(All|To))|(path\.join\s*\()|(makePath\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection (Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+ZipArchiveEntry\s*\.|ExtractToDirectory\s*\(|FileStream\s*\(|File\.WriteAll|Path\.Combine\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+ZipEntry\s*\.\s*getName\s*\(|getNextEntry\s*\(|new\s+File\s*\(|FileOutputStream\s*\(|Files\.write\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+ZipArchive\s*\(|extractTo\s*\(|fopen\s*\(|file_put_contents\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+entryName|getData\s*\(|createFile\s*\(|fs\.writeFile|extract(All|To)|path\.join\s*\(|makePath\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private static void SaveUnpackedFiles(UploadArgs args, IReadOnlyCollection<ZipArchiveEntry> archiveEntries)
+{
+    foreach (ZipArchiveEntry zipArchiveEntry in archiveEntries)
+    {
+        string text = FileUtil.MakePath(args.Folder, zipArchiveEntry.FullName, '\\');
+
+        if (!args.Overwrite)
+        {
+            text = FileUtil.GetUniqueFilename(text);
+        }
+
+        FileUtil.CreateFile(text, zipArchiveEntry.Open(), true);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private static void saveUnpackedFiles(UploadArgs args, Collection<ZipEntry> archiveEntries) throws Exception {
+
+    for (ZipEntry zipArchiveEntry : archiveEntries) {
+
+        String text = FileUtil.makePath(args.getFolder(), zipArchiveEntry.getName(), '\\');
+
+        if (!args.isOverwrite()) {
+            text = FileUtil.getUniqueFilename(text);
+        }
+
+        try (InputStream inputStream = zipArchiveEntry.getInputStream()) {
+            FileUtil.createFile(text, inputStream, true);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private static function saveUnpackedFiles($args, $archiveEntries)
+{
+    foreach ($archiveEntries as $zipArchiveEntry) {
+
+        $text = FileUtil::makePath($args->Folder, $zipArchiveEntry['name'], '\\');
+
+        if (!$args->Overwrite) {
+            $text = FileUtil::getUniqueFilename($text);
+        }
+
+        $stream = fopen($zipArchiveEntry['name'], 'r');
+        FileUtil::createFile($text, $stream, true);
+        fclose($stream);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+static saveUnpackedFiles(args, archiveEntries) {
+
+    for (let zipArchiveEntry of archiveEntries) {
+
+        let text = FileUtil.makePath(args.Folder, zipArchiveEntry.entryName, '\\');
+
+        if (!args.Overwrite) {
+            text = FileUtil.getUniqueFilename(text);
+        }
+
+        let inputStream = zipArchiveEntry.getData();
+        FileUtil.createFile(text, inputStream, true);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether any logical decision (`if` / `flag` / `branch`) is made based on the raw input before normalization. If a logical decision is based on raw input, check whether a special character (such as `\`, `/`, `:`, `.`) can change the execution path. Also verify whether that character is later removed or replaced during sanitization while its logical impact still remains
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static string GetUniqueFilename(string filePath)
+{
+	bool flag = filePath.IndexOf('\\') >= 0; // [1]
+	string validFilePath = FileUtil.GetValidFilePath(filePath); // [2]
+	string text = FileUtil.MapPath(validFilePath); // [3]
+
+	string directoryName = Path.GetDirectoryName(text);
+	string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(text);
+	string extension = Path.GetExtension(text);
+
+	int num = 1;
+	string text2 = fileNameWithoutExtension;
+
+	while (FileUtil.FileExists(text))
+	{
+		text2 = fileNameWithoutExtension + "_" + num.ToString("000");
+		text = directoryName + "\\" + text2 + extension;
+		num++;
+	}
+
+	if (flag)
+	{
+		return text; // [4]
+	}
+
+	int num2 = validFilePath.LastIndexOf('/'); // [5]
+	if (num2 < 0)
+	{
+		return text2 + extension;
+	}
+	return validFilePath.Substring(0, num2 + 1) + text2 + extension;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public static String getUniqueFilename(String filePath) {
+
+    boolean flag = filePath.indexOf('\\') >= 0;
+    String validFilePath = FileUtil.getValidFilePath(filePath);
+    String text = FileUtil.mapPath(validFilePath);
+
+    String directoryName = new File(text).getParent();
+    String fileName = new File(text).getName();
+
+    int dotIndex = fileName.lastIndexOf('.');
+    String fileNameWithoutExtension = (dotIndex >= 0) ? fileName.substring(0, dotIndex) : fileName;
+    String extension = (dotIndex >= 0) ? fileName.substring(dotIndex) : "";
+
+    int num = 1;
+    String text2 = fileNameWithoutExtension;
+
+    while (FileUtil.fileExists(text)) {
+        text2 = fileNameWithoutExtension + "_" + String.format("%03d", num);
+        text = directoryName + "\\" + text2 + extension;
+        num++;
+    }
+
+    if (flag) {
+        return text;
+    }
+
+    int num2 = validFilePath.lastIndexOf('/');
+    if (num2 < 0) {
+        return text2 + extension;
+    }
+
+    return validFilePath.substring(0, num2 + 1) + text2 + extension;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public static function getUniqueFilename($filePath)
+{
+    $flag = strpos($filePath, '\\') !== false;
+    $validFilePath = FileUtil::getValidFilePath($filePath);
+    $text = FileUtil::mapPath($validFilePath);
+
+    $directoryName = dirname($text);
+    $fileNameWithoutExtension = pathinfo($text, PATHINFO_FILENAME);
+    $extension = '.' . pathinfo($text, PATHINFO_EXTENSION);
+
+    $num = 1;
+    $text2 = $fileNameWithoutExtension;
+
+    while (FileUtil::fileExists($text)) {
+        $text2 = $fileNameWithoutExtension . "_" . str_pad($num, 3, "0", STR_PAD_LEFT);
+        $text = $directoryName . "\\" . $text2 . $extension;
+        $num++;
+    }
+
+    if ($flag) {
+        return $text;
+    }
+
+    $num2 = strrpos($validFilePath, '/');
+    if ($num2 === false) {
+        return $text2 . $extension;
+    }
+
+    return substr($validFilePath, 0, $num2 + 1) . $text2 . $extension;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+static getUniqueFilename(filePath) {
+
+    let flag = filePath.indexOf('\\') >= 0;
+    let validFilePath = FileUtil.getValidFilePath(filePath);
+    let text = FileUtil.mapPath(validFilePath);
+
+    const path = require("path");
+
+    let directoryName = path.dirname(text);
+    let fileNameWithoutExtension = path.parse(text).name;
+    let extension = path.parse(text).ext;
+
+    let num = 1;
+    let text2 = fileNameWithoutExtension;
+
+    while (FileUtil.fileExists(text)) {
+        text2 = fileNameWithoutExtension + "_" + num.toString().padStart(3, '0');
+        text = directoryName + "\\" + text2 + extension;
+        num++;
+    }
+
+    if (flag) {
+        return text;
+    }
+
+    let num2 = validFilePath.lastIndexOf('/');
+    if (num2 < 0) {
+        return text2 + extension;
+    }
+
+    return validFilePath.substring(0, num2 + 1) + text2 + extension;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Finally, find the function that converts a relative path into a physical path, and check whether it automatically prepends the Application Root or Webroot
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static string MapPath(HttpContextBase context, string path)
+{
+    HttpServerUtilityBase server = WebUtil.GetServer(context);
+
+    if (server != null)
+    {
+        return server.MapPath(path);
+    }
+
+    return null;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public static String mapPath(HttpServletRequest context, String path) {
+
+    ServletContext server = WebUtil.getServer(context);
+
+    if (server != null) {
+        return server.getRealPath(path);
+    }
+
+    return null;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public static function mapPath($context, $path)
+{
+    $server = WebUtil::getServer($context);
+
+    if ($server != null) {
+        return $server->mapPath($path);
+    }
+
+    return null;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+static mapPath(context, path) {
+
+    let server = WebUtil.getServer(context);
+
+    if (server != null) {
+        return server.mapPath(path);
+    }
+
+    return null;
+}
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 {% endstepper %}
 

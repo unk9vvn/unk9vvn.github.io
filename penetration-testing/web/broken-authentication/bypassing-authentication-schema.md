@@ -238,7 +238,7 @@ Then, in the class that handles the authentication endpoint, look for paths in t
 {% endtab %}
 {% endtabs %}
 
-RipGrep (Regex Detection (Linux))
+**RipGrep (Regex Detection (Linux))**
 
 {% tabs %}
 {% tab title="C#" %}
