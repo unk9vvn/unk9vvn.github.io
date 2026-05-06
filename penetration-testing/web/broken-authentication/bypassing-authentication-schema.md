@@ -595,7 +595,7 @@ public function doGet(Request $request, Response $response)
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 async function doGet(req, reply) {
     const statusCode = req.statusCode || null;
@@ -783,7 +783,7 @@ function saveSession(&$session, &$session_ref, $options = [])
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 function saveSession(session, session_ref, options = {}) {
 
@@ -953,7 +953,7 @@ function filter_sessiondata(&$session_ref)
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 function filter_sessiondata(session_ref) {
 
@@ -1235,7 +1235,7 @@ if (!$auth_header) {
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 let auth_header = server_obj.request.get_headers()["authorization"];
 
@@ -1501,7 +1501,7 @@ function loadSession($session)
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 function loadSession(session) {
 
@@ -1594,7 +1594,7 @@ if (empty($session_ref) || !count($session_ref)) {
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 if (!session_ref || Object.keys(session_ref).length === 0) {
     session_ref = Cpanel.Config.LoadConfig.parseFromFileHandle(...);
@@ -1801,7 +1801,7 @@ class SessionLoader {
 ```
 {% endtab %}
 
-{% tab title="Node JS" %}
+{% tab title="Node.js" %}
 ```js
 class SessionLoader {
 
@@ -2897,34 +2897,91 @@ function pageLoad(req, res) {
 {% step %}
 Then review the method responsible for redirect (such as `RedirectAndCompleteRequest`). Check how it processes the request and look for patterns where execution continues instead of stopping (no termination like `die`)
 
+**VSCode (Regex Detection**)
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(Response\.Redirect\s*\()|(CompleteRequest\s*\()|(GetRedirectPath|RedirectTo|RedirectUrl)|(IsSessionAuthenticated|IsAuthenticated)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(response\.sendRedirect\s*\()|(HttpServletResponse\.sendRedirect)|(redirect:\s*)|(return\s+\"redirect)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(header\s*\(\s*["']Location:)|(redirect\s*\()|(Location\s*=)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(res\.redirect\s*\()|(location\s*\()|(res\.setHeader\s*\(\s*["']Location["'])
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+Response\.Redirect\s*\(|CompleteRequest\s*\(|GetRedirectPath|RedirectTo|RedirectUrl|IsSessionAuthenticated|IsAuthenticated
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+response\.sendRedirect\s*\(|HttpServletResponse\.sendRedirect|redirect:\s*|return\s+"redirect
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+header\s*\(\s*["']Location:|redirect\s*\(|Location\s*=
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+res\.redirect\s*\(|location\s*\(|res\.setHeader\s*\(\s*["']Location["']
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
 	public void RedirectAndCompleteRequest(HttpContextBase httpContext, string redirectPath)
-		{
-			httpContext.Response.Redirect(redirectPath, false); // <---- [2]
-			HttpApplication applicationInstance = httpContext.ApplicationInstance;
-			if (applicationInstance == null)
-			{
-				return;
-			}
-			applicationInstance.CompleteRequest();
-		}
+{
+    httpContext.Response.Redirect(redirectPath, false); // <---- [2]
+    HttpApplication applicationInstance = httpContext.ApplicationInstance;
+    if (applicationInstance == null)
+    {
+        return;
+    }
+    applicationInstance.CompleteRequest();
+}
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```java
-public void redirectAndCompleteRequest(HttpServletRequest request, HttpServletResponse response, String redirectPath) throws IOException {
-
-    response.sendRedirect(redirectPath);
-
-    Object applicationInstance = request.getServletContext();
-    if (applicationInstance == null) {
+public void RedirectAndCompleteRequest(HttpContextBase httpContext, String redirectPath)
+{
+    httpContext.getResponse().redirect(redirectPath, false); // <---- [2]
+    HttpApplication applicationInstance = httpContext.getApplicationInstance();
+    if (applicationInstance == null)
+    {
         return;
     }
-
-    // Equivalent to CompleteRequest (no direct equivalent, placeholder)
+    applicationInstance.CompleteRequest();
 }
 ```
 {% endtab %}
@@ -2933,30 +2990,28 @@ public void redirectAndCompleteRequest(HttpServletRequest request, HttpServletRe
 ```php
 public function RedirectAndCompleteRequest($httpContext, $redirectPath)
 {
-    header("Location: " . $redirectPath, true, 302);
-
-    $applicationInstance = $httpContext['ApplicationInstance'] ?? null;
-    if ($applicationInstance == null) {
+    $httpContext->Response->Redirect($redirectPath, false); // <---- [2]
+    $applicationInstance = $httpContext->ApplicationInstance;
+    if ($applicationInstance == null)
+    {
         return;
     }
-
-    // CompleteRequest equivalent (no direct PHP equivalent)
+    $applicationInstance->CompleteRequest();
 }
 ```
 {% endtab %}
 
 {% tab title="Node JS" %}
 ```js
-function RedirectAndCompleteRequest(httpContext, redirectPath) {
-
-    httpContext.response.redirect(redirectPath);
-
+function RedirectAndCompleteRequest(httpContext, redirectPath)
+{
+    httpContext.response.redirect(redirectPath, false); // <---- [2]
     let applicationInstance = httpContext.applicationInstance;
-    if (!applicationInstance) {
+    if (applicationInstance == null)
+    {
         return;
     }
-
-    // CompleteRequest equivalent (framework-dependent)
+    applicationInstance.CompleteRequest();
 }
 ```
 {% endtab %}
@@ -3163,6 +3218,64 @@ If path control is successful, treat it as a “file write primitive” in the a
 
 {% step %}
 Look for file upload endpoints and check whether they use unzip. If files inside the ZIP are not validated and are stored directly in a UNC path, the vulnerability is confirmed
+
+**VSCode (Regex Detection**)
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(requestKeys\["unzip"\])|(Upload\.UnzipFiles)|(ZipArchive)|(ExtractToDirectory)|(FileUpload|HttpPostedFile)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(request\.getParameter\s*\("unzip"\))|(ZipInputStream)|(getNextEntry)|(FileOutputStream)|(Files\.write)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_REQUEST\["unzip"\])|(ZipArchive)|(extractTo)|(move_uploaded_file)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(req\.query\.unzip|req\.body\.unzip)|(adm-zip)|(unzipper)|(extractAllTo)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+requestKeys\["unzip"\]|Upload\.UnzipFiles|ZipArchive|ExtractToDirectory|FileUpload|HttpPostedFile
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+request\.getParameter\s*\("unzip"\)|ZipInputStream|getNextEntry|FileOutputStream|Files\.write
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_REQUEST\["unzip"\]|ZipArchive|extractTo|move_uploaded_file
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.query\.unzip|req\.body\.unzip|adm-zip|unzipper|extractAllTo
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
 
 {% tabs %}
 {% tab title="C#" %}
@@ -3423,15 +3536,15 @@ Find all endpoints related to ConfigService and management APIs (especially thos
 {% endstep %}
 
 {% step %}
-Test these endpoints with and without HMAC signatures and check whether sensitive data is accessible without authentication
+Test these endpoints with and without `HMAC` signatures and check whether sensitive data is accessible without authentication
 {% endstep %}
 
 {% step %}
-In responses, look for encoded or Base64 fields (such as `TempData2`), which may contain internal keys or secrets
+In responses, look for encoded or `Base64` fields (such as `TempData2`), which may contain internal keys or secrets
 {% endstep %}
 
 {% step %}
-Analyze how this encoded data is generated (e.g., AES + salt + passphrase) and check whether the passphrase can be accessed via bypass or another endpoint
+Analyze how this encoded data is generated (`AES` + `salt` + `passphrase`) and check whether the passphrase can be accessed via bypass or another endpoint
 {% endstep %}
 
 {% step %}
@@ -3443,7 +3556,7 @@ Check where this secret is used (for example, HMAC for upload or request validat
 {% endstep %}
 
 {% step %}
-Use the extracted secret to generate valid signatures (HMAC-SHA256) for sensitive requests and bypass security restrictions
+Use the extracted secret to generate valid signatures (`HMAC-SHA256`) for sensitive requests and bypass security restrictions
 {% endstep %}
 {% endstepper %}
 
