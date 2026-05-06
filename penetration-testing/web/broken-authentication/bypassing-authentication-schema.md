@@ -2736,6 +2736,719 @@ Modify the condition in the code to bypass password verification, send the reque
 
 ***
 
+#### Bypass Authentication To RCE
+
+{% stepper %}
+{% step %}
+Extract all DLL files and decompile them into C# code
+{% endstep %}
+
+{% step %}
+Run the application in a production-like environment and fully connect it to external services (SaaS)
+{% endstep %}
+
+{% step %}
+List all accessible endpoints and files: `ASHX / ASPX / ASMX` and REST endpoints defined in the `web.config` file
+{% endstep %}
+
+{% step %}
+List all `.aspx` files and send a request to each one (for example: `/ConfigService/Admin.aspx`). Then review the response status codes and separate abnormal responses (anything other than `401/403`)
+{% endstep %}
+
+{% step %}
+Prioritize endpoints (such as `ConfigService/Admin.aspx`) that return `302`. Check the `Content-Length` and response body in the redirect response
+{% endstep %}
+
+{% step %}
+If the response body still contains the actual page content despite the redirect, treat it as an anomaly. Then check whether server-side execution stops after the redirect or continues (Execution After Redirect)
+
+```http
+HTTP/1.1 302 Found
+Cache-Control: private,no-store
+Pragma: no-cache
+Content-Type: text/html; charset=utf-8
+Location: /ConfigService/Login.aspx?callerpage=Admin
+Server: Microsoft-IIS/10.0
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 540
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS, HEAD
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: DENY
+Date: Mon, 23 Mar 2026 01:59:44 GMT
+Content-Length: 22448
+
+<html><head><title>Object moved</title></head><body>
+<h2>Object moved to <a href="/ConfigService/Login.aspx?callerpage=Admin">here</a>.</h2>
+</body></html>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "<http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd>">
+
+<html xmlns="<http://www.w3.org/1999/xhtml>">
+<head id="ctl00_Head1"><title>
+	ShareFile - Where Companies Connect
+</title>
+[... Truncated ...]
+```
+{% endstep %}
+
+{% step %}
+Treat endpoints that return full content after redirect as candidates for authentication bypass
+{% endstep %}
+
+{% step %}
+After sending requests to sensitive pages (like admin pages) and receiving responses such as `302`, use HTTP tools to remove the `Location` header or change the response status code to `200`. If the page renders, the vulnerability exists
+{% endstep %}
+
+{% step %}
+Go to the source code of the vulnerable file (e.g., `ConfigService/Admin.aspx`). Find the method that loads the page and check whether it validates authentication or simply redirects unauthenticated users
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+protected void Page_Load(object sender, EventArgs e)
+		{
+			this._logger.LogDebug("Page_Load Enter", Array.Empty<object>());
+			this.Master.ActionHeader = "Select ShareFile " + (Admin.isMultiTenant ? "Multi-Tenant " : string.Empty) + "StorageZone";
+			this.Master.HeaderTitle = "<span class=\\"ico24 icoAdmin\\"></span>" + (Admin.isMultiTenant ? "Multi-Tenant " : string.Empty) + "StorageZone Setup";
+			if (!this._sessionHelper.IsSessionAuthenticated(HttpContext.Current.Session)) // <---- [0]
+			{
+				this._logger.LogDebug("Not authenticated", Array.Empty<object>());
+				string redirectPathWithCallerInfo = this._redirectionHelper.GetRedirectPathWithCallerInfo(WebPage.Login, WebPage.Admin);
+				this._redirectionHelper.RedirectAndCompleteRequest(new HttpContextWrapper(HttpContext.Current), redirectPathWithCallerInfo); // <---- [1]
+				return;
+			}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+protected void pageLoad(HttpServletRequest request, HttpServletResponse response) {
+
+    logger.debug("Page_Load Enter");
+
+    this.master.setActionHeader("Select ShareFile " + (Admin.isMultiTenant ? "Multi-Tenant " : "") + "StorageZone");
+    this.master.setHeaderTitle("<span class=\"ico24 icoAdmin\"></span>" + (Admin.isMultiTenant ? "Multi-Tenant " : "") + "StorageZone Setup");
+
+    if (!this.sessionHelper.isSessionAuthenticated(request.getSession())) {
+
+        logger.debug("Not authenticated");
+
+        String redirectPathWithCallerInfo =
+                this.redirectionHelper.getRedirectPathWithCallerInfo(WebPage.Login, WebPage.Admin);
+
+        this.redirectionHelper.redirectAndCompleteRequest(request, response, redirectPathWithCallerInfo);
+        return;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function Page_Load($sender, $e)
+{
+    $this->_logger->LogDebug("Page_Load Enter", []);
+
+    $this->Master->ActionHeader = "Select ShareFile " . (Admin::$isMultiTenant ? "Multi-Tenant " : "") . "StorageZone";
+    $this->Master->HeaderTitle = "<span class=\"ico24 icoAdmin\"></span>" . (Admin::$isMultiTenant ? "Multi-Tenant " : "") . "StorageZone Setup";
+
+    if (!$this->_sessionHelper->IsSessionAuthenticated($_SESSION)) {
+
+        $this->_logger->LogDebug("Not authenticated", []);
+
+        $redirectPathWithCallerInfo =
+            $this->_redirectionHelper->GetRedirectPathWithCallerInfo(WebPage::Login, WebPage::Admin);
+
+        $this->_redirectionHelper->RedirectAndCompleteRequest($redirectPathWithCallerInfo);
+        return;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function pageLoad(req, res) {
+
+    this._logger.LogDebug("Page_Load Enter", []);
+
+    this.Master.ActionHeader = "Select ShareFile " + (Admin.isMultiTenant ? "Multi-Tenant " : "") + "StorageZone";
+    this.Master.HeaderTitle = "<span class=\"ico24 icoAdmin\"></span>" + (Admin.isMultiTenant ? "Multi-Tenant " : "") + "StorageZone Setup";
+
+    if (!this._sessionHelper.IsSessionAuthenticated(req.session)) {
+
+        this._logger.LogDebug("Not authenticated", []);
+
+        let redirectPathWithCallerInfo =
+            this._redirectionHelper.GetRedirectPathWithCallerInfo(WebPage.Login, WebPage.Admin);
+
+        this._redirectionHelper.RedirectAndCompleteRequest(req, res, redirectPathWithCallerInfo);
+        return;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Then review the method responsible for redirect (such as `RedirectAndCompleteRequest`). Check how it processes the request and look for patterns where execution continues instead of stopping (no termination like `die`)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+	public void RedirectAndCompleteRequest(HttpContextBase httpContext, string redirectPath)
+		{
+			httpContext.Response.Redirect(redirectPath, false); // <---- [2]
+			HttpApplication applicationInstance = httpContext.ApplicationInstance;
+			if (applicationInstance == null)
+			{
+				return;
+			}
+			applicationInstance.CompleteRequest();
+		}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void redirectAndCompleteRequest(HttpServletRequest request, HttpServletResponse response, String redirectPath) throws IOException {
+
+    response.sendRedirect(redirectPath);
+
+    Object applicationInstance = request.getServletContext();
+    if (applicationInstance == null) {
+        return;
+    }
+
+    // Equivalent to CompleteRequest (no direct equivalent, placeholder)
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function RedirectAndCompleteRequest($httpContext, $redirectPath)
+{
+    header("Location: " . $redirectPath, true, 302);
+
+    $applicationInstance = $httpContext['ApplicationInstance'] ?? null;
+    if ($applicationInstance == null) {
+        return;
+    }
+
+    // CompleteRequest equivalent (no direct PHP equivalent)
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function RedirectAndCompleteRequest(httpContext, redirectPath) {
+
+    httpContext.response.redirect(redirectPath);
+
+    let applicationInstance = httpContext.applicationInstance;
+    if (!applicationInstance) {
+        return;
+    }
+
+    // CompleteRequest equivalent (framework-dependent)
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+After authentication bypass, test all admin panel features in a pre-auth state and identify paths like `Create / Join / Modify`
+{% endstep %}
+
+{% step %}
+Focus on `Modify / Join` paths because they are usually accessible without initial setup
+{% endstep %}
+
+{% step %}
+Review configuration fields (`Network / Storage / Security`) and determine which ones accept user input and which are server-side assigned
+{% endstep %}
+
+{% step %}
+If sensitive values (such as passphrase) are automatically filled by the server during editing, treat it as a security bypass and a path to infrastructure access
+{% endstep %}
+
+{% step %}
+If the product uses zone controllers with a primary zone controller, analyze the trust relationship between zone controllers and the primary one. Check how trust is established (e.g., encryption between APIs)
+{% endstep %}
+
+{% step %}
+Test whether all sensitive fields use the same validation level (e.g., encrypted API communication) or if some paths bypass it. If needed, analyze the component responsible for API communication and encryption to see if it can be bypassed
+{% endstep %}
+
+{% step %}
+If no bypass is found, check whether after authentication bypass you can define a new Primary Zone Controller and whether the passphrase is validated or filtered. If not, an attacker can connect zone controllers to their own primary controller
+{% endstep %}
+
+{% step %}
+Identify upload/storage functionality in the system and check whether the user can control the file storage path
+{% endstep %}
+
+{% step %}
+Find storage-related parameters (such as Network Share Location) and determine whether they accept local paths, UNC paths, or cloud paths
+{% endstep %}
+
+{% step %}
+Analyze the validation mechanism for the storage path (such as write/delete tests). Check whether it only verifies writability or also validates security (preventing webroot or sensitive paths)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+	private BaseActionResult ValidateStorageLocation(string filePath, string storageLocationType)
+{
+    BaseActionResult baseActionResult = new BaseActionResult
+    {
+        IsSuccess = true,
+        Message = string.Empty
+    };
+    try
+    {
+        using (StreamWriter streamWriter = new StreamWriter(filePath, false))
+        {
+            streamWriter.Write("SCTest");
+            streamWriter.Flush();
+        }
+    }
+    catch (Exception ex)
+    {
+        this._logger.LogError(ex, "An error occurred validating storage location: writing to " + filePath, Array.Empty<object>());
+        baseActionResult.IsSuccess = false;
+        baseActionResult.Message = string.Concat(new string[] { "Problem accessing ", storageLocationType, " Location. Check if the ", storageLocationType, " Location is correct and the user has write permission." });
+        return baseActionResult;
+    }
+    try
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
+    catch (Exception ex2)
+    {
+        this._logger.LogError(ex2, "An error occurred validating storage location: deleting " + filePath, Array.Empty<object>());
+        baseActionResult.IsSuccess = false;
+        baseActionResult.Message = string.Concat(new string[] { "Problem accessing ", storageLocationType, " Location. Check if the ", storageLocationType, " Location is correct and the user has delete permission." });
+        return baseActionResult;
+    }
+    return baseActionResult;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private BaseActionResult validateStorageLocation(String filePath, String storageLocationType) {
+
+    BaseActionResult baseActionResult = new BaseActionResult();
+    baseActionResult.setIsSuccess(true);
+    baseActionResult.setMessage("");
+
+    try {
+        FileWriter writer = new FileWriter(filePath, false);
+        writer.write("SCTest");
+        writer.flush();
+        writer.close();
+    } catch (Exception ex) {
+        this.logger.logError(ex, "An error occurred validating storage location: writing to " + filePath);
+        baseActionResult.setIsSuccess(false);
+        baseActionResult.setMessage("Problem accessing " + storageLocationType + " Location. Check if the " + storageLocationType + " Location is correct and the user has write permission.");
+        return baseActionResult;
+    }
+
+    try {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+    } catch (Exception ex2) {
+        this.logger.logError(ex2, "An error occurred validating storage location: deleting " + filePath);
+        baseActionResult.setIsSuccess(false);
+        baseActionResult.setMessage("Problem accessing " + storageLocationType + " Location. Check if the " + storageLocationType + " Location is correct and the user has delete permission.");
+        return baseActionResult;
+    }
+
+    return baseActionResult;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function ValidateStorageLocation($filePath, $storageLocationType)
+{
+    $baseActionResult = new BaseActionResult();
+    $baseActionResult->IsSuccess = true;
+    $baseActionResult->Message = '';
+
+    try {
+        $streamWriter = fopen($filePath, 'w');
+        fwrite($streamWriter, "SCTest");
+        fflush($streamWriter);
+        fclose($streamWriter);
+    } catch (Exception $ex) {
+        $this->_logger->LogError($ex, "An error occurred validating storage location: writing to " . $filePath, []);
+        $baseActionResult->IsSuccess = false;
+        $baseActionResult->Message = "Problem accessing " . $storageLocationType . " Location. Check if the " . $storageLocationType . " Location is correct and the user has write permission.";
+        return $baseActionResult;
+    }
+
+    try {
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    } catch (Exception $ex2) {
+        $this->_logger->LogError($ex2, "An error occurred validating storage location: deleting " . $filePath, []);
+        $baseActionResult->IsSuccess = false;
+        $baseActionResult->Message = "Problem accessing " . $storageLocationType . " Location. Check if the " . $storageLocationType . " Location is correct and the user has delete permission.";
+        return $baseActionResult;
+    }
+
+    return $baseActionResult;
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function ValidateStorageLocation(filePath, storageLocationType) {
+
+    let baseActionResult = {
+        IsSuccess: true,
+        Message: ""
+    };
+
+    const fs = require("fs");
+
+    try {
+        fs.writeFileSync(filePath, "SCTest");
+    } catch (ex) {
+        this._logger.LogError(ex, "An error occurred validating storage location: writing to " + filePath, []);
+        baseActionResult.IsSuccess = false;
+        baseActionResult.Message = "Problem accessing " + storageLocationType + " Location. Check if the " + storageLocationType + " Location is correct and the user has write permission.";
+        return baseActionResult;
+    }
+
+    try {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    } catch (ex2) {
+        this._logger.LogError(ex2, "An error occurred validating storage location: deleting " + filePath, []);
+        baseActionResult.IsSuccess = false;
+        baseActionResult.Message = "Problem accessing " + storageLocationType + " Location. Check if the " + storageLocationType + " Location is correct and the user has delete permission.";
+        return baseActionResult;
+    }
+
+    return baseActionResult;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+If path control is successful, treat it as a “file write primitive” in the application execution path
+{% endstep %}
+
+{% step %}
+Look for file upload endpoints and check whether they use unzip. If files inside the ZIP are not validated and are stored directly in a UNC path, the vulnerability is confirmed
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+	protected void Page_Load(object sender, EventArgs e)
+{
+    string text = "";
+    string text2 = "";
+    long num = 0L;
+    if (this.Page.Request.HttpMethod == "OPTIONS")
+    {
+        base.Response.End();
+    }
+    try
+    {
+        NameValueCollection requestKeys = SCWebUtils.GetRequestKeys(HttpContext.Current, "filename");
+        text = requestKeys["uploadid"];
+        if (string.IsNullOrEmpty(text))
+        {
+            text = Guid.NewGuid().ToString("n");
+        }
+        UploadLogic.CheckForAvailableDiskSpace((requestKeys["filesize"] == null) ? (-1L) : long.Parse(requestKeys["filesize"]));
+        this.ValidateIsPost(text);
+        string text3;
+        string text4;
+        string text5;
+        string text6;
+        UploadLogic.GetBasePath(requestKeys, out text3, out text4, out text5, out text6);
+        this.ValidateParameters(text, text3, text4);
+        string onFinishUrl = this.GetOnFinishUrl(text, requestKeys);
+        ShareFileUploadNotification shareFileUploadNotification = new ShareFileUploadNotification();
+        Hashtable hashtable = new Hashtable();
+        Hashtable hashtable2 = new Hashtable();
+        Hashtable hashtable3 = new Hashtable();
+        int num2 = 0;
+        bool flag = false;
+        if (requestKeys["unzip"] != null && (requestKeys["unzip"] == "true" || requestKeys["unzip"] == "on")) // [1]
+        {
+            flag = true;
+        }
+        if (flag)
+        {
+            num2 += Upload.UnzipFiles(new InputFile[]
+            {
+                this.File1, this.File2, this.File3, this.File4, this.File5, this.File6, this.File7, this.File8, this.File9, this.File10,
+                this.Filedata
+            }, shareFileUploadNotification, text, hashtable, hashtable3, text3, text4); // [2]
+        }
+        //...
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+protected void pageLoad(HttpServletRequest request, HttpServletResponse response) {
+
+    String text = "";
+    String text2 = "";
+    long num = 0L;
+
+    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        return;
+    }
+
+    try {
+        Map<String, String> requestKeys = SCWebUtils.getRequestKeys(request, "filename");
+
+        text = requestKeys.get("uploadid");
+        if (text == null || text.isEmpty()) {
+            text = UUID.randomUUID().toString().replace("-", "");
+        }
+
+        UploadLogic.checkForAvailableDiskSpace(
+                requestKeys.get("filesize") == null ? -1L : Long.parseLong(requestKeys.get("filesize"))
+        );
+
+        this.validateIsPost(text);
+
+        String text3, text4, text5, text6;
+        String[] basePaths = UploadLogic.getBasePath(requestKeys);
+        text3 = basePaths[0];
+        text4 = basePaths[1];
+        text5 = basePaths[2];
+        text6 = basePaths[3];
+
+        this.validateParameters(text, text3, text4);
+
+        String onFinishUrl = this.getOnFinishUrl(text, requestKeys);
+
+        ShareFileUploadNotification shareFileUploadNotification = new ShareFileUploadNotification();
+
+        Map<String, Object> hashtable = new HashMap<>();
+        Map<String, Object> hashtable2 = new HashMap<>();
+        Map<String, Object> hashtable3 = new HashMap<>();
+
+        int num2 = 0;
+        boolean flag = false;
+
+        if (requestKeys.get("unzip") != null &&
+            (requestKeys.get("unzip").equals("true") || requestKeys.get("unzip").equals("on"))) {
+            flag = true;
+        }
+
+        if (flag) {
+            num2 += Upload.unzipFiles(
+                new InputFile[]{File1, File2, File3, File4, File5, File6, File7, File8, File9, File10, Filedata},
+                shareFileUploadNotification,
+                text,
+                hashtable,
+                hashtable3,
+                text3,
+                text4
+            );
+        }
+
+        //...
+    } catch (Exception ignored) {}
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function Page_Load($sender, $e)
+{
+    $text = "";
+    $text2 = "";
+    $num = 0;
+
+    if ($_SERVER['REQUEST_METHOD'] === "OPTIONS") {
+        exit;
+    }
+
+    try {
+        $requestKeys = SCWebUtils::GetRequestKeys($_REQUEST, "filename");
+
+        $text = $requestKeys["uploadid"] ?? "";
+        if (empty($text)) {
+            $text = bin2hex(random_bytes(16));
+        }
+
+        UploadLogic::CheckForAvailableDiskSpace(
+            isset($requestKeys["filesize"]) ? (int)$requestKeys["filesize"] : -1
+        );
+
+        $this->ValidateIsPost($text);
+
+        list($text3, $text4, $text5, $text6) = UploadLogic::GetBasePath($requestKeys);
+
+        $this->ValidateParameters($text, $text3, $text4);
+
+        $onFinishUrl = $this->GetOnFinishUrl($text, $requestKeys);
+
+        $shareFileUploadNotification = new ShareFileUploadNotification();
+
+        $hashtable = [];
+        $hashtable2 = [];
+        $hashtable3 = [];
+
+        $num2 = 0;
+        $flag = false;
+
+        if (isset($requestKeys["unzip"]) && ($requestKeys["unzip"] == "true" || $requestKeys["unzip"] == "on")) {
+            $flag = true;
+        }
+
+        if ($flag) {
+            $num2 += Upload::UnzipFiles(
+                [$this->File1, $this->File2, $this->File3, $this->File4, $this->File5,
+                 $this->File6, $this->File7, $this->File8, $this->File9, $this->File10,
+                 $this->Filedata],
+                $shareFileUploadNotification,
+                $text,
+                $hashtable,
+                $hashtable3,
+                $text3,
+                $text4
+            );
+        }
+
+        //...
+    } catch (Exception $e) {}
+}
+```
+{% endtab %}
+
+{% tab title="Node JS" %}
+```js
+function pageLoad(req, res) {
+
+    let text = "";
+    let text2 = "";
+    let num = 0;
+
+    if (req.method === "OPTIONS") {
+        res.end();
+        return;
+    }
+
+    try {
+        let requestKeys = SCWebUtils.getRequestKeys(req, "filename");
+
+        text = requestKeys["uploadid"];
+        if (!text) {
+            text = require("crypto").randomBytes(16).toString("hex");
+        }
+
+        UploadLogic.CheckForAvailableDiskSpace(
+            requestKeys["filesize"] ? parseInt(requestKeys["filesize"]) : -1
+        );
+
+        this.ValidateIsPost(text);
+
+        let [text3, text4, text5, text6] = UploadLogic.GetBasePath(requestKeys);
+
+        this.ValidateParameters(text, text3, text4);
+
+        let onFinishUrl = this.GetOnFinishUrl(text, requestKeys);
+
+        let shareFileUploadNotification = new ShareFileUploadNotification();
+
+        let hashtable = {};
+        let hashtable2 = {};
+        let hashtable3 = {};
+
+        let num2 = 0;
+        let flag = false;
+
+        if (requestKeys["unzip"] && (requestKeys["unzip"] === "true" || requestKeys["unzip"] === "on")) {
+            flag = true;
+        }
+
+        if (flag) {
+            num2 += Upload.UnzipFiles(
+                [this.File1, this.File2, this.File3, this.File4, this.File5,
+                 this.File6, this.File7, this.File8, this.File9, this.File10,
+                 this.Filedata],
+                shareFileUploadNotification,
+                text,
+                hashtable,
+                hashtable3,
+                text3,
+                text4
+            );
+        }
+
+        //...
+    } catch (e) {}
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Find all endpoints related to ConfigService and management APIs (especially those returning zone configurations)
+{% endstep %}
+
+{% step %}
+Test these endpoints with and without HMAC signatures and check whether sensitive data is accessible without authentication
+{% endstep %}
+
+{% step %}
+In responses, look for encoded or Base64 fields (such as `TempData2`), which may contain internal keys or secrets
+{% endstep %}
+
+{% step %}
+Analyze how this encoded data is generated (e.g., AES + salt + passphrase) and check whether the passphrase can be accessed via bypass or another endpoint
+{% endstep %}
+
+{% step %}
+If the passphrase or encryption key is obtained, decrypt the data to extract the main system secret (Zone Secret)
+{% endstep %}
+
+{% step %}
+Check where this secret is used (for example, HMAC for upload or request validation)
+{% endstep %}
+
+{% step %}
+Use the extracted secret to generate valid signatures (HMAC-SHA256) for sensitive requests and bypass security restrictions
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Parameter Modification <a href="#parameter-modification" id="parameter-modification"></a>
