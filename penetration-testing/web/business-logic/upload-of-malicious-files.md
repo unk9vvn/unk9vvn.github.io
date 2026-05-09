@@ -1254,6 +1254,8 @@ you can use this regex for find vulnerability
 {% endtab %}
 {% endtabs %}
 
+**Vulnerable Code Patterns**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
