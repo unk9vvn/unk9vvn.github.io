@@ -679,6 +679,64 @@ function Process(args)
 {% step %}
 Analyze the flow of the method that processes the ZIP file
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(ZipArchive\s*\()|(ZipArchiveEntry)|(GetUniqueFilename)|(MapPath)|(SaveAs\s*\()|(SaveUnpackedFiles)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(ZipInputStream)|(getNextEntry)|(FileOutputStream)|(Files\.write)|(unzip)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(ZipArchive)|(extractTo)|(fopen)|(move_uploaded_file)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(adm-zip)|(unzipper)|(extractAllTo)|(fs\.writeFile)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ZipArchive\s*\(|ZipArchiveEntry|GetUniqueFilename|MapPath|SaveAs\s*\(|SaveUnpackedFiles
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+ZipInputStream|getNextEntry|FileOutputStream|Files\.write|unzip
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+ZipArchive|extractTo|fopen|move_uploaded_file
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+adm-zip|unzipper|extractAllTo|fs\.writeFile
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
@@ -1073,5 +1131,7 @@ function MapPath(context, path)
 {% endtabs %}
 {% endstep %}
 {% endstepper %}
+
+***
 
 ## Cheat Sheet
