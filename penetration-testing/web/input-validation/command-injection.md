@@ -97,6 +97,64 @@ Trace the data flow of each parameter from the request entry point to its usage 
 {% step %}
 Search the source code for functions that execute operating system commands, such as `exec`, `system`, `shell_exec`, `popen`, `proc_open`, or their equivalents in other languages
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(ProcessStartInfo)|(Process\.Start)|(cmd\.exe)|(powershell\.exe)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()|(getParameter\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_(GET|POST|REQUEST|FILES))|(exec\s*\()|(shell_exec\s*\()|(system\s*\()|(passthru\s*\()|(popen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(child_process)|(exec\s*\()|(spawn\s*\()|(execSync\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
