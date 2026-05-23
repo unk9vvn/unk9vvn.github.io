@@ -497,4 +497,283 @@ Then verify whether input validation or filtering is absent. Set up a local serv
 {% endstep %}
 {% endstepper %}
 
+***
+
+#### Command Injection via Misconfigured Chromium Binary Path in Administrative PDF Generation Feature
+
+{% stepper %}
+{% step %}
+Identify the target website or product and log in with an administrator account.
+{% endstep %}
+
+{% step %}
+Enter the application’s administrative panel and locate the system configuration paths `(Setup / Configuration)` that include parameters related to external tools
+{% endstep %}
+
+{% step %}
+Then, within the setup or administrative paths, look for parameters and inputs that store tool execution paths (such as `chromium_path`, `binary_path`, or similar)
+{% endstep %}
+
+{% step %}
+In the server-side code, find the files that use this value and look for the use of system execution functions such as `exec()`
+{% endstep %}
+
+{% step %}
+Check whether the value read from the configuration is properly sanitized or escaped before being passed to `exec()`
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+// /var/www/html/pandoraitsm/include/functions.php
+// Function Name is generatePDF()
+string chromium_dir = io_safe_output(config["chromium_path"]);
+var result_ejecution = System.Diagnostics.Process.Start(chromium_dir + " --version");
+
+if (string.IsNullOrEmpty(result_ejecution.ToString()) == true) {
+    if (params["return_img_base_64"]) {
+        params["base64"] = true;
+        
+-----------------------------------------------------------------------------------
+public void GeneratePDF(
+    List<object> items,
+    Dictionary<string, object> options = null,
+    Dictionary<string, object> optionsPDF = null
+)
+{
+    var config = Global.config;
+
+    // If not install chromium avoid 500 convert tu images no data to show.
+    string chromium_dir = io_safe_output(config["chromium_path"]);
+    var result_ejecution = System.Diagnostics.Process.Start(chromium_dir + " --version");
+
+    if (string.IsNullOrEmpty(result_ejecution.ToString()) == true)
+    {
+        string message_error = __("chromium is not installed") + ", ";
+        message_error += __("To be able to create images of the graphs for PDFs, please install the chromium extension.");
+        message_error += "<a href=\"https://www.chromium.org/getting-involved/download-chromium/\" target=\"_blank\">";
+        message_error += __("Info chromium");
+        message_error += "</a>";
+
+        throw new ArgumentException(message_error);
+        return;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+// /var/www/html/pandoraitsm/include/functions.php
+// Function Name is generatePDF()
+String chromium_dir = io_safe_output(config.get("chromium_path"));
+String result_ejecution = Runtime.getRuntime().exec(chromium_dir + " --version").toString();
+
+if (result_ejecution.isEmpty() == true) {
+    if (params.get("return_img_base_64")) {
+        params.put("base64", true);
+--------------------------------------------------------------------------------------------
+
+// Begin vulnerable code section
+public void generatePDF(
+    List<Object> items,
+    Map<String, Object> options,
+    Map<String, Object> optionsPDF
+) {
+    Map<String, Object> config = Global.config;
+
+    // If not install chromium avoid 500 convert tu images no data to show.
+    String chromium_dir = io_safe_output((String) config.get("chromium_path"));
+    String result_ejecution = Runtime.getRuntime()
+        .exec(chromium_dir + " --version")
+        .toString();
+
+    if (result_ejecution.isEmpty() == true) {
+        String message_error = __("chromium is not installed") + ", ";
+        message_error += __("To be able to create images of the graphs for PDFs, please install the chromium extension.");
+        message_error += "<a href=\"https://www.chromium.org/getting-involved/download-chromium/\" target=\"_blank\">";
+        message_error += __("Info chromium");
+        message_error += "</a>";
+
+        throw new IllegalArgumentException(message_error);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+// /var/www/html/pandoraitsm/include/functions.php
+// Function Name is generatePDF()
+$chromium_dir = io_safe_output($config['chromium_path']);
+$result_ejecution = exec($chromium_dir.' --version');
+if (empty($result_ejecution) === true) {
+    if ($params['return_img_base_64']) {
+        $params['base64'] = true;
+-------------------------------------------------------------
+
+// Begin vulnerable code section
+public function generatePDF(
+    array $items,
+    ?array $options = [],
+    ?array $optionsPDF = null
+) {
+    global $config;
+
+    // If not install chromium avoid 500 convert tu images no data to show.
+    $chromium_dir = io_safe_output($config['chromium_path']);
+    $result_ejecution = exec($chromium_dir.' --version');
+    if (empty($result_ejecution) === true) {
+        $message_error = __('chromium is not installed').', ';
+        $message_error .= __('To be able to create images of the graphs for PDFs, please install the chromium extension.');
+        $message_error .= '<a href="https://www.chromium.org/getting-involved/download-chromium/" target="_blank">';
+        $message_error .= __('Info chromium');
+        $message_error .= '</a>';
+
+        throw new InvalidArgumentException($message_error);
+        return;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+// /var/www/html/pandoraitsm/include/functions.php
+// Function Name is generatePDF()
+const chromium_dir = io_safe_output(config.chromium_path);
+const { execSync } = require('child_process');
+
+const result_ejecution = execSync(chromium_dir + " --version").toString();
+
+if (result_ejecution.length === 0 === true) {
+    if (params["return_img_base_64"]) {
+        params["base64"] = true;
+
+---------------------------------------------------------------------------
+
+// Begin vulnerable code section
+function generatePDF(
+    items,
+    options = {},
+    optionsPDF = null
+) {
+    const config = global.config;
+
+    // If not install chromium avoid 500 convert tu images no data to show.
+    const chromium_dir = io_safe_output(config.chromium_path);
+    const { execSync } = require('child_process');
+
+    const result_ejecution = execSync(chromium_dir + " --version").toString();
+
+    if (result_ejecution.length === 0 === true) {
+        let message_error = __("chromium is not installed") + ", ";
+        message_error += __("To be able to create images of the graphs for PDFs, please install the chromium extension.");
+        message_error += "<a href=\"https://www.chromium.org/getting-involved/download-chromium/\" target=\"_blank\">";
+        message_error += __("Info chromium");
+        message_error += "</a>";
+
+        throw new Error(message_error);
+        return;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Important note: **this vulnerability occurs when a report is created and then exported to PDF, and the report must be of chart type to be exported to PDF. In this case, the execution path of the user input, which is `chromium_path`, reaches the `exec` function**
+{% endstep %}
+{% endstepper %}
+
+***
+
+####
+
+{% stepper %}
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
