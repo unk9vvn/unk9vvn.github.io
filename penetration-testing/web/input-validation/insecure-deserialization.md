@@ -439,6 +439,8 @@ serialize\.(unserialize|deserialize)\s*\(|JSON\.parse\s*\(|v8\.deserialize\s*\(
 {% endtab %}
 {% endtabs %}
 
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
