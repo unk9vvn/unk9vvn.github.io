@@ -659,6 +659,95 @@ If the file is successfully returned, verify that the low-privileged user cannot
 
 ***
 
+#### Authorization Bypass Through Exposed Object Identifiers
+
+{% stepper %}
+{% step %}
+Create two user accounts with separate ownership contexts (an attacker account and a victim account)
+{% endstep %}
+
+{% step %}
+Using the attacker account, create a resource on which sensitive actions such as editing, publishing, deleting, previewing, or administration can be performed
+{% endstep %}
+
+{% step %}
+Intercept all requests generated while interacting with this resource
+{% endstep %}
+
+{% step %}
+Identify the primary identifier used in sensitive operations (such as `resourceId`, `projectId`, `websiteId`, `pageId`, or similar values)
+
+```http
+POST /api/projects/123/publish HTTP/1.1
+Host: target.com
+Cookie: session=attacker
+
+{
+  "projectId": "123"
+}
+```
+{% endstep %}
+
+{% step %}
+Send the request to Burp Repeater and determine whether the sensitive operation is performed solely based on the identifier supplied by the user
+{% endstep %}
+
+{% step %}
+Select a state-changing operation such as delete, edit, publish, or archive
+{% endstep %}
+
+{% step %}
+Replace the resource identifier with the identifier of another resource and inspect the server response
+
+```http
+POST /api/projects/456/publish HTTP/1.1
+Host: target.com
+Cookie: session=attacker
+
+{
+  "projectId": "456"
+}
+```
+{% endstep %}
+
+{% step %}
+If the operation succeeds, investigate how the target identifier is exposed
+{% endstep %}
+
+{% step %}
+Analyze all API responses, network requests, DOM elements, JavaScript variables, and HTML attributes to identify the required identifiers
+{% endstep %}
+
+{% step %}
+Extract any secondary identifiers used in the operation (such as `componentId`, `widgetId`, `blockId`, or similar values) and determine their sourc
+
+```http
+POST /api/projects/456/components/789/delete HTTP/1.1
+Host: target.com
+Cookie: session=attacker
+
+{
+  "projectId": "456",
+  "componentId": "789"
+}
+```
+{% endstep %}
+
+{% step %}
+Using the extracted identifiers, send the sensitive request against a resource owned by another user
+{% endstep %}
+
+{% step %}
+Verify whether the server validates resource ownership or simply trusts the provided identifiers
+{% endstep %}
+
+{% step %}
+Confirm that the operation succeeds despite the absence of administrative privileges over the target resource
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
