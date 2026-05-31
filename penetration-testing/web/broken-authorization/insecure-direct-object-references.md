@@ -603,6 +603,62 @@ If it shows, then enter the email and userid of the first account, that is, `att
 
 ***
 
+####
+
+{% stepper %}
+{% step %}
+Create two user accounts with different privilege levels (for example, one authorized user and one restricted user)
+{% endstep %}
+
+{% step %}
+Identify a feature that allows users to upload, view, or download attachment files
+{% endstep %}
+
+{% step %}
+Using the authorized user account, upload a file or locate an existing attachment
+{% endstep %}
+
+{% step %}
+While viewing or downloading the attachment, monitor the network traffic
+
+```http
+GET /api/attachments/12345/download HTTP/1.1
+Cookie: session=authorized_user
+```
+{% endstep %}
+
+{% step %}
+Identify the API endpoint responsible for serving the file
+{% endstep %}
+
+{% step %}
+Capture the request and send it to Burp Repeater
+{% endstep %}
+
+{% step %}
+Log in with the low-privileged account that should not have access to the target resource
+{% endstep %}
+
+{% step %}
+Replay the file download request using the low-privileged user's session
+
+```http
+GET /api/attachments/12345/download HTTP/1.1
+Cookie: session=low_priv_user
+```
+{% endstep %}
+
+{% step %}
+Check whether the server returns the file or responds with an authorization error
+{% endstep %}
+
+{% step %}
+If the file is successfully returned, verify that the low-privileged user cannot access the same resource through the user interface (UI)
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 ## Cheat Sheet
