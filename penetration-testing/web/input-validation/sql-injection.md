@@ -420,4 +420,295 @@ Conclude that the application is vulnerable to Blind (Boolean-based) SQL Injecti
 
 ### White Box
 
+#### SQL Injection via Tenant Routing Header in Database Search Path Construction
+
+{% stepper %}
+{% step %}
+Identify the application's request-processing architecture and extract the middleware execution order. Determine which middleware components execute before authentication and whether user-controlled input is processed prior to authentication
+
+```
+HTTP Request -> Apache/mod_wsgi -> Django
+  -> ApiLogMiddleware
+  -> SiteMiddleware
+  -> PostgresConnection
+  -> AuthMiddleware
+  -> BruteForceProtection
+  -> View/Controller
+```
+{% endstep %}
+
+{% step %}
+Identify middleware components that process HTTP headers and trace the data flow from the header to sensitive areas of the application
+{% endstep %}
+
+{% step %}
+Locate methods that receive header values and determine whether validation, allowlists, regex checks, or character filtering are applied to the received data
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+private bool GetHeaderSite(HttpRequest request)
+{
+    var site = request.Headers["HTTP_SITE"];
+
+    if (site != null)
+    {
+        request.Headers["SITE"] = site.ToLower();
+    }
+
+    return site != null;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private boolean getHeaderSite(HttpServletRequest request)
+{
+    String site = request.getHeader("HTTP_SITE");
+
+    if (site != null)
+    {
+        request.setAttribute("SITE", site.toLowerCase());
+    }
+
+    return site != null;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function get_header_site($request)
+{
+    $site = $request->server->get('HTTP_SITE');
+
+    if ($site !== null) {
+        $request->server->set('SITE', strtolower($site));
+    }
+
+    return $site !== null;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+getHeaderSite(request)
+{
+    const site = request.headers['http_site'];
+
+    if (site != null)
+    {
+        request.headers['site'] = site.toLowerCase();
+    }
+
+    return site != null;
+}    
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void Invoke(HttpRequest request)
+{
+    if (!EmsConsts.SITES_ENABLED)
+    {
+        request.Headers["SITE"] = EmsConsts.DEFAULT_VDOM;
+    }
+    else if (!this.GetHeaderSite(request))
+    {
+        this.GetSubdomainSite(request);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void call(HttpServletRequest request)
+{
+    if (!EmsConsts.SITES_ENABLED)
+    {
+        request.setAttribute("SITE", EmsConsts.DEFAULT_VDOM);
+    }
+    else if (!this.getHeaderSite(request))
+    {
+        this.getSubdomainSite(request);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function __invoke($request)
+{
+    if (!EmsConsts::SITES_ENABLED) {
+        $request->server->set('SITE', EmsConsts::DEFAULT_VDOM);
+    } elseif (!$this->get_header_site($request)) {
+        $this->get_subdomain_site($request);
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+invoke(request)
+{
+    if (!EmsConsts.SITES_ENABLED)
+    {
+        request.headers['site'] = EmsConsts.DEFAULT_VDOM;
+    }
+    else if (!this.getHeaderSite(request))
+    {
+        this.getSubdomainSite(request);
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Trace all values stored in `request.META` from headers and determine which application components they are propagated to
+{% endstep %}
+
+{% step %}
+Identify locations where user-supplied data is used in database connection settings, queries, connection strings, or database contexts
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+class PostgresConnection
+{
+    public PostgresConnection(string vdom, ...)
+    {
+        this.db_name = $"fcm_{vdom}";
+        this.searchpath = $"SET search_path TO '{this._db_prefix}{this.db_name}', public, addons";
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+class PostgresConnection {
+    public PostgresConnection(String vdom, ...) {
+        this.db_name = String.format("fcm_%s", vdom);
+        this.searchpath = String.format(
+            "SET search_path TO '%s%s', public, addons",
+            this._db_prefix,
+            this.db_name
+        );
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class PostgresConnection
+{
+    public function __construct($vdom, ...)
+    {
+        $this->db_name = "fcm_{$vdom}";
+        $this->searchpath = "SET search_path TO '{$this->_db_prefix}{$this->db_name}', public, addons";
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class PostgresConnection {
+    constructor(vdom, ...)
+    {
+        this.db_name = `fcm_${vdom}`;
+        this.searchpath = `SET search_path TO '${this._db_prefix}${this.db_name}', public, addons`;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether user-controlled data is directly inserted into SQL strings, query templates, or format strings
+{% endstep %}
+
+{% step %}
+Identify all queries executed before authentication and determine whether any portion of those queries is constructed using user-controlled data
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void Execute(string query, ...)
+{
+    this._connection.Execute(this.searchpath);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void execute(String query, ...)
+{
+    this._connection.execute(this.searchpath);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function execute($query, ...)
+{
+    $this->_connection->execute($this->searchpath);
+}    
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+execute(query, ...)
+{
+    this._connection.execute(this.searchpath);
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Where user-controlled data is inserted into queries, determine whether an attacker can break out of the current context (quote breakout), inject a new statement, or comment out the remainder of the query
+
+```sql
+SET search_path TO 'fcm_x'; SELECT pg_sleep(5)--', public, addons
+```
+{% endstep %}
+
+{% step %}
+Identify and review all headers that influence database routing, tenant selection, schema selection, search paths, or request-processing context
+{% endstep %}
+
+{% step %}
+Review the files and classes responsible for database connection management and look for dynamic query construction using user-controlled data
+{% endstep %}
+
+{% step %}
+Across different product versions, review middleware, routing, and database connection files to identify areas that have recently been rewritten or refactored
+{% endstep %}
+
+{% step %}
+During refactor analysis, inspect classes and files whose size, structure, or logic has changed and identify new paths through which user-controlled data can reach database queries
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet

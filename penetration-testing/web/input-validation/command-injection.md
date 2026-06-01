@@ -10,7 +10,7 @@
 
 {% stepper %}
 {% step %}
-When a web application includes a terminal, shell, or IDE interface (e.g., Cloud Shell, Dev Console, Admin Terminal), test URL parameters (project, env, config) for command injection.
+When a web application includes a terminal, shell, or IDE interface (Cloud Shell, Dev Console, Admin Terminal), test URL parameters (project, env, config) for command injection.
 {% endstep %}
 
 {% step %}
