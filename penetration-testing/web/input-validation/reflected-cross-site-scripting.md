@@ -376,4 +376,414 @@ Accept-Language: en-US
 
 ### White Box
 
+#### Reflected Cross-Site Scripting via Unsafe Rendering of User-Controlled Query Parameter
+
+{% stepper %}
+{% step %}
+Identify the application's controllers and extract all `GET` and `POST` routes
+{% endstep %}
+
+{% step %}
+Locate paths that receive user input and display it in a View without security processing
+{% endstep %}
+
+{% step %}
+Trace the data flow from user input to HTML output
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpGet]
+public IActionResult DemoTypeII(string query)
+{
+    ViewData["query"] = query;
+
+    HttpContext.Response.Headers.Add("X-XSS-Protection", "0");
+    return View();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@GetMapping
+public Object DemoTypeII(String query)
+{
+    ViewData.put("query", query);
+
+    response.addHeader("X-XSS-Protection", "0");
+    return View();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpGet]
+public function DemoTypeII($query)
+{
+    $this->ViewData['query'] = $query;
+
+    header("X-XSS-Protection: 0");
+    return $this->View();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.get('/DemoTypeII', (request, response) => {
+    const query = request.query.query;
+
+    ViewData["query"] = query;
+
+    response.setHeader("X-XSS-Protection", "0");
+    return View();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether input data is directly assigned to `ViewData`, `ViewBag`, `Model`, or `TempData`
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+ViewData["query"] = query;
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+ViewData.put("query", query);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$this->ViewData['query'] = $query;
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+ViewData["query"] = query;
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the View file associated with the Action and determine how the stored data is rendered
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+return View();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+return View();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+return $this->View();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+return View();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether automatic encoding mechanisms are used when rendering the data (such as `Html.Raw` or equivalent methods)
+{% endstep %}
+
+{% step %}
+Review the HTTP response security headers and determine whether browser-side protection mechanisms are disabled
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+HttpContext.Response.Headers.Add("X-XSS-Protection","0");
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+response.addHeader("X-XSS-Protection", "0");
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+header("X-XSS-Protection: 0");
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+response.setHeader("X-XSS-Protection", "0");
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify all Actions that store user data and trace the storage path
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost]
+public IActionResult DemoTypeI(CommentViewModel comment)
+{
+    Comment newComment = new Comment();
+    newComment.ID = Guid.NewGuid().ToString();
+    newComment.Username = "Anonymous";
+    newComment.CreatedAt = DateTime.Now;
+    newComment.Text = comment.Text;
+    commentsRepository.Save(newComment);
+
+    return RedirectToAction("DemoTypeI");
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+public Object DemoTypeI(CommentViewModel comment)
+{
+    Comment newComment = new Comment();
+    newComment.setID(java.util.UUID.randomUUID().toString());
+    newComment.setUsername("Anonymous");
+    newComment.setCreatedAt(new java.util.Date());
+    newComment.setText(comment.getText());
+    commentsRepository.save(newComment);
+
+    return RedirectToAction("DemoTypeI");
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+public function DemoTypeI(CommentViewModel $comment)
+{
+    $newComment = new Comment();
+    $newComment->ID = uniqid('', true);
+    $newComment->Username = "Anonymous";
+    $newComment->CreatedAt = new DateTime();
+    $newComment->Text = $comment->Text;
+    $this->commentsRepository->save($newComment);
+
+    return $this->RedirectToAction("DemoTypeI");
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post('/DemoTypeI', (request, response) => {
+    const comment = request.body;
+
+    let newComment = new Comment();
+    newComment.ID = crypto.randomUUID();
+    newComment.Username = "Anonymous";
+    newComment.CreatedAt = new Date();
+    newComment.Text = comment.Text;
+    commentsRepository.save(newComment);
+
+    return RedirectToAction("DemoTypeI");
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether input data is validated, sanitized, or encoded before being stored
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+newComment.Text = comment.Text;
+commentsRepository.Save(newComment);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+newComment.setText(comment.getText());
+commentsRepository.save(newComment);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$newComment->Text = $comment->Text;
+$this->commentsRepository->save($newComment);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+newComment.Text = comment.Text;
+commentsRepository.save(newComment);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the Repository or Data Access Layer and trace where the data is stored, up to the database or file system
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+commentsRepository.Save(newComment);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+commentsRepository.save(newComment);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$this->commentsRepository->save($newComment);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+commentsRepository.save(newComment);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify the path used to retrieve the stored data
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+CommentsViewModel comments = commentsRepository.GetAll();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+CommentsViewModel comments = commentsRepository.getAll();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$comments = $this->commentsRepository->getAll();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const comments = commentsRepository.getAll();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine how the retrieved data is passed to the View
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+return View(comments);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+return View(comments);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+return $this->View($comments);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+return View(comments);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the View responsible for displaying the stored data and determine whether the retrieved data is rendered without encoding, Search all controllers for the following patterns
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+ViewData["..."] = userInput;
+ViewBag.... = userInput;
+Model.Property = userInput;
+return View(model);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+ViewData.put("...", userInput);
+ViewBag.put("...", userInput);
+model.setProperty(userInput);
+return View(model);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$this->ViewData['...'] = $userInput;
+$this->ViewBag->... = $userInput;
+$model->Property = $userInput;
+return $this->View($model);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+ViewData["..."] = userInput;
+ViewBag.... = userInput;
+model.Property = userInput;
+return View(model);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review all response security headers and determine whether browser or framework defense mechanisms are disabled during the rendering process
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
