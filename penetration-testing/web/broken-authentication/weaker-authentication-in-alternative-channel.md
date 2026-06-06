@@ -453,4 +453,305 @@ Finally, determine whether authenticated routes can be accessed through Header S
 
 ***
 
+#### Authentication Bypass via Unsigned SSO Cookie Trust Leading to Arbitrary Account Takeover
+
+{% stepper %}
+{% step %}
+Identify all Authentication and Authorization endpoints responsible for issuing tokens
+{% endstep %}
+
+{% step %}
+Locate methods that obtain user identity information from alternative sources (Cookies, Headers, Sessions, or Query Parameters)
+{% endstep %}
+
+{% step %}
+Identify all Cookies that are directly used in the authentication process
+{% endstep %}
+
+{% step %}
+Trace the Cookie processing flow from the point of receipt to the point of use
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpGet("GetTokenSSO")]
+public IActionResult GetTokenSSO()
+{
+   var ssoCookieData = HttpContext.Request.Cookies["sso_ctx"];
+
+   if(String.IsNullOrEmpty(ssoCookieData)) {
+      return Unauthorized();
+   }
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@GetMapping("GetTokenSSO")
+public Object GetTokenSSO()
+{
+   String ssoCookieData = request.getCookies()["sso_ctx"];
+
+   if (ssoCookieData == null || ssoCookieData.isEmpty()) {
+      return Unauthorized();
+   }
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpGet("GetTokenSSO")]
+public function GetTokenSSO()
+{
+   $ssoCookieData = $_COOKIE["sso_ctx"];
+
+   if (empty($ssoCookieData)) {
+      return $this->Unauthorized();
+   }
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.get("GetTokenSSO", (request, response) => {
+   const ssoCookieData = request.cookies["sso_ctx"];
+
+   if (!ssoCookieData) {
+      return Unauthorized();
+   }
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether the Cookie value undergoes security validation before use (such as Signature Validation, HMAC verification, Encryption Verification, etc.)
+{% endstep %}
+
+{% step %}
+Review all Decode and Deserialize operations performed on Cookie data
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var ssoCookieDecoded = Convert.FromBase64String(ssoCookieData);
+var ssoCookie = JObject.Parse(System.Text.Encoding.UTF8.GetString(ssoCookieDecoded));
+
+var userId = ssoCookie["auth_user"];
+if(userId == null) {
+   return Unauthorized();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+byte[] ssoCookieDecoded = java.util.Base64.getDecoder().decode(ssoCookieData);
+String json = new String(ssoCookieDecoded, java.nio.charset.StandardCharsets.UTF_8);
+
+JSONObject ssoCookie = new JSONObject(json);
+
+Object userId = ssoCookie.opt("auth_user");
+if(userId == null) {
+   return Unauthorized();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$ssoCookieDecoded = base64_decode($ssoCookieData);
+$ssoCookie = json_decode($ssoCookieDecoded, true);
+
+$userId = $ssoCookie["auth_user"];
+if($userId == null) {
+   return Unauthorized();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const ssoCookieDecoded = Buffer.from(ssoCookieData, "base64");
+const ssoCookie = JSON.parse(ssoCookieDecoded.toString("utf8"));
+
+const userId = ssoCookie["auth_user"];
+if (userId == null) {
+   return Unauthorized();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether the decoded data is directly converted into an application-usable object
+{% endstep %}
+
+{% step %}
+Identify all security-sensitive fields extracted from the Cookie
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var userId = ssoCookie["auth_user"];
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+Object userId = ssoCookie.opt("auth_user");
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$userId = $ssoCookie["auth_user"];
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const userId = ssoCookie["auth_user"];
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether values extracted from the Cookie are used as user identity without validation
+{% endstep %}
+
+{% step %}
+Trace the use of the user identifier through database operations
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var user = _context.Users.
+    Where(b => b.ID == userId.ToObject<int>()).
+    FirstOrDefault();
+
+if(user == null) {
+   return NotFound();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = _context.Users.stream()
+    .filter(b -> b.getID() == userId.toObject(Integer.class))
+    .findFirst()
+    .orElse(null);
+
+if(user == null) {
+   return NotFound();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = $this->_context->Users
+    ->where(fn($b) => $b->ID == $userId->toObject('int'))
+    ->first();
+
+if($user == null) {
+   return NotFound();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const user = _context.Users
+    .filter(b => b.ID == userId.toObject(Number))
+    .shift();
+
+if(user == null) {
+   return NotFound();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether the application verifies the ownership or authenticity of the user identifier before loading the user record
+{% endstep %}
+
+{% step %}
+Identify all locations that generate a new token or session after the user is retrieved
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var response = new Models.AuthorizationResponse();
+response.role = user.role;
+response.accessToken = user.createAccessToken();
+
+return Ok(response);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+AuthorizationResponse response = new AuthorizationResponse();
+response.role = user.getRole();
+response.accessToken = user.createAccessToken();
+
+return Ok(response);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$response = new Models\AuthorizationResponse();
+$response->role = $user->role;
+$response->accessToken = $user->createAccessToken();
+
+return Ok($response);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const response = new Models.AuthorizationResponse();
+response.role = user.role;
+response.accessToken = user.createAccessToken();
+
+return Ok(response);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether Access Token generation is based solely on the user identifier or requires additional identity validation
+{% endstep %}
+
+{% step %}
+Modify identity-related fields inside the Cookie in a controlled manner and determine whether it is possible to obtain tokens for other users
+{% endstep %}
+
+{% step %}
+Determine whether changing the user identifier in the Cookie results in Account Takeover, Privilege Escalation, or Authentication Bypass
+{% endstep %}
+
+{% step %}
+Review all SSO flows and determine whether the trust boundary between the Identity Provider and the application is correctly implemented
+{% endstep %}
+
+{% step %}
+Determine whether SSO Cookies have a digital signature, expiration validation, session binding, or anti-forgery mechanisms
+{% endstep %}
+
+{% step %}
+If Base64-encoded Cookies, JSON Cookies, or other user-readable structures are present, treat them as high-priority candidates for Authentication Bypass analysis
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
