@@ -751,6 +751,64 @@ if(user.Role == "SuperAdmin")
 {% step %}
 Determine whether privilege validation is performed before assigning or modifying a Role
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(Role\s*\{\s*get;\s*set;\s*\})|(\[FromBody\])|(Request\.(Body|Form|Query))|(\.Role\s*=\s*request\.\w+)|(\.Role\s*=\s*model\.\w+)|(\.Permissions\s*=)|(\.IsAdmin\s*=)|(\.IsSystemRole\s*=)|(\[Authorize\s*\(\s*Roles\s*=)|(user\.Role\s*==)|(IsInRole\s*\()|(new\s+Claim\s*\(\s*ClaimTypes\.Role)|(AllowSensitiveOperation\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(@RequestBody)|(getParameter\s*\()|(role\s*;)|(setRole\s*\()|(setPermissions\s*\()|(setAdmin\s*\()|(setSystemRole\s*\()|(hasRole\s*\()|(hasAuthority\s*\()|(getRole\s*\(\)\s*\.equals)|(@PreAuthorize)|(@Secured)|(\.addClaim\s*\()|(ROLE_ADMIN)|(ROLE_SUPERADMIN)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_(POST|GET|REQUEST).*(role|permission|group))|(->role\s*=)|(->permission)|(->is_admin\s*=)|(->is_system_role\s*=)|(hasRole\s*\()|(in_array\s*\(\s*\$user->role)|(Gate::allows)|(Gate::authorize)|(can\s*\()|(ability\s*\()|(isAdmin\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(req\.(body|query|params)\.(role|permission|group))|(\.role\s*=)|(permissions\s*=)|(isAdmin\s*=)|(isSystemRole\s*=)|(hasRole\s*\()|(user\.role\s*===)|(roles\.includes\s*\()|(jwt\.sign\s*\()|(jwt\.verify\s*\()|(req\.user\.role)|(authorize\s*\()|(checkRole\s*\()
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Role\s*\{\s*get;\s*set;\s*\}|FromBody|Request\.(Body|Form|Query)|\.Role\s*=\s*request\.|\.Role\s*=\s*model\.|\.Permissions\s*=|\.IsAdmin\s*=|\.IsSystemRole\s*=|Authorize\s*\(\s*Roles\s*=|user\.Role\s*==|IsInRole\s*\(|ClaimTypes\.Role|AllowSensitiveOperation\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+@RequestBody|getParameter\s*\(|role\s*;|setRole\s*\(|setPermissions\s*\(|setAdmin\s*\(|setSystemRole\s*\(|hasRole\s*\(|hasAuthority\s*\(|getRole\s*\(\)\s*\.equals|@PreAuthorize|@Secured|\.addClaim\s*\(|ROLE_ADMIN|ROLE_SUPERADMIN
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_(POST|GET|REQUEST).*(role|permission|group)|->role\s*=|->permission|->is_admin\s*=|->is_system_role\s*=|hasRole\s*\(|in_array\s*\(\s*\$user->role|Gate::allows|Gate::authorize|can\s*\(|ability\s*\(|isAdmin\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+req\.(body|query|params)\.(role|permission|group)|\.role\s*=|permissions\s*=|isAdmin\s*=|isSystemRole\s*=|hasRole\s*\(|user\.role\s*===|roles\.includes\s*\(|jwt\.sign\s*\(|jwt\.verify\s*\(|req\.user\.role|authorize\s*\(|checkRole\s*\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
