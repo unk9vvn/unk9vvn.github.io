@@ -309,6 +309,585 @@ In this section, use the Burp Suite tool to intercept requests to access areas t
 
 ### White Box
 
+#### Vertical Privilege Escalation via Improper Role Assignment and Missing Authorization Checks
+
+{% stepper %}
+{% step %}
+Map the entire application using Burp Suite and identify all administrative functionalities related to **Role, Permission, Group, User Management, and Access Control**
+{% endstep %}
+
+{% step %}
+Create an XMind diagram of all entry and exit points related to Role creation, modification, deletion, and assignment
+{% endstep %}
+
+{% step %}
+Decompile the application and locate Controllers, Routes, or Endpoints related to Role management, such as
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[ApiController]
+[Route("api/roles")]
+public class RolesController : ControllerBase
+{
+    [HttpPost]
+    public IActionResult CreateRole(RoleModel model)
+    {
+        ...
+    }
+
+    [HttpPut("{id}")]
+    public IActionResult UpdateRole(int id, RoleModel model)
+    {
+        ...
+    }
+
+    [HttpPost("{id}/permissions")]
+    public IActionResult AssignPermissions(int id, PermissionModel model)
+    {
+        ...
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@RestController
+@RequestMapping("api/roles")
+public class RolesController
+{
+    @PostMapping
+    public Object CreateRole(RoleModel model)
+    {
+        ...
+    }
+
+    @PutMapping("{id}")
+    public Object UpdateRole(int id, RoleModel model)
+    {
+        ...
+    }
+
+    @PostMapping("{id}/permissions")
+    public Object AssignPermissions(int id, PermissionModel model)
+    {
+        ...
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[ApiController]
+#[Route("api/roles")]
+class RolesController extends ControllerBase
+{
+    #[HttpPost]
+    public function CreateRole(RoleModel $model)
+    {
+        ...
+    }
+
+    #[HttpPut("{id}")]
+    public function UpdateRole(int $id, RoleModel $model)
+    {
+        ...
+    }
+
+    #[HttpPost("{id}/permissions")]
+    public function AssignPermissions(int $id, PermissionModel $model)
+    {
+        ...
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class RolesController
+{
+    CreateRole(model)
+    {
+        ...
+    }
+
+    UpdateRole(id, model)
+    {
+        ...
+    }
+
+    AssignPermissions(id, model)
+    {
+        ...
+    }
+}
+
+app.post("/api/roles", (request, response) => {
+    return new RolesController().CreateRole(request.body);
+});
+
+app.put("/api/roles/:id", (request, response) => {
+    return new RolesController().UpdateRole(request.params.id, request.body);
+});
+
+app.post("/api/roles/:id/permissions", (request, response) => {
+    return new RolesController().AssignPermissions(request.params.id, request.body);
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Trace the request execution path from the Controller to the Service and Repository layers, and determine how Roles are stored and processed
+{% endstep %}
+
+{% step %}
+In the source code, locate models related to Roles and Permissions and identify all sensitive fields
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class Role
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public bool IsAdmin { get; set; }
+
+    public bool IsSystemRole { get; set; }
+
+    public ICollection<Permission> Permissions { get; set; }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class Role
+{
+    private int id;
+
+    private String name;
+
+    private boolean isAdmin;
+
+    private boolean isSystemRole;
+
+    private Collection<Permission> permissions;
+
+    public int getId() { return id; }
+
+    public void setId(int id) { this.id = id; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public boolean isAdmin() { return isAdmin; }
+
+    public void setAdmin(boolean admin) { isAdmin = admin; }
+
+    public boolean isSystemRole() { return isSystemRole; }
+
+    public void setSystemRole(boolean systemRole) { isSystemRole = systemRole; }
+
+    public Collection<Permission> getPermissions() { return permissions; }
+
+    public void setPermissions(Collection<Permission> permissions) { this.permissions = permissions; }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class Role
+{
+    public int $Id;
+
+    public string $Name;
+
+    public bool $IsAdmin;
+
+    public bool $IsSystemRole;
+
+    public array $Permissions;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class Role
+{
+    constructor()
+    {
+        this.Id = 0;
+        this.Name = null;
+        this.IsAdmin = false;
+        this.IsSystemRole = false;
+        this.Permissions = [];
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether sensitive Roles are statically defined within the application or loaded from the database
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static class Roles
+{
+    public const string SuperAdmin = "SuperAdmin";
+    public const string Admin = "Admin";
+    public const string User = "User";
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public final class Roles
+{
+    public static final String SuperAdmin = "SuperAdmin";
+    public static final String Admin = "Admin";
+    public static final String User = "User";
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class Roles
+{
+    public const SuperAdmin = "SuperAdmin";
+    public const Admin = "Admin";
+    public const User = "User";
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class Roles
+{
+    static SuperAdmin = "SuperAdmin";
+    static Admin = "Admin";
+    static User = "User";
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify all locations where a user's Role is received from a request and determine whether the Role value is accepted directly from user input
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class UpdateUserRequest
+{
+    public int UserId { get; set; }
+
+    public string Role { get; set; }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class UpdateUserRequest
+{
+    private int userId;
+
+    private String role;
+
+    public int getUserId() { return userId; }
+
+    public void setUserId(int userId) { this.userId = userId; }
+
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class UpdateUserRequest
+{
+    public int $UserId;
+
+    public string $Role;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class UpdateUserRequest
+{
+    constructor()
+    {
+        this.UserId = 0;
+        this.Role = null;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether the Role value is applied directly to the target object during user creation or modification without restrictions
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+user.Role = request.Role;
+
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+user.setRole(request.getRole());
+
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user->Role = $request->Role;
+
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+user.Role = request.Role;
+
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify all methods that make security decisions based on a Role name or identifier
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if(user.Role == "Admin")
+{
+    return View();
+}
+----------------------------------------------
+if(user.Role == "SuperAdmin")
+{
+    AllowSensitiveOperation();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if(user.getRole().equals("Admin"))
+{
+    return View();
+}
+----------------------------------------------
+if(user.getRole().equals("SuperAdmin"))
+{
+    AllowSensitiveOperation();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if($user->Role == "Admin")
+{
+    return $this->View();
+}
+----------------------------------------------
+if($user->Role == "SuperAdmin")
+{
+    $this->AllowSensitiveOperation();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if(user.Role == "Admin")
+{
+    return View();
+}
+----------------------------------------------
+if(user.Role == "SuperAdmin")
+{
+    AllowSensitiveOperation();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether privilege validation is performed before assigning or modifying a Role
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost]
+public IActionResult UpdateUser(UpdateUserRequest request)
+{
+    user.Role = request.Role;
+
+    _context.SaveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+public Object UpdateUser(UpdateUserRequest request)
+{
+    user.setRole(request.getRole());
+
+    _context.saveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+public function UpdateUser(UpdateUserRequest $request)
+{
+    $user->Role = $request->Role;
+
+    $this->_context->saveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/UpdateUser", (request, response) => {
+    user.Role = request.body.Role;
+
+    _context.saveChanges();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review all security attributes related to Roles
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[Authorize(Roles = "Admin")]
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Authorize(Roles = "Admin")
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[Authorize(Roles: "Admin")]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+@Authorize({ Roles: "Admin" })
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Trace the Authorization execution flow from the Attribute through the Middleware and Security Policies, and determine where the final access decision is made
+{% endstep %}
+
+{% step %}
+Determine whether a Role can be modified directly through Request parameters, JSON bodies, Cookies, JWT Claims, or Headers
+
+```http
+POST /api/users/update
+
+{
+    "userId":1,
+    "role":"SuperAdmin"
+}
+```
+{% endstep %}
+
+{% step %}
+If the Role is extracted from a JWT, review how Role claims are generated
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+new Claim(ClaimTypes.Role, user.Role)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+new Claim(ClaimTypes.Role, user.getRole())
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+new Claim(ClaimTypes::Role, $user->Role)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+new Claim(ClaimTypes.Role, user.Role)
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether a user can gain access to functionality that is not permitted for their current Role by modifying Roles or Permissions
+{% endstep %}
+
+{% step %}
+After identifying the Role assignment point, test high-privilege Role values such as
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Roles Identification
