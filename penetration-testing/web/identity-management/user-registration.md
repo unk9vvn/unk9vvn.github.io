@@ -456,6 +456,64 @@ _context.saveChanges();
 {% step %}
 If Invite, Tenant Registration, Organization Registration, or SSO Registration functionality exists, review those paths as well because user-creation logic is commonly duplicated in those areas
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(Register|Signup|CreateAccount|CreateUser|InviteUser|CompleteInvite|TenantRegistration|SSORegistration)|(\[HttpPost\])|(\[Route\s*\(\s*"register)|(RegisterRequest)|(InviteRegisterRequest)|(user\.(Role|IsAdmin|Permission|Permissions|Group|Claims|AccessLevel)\s*=)|(request\.(Role|IsAdmin|Permission|Permissions|Group|Claims|AccessLevel))|(_context\.Users\.Add)|(\.SaveChanges\s*\()|(ClaimTypes\.Role)|(new\s+Claim\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(@PostMapping)|(@RequestMapping)|(@RequestBody)|(register|signup|createUser|createAccount|inviteUser|completeInvite)|(RegisterRequest|SignupRequest)|(setRole\s*\()|(setAdmin\s*\()|(setPermission)|(setAccessLevel)|(request\.getRole\s*\()|(request\.isAdmin\s*\())|(save\s*\()|(saveAndFlush\s*\()|(new\s+SimpleGrantedAuthority)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(register|signup|createuser|createaccount|inviteuser|completeinvite)|(\$_POST)|(\$request->input)|(\$request->get)|(\$request->role)|(\$request->is_admin)|(->role\s*=)|(->permission\s*=)|(->group\s*=)|(->is_admin\s*=)|(->access_level\s*=)|(User::create)|(save\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(router\.post)|(app\.post)|(register|signup|createuser|createaccount|inviteuser|completeinvite)|(req\.body\.(role|isAdmin|permission|permissions|group|claims|accessLevel))|(\.role\s*=)|(\.isAdmin\s*=)|(\.permission\s*=)|(\.accessLevel\s*=)|(User\.create)|(user\.save\s*\()|(jwt\.sign\s*\()|(roles\s*:)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Register|Signup|CreateAccount|CreateUser|InviteUser|CompleteInvite|TenantRegistration|SSORegistration|\[HttpPost\]|\[Route\s*\(\s*"register|RegisterRequest|InviteRegisterRequest|user\.(Role|IsAdmin|Permission|Permissions|Group|Claims|AccessLevel)\s*=|request\.(Role|IsAdmin|Permission|Permissions|Group|Claims|AccessLevel)|_context\.Users\.Add|\.SaveChanges\s*\(|ClaimTypes\.Role|new\s+Claim\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+@PostMapping|@RequestMapping|@RequestBody|register|signup|createUser|createAccount|inviteUser|completeInvite|RegisterRequest|SignupRequest|setRole\s*\(|setAdmin\s*\(|setPermission|setAccessLevel|request\.getRole\s*\(|request\.isAdmin\s*\(|save\s*\(|saveAndFlush\s*\(|new\s+SimpleGrantedAuthority
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+register|signup|createuser|createaccount|inviteuser|completeinvite|\$_POST|\$request->input|\$request->get|\$request->role|\$request->is_admin|->role\s*=|->permission\s*=|->group\s*=|->is_admin\s*=|->access_level\s*=|User::create|save\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+router\.post|app\.post|register|signup|createuser|createaccount|inviteuser|completeinvite|req\.body\.(role|isAdmin|permission|permissions|group|claims|accessLevel)|\.role\s*=|\.isAdmin\s*=|\.permission\s*=|\.accessLevel\s*=|User\.create|user\.save\s*\(|jwt\.sign\s*\(|roles\s*:
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```c#
