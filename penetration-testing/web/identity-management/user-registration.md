@@ -109,6 +109,436 @@ Confirm that full access to the victim account is obtained, resulting in account
 
 ### White Box
 
+#### Privilege Escalation via User-Controlled Role Assignment During Registration
+
+{% stepper %}
+{% step %}
+Map the entire application using Burp Suite and identify all user registration capabilities (Register, Signup, Create Account, Invite User, Self Registration)
+{% endstep %}
+
+{% step %}
+Locate the Controller, Route, or Endpoint responsible for account creation in the source code and trace the complete registration flow through user creation
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+[HttpPost]
+[Route("register")]
+public IActionResult Register(RegisterRequest request)
+{
+    var user = new User();
+
+    user.Username = request.Username;
+    user.Email = request.Email;
+    user.Password = HashPassword(request.Password);
+
+    _context.Users.Add(user);
+    _context.SaveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("register")
+public Object Register(RegisterRequest request)
+{
+    User user = new User();
+
+    user.setUsername(request.getUsername());
+    user.setEmail(request.getEmail());
+    user.setPassword(HashPassword(request.getPassword()));
+
+    _context.getUsers().add(user);
+    _context.saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("register")]
+public function Register(RegisterRequest $request)
+{
+    $user = new User();
+
+    $user->Username = $request->Username;
+    $user->Email = $request->Email;
+    $user->Password = HashPassword($request->Password);
+
+    $this->_context->Users->add($user);
+    $this->_context->saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post("/register", (request, response) => {
+    const user = new User();
+
+    user.Username = request.body.Username;
+    user.Email = request.body.Email;
+    user.Password = HashPassword(request.body.Password);
+
+    _context.Users.add(user);
+    _context.saveChanges();
+
+    return Ok();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the registration logic, determine whether Role, Group, Permission, Claims, AccessLevel, or IsAdmin values are accepted from user input
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+[HttpPost]
+[Route("register")]
+public IActionResult Register(RegisterRequest request)
+{
+    var user = new User();
+
+    user.Username = request.Username;
+    user.Email = request.Email;
+    user.Password = HashPassword(request.Password);
+
+    user.Role = request.Role;
+    user.IsAdmin = request.IsAdmin;
+
+    _context.Users.Add(user);
+    _context.SaveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("register")
+public Object Register(RegisterRequest request)
+{
+    User user = new User();
+
+    user.setUsername(request.getUsername());
+    user.setEmail(request.getEmail());
+    user.setPassword(HashPassword(request.getPassword()));
+
+    user.setRole(request.getRole());
+    user.setAdmin(request.isAdmin());
+
+    _context.getUsers().add(user);
+    _context.saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("register")]
+public function Register(RegisterRequest $request)
+{
+    $user = new User();
+
+    $user->Username = $request->Username;
+    $user->Email = $request->Email;
+    $user->Password = HashPassword($request->Password);
+
+    $user->Role = $request->Role;
+    $user->IsAdmin = $request->IsAdmin;
+
+    $this->_context->Users->add($user);
+    $this->_context->saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post("/register", (request, response) => {
+    const user = new User();
+
+    user.Username = request.body.Username;
+    user.Email = request.body.Email;
+    user.Password = HashPassword(request.body.Password);
+
+    user.Role = request.body.Role;
+    user.IsAdmin = request.body.IsAdmin;
+
+    _context.Users.add(user);
+    _context.saveChanges();
+
+    return Ok();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the registration models (DTOs, ViewModels, RequestModels) and determine which fields are directly bound from the HTTP request
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+public class RegisterRequest
+{
+    public string Username { get; set; }
+
+    public string Email { get; set; }
+
+    public string Password { get; set; }
+
+    public string Role { get; set; }
+
+    public bool IsAdmin { get; set; }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class RegisterRequest
+{
+    private String username;
+
+    private String email;
+
+    private String password;
+
+    private String role;
+
+    private boolean isAdmin;
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
+
+    public boolean isAdmin() { return isAdmin; }
+
+    public void setAdmin(boolean admin) { isAdmin = admin; }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class RegisterRequest
+{
+    public string $Username;
+
+    public string $Email;
+
+    public string $Password;
+
+    public string $Role;
+
+    public bool $IsAdmin;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class RegisterRequest
+{
+    constructor()
+    {
+        this.Username = null;
+        this.Email = null;
+        this.Password = null;
+        this.Role = null;
+        this.IsAdmin = false;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Continue tracing the processing flow and determine whether Role or Permission values are overwritten with fixed secure values before the user is stored, or whether they are used directly from user input
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+var user = new User();
+
+user.Username = request.Username;
+user.Email = request.Email;
+user.Password = HashPassword(request.Password);
+
+user.Role = request.Role;
+
+_context.Users.Add(user);
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = new User();
+
+user.setUsername(request.getUsername());
+user.setEmail(request.getEmail());
+user.setPassword(HashPassword(request.getPassword()));
+
+user.setRole(request.getRole());
+
+_context.getUsers().add(user);
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = new User();
+
+$user->Username = $request->Username;
+$user->Email = $request->Email;
+$user->Password = HashPassword($request->Password);
+
+$user->Role = $request->Role;
+
+$this->_context->Users->add($user);
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+const user = new User();
+
+user.Username = request.Username;
+user.Email = request.Email;
+user.Password = HashPassword(request.Password);
+
+user.Role = request.Role;
+
+_context.Users.add(user);
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+If Invite, Tenant Registration, Organization Registration, or SSO Registration functionality exists, review those paths as well because user-creation logic is commonly duplicated in those areas
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+[HttpPost]
+[Route("invite/register")]
+public IActionResult CompleteInvite(InviteRegisterRequest request)
+{
+    var user = new User();
+
+    user.Email = request.Email;
+    user.Role = request.Role;
+
+    _context.Users.Add(user);
+    _context.SaveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("invite/register")
+public Object CompleteInvite(InviteRegisterRequest request)
+{
+    User user = new User();
+
+    user.setEmail(request.getEmail());
+    user.setRole(request.getRole());
+
+    _context.getUsers().add(user);
+    _context.saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("invite/register")]
+public function CompleteInvite(InviteRegisterRequest $request)
+{
+    $user = new User();
+
+    $user->Email = $request->Email;
+    $user->Role = $request->Role;
+
+    $this->_context->Users->add($user);
+    $this->_context->saveChanges();
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post("/invite/register", (request, response) => {
+    const user = new User();
+
+    user.Email = request.body.Email;
+    user.Role = request.body.Role;
+
+    _context.Users.add(user);
+    _context.saveChanges();
+
+    return Ok();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Intercept the registration request and add or modify fields such as Role, Permission, Group, Claims, IsAdmin, AccessLevel, and similar values, then determine whether an account is created with elevated privileges
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Find Register Form
