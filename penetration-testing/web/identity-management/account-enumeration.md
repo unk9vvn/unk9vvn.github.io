@@ -51,6 +51,400 @@ The system accepts valid emails without validation, recognizes them as active em
 
 ### White Box
 
+#### User Enumeration via Inconsistent Authentication and Account Recovery Responses
+
+{% stepper %}
+{% step %}
+Map the entire system using Burp Suite and identify all functionalities related to **Login, Registration, Password Reset, Forgot Password, Account Recovery, Invite User, SSO Login, MFA Enrollment, and Username/Email Validation endpoints**. Capture all responses that may reveal user existence through status codes, response messages, or timing differences
+{% endstep %}
+
+{% step %}
+Locate authentication-related controllers, services, or middleware responsible for login and identity validation, and trace the full authentication flow from request input to response generation
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost]
+[Route("api/auth/login")]
+public IActionResult Login([FromBody] LoginRequest request)
+{
+    var user = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+
+    if (user == null)
+        return BadRequest("User does not exist");
+
+    if (!PasswordHasher.Verify(request.Password, user.PasswordHash))
+        return Unauthorized("Invalid password");
+
+    return Ok(new { token = JwtGenerator.Generate(user) });
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("api/auth/login")
+public Object Login(@RequestBody LoginRequest request)
+{
+    User user = _context.getUsers()
+        .stream()
+        .filter(x -> x.getEmail().equals(request.getEmail()))
+        .findFirst()
+        .orElse(null);
+
+    if (user == null)
+        return BadRequest("User does not exist");
+
+    if (!PasswordHasher.verify(request.getPassword(), user.getPasswordHash()))
+        return Unauthorized("Invalid password");
+
+    return Ok(Map.of("token", JwtGenerator.generate(user)));
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("api/auth/login")]
+public function Login(LoginRequest $request)
+{
+    $user = $this->_context->Users
+        ->where(fn($x) => $x->Email == $request->Email)
+        ->first();
+
+    if ($user == null)
+        return BadRequest("User does not exist");
+
+    if (!PasswordHasher::verify($request->Password, $user->PasswordHash))
+        return Unauthorized("Invalid password");
+
+    return Ok(["token" => JwtGenerator::generate($user)]);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/api/auth/login", (request, response) => {
+    const user = _context.Users.find(x => x.Email === request.body.Email);
+
+    if (!user)
+        return BadRequest("User does not exist");
+
+    if (!PasswordHasher.verify(request.body.Password, user.PasswordHash))
+        return Unauthorized("Invalid password");
+
+    return Ok({ token: JwtGenerator.generate(user) });
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review all authentication input models and determine which identifiers are accepted for user lookup (Email, Username, Phone Number, UPN, ExternalId) and whether they are validated differently
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class LoginRequest
+{
+    public string Email { get; set; }
+    public string Username { get; set; }
+    public string PhoneNumber { get; set; }
+    public string Password { get; set; }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class LoginRequest
+{
+    private String email;
+    private String username;
+    private String phoneNumber;
+    private String password;
+
+    // getters/setters
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class LoginRequest
+{
+    public string $Email;
+    public string $Username;
+    public string $PhoneNumber;
+    public string $Password;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class LoginRequest
+{
+    constructor()
+    {
+        this.Email = null;
+        this.Username = null;
+        this.PhoneNumber = null;
+        this.Password = null;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Analyze whether the application returns different responses for existing vs non-existing accounts in login, registration, or password reset flows (status codes, error messages, response structure, or timing)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (user == null)
+{
+    return BadRequest("Account not found");
+}
+else
+{
+    return BadRequest("Incorrect password");
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (user == null)
+{
+    return BadRequest("Account not found");
+}
+else
+{
+    return BadRequest("Incorrect password");
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($user == null)
+{
+    return BadRequest("Account not found");
+}
+else
+{
+    return BadRequest("Incorrect password");
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (user == null)
+{
+    return BadRequest("Account not found");
+}
+else
+{
+    return BadRequest("Incorrect password");
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review password reset and account recovery logic to determine whether email/username existence is validated before sending reset tokens or OTPs
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var user = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+
+if (user != null)
+{
+    SendResetLink(user.Email);
+}
+
+return Ok("If the account exists, a reset link has been sent");
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = _context.getUsers()
+    .stream()
+    .filter(x -> x.getEmail().equals(request.getEmail()))
+    .findFirst()
+    .orElse(null);
+
+if (user != null)
+{
+    SendResetLink(user.getEmail());
+}
+
+return Ok("If the account exists, a reset link has been sent");
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = $this->_context->Users
+    ->where(fn($x) => $x->Email == $request->Email)
+    ->first();
+
+if ($user != null)
+{
+    SendResetLink($user->Email);
+}
+
+return Ok("If the account exists, a reset link has been sent");
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const user = _context.Users.find(x => x.Email === request.body.Email);
+
+if (user)
+{
+    SendResetLink(user.Email);
+}
+
+return Ok("If the account exists, a reset link has been sent");
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check registration and invite flows for behavior differences when attempting to register with existing emails or usernames, which can confirm account existence
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (_context.Users.Any(x => x.Email == request.Email))
+{
+    return Conflict("Email already registered");
+}
+
+_context.Users.Add(new User { Email = request.Email });
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (_context.getUsers().stream().anyMatch(x -> x.getEmail().equals(request.getEmail())))
+{
+    return Conflict("Email already registered");
+}
+
+_context.getUsers().add(new User(request.getEmail()));
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($this->_context->Users->any(fn($x) => $x->Email == $request->Email))
+{
+    return Conflict("Email already registered");
+}
+
+$this->_context->Users->add(new User(["Email" => $request->Email]));
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (_context.Users.some(x => x.Email === request.body.Email))
+{
+    return Conflict("Email already registered");
+}
+
+_context.Users.push({ Email: request.body.Email });
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Analyze timing-based enumeration vectors where response latency differs between valid and invalid usernames/emails due to database lookups, hashing, or external identity provider checks
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var user = _context.Users.FirstOrDefault(x => x.Username == request.Username);
+
+// Password hashing only executed if user exists
+if (user != null)
+{
+    PasswordHasher.Verify(request.Password, user.PasswordHash);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = _context.getUsers()
+    .stream()
+    .filter(x -> x.getUsername().equals(request.getUsername()))
+    .findFirst()
+    .orElse(null);
+
+// Password hashing only executed if user exists
+if (user != null)
+{
+    PasswordHasher.verify(request.getPassword(), user.getPasswordHash());
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = $this->_context->Users
+    ->where(fn($x) => $x->Username == $request->Username)
+    ->first();
+
+// Password hashing only executed if user exists
+if ($user != null)
+{
+    PasswordHasher::verify($request->Password, $user->PasswordHash);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const user = _context.Users.find(x => x.Username === request.body.Username);
+
+// Password hashing only executed if user exists
+if (user)
+{
+    PasswordHasher.verify(request.body.Password, user.PasswordHash);
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+ntercept authentication, registration, and recovery requests using Burp Suite and systematically test variations of usernames/emails/phones to determine whether the system leaks account existence through
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Status Code
