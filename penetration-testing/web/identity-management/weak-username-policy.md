@@ -400,6 +400,64 @@ _context.saveChanges();
 {% step %}
 Evaluate whether weak policies allow predictable, low-entropy usernames such as incremental IDs, default usernames, or email-based automatic username generation without restrictions
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(api\/users\/register|RegisterRequest|Username|UserName|CreateUser|InviteUser|SSO|SCIM|LDAP|AzureAD|Provision|Sync|UserManagement|ProfileUpdate|ChangeUsername)|(\[HttpPost\])|(\[Route)|(\[FromBody\])|(user\.Username\s*=)|(request\.Username)|(ExternalIdentity\.UserPrincipalName)|(Email)|(UserPrincipalName)|(DisplayName)|(SystemName)|(NormalizedUserName)|(_context\.Users\.Add)|(\.SaveChanges\s*\()|(Any\s*\(\s*x\s*=>\s*x\.Username\s*==)|(Count\s*\(\))|(Conflict|BadRequest|Exists|Duplicate)|(string\.IsNullOrEmpty\s*\(request\.Username\))
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(@PostMapping|@RequestMapping|Username|UserName|register|signup|invite|scim|ldap|sso|azuread|createuser|profile|updateusername)|(setUsername\s*\(|request\.getUsername|request\.getUserName)|(findByUsername|existsByUsername|count\(\))|(save\s*\(|saveAndFlush\s*\()|(String\.isEmpty|isBlank)|(ROLE_ADMIN|admin|root|system)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(register|signup|invite|scim|ldap|sso|azuread|createuser|username|profile|updateusername)|(\$request->username)|(\$_(POST|GET|REQUEST))|(->username\s*=)|(->email\s*=)|(User::create)|(firstOrCreate)|(updateOrCreate)|(count\(\))|(exists\(\))|(empty\()|(is_null\()|(admin|root|system)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(register|signup|invite|scim|ldap|sso|azuread|createuser|username|profile|updateusername)|(req\.body\.username)|(req\.body\.userName)|(\.username\s*=)|(\.userName\s*=)|(User\.create)|(user\.save\s*\()|(findOne\s*\(\s*\{.*username)|(exists\s*\(\s*\{.*username)|(countDocuments)|(admin|root|system|guest)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+api\/users\/register|RegisterRequest|Username|UserName|CreateUser|InviteUser|SSO|SCIM|LDAP|AzureAD|Provision|Sync|UserManagement|ProfileUpdate|ChangeUsername|\[HttpPost\]|\[Route|\[FromBody\]|user\.Username\s*=|request\.Username|ExternalIdentity\.UserPrincipalName|Email|UserPrincipalName|DisplayName|SystemName|NormalizedUserName|_context\.Users\.Add|\.SaveChanges\s*\(|Any\s*\(\s*x\s*=>\s*x\.Username\s*==|Count\s*\(\)|Conflict|BadRequest|Exists|Duplicate|string\.IsNullOrEmpty\s*\(request\.Username\)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+@PostMapping|@RequestMapping|Username|UserName|register|signup|invite|scim|ldap|sso|azuread|createuser|profile|updateusername|setUsername\s*\(|request\.getUsername|request\.getUserName|findByUsername|existsByUsername|count\(\)|save\s*\(|saveAndFlush\s*\(|String\.isEmpty|isBlank|ROLE_ADMIN|admin|root|system
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+register|signup|invite|scim|ldap|sso|azuread|createuser|username|profile|updateusername|\$request->username|\$_(POST|GET|REQUEST)|->username\s*=|->email\s*=|User::create|firstOrCreate|updateOrCreate|count\(\)|exists\(\)|empty\(|is_null\(|admin|root|system
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+register|signup|invite|scim|ldap|sso|azuread|createuser|username|profile|updateusername|req\.body\.username|req\.body\.userName|\.username\s*=|\.userName\s*=|User\.create|user\.save\s*\(|findOne\s*\(\s*\{.*username|exists\s*\(\s*\{.*username|countDocuments|admin|root|system|guest
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
