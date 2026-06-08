@@ -202,6 +202,64 @@ class ScimUserRequest
 {% step %}
 Determine whether Role, Group, Permission, Department, Manager, Tenant, Organization, or other security attributes are directly assigned from incoming data
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(ScimUserRequest|Provision|Provisioning|Sync|LDAP|SSO|AzureAD|Okta|UserImport|CreateUser|UsersController|scim\/v2\/Users)|(\[HttpPost\])|(\[Route\s*\(\s*["']scim)|(\[FromBody\])|(Roles\s*:|Groups\s*:|Department|Tenant|Organization|ExternalId|ObjectId|EmployeeId)|(user\.(Role|Roles|Group|Groups|Permission|Permissions|IsAdmin|TenantId|Department|Manager)\s*=)|(request\.(Roles|Groups|Role|IsAdmin|TenantId|Department|Manager))|(_context\.Users\.Add)|(\.SaveChanges\s*\()|(FirstOrDefault\s*\()|(ExternalId\s*==|Email\s*==)|(IsAdmin\s*==)|(Role\s*==)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(@PostMapping|@RequestMapping|scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser)|(ScimUserRequest|UserRequest)|(setRole\s*\(|setGroups\s*\(|setPermissions\s*\(|setIsAdmin\s*\(|setTenantId\s*\()|(request\.getRoles|request\.getGroups|request\.getDepartment|request\.getExternalId)|(save\s*\(|saveAndFlush\s*\()|(findByEmail|findByExternalId|findByObjectId)|(ROLE_|GROUP_)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser)|(\$_(POST|GET|REQUEST))|(\$request->input)|(\$request->roles)|(\$request->groups)|(->role\s*=)|(->roles\s*=)|(->group\s*=)|(->groups\s*=)|(->is_admin\s*=)|(->tenant_id\s*=)|(->external_id\s*=)|(User::create)|(\->save\s*\()|(firstOrCreate)|(updateOrCreate)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser)|(req\.body\.(role|roles|groups|isAdmin|tenantId|department|externalId|objectId|email))|(\.role\s*=)|(\.roles\s*=)|(\.groups\s*=)|(\.isAdmin\s*=)|(\.tenantId\s*=)|(User\.create)|(user\.save\s*\()|(findOne\s*\(\s*\{.*email)|(findOne\s*\(\s*\{.*externalId)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+ScimUserRequest|Provision|Provisioning|Sync|LDAP|SSO|AzureAD|Okta|UserImport|CreateUser|scim\/v2\/Users|\[HttpPost\]|\[Route\s*\(\s*["']scim|\[FromBody\]|Roles|Groups|Department|Tenant|Organization|ExternalId|ObjectId|EmployeeId|user\.(Role|Roles|Group|Groups|Permission|Permissions|IsAdmin|TenantId|Department|Manager)\s*=|request\.(Roles|Groups|Role|IsAdmin|TenantId|Department|Manager)|_context\.Users\.Add|\.SaveChanges\s*\(|FirstOrDefault\s*\(|ExternalId\s*==|Email\s*==|IsAdmin\s*==|Role\s*==
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+@PostMapping|@RequestMapping|scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|ScimUserRequest|UserRequest|setRole\s*\(|setGroups\s*\(|setPermissions\s*\(|setIsAdmin\s*\(|setTenantId\s*\(|request\.getRoles|request\.getGroups|request\.getDepartment|request\.getExternalId|save\s*\(|saveAndFlush\s*\(|findByEmail|findByExternalId|findByObjectId|ROLE_|GROUP_
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|\$_(POST|GET|REQUEST)|\$request->input|\$request->roles|\$request->groups|->role\s*=|->roles\s*=|->group\s*=|->groups\s*=|->is_admin\s*=|->tenant_id\s*=|->external_id\s*=|User::create|->save\s*\(|firstOrCreate|updateOrCreate
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|req\.body\.(role|roles|groups|isAdmin|tenantId|department|externalId|objectId|email)|\.role\s*=|\.roles\s*=|\.groups\s*=|\.isAdmin\s*=|\.tenantId\s*=|User\.create|user\.save\s*\(|findOne\s*\(\s*\{.*email|findOne\s*\(\s*\{.*externalId    
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
