@@ -205,6 +205,65 @@ class LoginRequest
 {% step %}
 Analyze whether the application returns different responses for existing vs non-existing accounts in login, registration, or password reset flows (status codes, error messages, response structure, or timing)
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(scim\/v2\/Users|ScimUserRequest|Provision|Provisioning|Sync|LDAP|SSO|AzureAD|Okta|UserManagement|ImportUser|CreateUser|AutoProvision)|(\[HttpPost\])|(\[Route\s*\(\s*["']scim)|(\[FromBody\])|(Roles|Groups|Permission|Permissions|TenantId|Organization|Department|Manager|ExternalId|ObjectId|EmployeeId|EnterpriseUser)|(
+user\.(Role|Roles|Group|Groups|Permission|Permissions|IsAdmin|TenantId|Organization|Department|Manager)\s*=)|(request\.(Roles|Groups|Role|IsAdmin|TenantId|Department|Manager|ExternalId|Email))|(_context\.Users\.Add)|(\.SaveChanges\s*\()|(FirstOrDefault\s*\()|(Email\s*==|ExternalId\s*==|ObjectId\s*==)|(IsAdmin\s*==|Role\s*==)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(@PostMapping|@RequestMapping|scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision|UserRequest|ScimUserRequest)|(setRole\s*\(|setGroups\s*\(|setPermissions\s*\(|setIsAdmin\s*\(|setTenantId\s*\(|setDepartment\s*\()|(request\.getRoles|request\.getGroups|request\.getExternalId|request\.getEmail)|(save\s*\(|saveAndFlush\s*\()|(findByEmail|findByExternalId|findByObjectId)|(ROLE_|GROUP_|TENANT_)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision)|(\$_(POST|GET|REQUEST))|(\$request->input)|(\$request->roles)|(\$request->groups)|(\$request->email)|(\$request->external_id)|(->role\s*=)|(->roles\s*=)|(->group\s*=)|(->groups\s*=)|(->is_admin\s*=)|(->tenant_id\s*=)|(->organization_id\s*=)|(->save\s*\()|(User::create)|(firstOrCreate)|(updateOrCreate)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision)|(req\.body\.(role|roles|groups|isAdmin|tenantId|organizationId|department|manager|externalId|objectId|email))|(\.role\s*=)|(\.roles\s*=)|(\.groups\s*=)|(\.isAdmin\s*=)|(\.tenantId\s*=)|(User\.create)|(user\.save\s*\()|(findOne\s*\(\s*\{.*email)|(findOne\s*\(\s*\{.*externalId)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+scim\/v2\/Users|ScimUserRequest|Provision|Provisioning|Sync|LDAP|SSO|AzureAD|Okta|UserManagement|ImportUser|CreateUser|AutoProvision|\[HttpPost\]|\[Route\s*\(\s*["']scim|\[FromBody\]|Roles|Groups|Permission|Permissions|TenantId|Organization|Department|Manager|ExternalId|ObjectId|EmployeeId|EnterpriseUser|user\.(Role|Roles|Group|Groups|Permission|Permissions|IsAdmin|TenantId|Organization|Department|Manager)\s*=|request\.(Roles|Groups|Role|IsAdmin|TenantId|Department|Manager|ExternalId|Email)|_context\.Users\.Add|\.SaveChanges\s*\(|FirstOrDefault\s*\(|Email\s*==|ExternalId\s*==|ObjectId\s*==|IsAdmin\s*==|Role\s*==
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+@PostMapping|@RequestMapping|scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision|UserRequest|ScimUserRequest|setRole\s*\(|setGroups\s*\(|setPermissions\s*\(|setIsAdmin\s*\(|setTenantId\s*\(|setDepartment\s*\(|request\.getRoles|request\.getGroups|request\.getExternalId|request\.getEmail|save\s*\(|saveAndFlush\s*\(|findByEmail|findByExternalId|findByObjectId|ROLE_|GROUP_|TENANT_
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision|\$_(POST|GET|REQUEST)|\$request->input|\$request->roles|\$request->groups|\$request->email|\$request->external_id|->role\s*=|->roles\s*=|->group\s*=|->groups\s*=|->is_admin\s*=|->tenant_id\s*=|->organization_id\s*=|->save\s*\(|User::create|firstOrCreate|updateOrCreate
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+scim|provision|sync|ldap|sso|azuread|okta|userimport|createuser|autoprovision|req\.body\.(role|roles|groups|isAdmin|tenantId|organizationId|department|manager|externalId|objectId|email)|\.role\s*=|\.roles\s*=|\.groups\s*=|\.isAdmin\s*=|\.tenantId\s*=|User\.create|user\.save\s*\(|findOne\s*\(\s*\{.*email|findOne\s*\(\s*\{.*externalId
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp

@@ -157,6 +157,362 @@ If the response is in JSON format and the response body contains 'false,' manipu
 
 ### White Box
 
+#### Username Policy Bypass via Weak Validation and Insecure Identity Handling Across User Lifecycle Endpoints
+
+{% stepper %}
+{% step %}
+Map the entire system using Burp Suite and identify all functionalities related to **User Registration, Account Creation, Profile Update, Username Change, Invite User, SSO Provisioning, SCIM/LDAP Sync, and Admin User Management panels**. Capture all endpoints where usernames are created, modified, or validated
+{% endstep %}
+
+{% step %}
+Locate backend controllers, services, or domain logic responsible for username generation and validation, and trace the full flow from input submission to database persistence
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost]
+[Route("api/users/register")]
+public IActionResult Register([FromBody] RegisterRequest request)
+{
+    var user = new User
+    {
+        Username = request.Username,
+        Email = request.Email
+    };
+
+    _context.Users.Add(user);
+    _context.SaveChanges();
+
+    return Ok(user);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("api/users/register")
+public Object Register(@RequestBody RegisterRequest request)
+{
+    User user = new User();
+    user.setUsername(request.getUsername());
+    user.setEmail(request.getEmail());
+
+    _context.getUsers().add(user);
+    _context.saveChanges();
+
+    return Ok(user);
+}
+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("api/users/register")]
+public function Register(RegisterRequest $request)
+{
+    $user = new User();
+    $user->Username = $request->Username;
+    $user->Email = $request->Email;
+
+    $this->_context->Users->add($user);
+    $this->_context->saveChanges();
+
+    return Ok($user);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/api/users/register", (request, response) => {
+    const user = new User();
+    user.Username = request.body.Username;
+    user.Email = request.body.Email;
+
+    _context.Users.add(user);
+    _context.saveChanges();
+
+    return Ok(user);
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review username input models and determine whether any validation rules exist for format, length, character set, or reserved keywords
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class RegisterRequest
+{
+    public string Username { get; set; }
+    public string Email { get; set; }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class RegisterRequest
+{
+    private String username;
+    private String email;
+
+    // getters/setters
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class RegisterRequest
+{
+    public string $Username;
+    public string $Email;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class RegisterRequest
+{
+    constructor()
+    {
+        this.Username = null;
+        this.Email = null;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Analyze whether the system enforces strong username constraints such as minimum length, maximum length, allowed character sets, or prevents dangerous patterns (spaces, unicode abuse, script injection, reserved system names)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (string.IsNullOrEmpty(request.Username))
+    return BadRequest("Username required");
+
+user.Username = request.Username;
+_context.Users.Add(user);
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (request.getUsername() == null || request.getUsername().isEmpty())
+    return BadRequest("Username required");
+
+user.setUsername(request.getUsername());
+_context.getUsers().add(user);
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if (empty($request->Username))
+    return BadRequest("Username required");
+
+$user->Username = $request->Username;
+$this->_context->Users->add($user);
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (!request.body.Username)
+    return BadRequest("Username required");
+
+user.Username = request.body.Username;
+_context.Users.add(user);
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether duplicate username handling is implemented correctly and whether race conditions or inconsistent validation allow bypassing uniqueness constraints
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (_context.Users.Any(x => x.Username == request.Username))
+{
+    return Conflict("Username already exists");
+}
+
+_context.Users.Add(new User { Username = request.Username });
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (_context.getUsers().stream().anyMatch(x -> x.getUsername().equals(request.getUsername())))
+{
+    return Conflict("Username already exists");
+}
+
+_context.getUsers().add(new User(request.getUsername()));
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($this->_context->Users->any(fn($x) => $x->Username == $request->Username))
+{
+    return Conflict("Username already exists");
+}
+
+$this->_context->Users->add(new User(["Username" => $request->Username]));
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (_context.Users.some(x => x.Username === request.body.Username))
+{
+    return Conflict("Username already exists");
+}
+
+_context.Users.push(new User({ Username: request.body.Username }));
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Evaluate whether weak policies allow predictable, low-entropy usernames such as incremental IDs, default usernames, or email-based automatic username generation without restrictions
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var user = new User
+{
+    Username = "user" + _context.Users.Count(),
+    Email = request.Email
+};
+
+_context.Users.Add(user);
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = new User();
+user.setUsername("user" + _context.getUsers().size());
+user.setEmail(request.getEmail());
+
+_context.getUsers().add(user);
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = new User([
+    "Username" => "user" . $this->_context->Users->count(),
+    "Email" => $request->Email
+]);
+
+$this->_context->Users->add($user);
+$this->_context->saveChanges();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const user = new User({
+    Username: "user" + _context.Users.length,
+    Email: request.body.Email
+});
+
+_context.Users.push(user);
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review external identity provisioning flows (SSO, SCIM, LDAP, Azure AD) to determine whether usernames are directly accepted from external providers without normalization or policy enforcement
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var user = new User
+{
+    Username = request.ExternalIdentity.UserPrincipalName,
+    Email = request.ExternalIdentity.Email
+};
+
+_context.Users.Add(user);
+_context.SaveChanges();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+User user = new User();
+user.setUsername(request.getExternalIdentity().getUserPrincipalName());
+user.setEmail(request.getExternalIdentity().getEmail());
+
+_context.getUsers().add(user);
+_context.saveChanges();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$user = new User([
+    "Username" => $request->ExternalIdentity->UserPrincipalName,
+    "Email" => $request->ExternalIdentity->Email
+]);
+
+$this->_context->Users->add($user);
+$this->_context->saveChanges();
+Node.js
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const user = new User({
+    Username: request.body.ExternalIdentity?.UserPrincipalName,
+    Email: request.body.ExternalIdentity?.Email
+});
+
+_context.Users.push(user);
+_context.saveChanges();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Intercept user creation and update requests using Burp Suite and test whether the system accepts weak or unsafe usernames such as
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Register & Weak Username
