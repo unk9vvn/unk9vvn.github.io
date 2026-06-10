@@ -192,6 +192,64 @@ app.post("/api/account/recovery", (request, response) => {
 {% step %}
 Then inspect the Security Question validation logic in the Service layer and determine whether comparison is performed in a weak way (direct comparison, no hashing, no salt, or no rate limiting)
 
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(VerifySecurityAnswer|SetSecurityQuestion|GenerateRecoveryToken|RecoverAccount)[\s\S]{0,400}(==|Equals|return\s+storedAnswer\s*==|storedAnswer\s*==\s*answer)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recoverAccount)[\s\S]{0,400}(==|equals\s*\(|return\s+storedAnswer\s*==)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recovery)[\s\S]{0,400}(==|===|strcmp|return\s+\$storedAnswer\s*==)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recoverAccount)[\s\S]{0,400}(===|==|storedAnswer\s*===|return\s+storedAnswer\s*==)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(VerifySecurityAnswer|SetSecurityQuestion|GenerateRecoveryToken|RecoverAccount).{0,400}(==|Equals|storedAnswer\s*==\s*answer)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recoverAccount).{0,400}(==|equals\s*\(|storedAnswer\s*==)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recovery).{0,400}(==|===|strcmp|\$storedAnswer\s*==)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(verifySecurityAnswer|setSecurityQuestion|generateRecoveryToken|recoverAccount).{0,400}(===|==|storedAnswer\s*===)
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
