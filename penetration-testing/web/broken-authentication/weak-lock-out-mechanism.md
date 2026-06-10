@@ -364,6 +364,481 @@ Instead of automated methods, you can use human-based captcha-solving services w
 
 ### White Box
 
+#### Insufficient Protection Against Brute Force Attacks
+
+{% stepper %}
+{% step %}
+Map the entire system using Burp Suite and identify all authentication entry points, including Login, SSO, API Authentication, Password Reset, MFA, VPN Login
+{% endstep %}
+
+{% step %}
+Locate the Controller, Middleware, Filter, or Service responsible for controlling failed login attempts and determine whether a lockout mechanism is triggered after a certain number of failed attempts
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public async Task<IActionResult> Login(LoginRequest request)
+{
+    var user = await _userRepository.FindByUsername(request.Username);
+
+    if (user == null)
+        return Unauthorized();
+
+    if (!PasswordHasher.Verify(request.Password, user.PasswordHash))
+    {
+        user.FailedLoginCount++;
+
+        await _userRepository.Update(user);
+
+        return Unauthorized();
+    }
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public async Task<IActionResult> Login(LoginRequest request)
+{
+    User user = await _userRepository.findByUsername(request.getUsername());
+
+    if (user == null)
+        return Unauthorized();
+
+    if (!PasswordHasher.verify(request.getPassword(), user.getPasswordHash()))
+    {
+        user.setFailedLoginCount(user.getFailedLoginCount() + 1);
+
+        await _userRepository.update(user);
+
+        return Unauthorized();
+    }
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public async function Login(LoginRequest $request)
+{
+    $user = await $this->_userRepository->findByUsername($request->Username);
+
+    if ($user == null)
+        return Unauthorized();
+
+    if (!PasswordHasher::verify($request->Password, $user->PasswordHash))
+    {
+        $user->FailedLoginCount++;
+
+        await $this->_userRepository->update($user);
+
+        return Unauthorized();
+    }
+
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+async function Login(request)
+{
+    const user = await _userRepository.findByUsername(request.Username);
+
+    if (user == null)
+        return Unauthorized();
+
+    if (!PasswordHasher.verify(request.Password, user.PasswordHash))
+    {
+        user.FailedLoginCount++;
+
+        await _userRepository.update(user);
+
+        return Unauthorized();
+    }
+
+    return Ok();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Trace the processing flow of failed login attempts and determine whether variables such as `FailedLoginCount`, `InvalidAttempts`, `RetryCount`, or `LoginAttempts` are used in lockout decisions
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (user.FailedLoginCount >= 5)
+{
+    user.IsLocked = true;
+    user.LockedUntil = DateTime.UtcNow.AddMinutes(30);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (user.getFailedLoginCount() >= 5)
+{
+    user.setLocked(true);
+    user.setLockedUntil(java.time.Instant.now().plus(java.time.Duration.ofMinutes(30)));
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($user->FailedLoginCount >= 5)
+{
+    $user->IsLocked = true;
+    $user->LockedUntil = (new DateTime())->modify('+30 minutes');
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (user.FailedLoginCount >= 5)
+{
+    user.IsLocked = true;
+    user.LockedUntil = new Date(Date.now() + 30 * 60 * 1000);
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the lockout logic and determine whether restrictions are enforced based on Username, Session, Cookie, IP Address, Device ID, or a combination of these factors
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var failedAttempts = _cache.Get<int>(
+    $"login_attempts_{request.Username}"
+);
+
+if (failedAttempts > 5)
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+Integer failedAttempts = _cache.get(
+    String.format("login_attempts_%s", request.getUsername())
+);
+
+if (failedAttempts > 5)
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$failedAttempts = $cache->get(
+    "login_attempts_" . $request->Username
+);
+
+if ($failedAttempts > 5)
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const failedAttempts = _cache.get(
+    `login_attempts_${request.Username}`
+);
+
+if (failedAttempts > 5)
+{
+    return Forbid();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Identify all locations where the lockout counter is reset and determine whether the restriction can be bypassed by changing the IP address, modifying headers, deleting cookies, creating a new session, or changing the username
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount)[\s\S]{0,300}(IsLocked|LockedUntil|LockoutEnd|LockoutEnabled|Forbid|Unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount)[\s\S]{0,300}(isLocked|lockedUntil|lockoutEnd|lockAccount|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount)[\s\S]{0,300}(isLocked|lockedUntil|lockoutEnd|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount)[\s\S]{0,300}(isLocked|lockedUntil|lockoutEnd|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount).{0,300}(IsLocked|LockedUntil|LockoutEnd|LockoutEnabled|Forbid|Unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount).{0,300}(isLocked|lockedUntil|lockoutEnd|lockAccount|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount).{0,300}(isLocked|lockedUntil|lockoutEnd|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(FailedLoginCount|InvalidAttempts|RetryCount|LoginAttempts|FailedAttempts|AccessFailedCount|BadPasswordCount).{0,300}(isLocked|lockedUntil|lockoutEnd|forbidden|unauthorized|AccountLocked)
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (loginSuccessful)
+{
+    user.FailedLoginCount = 0;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (loginSuccessful)
+{
+    user.setFailedLoginCount(0);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($loginSuccessful)
+{
+    $user->FailedLoginCount = 0;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (loginSuccessful)
+{
+    user.FailedLoginCount = 0;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the authentication logic, determine whether the lockout mechanism is enforced only on the user interface or also on all authentication APIs and endpoints
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost("login")]
+public IActionResult Login(LoginRequest request)
+{
+    ...
+}
+
+[HttpPost("api/token")]
+public IActionResult GenerateToken(LoginRequest request)
+{
+    ...
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping("login")
+public Object Login(LoginRequest request)
+{
+    ...
+}
+
+@PostMapping("api/token")
+public Object GenerateToken(LoginRequest request)
+{
+    ...
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost("login")]
+public function Login(LoginRequest $request)
+{
+    ...
+}
+
+#[HttpPost("api/token")]
+public function GenerateToken(LoginRequest $request)
+{
+    ...
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/login", (request, response) => {
+    ...
+});
+
+app.post("/api/token", (request, response) => {
+    ...
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the source code and determine whether temporary lockout or permanent lockout mechanisms exist and whether their values are predictable or can be bypassed
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (user.IsLocked &&
+    user.LockedUntil > DateTime.UtcNow)
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (user.isLocked() &&
+    user.getLockedUntil().isAfter(java.time.Instant.now()))
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($user->IsLocked &&
+    $user->LockedUntil > new DateTime())
+{
+    return Forbid();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (user.IsLocked &&
+    user.LockedUntil > new Date())
+{
+    return Forbid();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Determine whether the lockout mechanism is consistently enforced across all authentication paths or whether some endpoints remain unrestricted
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[AllowAnonymous]
+[HttpPost("authenticate")]
+public IActionResult Authenticate(LoginRequest request)
+{
+    return _authService.Authenticate(request);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@AllowAnonymous
+@PostMapping("authenticate")
+public Object Authenticate(LoginRequest request)
+{
+    return _authService.authenticate(request);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[AllowAnonymous]
+#[HttpPost("authenticate")]
+public function Authenticate(LoginRequest $request)
+{
+    return $this->_authService->Authenticate($request);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/authenticate", (request, response) => {
+    return _authService.authenticate(request);
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Finally, attempt to bypass the lockout mechanism by sending a large number of failed authentication requests, changing usernames, changing IP addresses, modifying sessions, or using alternative authentication endpoints, and document any weaknesses in the account lockout implementation
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Lockout Mechanism <a href="#lockout-mechanism" id="lockout-mechanism"></a>

@@ -33,6 +33,451 @@ And then we can automatically find the authentication form on the site using the
 
 ### White Box
 
+#### Use of Default Credentials
+
+{% stepper %}
+{% step %}
+Map the entire system using Burp Suite and identify all entry points, administrative panels, APIs, management services, agents, consoles, setup pages, and initial configuration interfaces
+{% endstep %}
+
+{% step %}
+Search documentation, installation files, Docker Compose files, Kubernetes manifests, Helm charts, configuration files, and source code for default usernames and passwords
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public static class DefaultUsers
+{
+    public const string AdminUsername = "admin";
+    public const string AdminPassword = "admin";
+
+    public const string ServiceUsername = "service";
+    public const string ServicePassword = "service123";
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public final class DefaultUsers
+{
+    public static final String AdminUsername = "admin";
+    public static final String AdminPassword = "admin";
+
+    public static final String ServiceUsername = "service";
+    public static final String ServicePassword = "service123";
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class DefaultUsers
+{
+    public const AdminUsername = "admin";
+    public const AdminPassword = "admin";
+
+    public const ServiceUsername = "service";
+    public const ServicePassword = "service123";
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+class DefaultUsers
+{
+    static AdminUsername = "admin";
+    static AdminPassword = "admin";
+
+    static ServiceUsername = "service";
+    static ServicePassword = "service123";
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Then locate the Controller, Service, or Authentication Provider responsible for authentication and determine whether default accounts are hardcoded within the application logic
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|Username\s*=\s*"[^"]+"[\s\S]{0,200}Password\s*=\s*"[^"]+"|ValidateUser\s*\([^)]*\)[\s\S]{0,300}(==|Equals)\s*"[^"]+"
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|username\s*=\s*"[^"]+"[\s\S]{0,200}password\s*=\s*"[^"]+"|authenticate\s*\([^)]*\)[\s\S]{0,300}(==|equals)\s*\(?\s*"[^"]+"
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|\$[a-zA-Z0-9_]*(user|username).{0,100}=\s*['"][^'"]+['"][\s\S]{0,200}\$[a-zA-Z0-9_]*(pass|password).{0,100}=\s*['"][^'"]+['"]|if\s*\([^)]*(username|password).{0,200}==.{0,100}['"][^'"]+['"]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|username\s*:\s*['"][^'"]+['"][\s\S]{0,200}password\s*:\s*['"][^'"]+['"]|if\s*\([^)]*(username|password).{0,200}(===|==).{0,100}['"][^'"]+['"]
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|Username\s*=\s*"[^"]+".{0,200}Password\s*=\s*"[^"]+"|ValidateUser\s*\([^)]*\).{0,300}(==|Equals)\s*"[^"]+"
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|username\s*=\s*"[^"]+".{0,200}password\s*=\s*"[^"]+"|authenticate\s*\([^)]*\).{0,300}(==|equals)\s*\(?\s*"[^"]+"
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|\$[a-zA-Z0-9_]*(user|username).{0,100}=\s*['"][^'"]+['"].{0,200}\$[a-zA-Z0-9_]*(pass|password).{0,100}=\s*['"][^'"]+['"]|if\s*\([^)]*(username|password).{0,200}==.{0,100}['"][^'"]+['"]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(admin|administrator|root|service|agent|guest|test|default|demo|support).{0,100}(password|passwd|pwd|secret)|username\s*:\s*['"][^'"]+['"].{0,200}password\s*:\s*['"][^'"]+['"]|if\s*\([^)]*(username|password).{0,200}(===|==).{0,100}['"][^'"]+['"]
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public bool ValidateUser(string username, string password)
+{
+    if (username == "admin" &&
+        password == "admin")
+    {
+        return true;
+    }
+
+    return false;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public boolean validateUser(String username, String password)
+{
+    if (username.equals("admin") &&
+        password.equals("admin"))
+    {
+        return true;
+    }
+
+    return false;
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function ValidateUser(string $username, string $password)
+{
+    if ($username == "admin" &&
+        $password == "admin")
+    {
+        return true;
+    }
+
+    return false;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function validateUser(username, password)
+{
+    if (username == "admin" &&
+        password == "admin")
+    {
+        return true;
+    }
+
+    return false;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the source code, search for the Initial Setup or First Run Wizard mechanism and determine whether initial accounts are automatically created during installation
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void SeedDefaultAdministrator()
+{
+    if (!_context.Users.Any())
+    {
+        _context.Users.Add(new User
+        {
+            Username = "admin",
+            Password = Hash("admin"),
+            Role = "Administrator"
+        });
+
+        _context.SaveChanges();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void seedDefaultAdministrator()
+{
+    if (_context.getUsers().isEmpty())
+    {
+        User user = new User();
+        user.setUsername("admin");
+        user.setPassword(Hash("admin"));
+        user.setRole("Administrator");
+
+        _context.getUsers().add(user);
+        _context.saveChanges();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function SeedDefaultAdministrator()
+{
+    if (!$this->_context->Users->any())
+    {
+        $this->_context->Users->add(new User([
+            "Username" => "admin",
+            "Password" => Hash("admin"),
+            "Role" => "Administrator"
+        ]));
+
+        $this->_context->saveChanges();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function seedDefaultAdministrator()
+{
+    if (!_context.Users.length)
+    {
+        _context.Users.push({
+            Username: "admin",
+            Password: Hash("admin"),
+            Role: "Administrator"
+        });
+
+        _context.saveChanges();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the logic responsible for creating initial users, database seeds, and migrations, and determine whether the credentials are static, predictable, or shared across all installations
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+protected override void Seed(AppDbContext context)
+{
+    context.Users.Add(
+        new User
+        {
+            Username = "administrator",
+            PasswordHash = Hash("P@ssw0rd")
+        }
+    );
+
+    context.SaveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Override
+protected void seed(AppDbContext context)
+{
+    User user = new User();
+    user.setUsername("administrator");
+    user.setPasswordHash(Hash("P@ssw0rd"));
+
+    context.getUsers().add(user);
+
+    context.saveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function Seed(AppDbContext $context)
+{
+    $context->Users->add(
+        new User([
+            "Username" => "administrator",
+            "PasswordHash" => Hash("P@ssw0rd")
+        ])
+    );
+
+    $context->saveChanges();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function seed(context)
+{
+    context.Users.push({
+        Username: "administrator",
+        PasswordHash: Hash("P@ssw0rd")
+    });
+
+    context.saveChanges();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Search application settings files, sample files, backup files, templates, and configuration files for default credentials
+
+```xml
+<authentication>
+    <username>admin</username>
+    <password>admin123</password>
+</authentication>
+```
+{% endstep %}
+
+{% step %}
+For automatically created services (API Users, Service Accounts, Agents, Database Accounts, Integration Accounts), determine whether the default password is changed after installation
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+var serviceAccount = new ServiceAccount
+{
+    Username = "agent",
+    Password = "agent123"
+};
+
+_context.ServiceAccounts.Add(serviceAccount);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+ServiceAccount serviceAccount = new ServiceAccount();
+serviceAccount.setUsername("agent");
+serviceAccount.setPassword("agent123");
+
+_context.getServiceAccounts().add(serviceAccount);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$serviceAccount = new ServiceAccount();
+$serviceAccount->Username = "agent";
+$serviceAccount->Password = "agent123";
+
+$this->_context->ServiceAccounts->add($serviceAccount);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+const serviceAccount = new ServiceAccount();
+serviceAccount.Username = "agent";
+serviceAccount.Password = "agent123";
+
+_context.ServiceAccounts.add(serviceAccount);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the login logic and determine whether the application forces users to change the default password upon first login
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if(user.IsUsingDefaultPassword)
+{
+    return Redirect("/ChangePassword");
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if(user.isUsingDefaultPassword())
+{
+    return Redirect("/ChangePassword");
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if($user->IsUsingDefaultPassword)
+{
+    return Redirect("/ChangePassword");
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if(user.IsUsingDefaultPassword)
+{
+    return Redirect("/ChangePassword");
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Using the identified default credentials, review the authentication process for panels, APIs, management services, and system accounts, and determine whether access is possible without changing the credentials
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
 
 ### Vendor Default Credentials

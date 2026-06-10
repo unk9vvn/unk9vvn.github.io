@@ -29,6 +29,433 @@ Then, using the Nuclei tool, we check the presence of vulnerabilities in `TLS/SS
 
 ### White Box
 
+#### leartext Transmission of Sensitive Information (Credentials Sent Over Unencrypted Channel)
+
+{% stepper %}
+{% step %}
+Identify all credential entry points within the system, such as Login, SSO, API Authentication, Password Reset, LDAP Authentication, Token Exchange, OAuth, and Mobile APIs
+{% endstep %}
+
+{% step %}
+Locate the Controller, Endpoint, or Service responsible for receiving Username, Password, API Key, Access Token, Session Token, or Secret values in the source code and trace their complete processing flow
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpPost]
+[Route("api/auth/login")]
+public IActionResult Login([FromBody] LoginRequest request)
+{
+    var user = _userService.ValidateUser(
+        request.Username,
+        request.Password
+    );
+
+    if (user == null)
+        return Unauthorized();
+
+    return Ok(CreateToken(user));
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping
+@RequestMapping("api/auth/login")
+public Object Login(@RequestBody LoginRequest request)
+{
+    User user = _userService.validateUser(
+        request.getUsername(),
+        request.getPassword()
+    );
+
+    if (user == null)
+        return Unauthorized();
+
+    return Ok(CreateToken(user));
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpPost]
+#[Route("api/auth/login")]
+public function Login(LoginRequest $request)
+{
+    $user = $this->_userService->validateUser(
+        $request->Username,
+        $request->Password
+    );
+
+    if ($user == null)
+        return Unauthorized();
+
+    return Ok(CreateToken($user));
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.post("/api/auth/login", (request, response) => {
+    const user = _userService.validateUser(
+        request.body.Username,
+        request.body.Password
+    );
+
+    if (user == null)
+        return Unauthorized();
+
+    return Ok(CreateToken(user));
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review the source code to determine through which channel credentials are received and whether a mechanism exists to enforce HTTPS or TLS before processing requests
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public void Configure(IApplicationBuilder app)
+{
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void configure(ApplicationBuilder app)
+{
+    app.useHttpsRedirection();
+
+    app.useAuthentication();
+
+    app.useAuthorization();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function Configure($app)
+{
+    $app->useHttpsRedirection();
+
+    $app->useAuthentication();
+
+    $app->useAuthorization();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function Configure(app)
+{
+    app.useHttpsRedirection();
+
+    app.useAuthentication();
+
+    app.useAuthorization();
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Review web server, reverse proxy, or application server configuration files and determine whether the service also supports HTTP or whether all requests are redirected to HTTPS
+
+```xml
+<rewrite>
+    <rules>
+        <rule name="Redirect to HTTPS">
+            <match url="(.*)" />
+            <conditions>
+                <add input="{HTTPS}" pattern="off" />
+            </conditions>
+            <action type="Redirect"
+                    url="https://{HTTP_HOST}/{R:1}" />
+        </rule>
+    </rules>
+</rewrite>
+```
+{% endstep %}
+
+{% step %}
+Review the request-processing logic and determine whether the application validates the connection state before accepting credentials
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (!Request.IsHttps)
+{
+    return BadRequest(
+        "HTTPS connection required"
+    );
+}
+
+var user = Authenticate(
+    request.Username,
+    request.Password
+);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (!request.isSecure())
+{
+    return BadRequest(
+        "HTTPS connection required"
+    );
+}
+
+User user = Authenticate(
+    request.getUsername(),
+    request.getPassword()
+);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+
+if (!$request->isSecure())
+{
+    return BadRequest(
+        "HTTPS connection required"
+    );
+}
+
+$user = Authenticate(
+    $request->Username,
+    $request->Password
+);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+if (!request.secure)
+{
+    return BadRequest(
+        "HTTPS connection required"
+    );
+}
+
+const user = Authenticate(
+    request.body.Username,
+    request.body.Password
+);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+For all endpoints that receive Username, Password, API Key, Secret, Session Token, or Access Token values, determine whether these values are supplied through Headers, Query Strings, URL paths, or request bodies
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpGet]
+public IActionResult Authenticate(
+    string username,
+    string password)
+{
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@GetMapping
+public Object Authenticate(
+    String username,
+    String password)
+{
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpGet]
+public function Authenticate(
+    string $username,
+    string $password)
+{
+    return Ok();
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.get("/authenticate", (request, response) => {
+    const username = request.query.username;
+    const password = request.query.password;
+
+    return Ok();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Specifically determine whether credentials are transmitted through Query Strings, URL paths, or insecure headers, as such values are often logged by proxies, browsers, monitoring systems, and server logs
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(Username|UserName|Password|ApiKey|AccessToken|RefreshToken|SessionToken|Secret)[\s\S]{0,300}(ValidateUser|Authenticate|Login|SignIn|VerifyPassword|CheckPassword|CreateToken)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret)[\s\S]{0,300}(authenticate|login|signIn|validateUser|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret)[\s\S]{0,300}(login|authenticate|signin|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret)[\s\S]{0,300}(login|authenticate|signin|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(Username|UserName|Password|ApiKey|AccessToken|RefreshToken|SessionToken|Secret).{0,300}(ValidateUser|Authenticate|Login|SignIn|VerifyPassword|CheckPassword|CreateToken)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret).{0,300}(authenticate|login|signIn|validateUser|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret).{0,300}(login|authenticate|signin|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(username|userName|password|apiKey|accessToken|refreshToken|sessionToken|secret).{0,300}(login|authenticate|signin|verifyPassword|checkPassword|createToken)
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+[HttpGet("login")]
+public IActionResult Login(
+    string username,
+    string password)
+{
+    var user = Validate(
+        username,
+        password
+    );
+
+    return Ok(user);
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@GetMapping("login")
+public Object Login(
+    String username,
+    String password)
+{
+    User user = Validate(
+        username,
+        password
+    );
+
+    return Ok(user);
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+#[HttpGet("login")]
+public function Login(
+    string $username,
+    string $password)
+{
+    $user = Validate(
+        $username,
+        $password
+    );
+
+    return Ok($user);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+app.get("/login", (request, response) => {
+    const username = request.query.username;
+    const password = request.query.password;
+
+    const user = Validate(
+        username,
+        password
+    );
+
+    return Ok(user);
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Intercept authentication traffic and determine whether Username, Password, API Key, Session Token, or other secrets are transmitted over HTTP or any other unencrypted channel
+{% endstep %}
+{% endstepper %}
+
+
+
+***
+
 ## Cheat Sheet
 
 ### Scan Vulns
