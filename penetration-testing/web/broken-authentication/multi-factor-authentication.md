@@ -1073,4 +1073,291 @@ Confirm that the victim’s email address is now verified and the account is act
 
 ### White Box
 
+#### MFA Enforcement Bypass via Missing Server-Side State Check (Forced Browsing Past the Second Factor
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Trigger a full login on an account that has MFA enabled while proxying through Burp, and record every request in the flow: the first-factor endpoint (username/password), the second-factor endpoint (`OTP/push/U2F` verification), and the first protected endpoint hit right after a successful login
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+// Some code
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+// Some code
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+// Some code
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+// Some code
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the decompiled code, locate the handler for the first-factor endpoint and identify exactly what session, token, or cookie state it sets on success — pay attention to whether it immediately marks the session as fully authenticated or only as "pending second factor"
+{% endstep %}
+
+{% step %}
+Locate the handler for a protected resource that should only be reachable after MFA, and identify exactly which attribute it checks to authorize the request
+{% endstep %}
+
+{% step %}
+Compare the attribute written in step 5 with the attribute read in step 6 — if the protected handler checks a coarse flag (e.g. `authenticated`/`loggedIn`) instead of a dedicated factor-completion flag (e.g. `mfaVerified`), the second factor is enforced only by the client-side redirect, not by the server
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+(Session\.SetString\(\s*"Authenticated")|(Session\.SetString\(\s*"LoggedIn")|(GetString\(\s*"Authenticated"\)\s*!=)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+(session\.setAttribute\(\s*"authenticated")|(session\.setAttribute\(\s*"loggedIn")|(session\.getAttribute\(\s*"authenticated"\))
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+(\$_SESSION\[\s*['"]authenticated['"]\s*\]\s*=)|(\$_SESSION\[\s*['"]logged_in['"]\s*\]\s*=)|(empty\(\$_SESSION\[\s*['"]authenticated['"]\s*\]\))
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+(req\.session\.authenticated\s*=)|(req\.session\.isAuthenticated\s*=)|(req\.session\.loggedIn\s*=)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Session\.SetString\(\s*"Authenticated"|Session\.SetString\(\s*"LoggedIn"|GetString\(\s*"Authenticated"\)\s*!=
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+session\.setAttribute\(\s*"authenticated"|session\.setAttribute\(\s*"loggedIn"|session\.getAttribute\(\s*"authenticated"\)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$_SESSION\[\s*['"]authenticated['"]\s*\]\s*=|\$_SESSION\[\s*['"]logged_in['"]\s*\]\s*=|empty\(\$_SESSION\[\s*['"]authenticated['"]\s*\]\)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.session\.authenticated\s*=|req\.session\.isAuthenticated\s*=|req\.session\.loggedIn\s*=
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+[HttpPost("login")]
+public IActionResult Login([FromBody] LoginRequest req)
+{
+    var user = _authService.ValidateCredentials(req.Username, req.Password);
+    if (user == null)
+        return Unauthorized();
+ 
+    HttpContext.Session.SetString("Authenticated", "true"); // [1]
+    HttpContext.Session.SetString("UserId", user.Id.ToString());
+ 
+    if (user.MfaEnabled)
+    {
+        HttpContext.Session.SetString("MfaVerified", "false"); // [2]
+        return Ok(new { mfaRequired = true });
+    }
+ 
+    return Ok(new { mfaRequired = false });
+}
+ 
+[HttpGet("account/invoices")]
+public IActionResult GetInvoices()
+{
+    if (HttpContext.Session.GetString("Authenticated") != "true") // [3]
+        return Unauthorized();
+ 
+    var userId = HttpContext.Session.GetString("UserId");
+    return Ok(_invoiceService.GetForUser(userId));
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpSession session) {
+    User user = authService.validateCredentials(req.getUsername(), req.getPassword());
+    if (user == null) {
+        return ResponseEntity.status(401).build();
+    }
+ 
+    session.setAttribute("authenticated", true); // [1]
+    session.setAttribute("userId", user.getId());
+ 
+    if (user.isMfaEnabled()) {
+        session.setAttribute("mfaVerified", false); // [2]
+        return ResponseEntity.ok(Map.of("mfaRequired", true));
+    }
+ 
+    return ResponseEntity.ok(Map.of("mfaRequired", false));
+}
+ 
+@GetMapping("/account/invoices")
+public ResponseEntity<?> getInvoices(HttpSession session) {
+    Boolean authenticated = (Boolean) session.getAttribute("authenticated"); // [3]
+    if (authenticated == null || !authenticated) {
+        return ResponseEntity.status(401).build();
+    }
+ 
+    Long userId = (Long) session.getAttribute("userId");
+    return ResponseEntity.ok(invoiceService.getForUser(userId));
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+function login($username, $password) {
+    $user = AuthService::validateCredentials($username, $password);
+    if ($user === null) {
+        http_response_code(401);
+        return;
+    }
+ 
+    $_SESSION['authenticated'] = true; // [1]
+    $_SESSION['user_id'] = $user->id;
+ 
+    if ($user->mfa_enabled) {
+        $_SESSION['mfa_verified'] = false; // [2]
+        echo json_encode(['mfaRequired' => true]);
+        return;
+    }
+ 
+    echo json_encode(['mfaRequired' => false]);
+}
+ 
+function getInvoices() {
+    if (empty($_SESSION['authenticated'])) { // [3]
+        http_response_code(401);
+        return;
+    }
+ 
+    echo json_encode(InvoiceService::getForUser($_SESSION['user_id']));
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+app.post('/login', async (req, res) => {
+  const user = await authService.validateCredentials(req.body.username, req.body.password);
+  if (!user) return res.status(401).end();
+ 
+  req.session.authenticated = true; // [1]
+  req.session.userId = user.id;
+ 
+  if (user.mfaEnabled) {
+    req.session.mfaVerified = false; // [2]
+    return res.json({ mfaRequired: true });
+  }
+ 
+  return res.json({ mfaRequired: false });
+});
+ 
+app.get('/account/invoices', (req, res) => {
+  if (!req.session.authenticated) { // [3]
+    return res.status(401).end();
+  }
+ 
+  res.json(invoiceService.getForUser(req.session.userId));
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Note the markers in the code above: `[1]` the coarse session flag is set immediately after the first factor succeeds, before any OTP has been submitted. `[2]` a dedicated factor-completion flag does exist in the data model. `[3]` the protected resource never reads it — it only checks the coarse flag from `[1]`, so the flag from `[2]` is effectively dead code from an authorization standpoint
+{% endstep %}
+
+{% step %}
+Confirm the bypass by sending only the first-factor request, capturing the resulting session cookie/token, and replaying it directly against the protected endpoint without ever calling the OTP-verification endpoint
+
+```http
+POST /login HTTP/1.1
+Host: target.tld
+Content-Type: application/json
+Content-Length: 51
+ 
+{"username":"alice","password":"Sup3rSecret!"}
+```
+
+```
+HTTP/1.1 200 OK
+Set-Cookie: session=eyJhbGciOi...; HttpOnly
+Content-Type: application/json
+ 
+{"mfaRequired":true}
+```
+{% endstep %}
+
+{% step %}
+Replay the session cookie against the protected resource without ever solving the OTP step
+
+```http
+GET /account/invoices HTTP/1.1
+Host: target.tld
+Cookie: session=eyJhbGciOi...
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+ 
+[{"id":1,"amount":"1200.00"},{"id":2,"amount":"640.00"}]
+```
+
+If real account data is returned instead of a redirect to the OTP page or a 401, the second factor is confirmed to be a client-side-only control
+{% endstep %}
+{% endstepper %}
+
 ## Cheat Sheet
