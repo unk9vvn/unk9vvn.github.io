@@ -1090,32 +1090,6 @@ Decompile the application based on the programming language used
 
 {% step %}
 Trigger a full login on an account that has MFA enabled while proxying through Burp, and record every request in the flow: the first-factor endpoint (username/password), the second-factor endpoint (`OTP/push/U2F` verification), and the first protected endpoint hit right after a successful login
-
-{% tabs %}
-{% tab title="C#" %}
-```c#
-// Some code
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```java
-// Some code
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```php
-// Some code
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```javascript
-// Some code
-```
-{% endtab %}
-{% endtabs %}
 {% endstep %}
 
 {% step %}
