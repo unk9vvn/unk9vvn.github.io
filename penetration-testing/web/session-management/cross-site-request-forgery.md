@@ -469,19 +469,19 @@ The browser dispatches the cross-origin POST request with the victim's session c
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:ContentType\b[\s\S]{0,200}?StartsWith\s*\(\s*"text/plain"\s*\)[\s\S]{0,200}?(?:Deserialize|DeserializeObject|JsonSerializer\.Deserialize)|Request\.ContentType\s*==\s*"text/plain"[\s\S]{0,200}?(?:Deserialize|ReadObject)|JsonConvert\.DeserializeObject\s*\([^)]*Request\.InputStream)
+\b(?:L1Cache\.(?:Remove|Evict|Invalidate)\s*\([^)]*\btoken\b|MemoryCache\.(?:Remove|TryRemove)\s*\([^)]*\btoken\b|IMemoryCache\.(?:Remove|TryGetValue)\s*\([^)]*\btoken\b|Redis\.(?:Delete|KeyDelete|Remove)\s*\([^)]*\btoken\b[\s\S]{0,200}?Cache\.(?:Remove|Evict|Invalidate)|localCache\.(?:Invalidate|Remove|Evict)\s*\()
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:getContentType\s*\(\s*\)\.startsWith\s*\(\s*"text/plain"\s*\)[\s\S]{0,200}?(?:readValue|deserialize)|ObjectMapper\b[\s\S]{0,200}?readValue\s*\([^)]*text/plain|HttpServletRequest\b[\s\S]{0,200}?getReader\s*\(\s*\))
+\b(?:cache\.invalidate\s*\([^)]*\btoken\b|cache\.evict\s*\([^)]*\btoken\b|cacheManager\.getCache\s*\([^)]*\)\.evict\s*\([^)]*\btoken\b|redisTemplate\.delete\s*\([^)]*\btoken\b[\s\S]{0,200}?cache\.(?:invalidate|evict)|localCache\.(?:invalidate|remove)\s*\()
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:json_decode\s*\(\s*file_get_contents\s*\(\s*['"]php://input['"]\s*\)|\$request->getContent\s*\(\s*\).*json_decode|file_get_contents\s*\(\s*['"]php://input['"]\s*\).*unserialize|Content-Type.*text/plain)
+\b(?:Cache::forget\s*\([^)]*\btoken\b|Redis::del\s*\([^)]*\btoken\b[\s\S]{0,200}?Cache::forget|apcu_delete\s*\([^)]*\btoken\b|localCache->(?:invalidate|remove)\s*\()
 ```
 {% endtab %}
 
@@ -497,19 +497,19 @@ The browser dispatches the cross-origin POST request with the victim's session c
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:ContentType.*StartsWith\s*\(\s*"text/plain"\s*\).*?(?:Deserialize|DeserializeObject|JsonSerializer\.Deserialize)|Request\.ContentType\s*==\s*"text/plain".*?(?:Deserialize|ReadObject)|JsonConvert\.DeserializeObject\s*\([^)]*Request\.InputStream)
+\b(?:L1Cache\.(?:Remove|Evict|Invalidate)\s*\([^)]*\btoken\b|MemoryCache\.(?:Remove|TryRemove)\s*\([^)]*\btoken\b|IMemoryCache\.(?:Remove|TryGetValue)\s*\([^)]*\btoken\b|Redis\.(?:Delete|KeyDelete|Remove)\s*\([^)]*\btoken\b.*Cache\.(?:Remove|Evict|Invalidate)|localCache\.(?:Invalidate|Remove|Evict)\s*\()
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:getContentType\s*\(\s*\)\.startsWith\s*\(\s*"text/plain"\s*\).*?(?:readValue|deserialize)|ObjectMapper.*readValue.*text/plain|HttpServletRequest.*getReader\s*\(\s*\))
+\b(?:cache\.invalidate\s*\([^)]*\btoken\b|cache\.evict\s*\([^)]*\btoken\b|cacheManager\.getCache\s*\([^)]*\)\.evict\s*\([^)]*\btoken\b|redisTemplate\.delete\s*\([^)]*\btoken\b.*cache\.(?:invalidate|evict)|localCache\.(?:invalidate|remove)\s*\()
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:json_decode\s*\(\s*file_get_contents\s*\(\s*['"]php://input['"]\s*\)|\$request->getContent\s*\(\s*\).*json_decode|file_get_contents\s*\(\s*['"]php://input['"]\s*\).*unserialize|Content-Type.*text/plain)
+\b(?:Cache::forget\s*\([^)]*\btoken\b|Redis::del\s*\([^)]*\btoken\b.*Cache::forget|apcu_delete\s*\([^)]*\btoken\b|localCache->(?:invalidate|remove)\s*\()
 ```
 {% endtab %}
 
