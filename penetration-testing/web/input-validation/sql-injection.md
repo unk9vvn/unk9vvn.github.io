@@ -711,4 +711,711 @@ During refactor analysis, inspect classes and files whose size, structure, or lo
 
 ***
 
+####
+
+{% stepper %}
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+
+**VSCode Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\b(?:if\s*\(\s*Request\.Method\s*==\s*"OPTIONS"\s*\)\s*\{\s*Response\.Headers\.Add|if\s*\(\s*HttpMethods\.IsOptions\s*\(\s*Request\.Method\s*\)\s*\)|UseCors|UseWhen[\s\S]{0,120}?OPTIONS|Request\.Method\s*==\s*"OPTIONS"[\s\S]{0,120}?(?:return|next|Ok|StatusCode))
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\b(?:if\s*\(\s*request\.getMethod\(\)\.equals\s*\(\s*"OPTIONS"\s*\)\s*\)\s*\{\s*request\.setAttribute\s*\(\s*"skipAuth"|request\.getMethod\(\)\.equalsIgnoreCase\s*\(\s*"OPTIONS"\s*\)|CorsFilter[\s\S]{0,120}?OPTIONS|OncePerRequestFilter[\s\S]{0,120}?OPTIONS)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\b(?:if\s*\(\s*\$request->isMethod\s*\(\s*'OPTIONS'\s*\)\s*\)\s*\{\s*\$skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|header\s*\(\s*['"]Access-Control-Allow-Origin|OPTIONS[\s\S]{0,120}?return)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+\b(?:if\s*\(\s*req\.method\s*===?\s*['"]OPTIONS['"]\s*\)\s*\{\s*next\s*\(\s*\)|app\.options\s*\(|router\.options\s*\(|cors\s*\(|req\.method\s*===?\s*['"]OPTIONS['"][\s\S]{0,120}?(?:return|next))
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Request\.Method\s*==\s*"OPTIONS".*Response\.Headers\.Add|HttpMethods\.IsOptions|UseCors|OPTIONS.*(return|next|Ok)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+request\.getMethod\(\)\.equals\("OPTIONS"\).*skipAuth|equalsIgnoreCase\("OPTIONS"\)|CorsFilter|OncePerRequestFilter.*OPTIONS
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$request->isMethod\('OPTIONS'\).*skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|OPTIONS.*return
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.method\s*===?\s*['"]OPTIONS['"].*next\(\)|app\.options\(|router\.options\(|cors\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class FastCorsMiddleware 
+{
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next) 
+    {
+        // [1]
+        if (context.Request.Method == "OPTIONS") 
+        {
+            // [2]
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            // context.Response.StatusCode = 200;
+            // return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+            
+            context.Items["SkipAuth"] = true;
+        }
+
+        // [4]
+        await next(context);
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if (context.Items.ContainsKey("SkipAuth")) return next(context);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Component
+public class FastCorsInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // [1]
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // [2]
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            request.setAttribute("SkipAuth", true);
+            
+            // [4]
+            // return false; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        return true;
+    }
+}
+
+// Downstream in JwtAuthFilter:
+// if (Boolean.TRUE.equals(request.getAttribute("SkipAuth"))) { chain.doFilter(request, response); return; }
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class FastCorsMiddleware 
+{
+    public function handle($request, Closure $next) 
+    {
+        // [1]
+        if ($request->isMethod('OPTIONS')) 
+        {
+            // [2]
+            // [3]
+            $request->attributes->set('SkipAuth', true);
+            
+            // [4]
+            // return response('', 200)->withHeaders([...]); <--- FORGOT TO RETURN EARLY
+        }
+
+        $response = $next($request);
+
+        if ($request->isMethod('OPTIONS')) {
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        }
+
+        return $response;
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if ($request->attributes->get('SkipAuth')) return $next($request);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class FastCorsMiddleware {
+    static handle(req, res, next) {
+        // [1]
+        if (req.method === 'OPTIONS') {
+            // [2]
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+            
+            // [3]
+            req.skipAuth = true;
+            
+            // [4]
+            // res.status(200).send(); return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        
+        next();
+    }
+}
+
+// Downstream Auth Middleware:
+// if (req.skipAuth) return next();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
+{% stepper %}
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+
+**VSCode Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\b(?:if\s*\(\s*Request\.Method\s*==\s*"OPTIONS"\s*\)\s*\{\s*Response\.Headers\.Add|if\s*\(\s*HttpMethods\.IsOptions\s*\(\s*Request\.Method\s*\)\s*\)|UseCors|UseWhen[\s\S]{0,120}?OPTIONS|Request\.Method\s*==\s*"OPTIONS"[\s\S]{0,120}?(?:return|next|Ok|StatusCode))
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\b(?:if\s*\(\s*request\.getMethod\(\)\.equals\s*\(\s*"OPTIONS"\s*\)\s*\)\s*\{\s*request\.setAttribute\s*\(\s*"skipAuth"|request\.getMethod\(\)\.equalsIgnoreCase\s*\(\s*"OPTIONS"\s*\)|CorsFilter[\s\S]{0,120}?OPTIONS|OncePerRequestFilter[\s\S]{0,120}?OPTIONS)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\b(?:if\s*\(\s*\$request->isMethod\s*\(\s*'OPTIONS'\s*\)\s*\)\s*\{\s*\$skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|header\s*\(\s*['"]Access-Control-Allow-Origin|OPTIONS[\s\S]{0,120}?return)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+\b(?:if\s*\(\s*req\.method\s*===?\s*['"]OPTIONS['"]\s*\)\s*\{\s*next\s*\(\s*\)|app\.options\s*\(|router\.options\s*\(|cors\s*\(|req\.method\s*===?\s*['"]OPTIONS['"][\s\S]{0,120}?(?:return|next))
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Request\.Method\s*==\s*"OPTIONS".*Response\.Headers\.Add|HttpMethods\.IsOptions|UseCors|OPTIONS.*(return|next|Ok)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+request\.getMethod\(\)\.equals\("OPTIONS"\).*skipAuth|equalsIgnoreCase\("OPTIONS"\)|CorsFilter|OncePerRequestFilter.*OPTIONS
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$request->isMethod\('OPTIONS'\).*skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|OPTIONS.*return
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.method\s*===?\s*['"]OPTIONS['"].*next\(\)|app\.options\(|router\.options\(|cors\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class FastCorsMiddleware 
+{
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next) 
+    {
+        // [1]
+        if (context.Request.Method == "OPTIONS") 
+        {
+            // [2]
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            // context.Response.StatusCode = 200;
+            // return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+            
+            context.Items["SkipAuth"] = true;
+        }
+
+        // [4]
+        await next(context);
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if (context.Items.ContainsKey("SkipAuth")) return next(context);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Component
+public class FastCorsInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // [1]
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // [2]
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            request.setAttribute("SkipAuth", true);
+            
+            // [4]
+            // return false; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        return true;
+    }
+}
+
+// Downstream in JwtAuthFilter:
+// if (Boolean.TRUE.equals(request.getAttribute("SkipAuth"))) { chain.doFilter(request, response); return; }
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class FastCorsMiddleware 
+{
+    public function handle($request, Closure $next) 
+    {
+        // [1]
+        if ($request->isMethod('OPTIONS')) 
+        {
+            // [2]
+            // [3]
+            $request->attributes->set('SkipAuth', true);
+            
+            // [4]
+            // return response('', 200)->withHeaders([...]); <--- FORGOT TO RETURN EARLY
+        }
+
+        $response = $next($request);
+
+        if ($request->isMethod('OPTIONS')) {
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        }
+
+        return $response;
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if ($request->attributes->get('SkipAuth')) return $next($request);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class FastCorsMiddleware {
+    static handle(req, res, next) {
+        // [1]
+        if (req.method === 'OPTIONS') {
+            // [2]
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+            
+            // [3]
+            req.skipAuth = true;
+            
+            // [4]
+            // res.status(200).send(); return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        
+        next();
+    }
+}
+
+// Downstream Auth Middleware:
+// if (req.skipAuth) return next();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
+{% stepper %}
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+{% endstep %}
+
+{% step %}
+
+
+**VSCode Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\b(?:if\s*\(\s*Request\.Method\s*==\s*"OPTIONS"\s*\)\s*\{\s*Response\.Headers\.Add|if\s*\(\s*HttpMethods\.IsOptions\s*\(\s*Request\.Method\s*\)\s*\)|UseCors|UseWhen[\s\S]{0,120}?OPTIONS|Request\.Method\s*==\s*"OPTIONS"[\s\S]{0,120}?(?:return|next|Ok|StatusCode))
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\b(?:if\s*\(\s*request\.getMethod\(\)\.equals\s*\(\s*"OPTIONS"\s*\)\s*\)\s*\{\s*request\.setAttribute\s*\(\s*"skipAuth"|request\.getMethod\(\)\.equalsIgnoreCase\s*\(\s*"OPTIONS"\s*\)|CorsFilter[\s\S]{0,120}?OPTIONS|OncePerRequestFilter[\s\S]{0,120}?OPTIONS)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\b(?:if\s*\(\s*\$request->isMethod\s*\(\s*'OPTIONS'\s*\)\s*\)\s*\{\s*\$skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|header\s*\(\s*['"]Access-Control-Allow-Origin|OPTIONS[\s\S]{0,120}?return)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+\b(?:if\s*\(\s*req\.method\s*===?\s*['"]OPTIONS['"]\s*\)\s*\{\s*next\s*\(\s*\)|app\.options\s*\(|router\.options\s*\(|cors\s*\(|req\.method\s*===?\s*['"]OPTIONS['"][\s\S]{0,120}?(?:return|next))
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+Request\.Method\s*==\s*"OPTIONS".*Response\.Headers\.Add|HttpMethods\.IsOptions|UseCors|OPTIONS.*(return|next|Ok)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+request\.getMethod\(\)\.equals\("OPTIONS"\).*skipAuth|equalsIgnoreCase\("OPTIONS"\)|CorsFilter|OncePerRequestFilter.*OPTIONS
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$request->isMethod\('OPTIONS'\).*skipAuth|\$request->getMethod\(\)\s*==\s*['"]OPTIONS['"]|OPTIONS.*return
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+req\.method\s*===?\s*['"]OPTIONS['"].*next\(\)|app\.options\(|router\.options\(|cors\(
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class FastCorsMiddleware 
+{
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next) 
+    {
+        // [1]
+        if (context.Request.Method == "OPTIONS") 
+        {
+            // [2]
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            // context.Response.StatusCode = 200;
+            // return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+            
+            context.Items["SkipAuth"] = true;
+        }
+
+        // [4]
+        await next(context);
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if (context.Items.ContainsKey("SkipAuth")) return next(context);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Component
+public class FastCorsInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // [1]
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // [2]
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            
+            // [3]
+            request.setAttribute("SkipAuth", true);
+            
+            // [4]
+            // return false; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        return true;
+    }
+}
+
+// Downstream in JwtAuthFilter:
+// if (Boolean.TRUE.equals(request.getAttribute("SkipAuth"))) { chain.doFilter(request, response); return; }
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class FastCorsMiddleware 
+{
+    public function handle($request, Closure $next) 
+    {
+        // [1]
+        if ($request->isMethod('OPTIONS')) 
+        {
+            // [2]
+            // [3]
+            $request->attributes->set('SkipAuth', true);
+            
+            // [4]
+            // return response('', 200)->withHeaders([...]); <--- FORGOT TO RETURN EARLY
+        }
+
+        $response = $next($request);
+
+        if ($request->isMethod('OPTIONS')) {
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        }
+
+        return $response;
+    }
+}
+
+// Downstream in AuthMiddleware:
+// if ($request->attributes->get('SkipAuth')) return $next($request);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class FastCorsMiddleware {
+    static handle(req, res, next) {
+        // [1]
+        if (req.method === 'OPTIONS') {
+            // [2]
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+            
+            // [3]
+            req.skipAuth = true;
+            
+            // [4]
+            // res.status(200).send(); return; <--- DEVELOPER FORGOT TO HALT THE PIPELINE
+        }
+        
+        next();
+    }
+}
+
+// Downstream Auth Middleware:
+// if (req.skipAuth) return next();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
