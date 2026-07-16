@@ -716,90 +716,92 @@ fastify.post('/spack/upload', async (request, reply) => {
 
 ***
 
+#### Financial Double-Spending via Read-Replica Synchronization Lag
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on high-throughput financial endpoints, inventory reservation systems, or enterprise resource provisioning APIs where strict negative balances are forbidden
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify the "Database CQRS / Read-Replica" architecture. To survive massive global traffic, enterprise architectures decouple database operations. They provision a single primary "Write Master" database and multiple distributed "Read Replica" databases
 {% endstep %}
 
 {% step %}
-
+Investigate the connection routing logic within the backend ORM. To minimize load on the Write Master, developers configure the framework to route all `SELECT` statements to the Read Replicas, and all `INSERT`/`UPDATE`/`DELETE` statements to the Write Master
 {% endstep %}
 
 {% step %}
-
+Analyze the business logic validation phase. Before deducting funds or allocating inventory, the service must verify the user's current balance (e.g., `if (account.Balance < transaction.Amount) throw Exception();`)
 {% endstep %}
 
 {% step %}
-
+Discover the fatal architectural desynchronization: The developer heavily optimized the application by explicitly marking the validation query as a "Read-Only" operation (e.g., using `@Transactional(readOnly = true)` or resolving a `ReadOnlyDbContext`). This forces the validation query to execute against the Read Replica
 {% endstep %}
 
 {% step %}
-
+Understand the physical constraints of distributed databases: Data written to the Write Master is not instantly available on the Read Replicas. There is a physical Replication Lag (typically 15ms to 100ms) as the transaction logs stream across the network and are applied to the replica nodes
 {% endstep %}
 
 {% step %}
-
+Formulate the Asymmetric Race Condition payload. You must execute a highly concurrent batch of requests that complete their validation phases _before_ the first request's write operation propagates to the Read Replica
 {% endstep %}
 
 {% step %}
-
+Identify the target endpoint (e.g., `POST /api/v1/accounts/transfer`). Determine your current active balance (e.g., `$100.00`)
 {% endstep %}
 
 {% step %}
-
+Configure a high-performance concurrency tool (e.g., Burp Suite Turbo Intruder) utilizing HTTP/2 multiplexing and single-packet attacks to eliminate network handshake jitter
 {% endstep %}
 
 {% step %}
-
+Transmit 50 identical transfer requests for `$100.00` simultaneously within a 5-millisecond window
 {% endstep %}
 
 {% step %}
-
+The API Gateway distributes the 50 requests across multiple backend pods
 {% endstep %}
 
 {% step %}
-
+All 50 pods execute the validation `SELECT` query against the Read Replica. Because the Replication Lag window (e.g., 50ms) has not passed, the Read Replica accurately reports a `$100.00` balance to _all 50 concurrent requests_
 {% endstep %}
 
 {% step %}
-
+All 50 pods pass the validation check and execute the `UPDATE` query against the Write Master. The Write Master obediently processes the updates sequentially, driving the account balance into massive negative territory (`-$4,900.00`) and successfully executing cross-cluster double-spending without violating local thread safety
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+\b(?:\[?Transactional\s*\(\s*readOnly\s*=\s*true\s*\)?|var\s+\w+\s*=\s*await\s+_readOnlyDbContext\.[A-Za-z0-9_]+|_readOnlyDbContext\.[A-Za-z0-9_]+[\s\S]{0,120}?(?:Account|Balance|Payment|Transaction|Permission)|UseQueryTrackingBehavior[\s\S]{0,120}?NoTracking)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+\b(?:@Transactional\s*\(\s*readOnly\s*=\s*true\s*\)|@Transactional\s*\([^)]*readOnly\s*=\s*true|repository\.[A-Za-z0-9_]+\([\s\S]{0,120}?(?:balance|account|payment|transaction)|EntityManager[\s\S]{0,120}?(?:readOnly|Replica))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+\b(?:DB::connection\s*\(\s*['"]replica['"]\s*\)->table|DB::connection\s*\(\s*['"]read['"]\s*\)|connection\s*\(\s*['"]replica['"]\s*\)[\s\S]{0,120}?(?:balance|account|transaction|payment))
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+\b(?:Account\.findOne\s*\(\s*\{[\s\S]{0,120}?transaction\s*:\s*null[\s\S]{0,100}?useMaster\s*:\s*false|useMaster\s*:\s*false|replica[\s\S]{0,120}?(?:Account|Balance|Payment|Transaction)|readReplica[\s\S]{0,120}?find)
 ```
 {% endtab %}
 {% endtabs %}
@@ -809,25 +811,25 @@ fastify.post('/spack/upload', async (request, reply) => {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+Transactional\(readOnly\s*=\s*true\)|_readOnlyDbContext\.[A-Za-z0-9_]+|UseQueryTrackingBehavior.*NoTracking
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+@Transactional\(readOnly\s*=\s*true\)|@Transactional.*readOnly\s*=\s*true|EntityManager.*readOnly|repository\..*balance
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+DB::connection\('replica'\)->table|DB::connection\('read'\)|connection\('replica'\)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+Account\.findOne\(\{.*transaction:\s*null.*useMaster:\s*false|useMaster:\s*false|replica.*find
 ```
 {% endtab %}
 {% endtabs %}
@@ -837,45 +839,35 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class TransferService
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    private readonly ApplicationDbContext _writeDb;
+    private readonly ReadOnlyDbContext _replicaDb;
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
-    {
-        _next = next;
-    }
-
-    public async Task InvokeAsync(IMiddlewareContext context)
+    public async Task<IActionResult> ExecuteTransferAsync(TransferRequest request)
     {
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+        // Developer optimizes read performance by querying the replica
+        var accountBalance = await _replicaDb.Accounts
+            .Where(a => a.Id == request.AccountId)
+            .Select(a => a.Balance)
+            .SingleOrDefaultAsync();
 
-        if (constraintDirective != null)
+        // [3]
+        // [4]
+        if (accountBalance < request.Amount)
         {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
+            return BadRequest("Insufficient funds.");
         }
 
-        await _next(context);
+        // Master DB updates the balance sequentially, but the validation has already passed
+        var accountToUpdate = await _writeDb.Accounts.FindAsync(request.AccountId);
+        accountToUpdate.Balance -= request.Amount;
+        
+        await _writeDb.SaveChangesAsync();
+
+        return Ok();
     }
 }
 ```
@@ -883,58 +875,40 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Service
+public class TransferService {
 
-    private final FieldDelegate next;
+    @Autowired
+    private AccountReadRepository readRepo;
+    @Autowired
+    private AccountWriteRepository writeRepo;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
+    // [1]
+    // [2]
+    @Transactional(readOnly = true)
+    public BigDecimal getAvailableBalance(UUID accountId) {
+        // Framework routes this to the Read Replica pool
+        return readRepo.findById(accountId).orElseThrow().getBalance();
     }
 
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+    // [3]
+    // [4]
+    @Transactional
+    public ResponseEntity<?> executeTransfer(TransferRequest request) {
+        
+        // Evaluates balance against the replica, subject to 50ms replication lag
+        BigDecimal currentBalance = getAvailableBalance(request.getAccountId());
 
-        // [1]
-        // [2]
-        Field field = context.getSelection().getField();
-
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
-
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
+        if (currentBalance.compareTo(request.getAmount()) < 0) {
+            return ResponseEntity.badRequest().body("Insufficient funds.");
         }
 
-        return next.invoke(context);
+        // Writes to the Master database
+        Account account = writeRepo.findById(request.getAccountId()).orElseThrow();
+        account.setBalance(account.getBalance().subtract(request.getAmount()));
+        writeRepo.save(account);
+
+        return ResponseEntity.ok().build();
     }
 }
 ```
@@ -944,78 +918,27 @@ public class ConstraintValidationMiddleware {
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class TransferService extends Controller
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
-    {
-        $this->next = $next;
-    }
-
-
-    public function invokeAsync($context)
+    public function executeTransfer(Request $request)
     {
         // [1]
         // [2]
-        $field = $context->selection->field;
+        // Explicitly reading from the configured read replica connection
+        $account = DB::connection('replica')->table('accounts')->find($request->accountId);
 
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
+        // [3]
+        // [4]
+        if ($account->balance < $request->amount) {
+            return response()->json(['error' => 'Insufficient funds.'], 400);
         }
 
+        // Eloquent default connection routes to the Write Master
+        DB::table('accounts')
+            ->where('id', $request->accountId)
+            ->decrement('balance', $request->amount);
 
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        return response()->json(['status' => 'Success']);
     }
 }
 ```
@@ -1023,136 +946,162 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
-
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
-
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
+class TransferService {
+    static async executeTransfer(req, res) {
+        // [1]
+        // [2]
+        // Sequelize configured to round-robin reads across replicas
+        let accountState = await Account.findOne({ 
+            where: { id: req.body.accountId },
+            useMaster: false 
         });
 
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
+        // [3]
+        // [4]
+        if (accountState.balance < req.body.amount) {
+            return res.status(400).send("Insufficient funds.");
+        }
+
+        // Writes to the primary instance
+        await Account.decrement('balance', { 
+            by: req.body.amount, 
+            where: { id: req.body.accountId } 
+        });
+
+        res.send({ status: "Success" });
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The architecture handles extreme read-heavy workloads. To prevent the primary database from locking during complex table scans, all read operations are strictly routed to asynchronously replicated secondary databases, \[2] The developer treats the validation check (e.g., retrieving the current balance) as a standard read operation, optimizing it via the Read Replica connection pool, \[3] The architecture relies entirely on the illusion of synchronous data. The developer implicitly assumes that the moment the Write Master updates a row, the Read Replica instantly reflects it, \[4] The execution sink. The validation boundary and the mutation boundary are physically separated by network replication latency. By flooding the endpoint with parallel requests, the attacker perfectly overlaps the execution timelines. All concurrent validation threads query the replica simultaneously, successfully reading the unmodified balance. Before the Write Master can process the first deduction and stream the commit log to the replica, the subsequent threads have already passed the compliance gate, executing massive localized double-spending
+
+```http
+// 1. Attacker has $50 in their account. They want to transfer $50 to an external account 10 times.
+// 2. Attacker loads Burp Suite Turbo Intruder and configures an HTTP/2 single-packet attack 
+//    to bypass network jitter and deliver all payloads perfectly concurrently.
+
+POST /api/v1/transfer HTTP/2
+Host: finance.enterprise.tld
+Authorization: Bearer <valid_token>
+Content-Type: application/json
+
+{"destination": "ATTACKER_EXTERNAL", "amount": 50.00}
+
+// 3. The server receives 10 identical requests simultaneously.
+// 4. Pod 1 queries Replica: Balance is $50. Check passes.
+// 5. Pod 2 queries Replica: Balance is $50. Check passes.
+// 6. Pod 3 queries Replica: Balance is $50. Check passes.
+
+// 7. Pod 1 executes UPDATE on Master. Master Balance becomes $0.
+// 8. Pod 2 executes UPDATE on Master. Master Balance becomes -$50.
+// 9. Pod 3 executes UPDATE on Master. Master Balance becomes -$100.
+
+// 10. 50ms later, the Read Replica finally synchronizes and updates its value to -$100.
+//     The attacker has successfully exfiltrated $500 using only $50 of initial capital.
+```
+{% endstep %}
+
+{% step %}
+To ensure maximum availability and prevent read-write lock contention on the primary database, enterprise architects deployed a distributed CQRS infrastructure utilizing asynchronous Read Replicas. This optimization structurally decoupled the validation tier from the persistence tier. Developers incorrectly assumed that application-level validation was mathematically atomic. By routing the compliance checks to the Read Replica, they introduced a physical network delay into the transaction's critical section. The attacker exploited this temporal gap by deploying extreme concurrency. The barrage of requests executed faster than the database cluster could synchronize its internal commit logs. The replication lag acted as a sustained "approval window," allowing all concurrent threads to validate against a stale, pristine balance before executing devastating, cumulative mutations on the primary database
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Critical Section Bypass via Garbage Collection Temporal Lock Expiration
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on distributed microservices that enforce strict singularity, such as claiming a unique promotional code, provisioning a singular IP address, or executing a daily payout job
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application according to the underlying technology stack
 {% endstep %}
 
 {% step %}
-
+Identify the "Distributed Locking" architecture. Because the application runs across 50 Kubernetes pods, standard thread locks (`lock()`, `synchronized`) do not work. To prevent race conditions, the developers utilize a distributed locking mechanism via Redis (e.g., Redlock, `SETNX`)
 {% endstep %}
 
 {% step %}
-
+Investigate the Lock Expiration optimization. If a pod acquires a lock and then suffers a catastrophic hardware failure or is OOM-killed, the lock would remain in Redis forever, permanently deadlocking the business process. To solve this, developers enforce a strict Time-To-Live (TTL) on the lock (e.g., `SET resource_key 'LOCKED' NX PX 2000` to expire the lock in 2 seconds)
 {% endstep %}
 
 {% step %}
-
+Analyze the execution flow within the critical section. After the lock is acquired, the application parses the incoming HTTP payload, validates business rules, and executes the database update
 {% endstep %}
 
 {% step %}
-
+Discover the temporal vulnerability: The developer assumes that the application thread will always complete the critical section faster than the 2-second lock TTL. They fail to account for runtime pauses induced by the underlying language framework (e.g., V8, CLR, JVM)
 {% endstep %}
 
 {% step %}
-
+Understand the Garbage Collection (GC) exploit mechanism. In managed languages, memory allocation spikes force the runtime to pause all executing threads to run a "Stop-The-World" Garbage Collection cycle. If an attacker can force a massive allocation, they can freeze the executing thread
 {% endstep %}
 
 {% step %}
-
+Formulate the Lock Expiration payload. You must execute two concurrent requests. The first request must acquire the lock, then immediately force the server to freeze itself for longer than the TTL threshold. The second request will then easily acquire the expired lock
 {% endstep %}
 
 {% step %}
-
+Target the data parsing layer (e.g., the JSON deserializer or an XML parser) that occurs _inside_ the critical section
 {% endstep %}
 
 {% step %}
-
+Construct a computationally devastating payload. Create a massive JSON object with 100,000 deeply nested arrays, or an exponentially complex regular expression input
 {% endstep %}
 
 {% step %}
-
+Fire Request A containing the massive payload
 {% endstep %}
 
 {% step %}
-
+Request A acquires the Redis lock (TTL: 2000ms). Request A proceeds to the JSON parsing phase. The massive payload exhausts the Young Generation memory heap, triggering a Stop-The-World GC pause. The thread freezes for 2500ms
 {% endstep %}
 
 {% step %}
-
+The Redis lock expires and is automatically deleted by the Redis server
 {% endstep %}
 
 {% step %}
+Fire Request B (a normal, lightweight request). Request B queries Redis, sees no lock, and acquires it. Request B executes the critical database mutation
+{% endstep %}
 
+{% step %}
+Request A's GC pause ends. The thread wakes up. Completely unaware that its lock has expired, Request A continues execution, performing the exact same database mutation. The critical section is breached, and the Race Condition succeeds
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+\b(?:await\s+_redis\.StringSetAsync\s*\([\s\S]{0,150}?,\s*TimeSpan\.FromSeconds\s*\(\s*[1-5]\s*\)|StringSetAsync[\s\S]{0,150}?FromSeconds\s*\(\s*[1-5]\s*\)|IDistributedLock[\s\S]{0,150}?TTL|DistributedLock[\s\S]{0,120}?Expiration)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+\b(?:redisTemplate\.opsForValue\(\)\.setIfAbsent\s*\([\s\S]{0,150}?,\s*[1-5]\s*,\s*TimeUnit\.SECONDS\)|setIfAbsent[\s\S]{0,150}?TimeUnit\.SECONDS|RedisLock[\s\S]{0,120}?expire|lock[\s\S]{0,100}?leaseTime)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+\b(?:\$redis->set\s*\([\s\S]{0,150}?'nx'\s*,\s*'ex'\s*,\s*[1-5]\s*\)|Redis::set[\s\S]{0,120}?(?:NX|EX)|setnx[\s\S]{0,120}?expire|lock[\s\S]{0,100}?seconds)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+\b(?:redis\.set\s*\([\s\S]{0,150}?['"]NX['"][\s\S]{0,80}?['"]PX['"]\s*,\s*[1-5]000|redis\.set\s*\([\s\S]{0,150}?NX[\s\S]{0,80}?PX|redlock[\s\S]{0,150}?ttl|lock[\s\S]{0,120}?duration)
 ```
 {% endtab %}
 {% endtabs %}
@@ -1162,25 +1111,25 @@ class ConstraintValidationPlugin {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+_redis\.StringSetAsync\(.*TimeSpan\.FromSeconds\([1-5]\)|StringSetAsync.*FromSeconds\([1-5]\)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+redisTemplate\.opsForValue\(\)\.setIfAbsent\(.*[1-5],\s*TimeUnit\.SECONDS\)|setIfAbsent.*TimeUnit\.SECONDS
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+\$redis->set\(.*'nx',\s*'ex',\s*[1-5]\)|Redis::set.*NX.*EX
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+redis\.set\(.*'NX',\s*'PX',\s*[1-5]000\)|redis\.set\(.*NX.*PX
 ```
 {% endtab %}
 {% endtabs %}
@@ -1190,45 +1139,38 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+[HttpPost("/api/v1/promotions/claim")]
+public async Task<IActionResult> ClaimPromotion([FromQuery] string code)
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    var lockKey = $"lock:promo:{code}";
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
+    // [1]
+    // [2]
+    var lockAcquired = await _redis.StringSetAsync(lockKey, "LOCKED", TimeSpan.FromSeconds(2), When.NotExists);
+
+    if (!lockAcquired) return StatusCode(429, "Processing...");
+
+    try
     {
-        _next = next;
+        // [3]
+        // [4]
+        using var reader = new StreamReader(Request.Body);
+        var rawBody = await reader.ReadToEndAsync();
+        
+        // Massive allocation causes Gen 2 Garbage Collection pause blocking the thread
+        var data = JsonConvert.DeserializeObject<dynamic>(rawBody);
+
+        var promo = await _dbContext.Promotions.SingleOrDefaultAsync(p => p.Code == code && !p.Claimed);
+        if (promo == null) return BadRequest("Already claimed");
+
+        promo.Claimed = true;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { Status = "Claimed successfully" });
     }
-
-    public async Task InvokeAsync(IMiddlewareContext context)
+    finally
     {
-        // [1]
-        // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
-
-        if (constraintDirective != null)
-        {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
-        }
-
-        await _next(context);
+        await _redis.KeyDeleteAsync(lockKey);
     }
 }
 ```
@@ -1236,58 +1178,44 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@RestController
+public class PromotionController {
 
-    private final FieldDelegate next;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @Autowired
+    private PromotionRepository promoRepo;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+    @PostMapping("/api/v1/promotions/claim")
+    public ResponseEntity<?> claimPromotion(@RequestParam String code, @RequestBody String rawJson) throws Exception {
+        String lockKey = "lock:promo:" + code;
 
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
+        // Redisson / RedisTemplate acquiring a lock with a 2-second lease time
+        Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "LOCKED", 2, TimeUnit.SECONDS);
 
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
-
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            return ResponseEntity.status(429).body("Processing...");
         }
 
-        return next.invoke(context);
+        try {
+            // [3]
+            // [4]
+            // Heavy deserialization occurs inside the critical section.
+            // A massive payload triggers a Stop-The-World GC pause lasting > 2000ms.
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode payload = mapper.readTree(rawJson);
+
+            Promotion promo = promoRepo.findByCodeAndClaimedFalse(code).orElseThrow();
+            promo.setClaimed(true);
+            promo.setClaimedBy(getCurrentUser());
+            promoRepo.save(promo);
+
+            return ResponseEntity.ok("Claimed successfully");
+        } finally {
+            redisTemplate.delete(lockKey);
+        }
     }
 }
 ```
@@ -1297,78 +1225,35 @@ public class ConstraintValidationMiddleware {
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class PromotionController extends Controller
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
+    public function claimPromotion(Request $request)
     {
-        $this->next = $next;
-    }
+        $code = $request->query('code');
+        $lockKey = "lock:promo:{$code}";
 
-
-    public function invokeAsync($context)
-    {
         // [1]
         // [2]
-        $field = $context->selection->field;
-
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
+        if (!Redis::set($lockKey, 'LOCKED', 'EX', 2, 'NX')) {
+            return response()->json(['error' => 'Processing...'], 429);
         }
 
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
+        try {
             // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
+            // [4]
+            // PHP decodes the massive JSON payload, causing memory allocation limits 
+            // to strain or regex evaluations to hang the process.
+            $data = json_decode($request->getContent(), true);
 
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
+            $promo = Promotion::where('code', $code)->where('claimed', false)->firstOrFail();
+            
+            $promo->claimed = true;
+            $promo->save();
 
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
+            return response()->json(['status' => 'Claimed successfully']);
+        } finally {
+            Redis::del($lockKey);
         }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
     }
 }
 ```
@@ -1376,136 +1261,184 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+router.post('/api/v1/promotions/claim', async (req, res) => {
+    const promoCode = req.query.code;
+    const lockKey = `lock:promo:${promoCode}`;
 
-class ConstraintValidationPlugin {
     // [1]
     // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
-
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
-
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
+    // Distributed lock with a 2-second TTL to prevent pod-crash deadlocks
+    const lockAcquired = await redis.set(lockKey, 'LOCKED', 'NX', 'PX', 2000);
+    
+    if (!lockAcquired) {
+        return res.status(429).send('Please wait, processing...');
     }
-}
+
+    try {
+        // [3]
+        // [4]
+        // The attacker passes a massive, heavily nested JSON body.
+        // Node.js parses this synchronously, or garbage collects the massive string allocation,
+        // freezing the V8 Event Loop for > 2000ms.
+        let parsedData = JSON.parse(req.rawBody);
+
+        let promo = await Promotion.findOne({ where: { code: promoCode, claimed: false } });
+        
+        if (!promo) return res.status(400).send('Already claimed');
+
+        promo.claimed = true;
+        promo.claimedBy = req.user.id;
+        await promo.save();
+
+        res.send({ status: 'Claimed successfully' });
+    } finally {
+        // The lock is deleted, but if it already expired, this delete does nothing.
+        await redis.del(lockKey);
+    }
+});
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The application orchestrates operations across multiple distributed pods. To ensure singularity (e.g., a promotional code can only be claimed once globally), developers implement Redis-backed distributed locks, \[2] To prevent a pod crash from stranding the lock in Redis and permanently disabling the feature, the developers enforce a strict Time-To-Live (TTL) on the lock, optimizing for system self-healing, \[3] The architecture processes untrusted input _inside_ the locked critical section, \[4] The execution sink. The developers assume that code executes instantaneously, failing to account for runtime environment pauses. By injecting a payload designed to exhaust heap memory or trigger exponential regex evaluation, the attacker forces the host language to suspend the executing thread. The thread remains frozen while the Redis server decrements the TTL. Once the lock expires, a second request can enter the critical section. When the first thread completes its Garbage Collection cycle, it blindly resumes execution, oblivious to the fact that its lock has expired, perfectly overlapping the database mutations
+
+```http
+// 1. Attacker obtains a highly valuable, single-use promotional code (e.g., $500_CREDIT).
+// 2. Attacker prepares a massive, deeply nested JSON payload designed to trigger a 3-second 
+//    Garbage Collection pause in the target framework (e.g., 50,000 nested arrays).
+
+// 3. Attacker sends Request A:
+POST /api/v1/promotions/claim?code=500_CREDIT HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <attacker_account_1>
+Content-Type: application/json
+
+{"data": [[[[[[[[[[[[[[...50,000 times...]]]]]]]]]]]]]]}
+
+// 4. Request A acquires the lock (TTL: 2000ms).
+// 5. The server attempts to deserialize Request A. The GC triggers. The thread freezes.
+// 6. 2001ms elapses. The Redis lock is automatically purged.
+
+// 7. Attacker immediately sends Request B:
+POST /api/v1/promotions/claim?code=500_CREDIT HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <attacker_account_2>
+Content-Type: application/json
+
+{"data": "fast_payload"}
+
+// 8. Request B queries Redis. The lock does not exist. Request B acquires a NEW lock.
+// 9. Request B verifies the promo code, marks it as claimed, and credits Account 2.
+// 10. Request A wakes up from the GC pause. It resumes execution.
+// 11. Request A verifies the promo code (which may still be uncommitted by B depending on exact millisecond overlap), 
+//     marks it as claimed, and credits Account 1.
+// 12. Both accounts are credited from a single-use token.
+```
+{% endstep %}
+
+{% step %}
+To enforce absolute exclusivity across distributed microservice clusters, enterprise engineers implemented Redis-backed distributed locks. To protect the cluster from irrecoverable deadlocks caused by transient pod failures, they applied aggressive, short-lived Time-To-Live (TTL) expirations to the locks. This optimization transferred the burden of thread synchronization from the database to the application's runtime environment. Developers mistakenly assumed that application threads execute linearly and predictably. The attacker bypassed this assumption by engineering a payload that intentionally triggered a massive Stop-The-World Garbage Collection cycle. By freezing the application thread for a duration exceeding the lock's TTL, the attacker manipulated the external Redis server into revoking the lock. The attacker's secondary request seamlessly bypassed the synchronization barrier. When the primary thread recovered, it blindly resumed execution, shattering the critical section and permanently violating the application's single-use business constraints
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Billing Bypass via Asynchronous Read-Modify-Write in Distributed Gateways
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on API Gateways, Edge Proxies, or enterprise billing layers that enforce complex, tiered rate limits or metered quotas (e.g., charging per API call, enforcing burst limits)
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the API Gateway's billing and rate-limiting middleware
 {% endstep %}
 
 {% step %}
-
+Identify the "Application-Layer Quota Evaluation" architecture. In simple rate-limiting scenarios, developers use atomic Redis commands (like `INCR`). However, in complex B2B enterprises, billing logic involves multiple variables: rolling windows, tier multipliers, free-tier allocations, and overage billing
 {% endstep %}
 
 {% step %}
-
+Investigate the execution bottleneck. Evaluating complex, multi-variable logic using raw Redis Lua scripts is notoriously difficult to debug and maintain
 {% endstep %}
 
 {% step %}
-
+Discover the "Read-Modify-Write" optimization. To maintain agile business logic, the Gateway developers read the raw quota metrics from Redis via a standard `GET`, execute the complex billing calculations in the native application language (C#, Java, Node.js), and write the updated values back to Redis using a `SET` command
 {% endstep %}
 
 {% step %}
-
+Analyze the concurrency model. The API Gateway serves thousands of concurrent requests across hundreds of distributed nodes
 {% endstep %}
 
 {% step %}
-
+Understand the architectural assumption: The developers assume that individual API requests from a single tenant arrive with enough temporal spacing that the `GET -> Calculate -> SET` pipeline will not intersect with itself. They fail to employ an optimistic concurrency control (OCC) mechanism or a distributed lock around the billing calculation
 {% endstep %}
 
 {% step %}
-
+Formulate the State Desynchronization payload. You must flood the API Gateway with a massive burst of concurrent requests that all trigger the `GET` command simultaneously, before any single request can reach the `SET` command
 {% endstep %}
 
 {% step %}
-
+Identify an expensive, heavily metered API endpoint (e.g., executing a Machine Learning model, sending an SMS, or fetching a heavy financial report)
 {% endstep %}
 
 {% step %}
-
+Configure a high-speed concurrency tool to multiplex the HTTP/2 stream, packing 500 identical requests into a single network frame to perfectly align their execution times on the backend
 {% endstep %}
 
 {% step %}
-
+Transmit the burst to the API Gateway
 {% endstep %}
 
 {% step %}
-
+The Gateway routes the 500 requests across its distributed workers
 {% endstep %}
 
 {% step %}
-
+All 500 threads hit the billing middleware simultaneously. They all execute the `GET` command against Redis. Redis returns the current usage (e.g., `990` calls used out of `1000`)
 {% endstep %}
 
 {% step %}
+All 500 threads evaluate the complex logic: `if (990 < 1000)`. The condition passes for all 500 threads
+{% endstep %}
 
+{% step %}
+All 500 threads calculate the new usage: `990 + 1 = 991`
+{% endstep %}
+
+{% step %}
+All 500 threads execute the `SET` command against Redis, forcefully writing the value `991`. The attacker successfully executes 500 heavily metered API operations while only incrementing the global billing ledger by exactly 1 unit, achieving catastrophic financial subversion
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+\b(?:await\s+cache\.GetAsync\s*\(\s*quotaKey\s*\)[\s\S]{0,200}?await\s+cache\.SetAsync\s*\(\s*quotaKey|(?:GetAsync|StringGetAsync)\s*\(\s*quotaKey[\s\S]{0,200}?(?:SetAsync|StringSetAsync)\s*\(\s*quotaKey)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+\b(?:redisTemplate\.opsForValue\(\)\.get\s*\(\s*quotaKey\s*\)[\s\S]{0,200}?redisTemplate\.opsForValue\(\)\.set\s*\(\s*quotaKey|opsForValue\(\)\.get[\s\S]{0,200}?opsForValue\(\)\.set)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+\b(?:\$redis->get\s*\(\s*\$quotaKey\s*\)[\s\S]{0,200}?\$redis->set\s*\(\s*\$quotaKey|\$redis->get[\s\S]{0,200}?\$redis->set|Redis::get[\s\S]{0,150}?Redis::set)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+\b(?:let\s+\w+\s*=\s*await\s+redis\.get\s*\(\s*quotaKey\s*\)[\s\S]{0,200}?await\s+redis\.set\s*\(\s*quotaKey|redis\.get\s*\(\s*quotaKey[\s\S]{0,200}?redis\.set\s*\(\s*quotaKey)
 ```
 {% endtab %}
 {% endtabs %}
@@ -1515,25 +1448,25 @@ class ConstraintValidationPlugin {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+await\s+cache\.GetAsync\(quotaKey\).*await\s+cache\.SetAsync\(quotaKey|GetAsync\(quotaKey\).*SetAsync\(quotaKey
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+redisTemplate\.opsForValue\(\)\.get\(quotaKey\).*redisTemplate\.opsForValue\(\)\.set\(quotaKey|opsForValue\(\)\.get.*opsForValue\(\)\.set
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+\$redis->get\(\$quotaKey\).*?\$redis->set\(\$quotaKey|\$redis->get.*\$redis->set
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+let\s+usage\s*=\s*await\s+redis\.get\(quotaKey\).*await\s+redis\.set\(quotaKey|redis\.get\(quotaKey\).*redis\.set\(quotaKey
 ```
 {% endtab %}
 {% endtabs %}
@@ -1543,43 +1476,38 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class GatewayBillingMiddleware
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    private readonly IDatabase _redis;
+    private readonly RequestDelegate _next;
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
+    public async Task InvokeAsync(HttpContext context)
     {
-        _next = next;
-    }
+        var tenantId = context.User.GetTenantId();
+        var quotaKey = $"billing:usage:{tenantId}";
 
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+        var usageJson = await _redis.StringGetAsync(quotaKey);
+        var usage = string.IsNullOrEmpty(usageJson) 
+            ? new BillingRecord() 
+            : JsonConvert.DeserializeObject<BillingRecord>(usageJson);
 
-        if (constraintDirective != null)
+        // [3]
+        // [4]
+        var dynamicLimit = CalculateLimit(usage.PlanType);
+
+        if (usage.TotalCalls >= dynamicLimit)
         {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
+            context.Response.StatusCode = 429;
+            await context.Response.WriteAsync("Quota Exceeded");
+            return;
         }
+
+        usage.TotalCalls += 1;
+
+        // Writes the stale increment back to Redis
+        await _redis.StringSetAsync(quotaKey, JsonConvert.SerializeObject(usage));
 
         await _next(context);
     }
@@ -1589,58 +1517,38 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Component
+public class GatewayBillingFilter implements GlobalFilter {
 
-    private final FieldDelegate next;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String tenantId = getTenantId(exchange);
+        String quotaKey = "billing:usage:" + tenantId;
 
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
+        // Non-atomic Read-Modify-Write pipeline
+        String usageStr = redisTemplate.opsForValue().get(quotaKey);
+        BillingRecord usage = parseUsage(usageStr);
 
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
+        // [3]
+        // [4]
+        long limit = calculateDynamicLimit(usage);
 
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
+        if (usage.getCount() >= limit) {
+            exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
+            return exchange.getResponse().setComplete();
         }
 
-        return next.invoke(context);
+        usage.increment();
+        
+        // Clobbers concurrent updates without Optimistic Concurrency Control (OCC)
+        redisTemplate.opsForValue().set(quotaKey, serializeUsage(usage));
+
+        return chain.filter(exchange);
     }
 }
 ```
@@ -1650,78 +1558,32 @@ public class ConstraintValidationMiddleware {
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class GatewayBillingMiddleware
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
+    public function handle(Request $request, Closure $next)
     {
-        $this->next = $next;
-    }
+        $tenantId = $request->user()->tenant_id;
+        $quotaKey = "billing:usage:{$tenantId}";
 
-
-    public function invokeAsync($context)
-    {
         // [1]
         // [2]
-        $field = $context->selection->field;
+        $usageJson = Redis::get($quotaKey);
+        $usage = $usageJson ? json_decode($usageJson, true) : ['count' => 0, 'tier' => 'basic'];
 
-        $constraintDirective = null;
+        // [3]
+        // [4]
+        $limit = $this->calculateDynamicLimit($usage);
 
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
+        if ($usage['count'] >= $limit) {
+            return response('Quota Exceeded', 429);
         }
 
+        $usage['count']++;
 
-        if ($constraintDirective !== null) {
+        // Unprotected SET command replaces value, destroying concurrent increments
+        Redis::set($quotaKey, json_encode($usage));
 
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        return $next($request);
     }
 }
 ```
@@ -1729,47 +1591,71 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+class GatewayBillingMiddleware {
+    static async enforceQuota(req, res, next) {
+        let tenantId = req.user.tenantId;
+        let quotaKey = `billing:usage:${tenantId}`;
 
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
+        // [1]
+        // [2]
+        // Reads the current usage from Redis
+        let usageData = await redis.get(quotaKey);
+        let usage = usageData ? JSON.parse(usageData) : { count: 0, tier: 'basic' };
 
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
+        // [3]
+        // [4]
+        // Complex application-layer logic replacing simple atomic INCR
+        let limit = usage.tier === 'premium' ? 10000 : 1000;
 
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
+        if (usage.count >= limit) {
+            return res.status(429).send('Billing quota exceeded.');
+        }
+
+        usage.count += 1;
+
+        // Overwrites the Redis key. Concurrent requests will clobber this value.
+        await redis.set(quotaKey, JSON.stringify(usage));
+
+        next();
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The API Gateway intercepts all ingress traffic to meter usage and enforce financial billing quotas across multi-tenant enterprise deployments, \[2] The developers avoid atomic Redis operations (`INCR`, `HINCRBY`) because the billing model relies on complex, dynamically shifting metadata (e.g., rollover credits, distinct time-based tiering) that cannot be easily evaluated within the database, \[3] To support this complex logic, the architecture extracts the state into application memory, recalculates it, and pushes it back to the datastore, \[4] The execution sink. The developers mistakenly equate single-user traffic with single-threaded execution. By failing to implement Optimistic Concurrency Control (e.g., using Redis `WATCH` transactions or checking `version` flags), the pipeline is entirely exposed to race conditions. When the attacker synchronizes hundreds of requests, all threads evaluate the exact same base state. They perform identical calculations and issue identical `SET` commands, continuously overwriting each other. The gateway silently drops 99% of the billable events, authorizing the attacker to aggressively mine expensive API resources while mathematically registering a negligible footprint on the financial ledger
+
+```http
+// 1. Attacker purchases the lowest tier API plan, providing 1,000 monthly calls.
+// 2. Attacker prepares a script to consume a highly expensive endpoint (e.g., generating a 50-page PDF report).
+// 3. Attacker uses HTTP/2 multiplexing to send 1,000 requests in a single burst.
+
+POST /api/v1/reports/generate HTTP/2
+Host: gateway.enterprise.tld
+Authorization: Bearer <attacker_token>
+Content-Type: application/json
+
+{"reportType": "Comprehensive_Audit"}
+
+// 4. The Gateway receives the burst. 1,000 threads execute the billing middleware concurrently.
+// 5. Thread 1 executes GET. Receives count: 0.
+// 6. Thread 500 executes GET. Receives count: 0.
+// 7. Thread 1000 executes GET. Receives count: 0.
+
+// 8. All threads evaluate: 0 < 1000. All threads authorize the request.
+// 9. All threads calculate: 0 + 1 = 1.
+// 10. All threads execute SET. Redis key becomes {"count": 1}.
+
+// 11. The backend mesh successfully generates 1,000 massive PDF reports.
+// 12. The attacker's dashboard reports they have used 1 out of 1,000 monthly calls.
+// 13. The attacker repeats this burst indefinitely, extracting massive computational value for free.
+```
+{% endstep %}
+
+{% step %}
+To support highly complex, dynamic B2B billing models, platform architects shifted quota calculation logic out of atomic datastore operations and into the application layer. This optimization utilized a Read-Modify-Write pipeline against a distributed Redis cache. The security failure stemmed from the omission of optimistic concurrency controls (OCC). Developers implicitly trusted that API requests originating from a single tenant would naturally space themselves out across the network, avoiding collisions. The attacker systematically shattered this assumption by launching heavily multiplexed, synchronized HTTP/2 request bursts. The distributed gateway workers instantly queried the datastore, uniformly receiving the exact same pristine baseline quota. Because the gateway lacked transactional isolation, all parallel threads independently verified the stale quota, authorized the expensive backend action, and overwrote the billing cache with identical, negligible increments. This Race Condition effectively nullified the platform's financial metering, enabling infinite, unmetered extraction of premium enterprise resources
 {% endstep %}
 {% endstepper %}
 
