@@ -100,6 +100,8 @@ If API lacks request quotas per `user/IP` and allows uncontrolled request volume
 
 ### White Box
 
+####
+
 {% stepper %}
 {% step %}
 
@@ -448,6 +450,14 @@ class ConstraintValidationPlugin {
 ```
 {% endtab %}
 {% endtabs %}
+{% endstep %}
+
+{% step %}
+
+
+```
+// Some code
+```
 {% endstep %}
 {% endstepper %}
 
