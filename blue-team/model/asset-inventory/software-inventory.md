@@ -323,7 +323,7 @@ Save & Execute (Run with sudo)
 
 ```bash
 sudo chmod +x remote-debian-software-inventory.sh
-./remote-debian-software-inventory.sh
+./remote-debian-software-inventory.sh username@1.2.3.4
 ```
 
 #### RPM-based
@@ -402,8 +402,8 @@ Save & Execute (Run with sudo)
 {% endhint %}
 
 ```bash
-sudo chmod +x remote-debian-software-inventory.sh
-./remote-debian-software-inventory.sh
+sudo chmod +x remote-rpm-software-inventory.sh
+./remote-rpm-software-inventory.sh username@1.2.3.4
 ```
 
 ### Cisco Products

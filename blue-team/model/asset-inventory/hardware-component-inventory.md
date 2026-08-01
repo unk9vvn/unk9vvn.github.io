@@ -434,7 +434,7 @@ Save & Execute (Run with sudo)
 
 ```bash
 sudo chmod +x remote-hardware-inventory.sh
-./remote-hardware-inventory.sh {user@ip}
+./remote-hardware-inventory.sh username@1.2.3.4
 ```
 
 ### Cisco Products
