@@ -355,7 +355,7 @@ sudo chmod +x local-hardware-inventory.sh
 ./local-hardware-inventory.sh
 ```
 
-### Linux Rempte Hardware Inventory (SSH)
+### Linux Remote Hardware Inventory (SSH)
 
 #### Bash
 
