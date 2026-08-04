@@ -6,6 +6,10 @@
 
 #### [find](https://www.man7.org/linux/man-pages/man1/find.1.html) & [jq](https://jqlang.org/)
 
+{% hint style="info" %}
+Collect document locations, types, owners, groups, permissions, sizes, and modification dates
+{% endhint %}
+
 ```bash
 #!/bin/bash
 
@@ -389,6 +393,10 @@ sudo ./data-inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ### Local & Remote Windows Data Inventory
 
 #### [Powershell](https://github.com/powershell/powershell)
+
+{% hint style="info" %}
+Collect Windows filesystem inventory data including hostname, asset type, file path, MIME type, owner, ACL permissions, file size, and last modification time
+{% endhint %}
 
 ```powershell
 <#
