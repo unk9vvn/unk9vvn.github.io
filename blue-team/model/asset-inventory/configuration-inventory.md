@@ -222,3 +222,17 @@ for ($i = $startIP; $i -le $endIP; $i++) {
     }
 }
 ```
+
+### System Configuration
+
+#### [Lynis (Linux)](https://github.com/CISOfy/lynis)
+
+```bash
+lynis
+```
+
+#### [Hardentools (Windows)](https://github.com/hardentools/hardentools)
+
+```bash
+hardentools-cli.exe
+```
