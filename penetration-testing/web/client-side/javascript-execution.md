@@ -10,6 +10,8 @@
 
 #### Native Sandbox Escape via Host-Object Reference Bleeding in Tenant Integration Hubs
 
+#### Native Sandbox Escape via Host-Object Reference Bleeding in Tenant Integration Hubs
+
 {% stepper %}
 {% step %}
 Map the entire target system using Burp Suite. Focus on API architectures functioning as Integration Hubs, Workflow Orchestrators, or Data Transformation pipelines (e.g., Webhook dispatchers, iPaaS solutions) that allow Tenant Administrators to define custom data-mapping logic
@@ -291,6 +293,8 @@ Content-Type: application/json
 To support complex B2B workflow customizations without incurring the massive compute overhead of isolating individual Docker containers, enterprise architects embedded native JavaScript execution engines directly into the core integration backend. This optimization relied entirely on the assumption that software sandboxes provided absolute isolation. To maintain usability, developers intentionally punctured the sandbox, injecting utility objects from the host language into the isolated context. They erroneously assumed that the execution boundary was restricted to the declared interface of the injected object. The attacker weaponized this trust by utilizing native language reflection and prototype traversal. By pivoting off the injected utility object, the attacker walked the object's ancestry graph, ultimately acquiring a reference to the global runtime execution context. This traversal seamlessly bypassed the engine's isolation constraints, escalating a restricted JS execution context into absolute, host-level Remote Code Execution
 {% endstep %}
 {% endstepper %}
+
+***
 
 ***
 

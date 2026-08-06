@@ -315,6 +315,8 @@ Load the HTML file in the browser and confirm that the account managers page ren
 
 #### State Mutation via Deprecated X-Frame-Options: ALLOW-FROM Fallback Asymmetr
 
+#### State Mutation via Deprecated X-Frame-Options: ALLOW-FROM Fallback Asymmetry
+
 {% stepper %}
 {% step %}
 Map the entire target system using Burp Suite. Focus on B2B SaaS platforms, enterprise embedded widgets (e.g., payment gateways, booking calendars, analytics dashboards), or partner integrations that are explicitly designed to be framed by authorized third parties
