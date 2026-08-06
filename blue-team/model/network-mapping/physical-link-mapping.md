@@ -61,7 +61,7 @@ Passive layer-2 packet capture
 ```bash
 sudo tshark -i eth0 \
     -Y "arp or lldp or cdp or stp or l2tp" \
-    > capture-layer2.txt
+    > capture-layer2.pcap
 ```
 
 #### [Netdiscover](https://github.com/netdiscover-scanner/netdiscover)

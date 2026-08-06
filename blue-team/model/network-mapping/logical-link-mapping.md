@@ -4,7 +4,7 @@
 
 ### Active Logical Link Mapping
 
-#### Map Layer-3
+#### Map Layer 3
 
 #### [Nmap](https://nmap.org/)
 
@@ -116,5 +116,5 @@ Passive layer-3 packet capture
 ```bash
 sudo tshark -i eth0 \
     -Y "dhcp or icmp or igmp or ospf or bgp or eigrp or rip or glbp or hsrp or vrrp" \
-    > capture-layer3.txt
+    > capture-layer3.pcap
 ```
