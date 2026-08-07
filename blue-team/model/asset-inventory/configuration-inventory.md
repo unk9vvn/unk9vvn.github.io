@@ -137,6 +137,585 @@ diff snmpv1-baseline.txt /tmp/snmpv1-current.txt
 diff snmpv2c-baseline.txt /tmp/snmpv2c-current.txt
 ```
 
+### Local & Remote Windows Configuration Inventory
+
+{% hint style="info" %}
+Collect Windows security, access, and automation configuration data, including Microsoft Defender status, BitLocker volumes, process mitigation settings, audit policy, WinRM configuration, and scheduled task details
+{% endhint %}
+
+```powershell
+<#
+.SYNOPSIS
+    Windows Configuration Inventory Script.
+
+.DESCRIPTION
+    Collects Windows configuration data from local and remote hosts and
+    writes one pretty-printed JSON file per host.
+
+.EXAMPLE
+    .\conf-inv.ps1
+
+.EXAMPLE
+    .\conf-inv.ps1 HOST-01,HOST-02,192.168.1.10
+
+.OUTPUT
+    <script-directory>\inventory_results\<hostname>-configuration_inventory_results.json
+#>
+
+[CmdletBinding()]
+param(
+    [Parameter(Position = 0)]
+    [string]$Targets
+)
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = "Continue"
+
+# Resolve the output directory relative to the script location.
+# This prevents output behavior from depending on the current PowerShell path.
+$ScriptRoot = $PSScriptRoot
+
+if ([string]::IsNullOrWhiteSpace($ScriptRoot)) {
+    $ScriptRoot = (Get-Location).Path
+}
+
+$OutputDir = Join-Path `
+    -Path $ScriptRoot `
+    -ChildPath "inventory_results"
+
+try {
+    if (-not (Test-Path `
+        -LiteralPath $OutputDir `
+        -PathType Container `
+        -ErrorAction Stop)) {
+
+        New-Item `
+            -Path $OutputDir `
+            -ItemType Directory `
+            -Force `
+            -ErrorAction Stop |
+            Out-Null
+    }
+}
+catch {
+    Write-Host "[!] Cannot create output directory '$OutputDir'." -ForegroundColor Red
+    Write-Host "[!] $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}
+
+if ([string]::IsNullOrWhiteSpace($Targets)) {
+    $ComputerNames = @("localhost")
+}
+else {
+    $ComputerNames = @(
+        $Targets -split ',' |
+            ForEach-Object {
+                $_.Trim().Replace("`r", "").Replace("`n", "")
+            } |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            } |
+            Select-Object -Unique
+    )
+}
+
+if ($ComputerNames.Count -eq 0) {
+    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
+    exit 1
+}
+
+function Read-CliCredentialForTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
+
+    $UserName = Read-Host `
+        "Username for $Target (Format: DOMAIN\User or $Target\User)"
+
+    if ([string]::IsNullOrWhiteSpace($UserName)) {
+        throw "Username cannot be empty."
+    }
+
+    $Password = Read-Host `
+        "Password for $Target" `
+        -AsSecureString
+
+    return New-Object `
+        System.Management.Automation.PSCredential `
+        ($UserName, $Password)
+}
+
+function Test-LocalTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    $NormalizedTarget = $Target.Trim().ToLowerInvariant()
+    $LocalComputerName = $env:COMPUTERNAME.Trim().ToLowerInvariant()
+
+    return (
+        $NormalizedTarget -eq "localhost" -or
+        $NormalizedTarget -eq "." -or
+        $NormalizedTarget -eq $LocalComputerName
+    )
+}
+
+$ConfigurationInventoryScriptBlock = {
+    $Results = New-Object System.Collections.Generic.List[object]
+
+    function ConvertTo-PlainObject {
+        param(
+            [Parameter(Mandatory = $false)]
+            [object]$InputObject
+        )
+
+        if ($null -eq $InputObject) {
+            return $null
+        }
+
+        if (
+            $InputObject -is [string] -or
+            $InputObject -is [char] -or
+            $InputObject -is [bool] -or
+            $InputObject -is [byte] -or
+            $InputObject -is [sbyte] -or
+            $InputObject -is [int16] -or
+            $InputObject -is [int32] -or
+            $InputObject -is [int64] -or
+            $InputObject -is [uint16] -or
+            $InputObject -is [uint32] -or
+            $InputObject -is [uint64] -or
+            $InputObject -is [single] -or
+            $InputObject -is [double] -or
+            $InputObject -is [decimal] -or
+            $InputObject -is [datetime] -or
+            $InputObject -is [guid] -or
+            $InputObject -is [timespan]
+        ) {
+            return $InputObject
+        }
+
+        if ($InputObject -is [System.Enum]) {
+            return $InputObject.ToString()
+        }
+
+        if ($InputObject -is [System.Collections.IDictionary]) {
+            $DictionaryObject = [ordered]@{}
+
+            foreach ($Key in $InputObject.Keys) {
+                $DictionaryObject[[string]$Key] =
+                    ConvertTo-PlainObject -InputObject $InputObject[$Key]
+            }
+
+            return [PSCustomObject]$DictionaryObject
+        }
+
+        if (
+            $InputObject -is [System.Collections.IEnumerable] -and
+            -not ($InputObject -is [string])
+        ) {
+            $ArrayObject = New-Object System.Collections.Generic.List[object]
+
+            foreach ($Item in $InputObject) {
+                [void]$ArrayObject.Add(
+                    (ConvertTo-PlainObject -InputObject $Item)
+                )
+            }
+
+            return @($ArrayObject.ToArray())
+        }
+
+        $ExcludedProperties = @(
+            "CimClass",
+            "CimInstanceProperties",
+            "CimSystemProperties",
+            "PSComputerName",
+            "RunspaceId",
+            "PSShowComputerName",
+            "PSSourceJobInstanceId",
+            "PSStatus",
+            "PSState",
+            "PSBeginTime",
+            "PSEndTime",
+            "PSJobTypeName",
+            "Output"
+        )
+
+        $PropertyBag = [ordered]@{}
+
+        foreach ($Property in $InputObject.PSObject.Properties) {
+            if ($Property.Name -in $ExcludedProperties) {
+                continue
+            }
+
+            if (-not $Property.IsGettable) {
+                continue
+            }
+
+            try {
+                $PropertyBag[$Property.Name] =
+                    ConvertTo-PlainObject -InputObject $Property.Value
+            }
+            catch {
+                $PropertyBag[$Property.Name] = $null
+            }
+        }
+
+        return [PSCustomObject]$PropertyBag
+    }
+
+    function Add-InventoryRecord {
+        param(
+            [Parameter(Mandatory = $true)]
+            [string]$ConfigDomain,
+
+            [Parameter(Mandatory = $true)]
+            [string]$ConfigCategory,
+
+            [Parameter(Mandatory = $true)]
+            [string]$ConfigItem,
+
+            [Parameter(Mandatory = $true)]
+            [string]$CollectionCommand,
+
+            [Parameter(Mandatory = $false)]
+            [object]$ConfigValue = $null,
+
+            [Parameter(Mandatory = $false)]
+            [string]$CollectionStatus = "success",
+
+            [Parameter(Mandatory = $false)]
+            [string]$ErrorMessage = $null
+        )
+
+        $InventoryItem = [PSCustomObject]@{
+            hostname           = [string]$env:COMPUTERNAME
+            asset_type         = "windows_configuration"
+            config_domain      = $ConfigDomain
+            config_category    = $ConfigCategory
+            config_item        = $ConfigItem
+            collection_command = $CollectionCommand
+            collection_status  = $CollectionStatus
+            error_message      = $ErrorMessage
+            config_value       = $ConfigValue
+            collection_time    = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+        }
+
+        [void]$Results.Add($InventoryItem)
+    }
+
+    try {
+        $DefenderStatus = Get-MpComputerStatus -ErrorAction Stop
+
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Endpoint Protection Configuration" `
+            -ConfigItem "Microsoft Defender Computer Status" `
+            -CollectionCommand "Get-MpComputerStatus" `
+            -ConfigValue (
+                ConvertTo-PlainObject -InputObject $DefenderStatus
+            )
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Endpoint Protection Configuration" `
+            -ConfigItem "Microsoft Defender Computer Status" `
+            -CollectionCommand "Get-MpComputerStatus" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    try {
+        $BitLockerVolumes = @(
+            Get-BitLockerVolume -ErrorAction Stop
+        )
+
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Disk Encryption Configuration" `
+            -ConfigItem "BitLocker Volume Configuration" `
+            -CollectionCommand "Get-BitLockerVolume" `
+            -ConfigValue (
+                ConvertTo-PlainObject -InputObject $BitLockerVolumes
+            )
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Disk Encryption Configuration" `
+            -ConfigItem "BitLocker Volume Configuration" `
+            -CollectionCommand "Get-BitLockerVolume" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    try {
+        $SystemMitigation = Get-ProcessMitigation `
+            -System `
+            -ErrorAction Stop
+
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Exploit Protection Configuration" `
+            -ConfigItem "System Process Mitigation Configuration" `
+            -CollectionCommand "Get-ProcessMitigation -System" `
+            -ConfigValue (
+                ConvertTo-PlainObject -InputObject $SystemMitigation
+            )
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Exploit Protection Configuration" `
+            -ConfigItem "System Process Mitigation Configuration" `
+            -CollectionCommand "Get-ProcessMitigation -System" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    try {
+        $AuditPolicyLines = @(
+            auditpol /get /category:* 2>&1 |
+                ForEach-Object {
+                    $_.ToString()
+                }
+        )
+
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Audit Policy Configuration" `
+            -ConfigItem "Advanced Audit Policy Configuration" `
+            -CollectionCommand "auditpol /get /category:*" `
+            -ConfigValue $AuditPolicyLines
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Security Configuration" `
+            -ConfigCategory "Audit Policy Configuration" `
+            -ConfigItem "Advanced Audit Policy Configuration" `
+            -CollectionCommand "auditpol /get /category:*" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    try {
+        $WinRmConfigLines = @(
+            winrm get winrm/config 2>&1 |
+                ForEach-Object {
+                    $_.ToString()
+                }
+        )
+
+        Add-InventoryRecord `
+            -ConfigDomain "Account / Access Configuration" `
+            -ConfigCategory "Remote Management Configuration" `
+            -ConfigItem "WinRM Service Configuration" `
+            -CollectionCommand "winrm get winrm/config" `
+            -ConfigValue $WinRmConfigLines
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Account / Access Configuration" `
+            -ConfigCategory "Remote Management Configuration" `
+            -ConfigItem "WinRM Service Configuration" `
+            -CollectionCommand "winrm get winrm/config" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    try {
+        $ScheduledTasksLines = @(
+            schtasks /query /fo LIST /v 2>&1 |
+                ForEach-Object {
+                    $_.ToString()
+                }
+        )
+
+        Add-InventoryRecord `
+            -ConfigDomain "Task / Automation Configuration" `
+            -ConfigCategory "Scheduled Task Configuration" `
+            -ConfigItem "Windows Scheduled Tasks Detailed Configuration" `
+            -CollectionCommand "schtasks /query /fo LIST /v" `
+            -ConfigValue $ScheduledTasksLines
+    }
+    catch {
+        Add-InventoryRecord `
+            -ConfigDomain "Task / Automation Configuration" `
+            -ConfigCategory "Scheduled Task Configuration" `
+            -ConfigItem "Windows Scheduled Tasks Detailed Configuration" `
+            -CollectionCommand "schtasks /query /fo LIST /v" `
+            -CollectionStatus "failed" `
+            -ErrorMessage $_.Exception.Message
+    }
+
+    # The unary comma keeps the complete result array as one pipeline object.
+    return ,$Results.ToArray()
+}
+
+foreach ($Target in $ComputerNames) {
+    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
+
+    $InventoryRecords = $null
+    $FinalHostName = $Target
+    $IsLocalTarget = Test-LocalTarget -Target $Target
+
+    try {
+        if ($IsLocalTarget) {
+            $InventoryRecords = & $ConfigurationInventoryScriptBlock
+        }
+        else {
+            $InventoryRecords = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $ConfigurationInventoryScriptBlock `
+                -ErrorAction Stop
+        }
+    }
+    catch {
+        if ($IsLocalTarget) {
+            Write-Host `
+                "[!] Local inventory collection failed: $($_.Exception.Message)" `
+                -ForegroundColor Red
+
+            continue
+        }
+
+        Write-Host `
+            "[-] Current user context failed for $Target. Requesting credentials..." `
+            -ForegroundColor DarkGray
+    }
+
+    if ($null -eq $InventoryRecords -and -not $IsLocalTarget) {
+        try {
+            $Credential = Read-CliCredentialForTarget -Target $Target
+
+            $InventoryRecords = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $ConfigurationInventoryScriptBlock `
+                -Credential $Credential `
+                -ErrorAction Stop
+        }
+        catch {
+            Write-Host `
+                "[!] Failed to collect from ${Target}: $($_.Exception.Message)" `
+                -ForegroundColor Red
+
+            continue
+        }
+    }
+
+    if ($null -eq $InventoryRecords) {
+        Write-Host `
+            "[!] No inventory result was returned for $Target." `
+            -ForegroundColor Red
+
+        continue
+    }
+
+    $InventoryRecords = @($InventoryRecords)
+
+    if (
+        $InventoryRecords.Count -gt 0 -and
+        $null -ne $InventoryRecords[0].hostname -and
+        -not [string]::IsNullOrWhiteSpace(
+            [string]$InventoryRecords[0].hostname
+        )
+    ) {
+        $FinalHostName = [string]$InventoryRecords[0].hostname
+    }
+
+    if ($InventoryRecords.Count -eq 0) {
+        Write-Host `
+            "[!] No records collected from $Target." `
+            -ForegroundColor Yellow
+
+        continue
+    }
+
+    $FinalHostName = $FinalHostName.Trim()
+
+    if ([string]::IsNullOrWhiteSpace($FinalHostName)) {
+        $FinalHostName = $Target.Trim()
+    }
+
+    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
+
+    $OutputFilePath = Join-Path `
+        -Path $OutputDir `
+        -ChildPath "${SafeHostName}-configuration_inventory_results.json"
+
+    try {
+        $JsonOutput = $InventoryRecords |
+            ConvertTo-Json -Depth 20
+
+        if ([string]::IsNullOrWhiteSpace($JsonOutput)) {
+            throw "ConvertTo-Json returned an empty result."
+        }
+
+        $Utf8NoBom = New-Object `
+            System.Text.UTF8Encoding($false)
+
+        [System.IO.File]::WriteAllText(
+            $OutputFilePath,
+            $JsonOutput,
+            $Utf8NoBom
+        )
+
+        $FileExists = Test-Path `
+            -LiteralPath $OutputFilePath `
+            -PathType Leaf `
+            -ErrorAction Stop
+
+        if (-not $FileExists) {
+            throw "The output file was not created."
+        }
+
+        $OutputFile = Get-Item `
+            -LiteralPath $OutputFilePath `
+            -ErrorAction Stop
+
+        if ($OutputFile.Length -eq 0) {
+            throw "The output file is empty."
+        }
+
+        Write-Host `
+            "[+] Inventory saved for ${FinalHostName}: $($OutputFile.FullName)" `
+            -ForegroundColor Green
+
+        Write-Host `
+            "[+] Total records collected: $($InventoryRecords.Count)" `
+            -ForegroundColor Gray
+    }
+    catch {
+        Write-Host `
+            "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" `
+            -ForegroundColor Red
+
+        Write-Host `
+            "[!] Expected output path: $OutputFilePath" `
+            -ForegroundColor Yellow
+
+        continue
+    }
+}
+
+Write-Host "`n[*] All tasks completed." -ForegroundColor White
+```
+
+{% hint style="info" %}
+Save & Execute
+{% endhint %}
+
+```bash
+notepad .\configuration-inventory.ps1
+.\configuration-inventory.ps1 # Local Inventory
+.\configuration-inventory.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
+```
+
 ### System Configuration
 
 #### [Lynis (Linux)](https://github.com/CISOfy/lynis)
