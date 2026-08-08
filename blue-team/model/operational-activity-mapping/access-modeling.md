@@ -2,6 +2,11 @@
 
 ## Cheatsheet
 
+### Checklist
+
+* [ ] For websites, identify and document the roles used by the application
+* [ ] Review the granularity of those roles and the needs behind the permissions granted.
+
 ### Local & Remote Windows Access Modeling
 
 #### [Powershell](https://github.com/powershell/powershell)
@@ -317,6 +322,8 @@ notepad access-modeling.ps1
 .\access-modeling.ps1 # Local Inventory
 .\access-modeling.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
+
+### Local & Remote Windows Access Control List Inventory
 
 #### [Powershell](https://github.com/powershell/powershell)
 
@@ -1023,6 +1030,8 @@ sudo chmod +x access-modeling.sh
 sudo ./access-modeling.sh # Local Inventory
 sudo ./access-modeling.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```
+
+### Local & Remote Linux Access Control List Inventory
 
 #### [getfacl](https://man7.org/linux/man-pages/man1/getfacl.1.html) & [jq](https://jqlang.org/)
 
