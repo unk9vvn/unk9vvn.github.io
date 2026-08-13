@@ -2,6 +2,321 @@
 
 ## Cheatsheet
 
+### Local & Remote Windows Data Inventory
+
+#### [Powershell](https://github.com/powershell/powershell)
+
+{% hint style="info" %}
+Gather Firewall profiles status, active rules and listening Ports with Process Name
+{% endhint %}
+
+```powershell
+param(
+    [Parameter(Position = 0, Mandatory = $false)]
+    [string[]]$ComputerName
+)
+
+$OutputDirectory = Join-Path -Path (Get-Location) -ChildPath "inventory_results"
+
+if (-not (Test-Path -Path $OutputDirectory)) {
+    try {
+        New-Item -Path $OutputDirectory -ItemType Directory -Force | Out-Null
+        Write-Host "Created output directory: $OutputDirectory" -ForegroundColor Gray
+    }
+    catch {
+        throw "Failed to create directory $OutputDirectory. Please check permissions."
+    }
+}
+
+function ConvertTo-SafeFileName {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    return ($Name.Trim() -replace '[\\/:*?"<>|]', '_')
+}
+
+function Read-CliCredentialForTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    Write-Host ""
+    Write-Host "Enter credentials for target: $Target" -ForegroundColor Cyan
+
+    $UserName = Read-Host "Username for $Target, for example DOMAIN\User or $Target\Administrator"
+    $Password = Read-Host "Password for $Target" -AsSecureString
+
+    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
+}
+
+$NetworkPolicyMappingScript = {
+    function Get-ProfileString {
+        param($ProfileNumber)
+
+        switch ($ProfileNumber) {
+            1          { "Domain" }
+            2          { "Private" }
+            4          { "Public" }
+            3          { "Domain, Private" }
+            5          { "Domain, Public" }
+            6          { "Private, Public" }
+            7          { "Any" }
+            2147483647 { "Any" }
+            default    { "Unknown ($ProfileNumber)" }
+        }
+    }
+
+    function Get-TcpStateString {
+        param($StateNumber)
+
+        switch ($StateNumber) {
+            0       { "Closed" }
+            1       { "Listen" }
+            2       { "SynSent" }
+            3       { "SynReceived" }
+            4       { "Established" }
+            5       { "FinWait1" }
+            6       { "FinWait2" }
+            7       { "CloseWait" }
+            8       { "Closing" }
+            9       { "LastAck" }
+            10      { "TimeWait" }
+            default { "Unknown ($StateNumber)" }
+        }
+    }
+
+    function Get-SafeData {
+        param(
+            [Parameter(Mandatory = $true)]
+            [scriptblock]$Script
+        )
+
+        try {
+            & $Script
+        }
+        catch {
+            $null
+        }
+    }
+
+    $FirewallProfiles = Get-SafeData {
+        Get-NetFirewallProfile |
+            Select-Object `
+                @{Name = 'Name'; Expression = { $_.Name.ToString() }},
+                @{Name = 'Enabled'; Expression = { $_.Enabled.ToString() }},
+                @{Name = 'DefaultInboundAction'; Expression = { $_.DefaultInboundAction.ToString() }},
+                @{Name = 'DefaultOutboundAction'; Expression = { $_.DefaultOutboundAction.ToString() }},
+                @{Name = 'LogAllowed'; Expression = { $_.LogAllowed.ToString() }},
+                @{Name = 'LogBlocked'; Expression = { $_.LogBlocked.ToString() }},
+                @{Name = 'LogFileName'; Expression = { $_.LogFileName }}
+    }
+
+    $ActiveFirewallRules = Get-SafeData {
+        Get-NetFirewallRule |
+            Where-Object { $_.Enabled -eq $true } |
+            Select-Object `
+                DisplayName,
+                Name,
+                @{Name = 'Direction'; Expression = { $_.Direction.ToString() }},
+                @{Name = 'Action'; Expression = { $_.Action.ToString() }},
+                @{Name = 'Profile'; Expression = { Get-ProfileString $_.Profile }},
+                @{Name = 'Enabled'; Expression = { $_.Enabled.ToString() }},
+                @{Name = 'PolicyStoreSource'; Expression = { $_.PolicyStoreSource }},
+                @{Name = 'PolicyStoreSourceType'; Expression = { $_.PolicyStoreSourceType.ToString() }} |
+            Sort-Object Direction, Action, DisplayName
+    }
+
+    $ListeningPorts = Get-SafeData {
+        Get-NetTCPConnection -State Listen |
+            Select-Object `
+                LocalAddress,
+                LocalPort,
+                @{Name = 'State'; Expression = { Get-TcpStateString $_.State }},
+                @{Name = 'PID'; Expression = { [string]$_.OwningProcess }},
+                @{Name = 'ProcessName'; Expression = {
+                    $Process = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue
+
+                    if ($Process) {
+                        $Process.ProcessName
+                    }
+                    else {
+                        "Unknown"
+                    }
+                }},
+                @{Name = 'ProcessPath'; Expression = {
+                    $Process = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue
+
+                    if ($Process -and $Process.Path) {
+                        $Process.Path
+                    }
+                    else {
+                        "N/A"
+                    }
+                }} |
+            Sort-Object LocalPort, LocalAddress
+    }
+
+    [PSCustomObject]@{
+        Hostname              = $env:COMPUTERNAME
+        CollectionTimeUtc     = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+        ReportType            = "Network Traffic Policy Mapping"
+        CollectionMode        = "Windows PowerShell"
+        FirewallProfilesCount = @($FirewallProfiles).Count
+        ActiveRulesCount      = @($ActiveFirewallRules).Count
+        ListeningPortsCount   = @($ListeningPorts).Count
+        FirewallProfiles      = @($FirewallProfiles)
+        ActiveFirewallRules   = @($ActiveFirewallRules)
+        ListeningPorts        = @($ListeningPorts)
+    }
+}
+
+function Save-NetworkPolicyMappingReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Report,
+
+        [Parameter(Mandatory = $true)]
+        [string]$OutputDirectory
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Report.Hostname)) {
+        Write-Host "Skipping report because hostname is empty." -ForegroundColor Red
+        return
+    }
+
+    $SafeHostname = ConvertTo-SafeFileName -Name $Report.Hostname
+    $OutputPath = Join-Path -Path $OutputDirectory -ChildPath "$SafeHostname-network-traffic-policy-mapping.json"
+
+    try {
+        $Report |
+            ConvertTo-Json -Depth 10 |
+            Out-File -FilePath $OutputPath -Encoding UTF8
+
+        Write-Host "Network policy mapping saved: $OutputPath" -ForegroundColor Yellow
+    }
+    catch {
+        Write-Host "Failed to save report for $($Report.Hostname): $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+$Targets = @()
+
+if ($ComputerName) {
+    $Targets = @(
+        $ComputerName |
+            ForEach-Object {
+                $_ -split ','
+            } |
+            ForEach-Object {
+                $_.Trim().
+                    Replace("`r", "").
+                    Replace("`n", "").
+                    Replace("[", "").
+                    Replace("]", "")
+            } |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            } |
+            Select-Object -Unique
+    )
+}
+
+if ($Targets.Count -eq 0) {
+    Write-Host "[*] Running in local mode ..." -ForegroundColor Cyan
+
+    try {
+        $LocalResult = & $NetworkPolicyMappingScript
+
+        if ($null -eq $LocalResult) {
+            throw "Local Network Traffic Policy Mapping returned no data."
+        }
+
+        Save-NetworkPolicyMappingReport -Report $LocalResult -OutputDirectory $OutputDirectory
+
+        Write-Host "[+] Local Network Traffic Policy Mapping complete." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "[ERROR] Local Network Traffic Policy Mapping failed: $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+
+    exit 0
+}
+
+Write-Host "[*] Running in remote mode ..." -ForegroundColor Cyan
+Write-Host "[+] Validated target systems: $($Targets -join ', ')" -ForegroundColor Cyan
+
+$Results = @()
+
+foreach ($Target in $Targets) {
+    Write-Host ""
+    Write-Host "[*] Processing target: $Target" -ForegroundColor Cyan
+
+    $Result = $null
+
+    try {
+        $Result = Invoke-Command `
+            -ComputerName $Target `
+            -ScriptBlock $NetworkPolicyMappingScript `
+            -ErrorAction Stop
+
+        if ($null -ne $Result) {
+            $Results += $Result
+            Write-Host "[+] Success using current context: $Target" -ForegroundColor Green
+        }
+    }
+    catch {
+        Write-Host "[WARNING] Current context failed for ${Target}: $($_.Exception.Message)" -ForegroundColor DarkGray
+    }
+
+    if ($null -eq $Result) {
+        try {
+            $TargetCredential = Read-CliCredentialForTarget -Target $Target
+
+            $Result = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $NetworkPolicyMappingScript `
+                -Credential $TargetCredential `
+                -ErrorAction Stop
+
+            if ($null -ne $Result) {
+                $Results += $Result
+                Write-Host "[+] Success using provided credentials: $Target" -ForegroundColor Green
+            }
+        }
+        catch {
+            Write-Host "[ERROR] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+}
+
+if ($Results.Count -eq 0) {
+    Write-Host "[ERROR] No remote reports were collected." -ForegroundColor Red
+    exit 1
+}
+
+foreach ($Result in $Results) {
+    Save-NetworkPolicyMappingReport -Report $Result -OutputDirectory $OutputDirectory
+}
+
+Write-Host ""
+Write-Host "[+] Remote Network Traffic Policy Mapping complete." -ForegroundColor Green
+Write-Host "[+] Reports saved to: $OutputDirectory" -ForegroundColor Green
+```
+
+{% hint style="info" %}
+Save & Execute
+{% endhint %}
+
+```bash
+notepad network_traffic_policy_mapping.ps1
+.\network_traffic_policy_mapping.ps1 # Local Inventory
+.\network_traffic_policy_mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
+```
+
 ### Local & Remote Linux Network Traffic Policy Mapping
 
 #### [nft](https://www.netfilter.org/projects/nftables/manpage.html) & [iptables](https://man7.org/linux/man-pages/man8/iptables.8.html) & [ip6tables](https://linux.die.net/man/8/ip6tables) & [ufw](https://wiki.ubuntu.com/UncomplicatedFirewall?action=show\&redirect=UbuntuFirewall)
@@ -482,320 +797,5 @@ Save & Execute
 nano network_traffic_policy_mapping.sh
 ./network_traffic_policy_mapping.sh # Local Inventory
 ./network_traffic_policy_mapping.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
-```
-
-### Local & Remote Windows Data Inventory
-
-#### [Powershell](https://github.com/powershell/powershell)
-
-{% hint style="info" %}
-Gather Firewall profiles status, active rules and listening Ports with Process Name
-{% endhint %}
-
-```powershell
-param(
-    [Parameter(Position = 0, Mandatory = $false)]
-    [string[]]$ComputerName
-)
-
-$OutputDirectory = Join-Path -Path (Get-Location) -ChildPath "inventory_results"
-
-if (-not (Test-Path -Path $OutputDirectory)) {
-    try {
-        New-Item -Path $OutputDirectory -ItemType Directory -Force | Out-Null
-        Write-Host "Created output directory: $OutputDirectory" -ForegroundColor Gray
-    }
-    catch {
-        throw "Failed to create directory $OutputDirectory. Please check permissions."
-    }
-}
-
-function ConvertTo-SafeFileName {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Name
-    )
-
-    return ($Name.Trim() -replace '[\\/:*?"<>|]', '_')
-}
-
-function Read-CliCredentialForTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    Write-Host ""
-    Write-Host "Enter credentials for target: $Target" -ForegroundColor Cyan
-
-    $UserName = Read-Host "Username for $Target, for example DOMAIN\User or $Target\Administrator"
-    $Password = Read-Host "Password for $Target" -AsSecureString
-
-    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
-}
-
-$NetworkPolicyMappingScript = {
-    function Get-ProfileString {
-        param($ProfileNumber)
-
-        switch ($ProfileNumber) {
-            1          { "Domain" }
-            2          { "Private" }
-            4          { "Public" }
-            3          { "Domain, Private" }
-            5          { "Domain, Public" }
-            6          { "Private, Public" }
-            7          { "Any" }
-            2147483647 { "Any" }
-            default    { "Unknown ($ProfileNumber)" }
-        }
-    }
-
-    function Get-TcpStateString {
-        param($StateNumber)
-
-        switch ($StateNumber) {
-            0       { "Closed" }
-            1       { "Listen" }
-            2       { "SynSent" }
-            3       { "SynReceived" }
-            4       { "Established" }
-            5       { "FinWait1" }
-            6       { "FinWait2" }
-            7       { "CloseWait" }
-            8       { "Closing" }
-            9       { "LastAck" }
-            10      { "TimeWait" }
-            default { "Unknown ($StateNumber)" }
-        }
-    }
-
-    function Get-SafeData {
-        param(
-            [Parameter(Mandatory = $true)]
-            [scriptblock]$Script
-        )
-
-        try {
-            & $Script
-        }
-        catch {
-            $null
-        }
-    }
-
-    $FirewallProfiles = Get-SafeData {
-        Get-NetFirewallProfile |
-            Select-Object `
-                @{Name = 'Name'; Expression = { $_.Name.ToString() }},
-                @{Name = 'Enabled'; Expression = { $_.Enabled.ToString() }},
-                @{Name = 'DefaultInboundAction'; Expression = { $_.DefaultInboundAction.ToString() }},
-                @{Name = 'DefaultOutboundAction'; Expression = { $_.DefaultOutboundAction.ToString() }},
-                @{Name = 'LogAllowed'; Expression = { $_.LogAllowed.ToString() }},
-                @{Name = 'LogBlocked'; Expression = { $_.LogBlocked.ToString() }},
-                @{Name = 'LogFileName'; Expression = { $_.LogFileName }}
-    }
-
-    $ActiveFirewallRules = Get-SafeData {
-        Get-NetFirewallRule |
-            Where-Object { $_.Enabled -eq $true } |
-            Select-Object `
-                DisplayName,
-                Name,
-                @{Name = 'Direction'; Expression = { $_.Direction.ToString() }},
-                @{Name = 'Action'; Expression = { $_.Action.ToString() }},
-                @{Name = 'Profile'; Expression = { Get-ProfileString $_.Profile }},
-                @{Name = 'Enabled'; Expression = { $_.Enabled.ToString() }},
-                @{Name = 'PolicyStoreSource'; Expression = { $_.PolicyStoreSource }},
-                @{Name = 'PolicyStoreSourceType'; Expression = { $_.PolicyStoreSourceType.ToString() }} |
-            Sort-Object Direction, Action, DisplayName
-    }
-
-    $ListeningPorts = Get-SafeData {
-        Get-NetTCPConnection -State Listen |
-            Select-Object `
-                LocalAddress,
-                LocalPort,
-                @{Name = 'State'; Expression = { Get-TcpStateString $_.State }},
-                @{Name = 'PID'; Expression = { [string]$_.OwningProcess }},
-                @{Name = 'ProcessName'; Expression = {
-                    $Process = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue
-
-                    if ($Process) {
-                        $Process.ProcessName
-                    }
-                    else {
-                        "Unknown"
-                    }
-                }},
-                @{Name = 'ProcessPath'; Expression = {
-                    $Process = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue
-
-                    if ($Process -and $Process.Path) {
-                        $Process.Path
-                    }
-                    else {
-                        "N/A"
-                    }
-                }} |
-            Sort-Object LocalPort, LocalAddress
-    }
-
-    [PSCustomObject]@{
-        Hostname              = $env:COMPUTERNAME
-        CollectionTimeUtc     = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-        ReportType            = "Network Traffic Policy Mapping"
-        CollectionMode        = "Windows PowerShell"
-        FirewallProfilesCount = @($FirewallProfiles).Count
-        ActiveRulesCount      = @($ActiveFirewallRules).Count
-        ListeningPortsCount   = @($ListeningPorts).Count
-        FirewallProfiles      = @($FirewallProfiles)
-        ActiveFirewallRules   = @($ActiveFirewallRules)
-        ListeningPorts        = @($ListeningPorts)
-    }
-}
-
-function Save-NetworkPolicyMappingReport {
-    param(
-        [Parameter(Mandatory = $true)]
-        [object]$Report,
-
-        [Parameter(Mandatory = $true)]
-        [string]$OutputDirectory
-    )
-
-    if ([string]::IsNullOrWhiteSpace($Report.Hostname)) {
-        Write-Host "Skipping report because hostname is empty." -ForegroundColor Red
-        return
-    }
-
-    $SafeHostname = ConvertTo-SafeFileName -Name $Report.Hostname
-    $OutputPath = Join-Path -Path $OutputDirectory -ChildPath "$SafeHostname-network-traffic-policy-mapping.json"
-
-    try {
-        $Report |
-            ConvertTo-Json -Depth 10 |
-            Out-File -FilePath $OutputPath -Encoding UTF8
-
-        Write-Host "Network policy mapping saved: $OutputPath" -ForegroundColor Yellow
-    }
-    catch {
-        Write-Host "Failed to save report for $($Report.Hostname): $($_.Exception.Message)" -ForegroundColor Red
-    }
-}
-
-$Targets = @()
-
-if ($ComputerName) {
-    $Targets = @(
-        $ComputerName |
-            ForEach-Object {
-                $_ -split ','
-            } |
-            ForEach-Object {
-                $_.Trim().
-                    Replace("`r", "").
-                    Replace("`n", "").
-                    Replace("[", "").
-                    Replace("]", "")
-            } |
-            Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
-            } |
-            Select-Object -Unique
-    )
-}
-
-if ($Targets.Count -eq 0) {
-    Write-Host "[*] Running in local mode ..." -ForegroundColor Cyan
-
-    try {
-        $LocalResult = & $NetworkPolicyMappingScript
-
-        if ($null -eq $LocalResult) {
-            throw "Local Network Traffic Policy Mapping returned no data."
-        }
-
-        Save-NetworkPolicyMappingReport -Report $LocalResult -OutputDirectory $OutputDirectory
-
-        Write-Host "[+] Local Network Traffic Policy Mapping complete." -ForegroundColor Green
-    }
-    catch {
-        Write-Host "[ERROR] Local Network Traffic Policy Mapping failed: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
-    }
-
-    exit 0
-}
-
-Write-Host "[*] Running in remote mode ..." -ForegroundColor Cyan
-Write-Host "[+] Validated target systems: $($Targets -join ', ')" -ForegroundColor Cyan
-
-$Results = @()
-
-foreach ($Target in $Targets) {
-    Write-Host ""
-    Write-Host "[*] Processing target: $Target" -ForegroundColor Cyan
-
-    $Result = $null
-
-    try {
-        $Result = Invoke-Command `
-            -ComputerName $Target `
-            -ScriptBlock $NetworkPolicyMappingScript `
-            -ErrorAction Stop
-
-        if ($null -ne $Result) {
-            $Results += $Result
-            Write-Host "[+] Success using current context: $Target" -ForegroundColor Green
-        }
-    }
-    catch {
-        Write-Host "[WARNING] Current context failed for ${Target}: $($_.Exception.Message)" -ForegroundColor DarkGray
-    }
-
-    if ($null -eq $Result) {
-        try {
-            $TargetCredential = Read-CliCredentialForTarget -Target $Target
-
-            $Result = Invoke-Command `
-                -ComputerName $Target `
-                -ScriptBlock $NetworkPolicyMappingScript `
-                -Credential $TargetCredential `
-                -ErrorAction Stop
-
-            if ($null -ne $Result) {
-                $Results += $Result
-                Write-Host "[+] Success using provided credentials: $Target" -ForegroundColor Green
-            }
-        }
-        catch {
-            Write-Host "[ERROR] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
-        }
-    }
-}
-
-if ($Results.Count -eq 0) {
-    Write-Host "[ERROR] No remote reports were collected." -ForegroundColor Red
-    exit 1
-}
-
-foreach ($Result in $Results) {
-    Save-NetworkPolicyMappingReport -Report $Result -OutputDirectory $OutputDirectory
-}
-
-Write-Host ""
-Write-Host "[+] Remote Network Traffic Policy Mapping complete." -ForegroundColor Green
-Write-Host "[+] Reports saved to: $OutputDirectory" -ForegroundColor Green
-```
-
-{% hint style="info" %}
-Save & Execute
-{% endhint %}
-
-```bash
-notepad network_traffic_policy_mapping.ps1
-.\network_traffic_policy_mapping.ps1 # Local Inventory
-.\network_traffic_policy_mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
 
