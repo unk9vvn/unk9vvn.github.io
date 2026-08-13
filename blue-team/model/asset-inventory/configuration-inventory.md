@@ -1,5 +1,9 @@
 # Configuration Inventory
 
+## Checklist
+
+* [ ] Always check the configuration files of important software.
+
 ## Cheat Sheet
 
 #### [Nmap](https://nmap.org/) & [naabu](https://github.com/projectdiscovery/naabu)
