@@ -11,6 +11,26 @@ Gather Firewall profiles status, active rules and listening Ports with Process N
 {% endhint %}
 
 ```powershell
+<#
+.SYNOPSIS
+    Windows Network Traffic Policy Mapping Script.
+
+.DESCRIPTION
+    Performs Windows Network Traffic Policy Mapping for local and remote hosts.
+    Collects firewall profile configuration, active firewall rules, and listening
+    TCP ports with owning process information, and writes the consolidated result
+    as a single JSON object per host.
+
+.EXAMPLE
+    .\network-policy-mapping.ps1
+
+.EXAMPLE
+    .\network-policy-mapping.ps1 HOST-01,HOST-02,192.168.1.10
+
+.OUTPUT
+    inventory_results\<hostname>-network-traffic-policy-mapping.json
+#>
+
 param(
     [Parameter(Position = 0, Mandatory = $false)]
     [string[]]$ComputerName
