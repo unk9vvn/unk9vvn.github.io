@@ -2,6 +2,375 @@
 
 ## Cheatsheet
 
+### Local & Remote Windows Service Dependency Mapping
+
+#### [Powershell](https://github.com/powershell/powershell)
+
+{% hint style="info" %}
+Collect Windows service status, configuration, process ID, executable path and service dependency tree information
+{% endhint %}
+
+```powershell
+<#
+.SYNOPSIS
+    Windows Service Dependency Mapping Inventory Script.
+
+.DESCRIPTION
+    Collects Windows service status information and service dependency trees
+    for local and remote hosts.
+
+    For each service, the script collects:
+    - Name
+    - DisplayName
+    - State
+    - StartMode
+    - StartName
+    - PathName
+    - PID / ProcessId
+    - Service dependency tree
+
+.EXAMPLE
+    .\service-dependency-mapping.ps1
+
+.EXAMPLE
+    .\service-dependency-mapping.ps1 unk9vvn,WIN-E31P99E3C3J
+
+.EXAMPLE
+    .\service-dependency-mapping.ps1 unk9vvn WIN-E31P99E3C3J
+
+.EXAMPLE
+    .\service-dependency-mapping.ps1 "unk9vvn,WIN-E31P99E3C3J"
+
+.OUTPUT
+    inventory_results\<hostname>-service-dependency-mapping-results.json
+#>
+
+param(
+    [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+    [string[]]$Targets
+)
+
+$OutputDir = "inventory_results"
+
+if (-not (Test-Path -Path $OutputDir)) {
+    New-Item -Path $OutputDir -ItemType Directory | Out-Null
+}
+
+function Convert-TargetsToComputerNames {
+    param(
+        [string[]]$RawTargets
+    )
+
+    if ($null -eq $RawTargets -or $RawTargets.Count -eq 0) {
+        return @("localhost")
+    }
+
+    $ComputerNameList = @()
+
+    foreach ($RawTarget in $RawTargets) {
+        if ([string]::IsNullOrWhiteSpace($RawTarget)) {
+            continue
+        }
+
+        $CleanTarget = $RawTarget.Trim().Replace("`r", " ").Replace("`n", " ")
+
+        $Parts = $CleanTarget -split '[,\s;]+'
+
+        foreach ($Part in $Parts) {
+            $ComputerName = $Part.Trim()
+
+            if (-not [string]::IsNullOrWhiteSpace($ComputerName)) {
+                $ComputerNameList += $ComputerName
+            }
+        }
+    }
+
+    $ComputerNameList = @(
+        $ComputerNameList |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            } |
+            Select-Object -Unique
+    )
+
+    if ($ComputerNameList.Count -eq 0) {
+        return @("localhost")
+    }
+
+    return $ComputerNameList
+}
+
+$ComputerNames = Convert-TargetsToComputerNames -RawTargets $Targets
+
+if ($ComputerNames.Count -eq 0) {
+    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
+    exit 1
+}
+
+function Read-CliCredentialForTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
+    $UserName = Read-Host "Username for $Target (Format: DOMAIN\User or $Target\User)"
+    $Password = Read-Host "Password for $Target" -AsSecureString
+
+    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
+}
+
+function Test-LocalTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    $NormalizedTarget = $Target.Trim().ToLower()
+    $LocalComputerName = $env:COMPUTERNAME.ToLower()
+
+    if ($NormalizedTarget -eq "localhost") {
+        return $true
+    }
+
+    if ($NormalizedTarget -eq ".") {
+        return $true
+    }
+
+    if ($NormalizedTarget -eq $LocalComputerName) {
+        return $true
+    }
+
+    return $false
+}
+
+$ServiceDependencyMappingScriptBlock = {
+    function Get-ServiceDependencyTreeObject {
+        param (
+            [Parameter(Mandatory = $true)]
+            [string]$ServiceName,
+
+            [int]$Level = 0,
+
+            [hashtable]$Visited = @{}
+        )
+
+        try {
+            $Service = Get-Service -Name $ServiceName -ErrorAction Stop
+        }
+        catch {
+            return [PSCustomObject]@{
+                name         = $ServiceName
+                display_name = $null
+                status       = "Not Found"
+                level        = $Level
+                already_seen = $false
+                dependencies = @()
+            }
+        }
+
+        if ($Visited.ContainsKey($ServiceName)) {
+            return [PSCustomObject]@{
+                name         = $Service.Name
+                display_name = $Service.DisplayName
+                status       = $Service.Status.ToString()
+                level        = $Level
+                already_seen = $true
+                dependencies = @()
+            }
+        }
+
+        $Visited[$ServiceName] = $true
+
+        $DependencyObjects = @()
+
+        foreach ($Dependency in ($Service.ServicesDependedOn | Sort-Object Name)) {
+            $DependencyObjects += Get-ServiceDependencyTreeObject `
+                -ServiceName $Dependency.Name `
+                -Level ($Level + 1) `
+                -Visited $Visited
+        }
+
+        return [PSCustomObject]@{
+            name         = $Service.Name
+            display_name = $Service.DisplayName
+            status       = $Service.Status.ToString()
+            level        = $Level
+            already_seen = $false
+            dependencies = $DependencyObjects
+        }
+    }
+
+    function Show-ServiceDependencyTree {
+        param (
+            [string]$ServiceName,
+            [int]$Level = 0,
+            [hashtable]$Visited = @{}
+        )
+
+        $indent = "  " * $Level
+
+        try {
+            $service = Get-Service -Name $ServiceName -ErrorAction Stop
+        }
+        catch {
+            Write-Output "$indent- $ServiceName [Not Found]"
+            return
+        }
+
+        if ($Visited.ContainsKey($ServiceName)) {
+            Write-Output "$indent- $ServiceName [Already Listed]"
+            return
+        }
+
+        $Visited[$ServiceName] = $true
+
+        Write-Output "$indent- $($service.Name) [$($service.Status)]"
+
+        foreach ($dep in ($service.ServicesDependedOn | Sort-Object Name)) {
+            Show-ServiceDependencyTree `
+                -ServiceName $dep.Name `
+                -Level ($Level + 1) `
+                -Visited $Visited
+        }
+    }
+
+    $HostName = $env:COMPUTERNAME
+
+    $ServiceStatus = Get-CimInstance Win32_Service |
+        Select-Object `
+            Name,
+            DisplayName,
+            State,
+            StartMode,
+            StartName,
+            PathName,
+            @{
+                Name = "PID"
+                Expression = {
+                    $_.ProcessId
+                }
+            }
+
+    $ServiceDependencyResults = @()
+
+    foreach ($Service in ($ServiceStatus | Sort-Object Name)) {
+        $VisitedForObjectTree = @{}
+        $VisitedForTextTree = @{}
+
+        $DependencyTreeObject = Get-ServiceDependencyTreeObject `
+            -ServiceName $Service.Name `
+            -Level 0 `
+            -Visited $VisitedForObjectTree
+
+        $DependencyTreeText = Show-ServiceDependencyTree `
+            -ServiceName $Service.Name `
+            -Level 0 `
+            -Visited $VisitedForTextTree
+
+        $ServiceDependencyResults += [PSCustomObject]@{
+            hostname             = $HostName
+            asset_type           = "windows_service"
+            name                 = $Service.Name
+            display_name         = $Service.DisplayName
+            state                = $Service.State
+            start_mode           = $Service.StartMode
+            start_name           = $Service.StartName
+            path_name            = $Service.PathName
+            pid                  = $Service.PID
+            dependency_tree      = $DependencyTreeObject
+            dependency_tree_text = @($DependencyTreeText)
+        }
+    }
+
+    return [PSCustomObject]@{
+        hostname      = $HostName
+        collected_at  = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+        asset_type    = "windows_service_dependency_mapping"
+        service_count = $ServiceDependencyResults.Count
+        services      = $ServiceDependencyResults
+    }
+}
+
+foreach ($Target in $ComputerNames) {
+    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
+
+    $ResultObject = $null
+    $FinalHostName = $Target
+    $IsLocalTarget = Test-LocalTarget -Target $Target
+
+    try {
+        if ($IsLocalTarget) {
+            $ResultObject = & $ServiceDependencyMappingScriptBlock
+        }
+        else {
+            $ResultObject = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $ServiceDependencyMappingScriptBlock `
+                -ErrorAction Stop
+        }
+    }
+    catch {
+        Write-Host "[-] Current user context failed for $Target. Requesting credentials..." -ForegroundColor DarkGray
+    }
+
+    if ($null -eq $ResultObject -and -not $IsLocalTarget) {
+        try {
+            $Credential = Read-CliCredentialForTarget -Target $Target
+
+            $ResultObject = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $ServiceDependencyMappingScriptBlock `
+                -Credential $Credential `
+                -ErrorAction Stop
+        }
+        catch {
+            Write-Host "[!] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
+            continue
+        }
+    }
+
+    if ($null -eq $ResultObject -and $IsLocalTarget) {
+        Write-Host "[!] Failed to collect local service dependency mapping from ${Target}." -ForegroundColor Red
+        continue
+    }
+
+    if ($ResultObject.hostname) {
+        $FinalHostName = $ResultObject.hostname
+    }
+
+    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
+    $OutputFilePath = Join-Path -Path $OutputDir -ChildPath "${SafeHostName}-service-dependency-mapping-results.json"
+
+    try {
+        $ResultObject |
+            ConvertTo-Json -Depth 30 |
+            Out-File -FilePath $OutputFilePath -Encoding UTF8 -Force
+
+        $FullOutputPath = (Get-Item -Path $OutputFilePath).FullName
+
+        Write-Host "[+] Service dependency mapping saved for ${FinalHostName}: $FullOutputPath" -ForegroundColor Green
+        Write-Host "[+] Total services collected: $($ResultObject.service_count)" -ForegroundColor Gray
+    }
+    catch {
+        Write-Host "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" -ForegroundColor Red
+        continue
+    }
+}
+
+Write-Host "`n[*] All tasks completed." -ForegroundColor White
+```
+
+{% hint style="info" %}
+Save & Execute
+{% endhint %}
+
+```bash
+notepad service-dependency-mapping.ps1
+.\service-dependency-mapping.ps1 # Local Inventory
+.\service-dependency-mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
+```
+
 ### Local & Remote Linux Service Dependency Mapping
 
 #### [systemctl](https://man7.org/linux/man-pages/man1/systemctl.1.html) & [ps](https://man7.org/linux/man-pages/man1/ps.1.html)
@@ -507,373 +876,4 @@ see service logs
 
 ```bash
 journalctl -u <service-name>
-```
-
-### Local & Remote Windows Service Dependency Mapping
-
-#### [Powershell](https://github.com/powershell/powershell)
-
-{% hint style="info" %}
-Collect Windows service status, configuration, process ID, executable path and service dependency tree information
-{% endhint %}
-
-```powershell
-<#
-.SYNOPSIS
-    Windows Service Dependency Mapping Inventory Script.
-
-.DESCRIPTION
-    Collects Windows service status information and service dependency trees
-    for local and remote hosts.
-
-    For each service, the script collects:
-    - Name
-    - DisplayName
-    - State
-    - StartMode
-    - StartName
-    - PathName
-    - PID / ProcessId
-    - Service dependency tree
-
-.EXAMPLE
-    .\service-dependency-mapping.ps1
-
-.EXAMPLE
-    .\service-dependency-mapping.ps1 unk9vvn,WIN-E31P99E3C3J
-
-.EXAMPLE
-    .\service-dependency-mapping.ps1 unk9vvn WIN-E31P99E3C3J
-
-.EXAMPLE
-    .\service-dependency-mapping.ps1 "unk9vvn,WIN-E31P99E3C3J"
-
-.OUTPUT
-    inventory_results\<hostname>-service-dependency-mapping-results.json
-#>
-
-param(
-    [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
-    [string[]]$Targets
-)
-
-$OutputDir = "inventory_results"
-
-if (-not (Test-Path -Path $OutputDir)) {
-    New-Item -Path $OutputDir -ItemType Directory | Out-Null
-}
-
-function Convert-TargetsToComputerNames {
-    param(
-        [string[]]$RawTargets
-    )
-
-    if ($null -eq $RawTargets -or $RawTargets.Count -eq 0) {
-        return @("localhost")
-    }
-
-    $ComputerNameList = @()
-
-    foreach ($RawTarget in $RawTargets) {
-        if ([string]::IsNullOrWhiteSpace($RawTarget)) {
-            continue
-        }
-
-        $CleanTarget = $RawTarget.Trim().Replace("`r", " ").Replace("`n", " ")
-
-        $Parts = $CleanTarget -split '[,\s;]+'
-
-        foreach ($Part in $Parts) {
-            $ComputerName = $Part.Trim()
-
-            if (-not [string]::IsNullOrWhiteSpace($ComputerName)) {
-                $ComputerNameList += $ComputerName
-            }
-        }
-    }
-
-    $ComputerNameList = @(
-        $ComputerNameList |
-            Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
-            } |
-            Select-Object -Unique
-    )
-
-    if ($ComputerNameList.Count -eq 0) {
-        return @("localhost")
-    }
-
-    return $ComputerNameList
-}
-
-$ComputerNames = Convert-TargetsToComputerNames -RawTargets $Targets
-
-if ($ComputerNames.Count -eq 0) {
-    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
-    exit 1
-}
-
-function Read-CliCredentialForTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
-    $UserName = Read-Host "Username for $Target (Format: DOMAIN\User or $Target\User)"
-    $Password = Read-Host "Password for $Target" -AsSecureString
-
-    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
-}
-
-function Test-LocalTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    $NormalizedTarget = $Target.Trim().ToLower()
-    $LocalComputerName = $env:COMPUTERNAME.ToLower()
-
-    if ($NormalizedTarget -eq "localhost") {
-        return $true
-    }
-
-    if ($NormalizedTarget -eq ".") {
-        return $true
-    }
-
-    if ($NormalizedTarget -eq $LocalComputerName) {
-        return $true
-    }
-
-    return $false
-}
-
-$ServiceDependencyMappingScriptBlock = {
-    function Get-ServiceDependencyTreeObject {
-        param (
-            [Parameter(Mandatory = $true)]
-            [string]$ServiceName,
-
-            [int]$Level = 0,
-
-            [hashtable]$Visited = @{}
-        )
-
-        try {
-            $Service = Get-Service -Name $ServiceName -ErrorAction Stop
-        }
-        catch {
-            return [PSCustomObject]@{
-                name         = $ServiceName
-                display_name = $null
-                status       = "Not Found"
-                level        = $Level
-                already_seen = $false
-                dependencies = @()
-            }
-        }
-
-        if ($Visited.ContainsKey($ServiceName)) {
-            return [PSCustomObject]@{
-                name         = $Service.Name
-                display_name = $Service.DisplayName
-                status       = $Service.Status.ToString()
-                level        = $Level
-                already_seen = $true
-                dependencies = @()
-            }
-        }
-
-        $Visited[$ServiceName] = $true
-
-        $DependencyObjects = @()
-
-        foreach ($Dependency in ($Service.ServicesDependedOn | Sort-Object Name)) {
-            $DependencyObjects += Get-ServiceDependencyTreeObject `
-                -ServiceName $Dependency.Name `
-                -Level ($Level + 1) `
-                -Visited $Visited
-        }
-
-        return [PSCustomObject]@{
-            name         = $Service.Name
-            display_name = $Service.DisplayName
-            status       = $Service.Status.ToString()
-            level        = $Level
-            already_seen = $false
-            dependencies = $DependencyObjects
-        }
-    }
-
-    function Show-ServiceDependencyTree {
-        param (
-            [string]$ServiceName,
-            [int]$Level = 0,
-            [hashtable]$Visited = @{}
-        )
-
-        $indent = "  " * $Level
-
-        try {
-            $service = Get-Service -Name $ServiceName -ErrorAction Stop
-        }
-        catch {
-            Write-Output "$indent- $ServiceName [Not Found]"
-            return
-        }
-
-        if ($Visited.ContainsKey($ServiceName)) {
-            Write-Output "$indent- $ServiceName [Already Listed]"
-            return
-        }
-
-        $Visited[$ServiceName] = $true
-
-        Write-Output "$indent- $($service.Name) [$($service.Status)]"
-
-        foreach ($dep in ($service.ServicesDependedOn | Sort-Object Name)) {
-            Show-ServiceDependencyTree `
-                -ServiceName $dep.Name `
-                -Level ($Level + 1) `
-                -Visited $Visited
-        }
-    }
-
-    $HostName = $env:COMPUTERNAME
-
-    $ServiceStatus = Get-CimInstance Win32_Service |
-        Select-Object `
-            Name,
-            DisplayName,
-            State,
-            StartMode,
-            StartName,
-            PathName,
-            @{
-                Name = "PID"
-                Expression = {
-                    $_.ProcessId
-                }
-            }
-
-    $ServiceDependencyResults = @()
-
-    foreach ($Service in ($ServiceStatus | Sort-Object Name)) {
-        $VisitedForObjectTree = @{}
-        $VisitedForTextTree = @{}
-
-        $DependencyTreeObject = Get-ServiceDependencyTreeObject `
-            -ServiceName $Service.Name `
-            -Level 0 `
-            -Visited $VisitedForObjectTree
-
-        $DependencyTreeText = Show-ServiceDependencyTree `
-            -ServiceName $Service.Name `
-            -Level 0 `
-            -Visited $VisitedForTextTree
-
-        $ServiceDependencyResults += [PSCustomObject]@{
-            hostname             = $HostName
-            asset_type           = "windows_service"
-            name                 = $Service.Name
-            display_name         = $Service.DisplayName
-            state                = $Service.State
-            start_mode           = $Service.StartMode
-            start_name           = $Service.StartName
-            path_name            = $Service.PathName
-            pid                  = $Service.PID
-            dependency_tree      = $DependencyTreeObject
-            dependency_tree_text = @($DependencyTreeText)
-        }
-    }
-
-    return [PSCustomObject]@{
-        hostname      = $HostName
-        collected_at  = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        asset_type    = "windows_service_dependency_mapping"
-        service_count = $ServiceDependencyResults.Count
-        services      = $ServiceDependencyResults
-    }
-}
-
-foreach ($Target in $ComputerNames) {
-    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
-
-    $ResultObject = $null
-    $FinalHostName = $Target
-    $IsLocalTarget = Test-LocalTarget -Target $Target
-
-    try {
-        if ($IsLocalTarget) {
-            $ResultObject = & $ServiceDependencyMappingScriptBlock
-        }
-        else {
-            $ResultObject = Invoke-Command `
-                -ComputerName $Target `
-                -ScriptBlock $ServiceDependencyMappingScriptBlock `
-                -ErrorAction Stop
-        }
-    }
-    catch {
-        Write-Host "[-] Current user context failed for $Target. Requesting credentials..." -ForegroundColor DarkGray
-    }
-
-    if ($null -eq $ResultObject -and -not $IsLocalTarget) {
-        try {
-            $Credential = Read-CliCredentialForTarget -Target $Target
-
-            $ResultObject = Invoke-Command `
-                -ComputerName $Target `
-                -ScriptBlock $ServiceDependencyMappingScriptBlock `
-                -Credential $Credential `
-                -ErrorAction Stop
-        }
-        catch {
-            Write-Host "[!] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
-            continue
-        }
-    }
-
-    if ($null -eq $ResultObject -and $IsLocalTarget) {
-        Write-Host "[!] Failed to collect local service dependency mapping from ${Target}." -ForegroundColor Red
-        continue
-    }
-
-    if ($ResultObject.hostname) {
-        $FinalHostName = $ResultObject.hostname
-    }
-
-    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
-    $OutputFilePath = Join-Path -Path $OutputDir -ChildPath "${SafeHostName}-service-dependency-mapping-results.json"
-
-    try {
-        $ResultObject |
-            ConvertTo-Json -Depth 30 |
-            Out-File -FilePath $OutputFilePath -Encoding UTF8 -Force
-
-        $FullOutputPath = (Get-Item -Path $OutputFilePath).FullName
-
-        Write-Host "[+] Service dependency mapping saved for ${FinalHostName}: $FullOutputPath" -ForegroundColor Green
-        Write-Host "[+] Total services collected: $($ResultObject.service_count)" -ForegroundColor Gray
-    }
-    catch {
-        Write-Host "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" -ForegroundColor Red
-        continue
-    }
-}
-
-Write-Host "`n[*] All tasks completed." -ForegroundColor White
-```
-
-{% hint style="info" %}
-Save & Execute
-{% endhint %}
-
-```bash
-notepad service-dependency-mapping.ps1
-.\service-dependency-mapping.ps1 # Local Inventory
-.\service-dependency-mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
