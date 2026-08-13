@@ -2,7 +2,7 @@
 
 ## Cheatsheet
 
-### Local & Remote Windows Data Inventory
+### Local & Remote Windows Network Traffic Policy Mapping
 
 #### [Powershell](https://github.com/powershell/powershell)
 
