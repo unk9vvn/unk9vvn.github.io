@@ -2,6 +2,298 @@
 
 ## Cheat Sheet
 
+### Local & Remote Windows Data Inventory
+
+#### [Powershell](https://github.com/powershell/powershell)
+
+{% hint style="info" %}
+Collect Windows filesystem inventory data including hostname, asset type, file path, MIME type, owner, ACL permissions, file size, and last modification time
+{% endhint %}
+
+```powershell
+<#
+.SYNOPSIS
+    Comprehensive Windows Data Inventory Script.
+
+.DESCRIPTION
+    Performs Windows filesystem Data Inventory for local and remote hosts.
+    Discovers data-oriented files, extracts metadata and ACL information,
+    and writes one JSON object per line in JSONL format for each host.
+
+.EXAMPLE
+    .\data-inventory.ps1
+
+.EXAMPLE
+    .\data-inventory.ps1 HOST-01,HOST-02,192.168.1.10
+
+.OUTPUT
+    inventory_results\<hostname>-data_inventory_results.jsonl
+#>
+
+param(
+    [Parameter(Position = 0)]
+    [string]$Targets
+)
+
+$OutputDir = "inventory_results"
+
+if (-not (Test-Path -Path $OutputDir)) {
+    New-Item -Path $OutputDir -ItemType Directory | Out-Null
+}
+
+if ([string]::IsNullOrWhiteSpace($Targets)) {
+    $ComputerNames = @("localhost")
+}
+else {
+    $ComputerNames = @(
+        $Targets -split ',' |
+            ForEach-Object {
+                $_.Trim().Replace("`r", "").Replace("`n", "")
+            } |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            } |
+            Select-Object -Unique
+    )
+}
+
+if ($ComputerNames.Count -eq 0) {
+    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
+    exit 1
+}
+
+function Read-CliCredentialForTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
+    $UserName = Read-Host "Username for $Target (Format: DOMAIN\User or $Target\User)"
+    $Password = Read-Host "Password for $Target" -AsSecureString
+
+    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
+}
+
+function Test-LocalTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    $NormalizedTarget = $Target.Trim().ToLower()
+    $LocalComputerName = $env:COMPUTERNAME.ToLower()
+
+    if ($NormalizedTarget -eq "localhost") {
+        return $true
+    }
+
+    if ($NormalizedTarget -eq ".") {
+        return $true
+    }
+
+    if ($NormalizedTarget -eq $LocalComputerName) {
+        return $true
+    }
+
+    return $false
+}
+
+$DataInventoryScriptBlock = {
+    $ExcludeExtensions = @(
+        ".pt", ".c", ".cpp", ".h", ".py", ".js", ".ts", ".java",
+        ".go", ".rs", ".rb", ".php", ".sh", ".swift", ".kt",
+        ".exe", ".dll", ".sys", ".msi"
+    )
+
+    $TargetExtensions = @(
+        ".pdf", ".json", ".csv", ".txt", ".xml",
+        ".zip", ".gz", ".doc", ".docx", ".xls", ".xlsx"
+    )
+
+    $PrunePaths = @(
+        "C:\Windows",
+        "C:\Program Files",
+        "C:\Program Files (x86)",
+        "C:\ProgramData"
+    )
+
+    $MimeMap = @{
+        ".pdf"  = "application/pdf"
+        ".json" = "application/json"
+        ".csv"  = "text/csv"
+        ".txt"  = "text/plain"
+        ".xml"  = "application/xml"
+        ".zip"  = "application/zip"
+        ".gz"   = "application/gzip"
+        ".doc"  = "application/msword"
+        ".docx" = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ".xls"  = "application/vnd.ms-excel"
+        ".xlsx" = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+
+    $Results = New-Object System.Collections.Generic.List[string]
+
+    $Drives = Get-PSDrive -PSProvider FileSystem |
+        Where-Object {
+            $_.Root -and $_.Free -ne $null
+        } |
+        Select-Object -ExpandProperty Root
+
+    foreach ($Drive in $Drives) {
+        try {
+            Get-ChildItem -Path $Drive -File -Recurse -Force -ErrorAction SilentlyContinue |
+                Where-Object {
+                    $FilePath = $_.FullName
+                    $Extension = $_.Extension.ToLowerInvariant()
+
+                    $IsPrunedPath = $false
+                    foreach ($PrunePath in $PrunePaths) {
+                        if ($FilePath.StartsWith($PrunePath, [System.StringComparison]::OrdinalIgnoreCase)) {
+                            $IsPrunedPath = $true
+                            break
+                        }
+                    }
+
+                    if ($IsPrunedPath) {
+                        return $false
+                    }
+
+                    if ($ExcludeExtensions -contains $Extension) {
+                        return $false
+                    }
+
+                    if ($TargetExtensions -contains $Extension) {
+                        return $true
+                    }
+
+                    return $false
+                } |
+                ForEach-Object {
+                    try {
+                        $File = $_
+                        $Acl = Get-Acl -Path $File.FullName -ErrorAction Stop
+                        $Extension = $File.Extension.ToLowerInvariant()
+                        $MimeType = "application/octet-stream"
+
+                        if ($MimeMap.ContainsKey($Extension)) {
+                            $MimeType = $MimeMap[$Extension]
+                        }
+
+                        $InventoryItem = [PSCustomObject]@{
+                            hostname             = $env:COMPUTERNAME
+                            asset_type           = "filesystem"
+                            location             = $File.FullName
+                            mime_type            = $MimeType
+                            owner                = $Acl.Owner
+                            permissions_symbolic = ($Acl.AccessToString -replace "`r?`n", " | ")
+                            size_bytes           = $File.Length
+                            mtime                = $File.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+                        }
+
+                        [void]$Results.Add(($InventoryItem | ConvertTo-Json -Compress -Depth 5))
+                    }
+                    catch {
+                        continue
+                    }
+                }
+        }
+        catch {
+            continue
+        }
+    }
+
+    return $Results
+}
+
+foreach ($Target in $ComputerNames) {
+    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
+
+    $RawJsonLines = $null
+    $FinalHostName = $Target
+    $IsLocalTarget = Test-LocalTarget -Target $Target
+
+    try {
+        if ($IsLocalTarget) {
+            $RawJsonLines = & $DataInventoryScriptBlock
+        }
+        else {
+            $RawJsonLines = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $DataInventoryScriptBlock `
+                -ErrorAction Stop
+        }
+    }
+    catch {
+        Write-Host "[-] Current user context failed for $Target. Requesting credentials..." -ForegroundColor DarkGray
+    }
+
+    if ($null -eq $RawJsonLines -and -not $IsLocalTarget) {
+        try {
+            $Credential = Read-CliCredentialForTarget -Target $Target
+            $RawJsonLines = Invoke-Command `
+                -ComputerName $Target `
+                -ScriptBlock $DataInventoryScriptBlock `
+                -Credential $Credential `
+                -ErrorAction Stop
+        }
+        catch {
+            Write-Host "[!] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
+            continue
+        }
+    }
+
+    if ($null -eq $RawJsonLines -and $IsLocalTarget) {
+        Write-Host "[!] Failed to collect local inventory from ${Target}." -ForegroundColor Red
+        continue
+    }
+
+    $RawJsonLines = @($RawJsonLines)
+
+    if ($RawJsonLines.Count -gt 0) {
+        try {
+            $FirstObject = $RawJsonLines[0] | ConvertFrom-Json -ErrorAction Stop
+            if ($FirstObject.hostname) {
+                $FinalHostName = $FirstObject.hostname
+            }
+        }
+        catch {
+            $FinalHostName = $Target
+        }
+    }
+    else {
+        Write-Host "[!] No records collected from ${Target}." -ForegroundColor Yellow
+    }
+
+    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
+    $OutputFilePath = Join-Path -Path $OutputDir -ChildPath "${SafeHostName}-data_inventory_results.jsonl"
+
+    try {
+        $RawJsonLines | Out-File -FilePath $OutputFilePath -Encoding UTF8 -Force
+        $FullOutputPath = (Get-Item -Path $OutputFilePath).FullName
+
+        Write-Host "[+] Inventory saved for ${FinalHostName}: $FullOutputPath" -ForegroundColor Green
+        Write-Host "[+] Total records collected: $($RawJsonLines.Count)" -ForegroundColor Gray
+    }
+    catch {
+        Write-Host "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" -ForegroundColor Red
+        continue
+    }
+}
+
+Write-Host "`n[*] All tasks completed." -ForegroundColor White
+```
+
+{% hint style="info" %}
+Save & Execute
+{% endhint %}
+
+```bash
+notepad data-inventory.ps1
+.\data-inventory.ps1 # Local Inventory
+.\data-inventory.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
+```
+
 ### Local & Remote Linux Data Inventory
 
 #### [find](https://www.man7.org/linux/man-pages/man1/find.1.html) & [jq](https://jqlang.org/)
@@ -388,296 +680,4 @@ Save & Execute
 sudo chmod +x data-inventory.sh
 sudo ./data-inventory.sh # Local Inventory
 sudo ./data-inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
-```
-
-### Local & Remote Windows Data Inventory
-
-#### [Powershell](https://github.com/powershell/powershell)
-
-{% hint style="info" %}
-Collect Windows filesystem inventory data including hostname, asset type, file path, MIME type, owner, ACL permissions, file size, and last modification time
-{% endhint %}
-
-```powershell
-<#
-.SYNOPSIS
-    Comprehensive Windows Data Inventory Script.
-
-.DESCRIPTION
-    Performs Windows filesystem Data Inventory for local and remote hosts.
-    Discovers data-oriented files, extracts metadata and ACL information,
-    and writes one JSON object per line in JSONL format for each host.
-
-.EXAMPLE
-    .\data-inventory.ps1
-
-.EXAMPLE
-    .\data-inventory.ps1 HOST-01,HOST-02,192.168.1.10
-
-.OUTPUT
-    inventory_results\<hostname>-data_inventory_results.jsonl
-#>
-
-param(
-    [Parameter(Position = 0)]
-    [string]$Targets
-)
-
-$OutputDir = "inventory_results"
-
-if (-not (Test-Path -Path $OutputDir)) {
-    New-Item -Path $OutputDir -ItemType Directory | Out-Null
-}
-
-if ([string]::IsNullOrWhiteSpace($Targets)) {
-    $ComputerNames = @("localhost")
-}
-else {
-    $ComputerNames = @(
-        $Targets -split ',' |
-            ForEach-Object {
-                $_.Trim().Replace("`r", "").Replace("`n", "")
-            } |
-            Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
-            } |
-            Select-Object -Unique
-    )
-}
-
-if ($ComputerNames.Count -eq 0) {
-    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
-    exit 1
-}
-
-function Read-CliCredentialForTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
-    $UserName = Read-Host "Username for $Target (Format: DOMAIN\User or $Target\User)"
-    $Password = Read-Host "Password for $Target" -AsSecureString
-
-    return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
-}
-
-function Test-LocalTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    $NormalizedTarget = $Target.Trim().ToLower()
-    $LocalComputerName = $env:COMPUTERNAME.ToLower()
-
-    if ($NormalizedTarget -eq "localhost") {
-        return $true
-    }
-
-    if ($NormalizedTarget -eq ".") {
-        return $true
-    }
-
-    if ($NormalizedTarget -eq $LocalComputerName) {
-        return $true
-    }
-
-    return $false
-}
-
-$DataInventoryScriptBlock = {
-    $ExcludeExtensions = @(
-        ".pt", ".c", ".cpp", ".h", ".py", ".js", ".ts", ".java",
-        ".go", ".rs", ".rb", ".php", ".sh", ".swift", ".kt",
-        ".exe", ".dll", ".sys", ".msi"
-    )
-
-    $TargetExtensions = @(
-        ".pdf", ".json", ".csv", ".txt", ".xml",
-        ".zip", ".gz", ".doc", ".docx", ".xls", ".xlsx"
-    )
-
-    $PrunePaths = @(
-        "C:\Windows",
-        "C:\Program Files",
-        "C:\Program Files (x86)",
-        "C:\ProgramData"
-    )
-
-    $MimeMap = @{
-        ".pdf"  = "application/pdf"
-        ".json" = "application/json"
-        ".csv"  = "text/csv"
-        ".txt"  = "text/plain"
-        ".xml"  = "application/xml"
-        ".zip"  = "application/zip"
-        ".gz"   = "application/gzip"
-        ".doc"  = "application/msword"
-        ".docx" = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ".xls"  = "application/vnd.ms-excel"
-        ".xlsx" = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    }
-
-    $Results = New-Object System.Collections.Generic.List[string]
-
-    $Drives = Get-PSDrive -PSProvider FileSystem |
-        Where-Object {
-            $_.Root -and $_.Free -ne $null
-        } |
-        Select-Object -ExpandProperty Root
-
-    foreach ($Drive in $Drives) {
-        try {
-            Get-ChildItem -Path $Drive -File -Recurse -Force -ErrorAction SilentlyContinue |
-                Where-Object {
-                    $FilePath = $_.FullName
-                    $Extension = $_.Extension.ToLowerInvariant()
-
-                    $IsPrunedPath = $false
-                    foreach ($PrunePath in $PrunePaths) {
-                        if ($FilePath.StartsWith($PrunePath, [System.StringComparison]::OrdinalIgnoreCase)) {
-                            $IsPrunedPath = $true
-                            break
-                        }
-                    }
-
-                    if ($IsPrunedPath) {
-                        return $false
-                    }
-
-                    if ($ExcludeExtensions -contains $Extension) {
-                        return $false
-                    }
-
-                    if ($TargetExtensions -contains $Extension) {
-                        return $true
-                    }
-
-                    return $false
-                } |
-                ForEach-Object {
-                    try {
-                        $File = $_
-                        $Acl = Get-Acl -Path $File.FullName -ErrorAction Stop
-                        $Extension = $File.Extension.ToLowerInvariant()
-                        $MimeType = "application/octet-stream"
-
-                        if ($MimeMap.ContainsKey($Extension)) {
-                            $MimeType = $MimeMap[$Extension]
-                        }
-
-                        $InventoryItem = [PSCustomObject]@{
-                            hostname             = $env:COMPUTERNAME
-                            asset_type           = "filesystem"
-                            location             = $File.FullName
-                            mime_type            = $MimeType
-                            owner                = $Acl.Owner
-                            permissions_symbolic = ($Acl.AccessToString -replace "`r?`n", " | ")
-                            size_bytes           = $File.Length
-                            mtime                = $File.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
-                        }
-
-                        [void]$Results.Add(($InventoryItem | ConvertTo-Json -Compress -Depth 5))
-                    }
-                    catch {
-                        continue
-                    }
-                }
-        }
-        catch {
-            continue
-        }
-    }
-
-    return $Results
-}
-
-foreach ($Target in $ComputerNames) {
-    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
-
-    $RawJsonLines = $null
-    $FinalHostName = $Target
-    $IsLocalTarget = Test-LocalTarget -Target $Target
-
-    try {
-        if ($IsLocalTarget) {
-            $RawJsonLines = & $DataInventoryScriptBlock
-        }
-        else {
-            $RawJsonLines = Invoke-Command `
-                -ComputerName $Target `
-                -ScriptBlock $DataInventoryScriptBlock `
-                -ErrorAction Stop
-        }
-    }
-    catch {
-        Write-Host "[-] Current user context failed for $Target. Requesting credentials..." -ForegroundColor DarkGray
-    }
-
-    if ($null -eq $RawJsonLines -and -not $IsLocalTarget) {
-        try {
-            $Credential = Read-CliCredentialForTarget -Target $Target
-            $RawJsonLines = Invoke-Command `
-                -ComputerName $Target `
-                -ScriptBlock $DataInventoryScriptBlock `
-                -Credential $Credential `
-                -ErrorAction Stop
-        }
-        catch {
-            Write-Host "[!] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
-            continue
-        }
-    }
-
-    if ($null -eq $RawJsonLines -and $IsLocalTarget) {
-        Write-Host "[!] Failed to collect local inventory from ${Target}." -ForegroundColor Red
-        continue
-    }
-
-    $RawJsonLines = @($RawJsonLines)
-
-    if ($RawJsonLines.Count -gt 0) {
-        try {
-            $FirstObject = $RawJsonLines[0] | ConvertFrom-Json -ErrorAction Stop
-            if ($FirstObject.hostname) {
-                $FinalHostName = $FirstObject.hostname
-            }
-        }
-        catch {
-            $FinalHostName = $Target
-        }
-    }
-    else {
-        Write-Host "[!] No records collected from ${Target}." -ForegroundColor Yellow
-    }
-
-    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
-    $OutputFilePath = Join-Path -Path $OutputDir -ChildPath "${SafeHostName}-data_inventory_results.jsonl"
-
-    try {
-        $RawJsonLines | Out-File -FilePath $OutputFilePath -Encoding UTF8 -Force
-        $FullOutputPath = (Get-Item -Path $OutputFilePath).FullName
-
-        Write-Host "[+] Inventory saved for ${FinalHostName}: $FullOutputPath" -ForegroundColor Green
-        Write-Host "[+] Total records collected: $($RawJsonLines.Count)" -ForegroundColor Gray
-    }
-    catch {
-        Write-Host "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" -ForegroundColor Red
-        continue
-    }
-}
-
-Write-Host "`n[*] All tasks completed." -ForegroundColor White
-```
-
-{% hint style="info" %}
-Save & Execute
-{% endhint %}
-
-```bash
-notepad data-inventory.ps1
-.\data-inventory.ps1 # Local Inventory
-.\data-inventory.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
