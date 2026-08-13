@@ -2,6 +2,166 @@
 
 ## Cheat Sheet
 
+### Local & Remote Linux Hardware Component Inventory
+
+#### [dmidecode](https://github.com/mirror/dmidecode) & [lscpu](https://man7.org/linux/man-pages/man1/lscpu.1.html) & [lspci](https://man7.org/linux/man-pages/man8/lspci.8.html) & [lsblk](https://man7.org/linux/man-pages/man8/lsblk.8.html) & [free](https://man7.org/linux/man-pages/man1/free.1.html) & [ip](https://man7.org/linux/man-pages/man8/ip.8.html) & [lshw](https://github.com/lyonel/lshw)
+
+{% hint style="info" %}
+Collect BIOS, CPU, PCI devices, disk (block device), memory slot and usage, network interface, and consolidated LSHW hardware inventory data
+{% endhint %}
+
+```bash
+#!/usr/bin/env bash
+
+set -u
+
+if [ -z "${1:-}" ]; then
+    REMOTE_MODE=false
+else
+    REMOTE_MODE=true
+    TARGET="$1"
+fi
+
+collect_inventory() {
+    local hostname
+    hostname=$(hostname)
+
+    sudo dmidecode -t bios > /tmp/_bios.txt 2>&1
+    lscpu > /tmp/_cpu.txt 2>&1
+    lspci > /tmp/_pci.txt 2>&1
+    lsblk --json > /tmp/_disk.json 2>&1
+    sudo dmidecode -t memory 2>&1 | awk 'BEGIN{RS="";ORS="\n\n"} $0!~/Installed Size:[[:space:]]*Not Installed/ && $0!~/Size:[[:space:]]*No Module Installed/{print}' > /tmp/_mem.txt
+    free -h > /tmp/_free.txt 2>&1
+    ip addr > /tmp/_net.txt 2>&1
+    sudo lshw -json > /tmp/_lshw.json 2>&1
+
+    python3 - <<'PYEOF'
+import json, re, socket
+
+def read(path):
+    try:
+        with open(path) as f: return f.read().strip()
+    except: return ""
+
+def parse_lshw():
+    try:
+        with open("/tmp/_lshw.json") as f: return json.load(f)
+    except: return {}
+
+def parse_lscpu():
+    out = {}
+    for line in read("/tmp/_cpu.txt").splitlines():
+        if ":" in line:
+            k, _, v = line.partition(":")
+            out[k.strip()] = v.strip()
+    return out
+
+def parse_lspci():
+    return [line.strip() for line in read("/tmp/_pci.txt").splitlines() if line.strip()]
+
+def parse_lsblk():
+    try:
+        with open("/tmp/_disk.json") as f: return json.load(f)
+    except:
+        return {"raw": read("/tmp/_disk.json")}
+
+def parse_mem_free():
+    lines = read("/tmp/_free.txt").splitlines()
+    result = {}
+    if len(lines) >= 2:
+        headers = lines[0].split()
+        for row in lines[1:]:
+            parts = row.split()
+            if parts:
+                result[parts[0].rstrip(":")] = dict(zip(headers, parts[1:]))
+    return result
+
+def parse_dmidecode_sections(path):
+    text = read(path)
+    sections = []
+    for block in re.split(r'\n\n+', text):
+        if block.strip():
+            obj = {}
+            for line in block.splitlines():
+                if ":" in line and not line.startswith("\t\t"):
+                    k, _, v = line.partition(":")
+                    obj[k.strip()] = v.strip()
+            if obj:
+                sections.append(obj)
+    return sections
+
+result = {
+    "hostname": socket.gethostname(),
+    "bios": parse_dmidecode_sections("/tmp/_bios.txt"),
+    "cpu": parse_lscpu(),
+    "pci": parse_lspci(),
+    "disks": parse_lsblk(),
+    "memory_slots": parse_dmidecode_sections("/tmp/_mem.txt"),
+    "memory_free": parse_mem_free(),
+    "network": read("/tmp/_net.txt"),
+    "lshw": parse_lshw(),
+}
+
+print(json.dumps(result, indent=2))
+PYEOF
+}
+
+OUTPUT_DIR="./inventory_results"
+mkdir -p "$OUTPUT_DIR"
+
+if [ "$REMOTE_MODE" = false ]; then
+    HOSTNAME_SHORT=$(hostname)
+    OUTPUT_FILE="${OUTPUT_DIR}/${HOSTNAME_SHORT}-hardware-component-inventory-results.json"
+    collect_inventory > "$OUTPUT_FILE"
+    echo "Saved: $OUTPUT_FILE"
+else
+    CONTROL_PATH="/tmp/ssh_ctrl_$$"
+
+    cleanup() {
+        ssh -o ControlPath="$CONTROL_PATH" -O exit "$TARGET" 2>/dev/null
+        rm -f "$CONTROL_PATH"
+    }
+    trap cleanup EXIT
+
+    ssh -M -f -N \
+        -o ControlMaster=auto \
+        -o ControlPath="$CONTROL_PATH" \
+        -o ControlPersist=60 \
+        "$TARGET"
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to establish SSH master connection to $TARGET" >&2
+        exit 1
+    fi
+
+    REMOTE_SCRIPT=$(declare -f collect_inventory)
+    REMOTE_SCRIPT+=$'\n'
+    REMOTE_SCRIPT+='echo "___HOSTNAME_MARKER___$(hostname)"'
+    REMOTE_SCRIPT+=$'\n'
+    REMOTE_SCRIPT+='collect_inventory'
+
+    RAW_OUTPUT=$(ssh -o ControlPath="$CONTROL_PATH" "$TARGET" "bash -s" <<< "$REMOTE_SCRIPT")
+
+    REMOTE_HOSTNAME=$(echo "$RAW_OUTPUT" | grep '___HOSTNAME_MARKER___' | sed 's/___HOSTNAME_MARKER___//')
+    JSON_OUTPUT=$(echo "$RAW_OUTPUT" | grep -v '___HOSTNAME_MARKER___')
+
+    OUTPUT_FILE="${OUTPUT_DIR}/${REMOTE_HOSTNAME}-hardware-component-inventory-results.json"
+    echo "$JSON_OUTPUT" > "$OUTPUT_FILE"
+
+    echo "Saved: $OUTPUT_FILE"
+fi
+```
+
+{% hint style="info" %}
+Save & Execute
+{% endhint %}
+
+```bash
+sudo chmod +x hardware_component_inventory.sh
+./hardware_component_inventory.sh # Local Inventory
+./hardware_component_inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
+```
+
 ### Local & Remote Windows Hardware Component Inventory
 
 #### [Powershell](https://github.com/powershell/powershell)
@@ -188,166 +348,6 @@ Save & Execute
 notepad .\hardware-component-inventory.ps1
 .\hardware-component-inventory.ps1 # Local Inventory
 .\hardware-component-inventory.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
-```
-
-### Local & Remote Linux Hardware Component Inventory
-
-#### [dmidecode](https://github.com/mirror/dmidecode) & [lscpu](https://man7.org/linux/man-pages/man1/lscpu.1.html) & [lspci](https://man7.org/linux/man-pages/man8/lspci.8.html) & [lsblk](https://man7.org/linux/man-pages/man8/lsblk.8.html) & [free](https://man7.org/linux/man-pages/man1/free.1.html) & [ip](https://man7.org/linux/man-pages/man8/ip.8.html) & [lshw](https://github.com/lyonel/lshw)
-
-{% hint style="info" %}
-Collect BIOS, CPU, PCI devices, disk (block device), memory slot and usage, network interface, and consolidated LSHW hardware inventory data
-{% endhint %}
-
-```bash
-#!/usr/bin/env bash
-
-set -u
-
-if [ -z "${1:-}" ]; then
-    REMOTE_MODE=false
-else
-    REMOTE_MODE=true
-    TARGET="$1"
-fi
-
-collect_inventory() {
-    local hostname
-    hostname=$(hostname)
-
-    sudo dmidecode -t bios > /tmp/_bios.txt 2>&1
-    lscpu > /tmp/_cpu.txt 2>&1
-    lspci > /tmp/_pci.txt 2>&1
-    lsblk --json > /tmp/_disk.json 2>&1
-    sudo dmidecode -t memory 2>&1 | awk 'BEGIN{RS="";ORS="\n\n"} $0!~/Installed Size:[[:space:]]*Not Installed/ && $0!~/Size:[[:space:]]*No Module Installed/{print}' > /tmp/_mem.txt
-    free -h > /tmp/_free.txt 2>&1
-    ip addr > /tmp/_net.txt 2>&1
-    sudo lshw -json > /tmp/_lshw.json 2>&1
-
-    python3 - <<'PYEOF'
-import json, re, socket
-
-def read(path):
-    try:
-        with open(path) as f: return f.read().strip()
-    except: return ""
-
-def parse_lshw():
-    try:
-        with open("/tmp/_lshw.json") as f: return json.load(f)
-    except: return {}
-
-def parse_lscpu():
-    out = {}
-    for line in read("/tmp/_cpu.txt").splitlines():
-        if ":" in line:
-            k, _, v = line.partition(":")
-            out[k.strip()] = v.strip()
-    return out
-
-def parse_lspci():
-    return [line.strip() for line in read("/tmp/_pci.txt").splitlines() if line.strip()]
-
-def parse_lsblk():
-    try:
-        with open("/tmp/_disk.json") as f: return json.load(f)
-    except:
-        return {"raw": read("/tmp/_disk.json")}
-
-def parse_mem_free():
-    lines = read("/tmp/_free.txt").splitlines()
-    result = {}
-    if len(lines) >= 2:
-        headers = lines[0].split()
-        for row in lines[1:]:
-            parts = row.split()
-            if parts:
-                result[parts[0].rstrip(":")] = dict(zip(headers, parts[1:]))
-    return result
-
-def parse_dmidecode_sections(path):
-    text = read(path)
-    sections = []
-    for block in re.split(r'\n\n+', text):
-        if block.strip():
-            obj = {}
-            for line in block.splitlines():
-                if ":" in line and not line.startswith("\t\t"):
-                    k, _, v = line.partition(":")
-                    obj[k.strip()] = v.strip()
-            if obj:
-                sections.append(obj)
-    return sections
-
-result = {
-    "hostname": socket.gethostname(),
-    "bios": parse_dmidecode_sections("/tmp/_bios.txt"),
-    "cpu": parse_lscpu(),
-    "pci": parse_lspci(),
-    "disks": parse_lsblk(),
-    "memory_slots": parse_dmidecode_sections("/tmp/_mem.txt"),
-    "memory_free": parse_mem_free(),
-    "network": read("/tmp/_net.txt"),
-    "lshw": parse_lshw(),
-}
-
-print(json.dumps(result, indent=2))
-PYEOF
-}
-
-OUTPUT_DIR="./inventory_results"
-mkdir -p "$OUTPUT_DIR"
-
-if [ "$REMOTE_MODE" = false ]; then
-    HOSTNAME_SHORT=$(hostname)
-    OUTPUT_FILE="${OUTPUT_DIR}/${HOSTNAME_SHORT}-hardware-component-inventory-results.json"
-    collect_inventory > "$OUTPUT_FILE"
-    echo "Saved: $OUTPUT_FILE"
-else
-    CONTROL_PATH="/tmp/ssh_ctrl_$$"
-
-    cleanup() {
-        ssh -o ControlPath="$CONTROL_PATH" -O exit "$TARGET" 2>/dev/null
-        rm -f "$CONTROL_PATH"
-    }
-    trap cleanup EXIT
-
-    ssh -M -f -N \
-        -o ControlMaster=auto \
-        -o ControlPath="$CONTROL_PATH" \
-        -o ControlPersist=60 \
-        "$TARGET"
-
-    if [ $? -ne 0 ]; then
-        echo "Failed to establish SSH master connection to $TARGET" >&2
-        exit 1
-    fi
-
-    REMOTE_SCRIPT=$(declare -f collect_inventory)
-    REMOTE_SCRIPT+=$'\n'
-    REMOTE_SCRIPT+='echo "___HOSTNAME_MARKER___$(hostname)"'
-    REMOTE_SCRIPT+=$'\n'
-    REMOTE_SCRIPT+='collect_inventory'
-
-    RAW_OUTPUT=$(ssh -o ControlPath="$CONTROL_PATH" "$TARGET" "bash -s" <<< "$REMOTE_SCRIPT")
-
-    REMOTE_HOSTNAME=$(echo "$RAW_OUTPUT" | grep '___HOSTNAME_MARKER___' | sed 's/___HOSTNAME_MARKER___//')
-    JSON_OUTPUT=$(echo "$RAW_OUTPUT" | grep -v '___HOSTNAME_MARKER___')
-
-    OUTPUT_FILE="${OUTPUT_DIR}/${REMOTE_HOSTNAME}-hardware-component-inventory-results.json"
-    echo "$JSON_OUTPUT" > "$OUTPUT_FILE"
-
-    echo "Saved: $OUTPUT_FILE"
-fi
-```
-
-{% hint style="info" %}
-Save & Execute
-{% endhint %}
-
-```bash
-sudo chmod +x hardware_component_inventory.sh
-./hardware_component_inventory.sh # Local Inventory
-./hardware_component_inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```
 
 ### Cisco Products
