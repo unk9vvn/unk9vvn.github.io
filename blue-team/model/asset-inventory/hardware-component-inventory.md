@@ -2,285 +2,200 @@
 
 ## Cheat Sheet
 
-### Windows Local Hardware Inventory
+### Local & Remote Windows Hardware Component Inventory
 
 #### [Powershell](https://github.com/powershell/powershell)
 
 {% hint style="info" %}
-Gather System, Base Board, BIOS, CPU, Memory, Network Adapters, Disks, TPM and Secure Boot Information
-{% endhint %}
-
-```ps1
-$computerSystem        = Get-CimInstance -ClassName Win32_ComputerSystem
-$computerSystemProduct = Get-CimInstance -ClassName Win32_ComputerSystemProduct
-$baseBoard             = Get-CimInstance -ClassName Win32_BaseBoard
-$bios                  = Get-CimInstance -ClassName Win32_BIOS
-$processors            = Get-CimInstance -ClassName Win32_Processor
-$memoryModules         = Get-CimInstance -ClassName Win32_PhysicalMemory
-$networkAdapters       = Get-CimInstance -ClassName Win32_NetworkAdapter | Where-Object { $_.PhysicalAdapter }
-$physicalDisks         = Get-PhysicalDisk
-$tpm                   = Get-Tpm
-$secureBoot            = Confirm-SecureBootUEFI
-
-$inventory = [PSCustomObject]@{
-    Hostname = $env:COMPUTERNAME
-
-    System = [PSCustomObject]@{
-        Manufacturer = $computerSystem.Manufacturer
-        Model        = $computerSystem.Model
-        TotalMemory  = $computerSystem.TotalPhysicalMemory
-        UUID         = $computerSystemProduct.UUID
-        Vendor       = $computerSystemProduct.Vendor
-        Version      = $computerSystemProduct.Version
-    }
-
-    BaseBoard = [PSCustomObject]@{
-        Manufacturer = $baseBoard.Manufacturer
-        Product      = $baseBoard.Product
-        SerialNumber = $baseBoard.SerialNumber
-    }
-
-    BIOS = [PSCustomObject]@{
-        Manufacturer = $bios.Manufacturer
-        Version      = $bios.SMBIOSBIOSVersion
-        SerialNumber = $bios.SerialNumber
-        ReleaseDate  = $bios.ReleaseDate
-    }
-
-    CPU = $processors | ForEach-Object {
-        [PSCustomObject]@{
-            Name                      = $_.Name
-            Manufacturer              = $_.Manufacturer
-            NumberOfCores             = $_.NumberOfCores
-            NumberOfLogicalProcessors = $_.NumberOfLogicalProcessors
-        }
-    } | Sort-Object Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors -Unique
-
-    Memory = $memoryModules | ForEach-Object {
-        [PSCustomObject]@{
-            Manufacturer = $_.Manufacturer
-            PartNumber   = $_.PartNumber
-            SerialNumber = $_.SerialNumber
-            Capacity     = $_.Capacity
-            Speed        = $_.Speed
-        }
-    } | Sort-Object Manufacturer, PartNumber, SerialNumber, Capacity, Speed -Unique
-
-    NetworkAdapters = $networkAdapters | ForEach-Object {
-        [PSCustomObject]@{
-            Name         = $_.Name
-            Manufacturer = $_.Manufacturer
-            MACAddress   = $_.MACAddress
-            Speed        = $_.Speed
-            NetEnabled   = $_.NetEnabled
-            PNPDeviceID  = $_.PNPDeviceID
-        }
-    } | Sort-Object MACAddress, PNPDeviceID -Unique
-
-    Disks = $physicalDisks | ForEach-Object {
-        [PSCustomObject]@{
-            Source       = 'Get-PhysicalDisk'
-            Name         = $_.FriendlyName
-            SerialNumber = $_.SerialNumber
-            BusType      = $_.BusType
-            Size         = $_.Size
-            MediaType    = $_.MediaType
-            HealthStatus = $_.HealthStatus
-        }
-    } | Sort-Object SerialNumber, Name, Size -Unique
-
-    TPM = [PSCustomObject]@{
-        TpmPresent          = $tpm.TpmPresent
-        TpmReady            = $tpm.TpmReady
-        ManufacturerId      = $tpm.ManufacturerId
-        ManufacturerVersion = $tpm.ManufacturerVersion
-    }
-
-    SecureBoot = [PSCustomObject]@{
-        Enabled = $secureBoot
-    }
-}
-
-$outputDirectory = 'C:\Hardware Inventory'
-
-if (-not (Test-Path -LiteralPath $outputDirectory)) {
-    New-Item -Path $outputDirectory -ItemType Directory -Force | Out-Null
-}
-
-$outputPath = Join-Path `
-    -Path $outputDirectory `
-    -ChildPath "$env:COMPUTERNAME-hardware-inventory.json"
-
-$inventory |
-    ConvertTo-Json -Depth 6 |
-    Out-File -LiteralPath $outputPath -Encoding utf8
-
-Write-Host "Inventory saved: $outputPath" -ForegroundColor Yellow
-```
-
-{% hint style="info" %}
-Save & Execute (Run as administrator)
+Collect system chassis metadata, BIOS attributes, motherboard details, CPU core configurations, memory module metrics, physical storage properties, Trusted Platform Module configurations, and Secure Boot status
 {% endhint %}
 
 ```powershell
-notepad .\local-hardware-inventory.ps1
-.\local-hardware-inventory.ps1
-```
+<#
+.SYNOPSIS
+    Comprehensive Windows Hardware Inventory Script.
 
-### Windows Remote Hardware Inventory
+.DESCRIPTION
+    Performs Windows hardware inventory for both local and remote hosts.
+    Queries BIOS, CPU, Memory, Disks, TPM, and Secure Boot configurations.
+    Handles null-byte cleanup for TPM fields and supports credential fallback.
 
-#### [Powershell](https://github.com/powershell/powershell)
+.EXAMPLE
+    .\hardware-component-inventory.ps1 -Targets "unk9vvn,WIN-E31P99E3C3J"
 
-{% hint style="info" %}
-Gather System, Base Board, BIOS, CPU, Memory, Network Adapters, Disks, TPM and Secure Boot Information
-{% endhint %}
+.OUTPUT
+    inventory_results\<hostname>-hardware_inventory.json
+#>
 
-```ps1
-# 1. Get computer names from user input
-$ComputerNameInput = Read-Host "Enter computer names separated by comma, for example HOST01,HOST02,HOST03"
-
-$ComputerName = @(
-    $ComputerNameInput -split ',' |
-        ForEach-Object {
-            $_.Trim().
-                Replace("`r", "").
-                Replace("`n", "").
-                Replace("[", "").
-                Replace("]", "")
-        } |
-        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-        Select-Object -Unique
+param(
+    [Parameter(Position = 0, ValueFromPipeline = $true)]
+    [Alias("ComputerName")]
+    [object]$Targets
 )
 
-if ($ComputerName.Count -eq 0) {
-    throw "No computer names were provided."
-}
+$OutputDir = "inventory_results"
 
-# 2. Set output directory
-$OutputDirectory = 'C:\Hardware Inventory'
-
-# Ensure the output directory exists
-if (-not (Test-Path -Path $OutputDirectory)) {
+# Ensure output directory exists
+if (-not (Test-Path -Path $OutputDir)) {
     try {
-        New-Item -Path $OutputDirectory -ItemType Directory -Force | Out-Null
-        Write-Host "Created output directory: $OutputDirectory" -ForegroundColor Gray
+        New-Item -Path $OutputDir -ItemType Directory -Force | Out-Null
     }
     catch {
-        throw "Failed to create directory $OutputDirectory. Please run as Administrator."
+        Write-Host "[!] Failed to create directory $OutputDir. Run as Administrator." -ForegroundColor Red
+        exit 1
     }
 }
 
-Write-Host "Validated target systems: $($ComputerName -join ', ')" -ForegroundColor Cyan
+# Determine target systems and handle Array vs String input
+$ComputerNames = @()
+if ($null -eq $Targets -or [string]::IsNullOrWhiteSpace($Targets.ToString())) {
+    $ComputerNames = @("localhost")
+}
+else {
+    # Convert input to string and split by comma to handle unquoted CLI input
+    $RawTargets = if ($Targets -is [array]) { $Targets -join ',' } else { $Targets.ToString() }
+    $ComputerNames = @(
+        $RawTargets -split ',' |
+            ForEach-Object {
+                $_.Trim().Replace("`r", "").Replace("`n", "").Replace("[", "").Replace("]", "")
+            } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            Select-Object -Unique
+    )
+}
 
-# 3. Function to prompt for credentials if the connection fails
+if ($ComputerNames.Count -eq 0) {
+    Write-Host "[!] No valid computer names were provided." -ForegroundColor Red
+    exit 1
+}
+
 function Read-CliCredentialForTarget {
     param([Parameter(Mandatory = $true)][string]$Target)
-    Write-Host ""
-    Write-Host "Enter credentials for target: $Target" -ForegroundColor Cyan
-    $UserName = Read-Host "Username for $Target (e.g., DOMAIN\User or $Target\User)"
-    $Password = Read-Host "Password for $Target" -AsSecureString
+    Write-Host "`n[!] Credentials required for ${Target}" -ForegroundColor Yellow
+    $UserName = Read-Host "Username for ${Target} (Format: DOMAIN\User or Administrator)"
+    $Password = Read-Host "Password for ${Target}" -AsSecureString
     return New-Object System.Management.Automation.PSCredential ($UserName, $Password)
 }
 
-# 4. Inventory script to be executed on the remote target
-$InventoryScript = {
-    # Helper to suppress errors for specific CIM/WMI queries
+function Test-LocalTarget {
+    param([Parameter(Mandatory = $true)][string]$Target)
+    $NormalizedTarget = $Target.Trim().ToLower()
+    $LocalComputerName = $env:COMPUTERNAME.ToLower()
+    return ($NormalizedTarget -eq "localhost" -or $NormalizedTarget -eq "." -or $NormalizedTarget -eq $LocalComputerName)
+}
+
+$HardwareInventoryScriptBlock = {
     function Get-SafeData {
         param([scriptblock]$Script)
-        try { & $Script } catch { $null }
+        try { & $Script -ErrorAction Stop } catch { $null }
     }
 
-    $computerSystem        = Get-SafeData { Get-CimInstance -ClassName Win32_ComputerSystem }
-    $computerSystemProduct = Get-SafeData { Get-CimInstance -ClassName Win32_ComputerSystemProduct }
-    $baseBoard             = Get-SafeData { Get-CimInstance -ClassName Win32_BaseBoard }
-    $bios                  = Get-SafeData { Get-CimInstance -ClassName Win32_BIOS }
-    $processors            = Get-SafeData { Get-CimInstance -ClassName Win32_Processor }
-    $memoryModules         = Get-SafeData { Get-CimInstance -ClassName Win32_PhysicalMemory }
-    $networkAdapters       = Get-SafeData { Get-CimInstance -ClassName Win32_NetworkAdapter | Where-Object { $_.PhysicalAdapter } }
-    $physicalDisks         = Get-SafeData { Get-PhysicalDisk }
-    $tpm                   = Get-SafeData { Get-Tpm }
-    $secureBoot            = Get-SafeData { Confirm-SecureBootUEFI }
+    # Data Collection
+    $cs        = Get-SafeData { Get-CimInstance -ClassName Win32_ComputerSystem }
+    $csp       = Get-SafeData { Get-CimInstance -ClassName Win32_ComputerSystemProduct }
+    $bb        = Get-SafeData { Get-CimInstance -ClassName Win32_BaseBoard }
+    $bios      = Get-SafeData { Get-CimInstance -ClassName Win32_BIOS }
+    $procs     = Get-SafeData { Get-CimInstance -ClassName Win32_Processor }
+    $mem       = Get-SafeData { Get-CimInstance -ClassName Win32_PhysicalMemory }
+    $disks     = Get-SafeData { Get-PhysicalDisk }
+    $tpm       = Get-SafeData { Get-Tpm }
+    $sb        = Get-SafeData { Confirm-SecureBootUEFI }
 
-    [PSCustomObject]@{
-        Hostname = $env:COMPUTERNAME
-        System = [PSCustomObject]@{
-            Manufacturer = $computerSystem.Manufacturer
-            Model        = $computerSystem.Model
-            TotalMemory  = $computerSystem.TotalPhysicalMemory
-            UUID         = $computerSystemProduct.UUID
-            Vendor       = $computerSystemProduct.Vendor
-            Version      = $computerSystemProduct.Version
+    # Clean Null Characters (\u0000) from TPM ManufacturerVersion
+    $cleanTpmVer = $null
+    if ($null -ne $tpm -and $null -ne $tpm.ManufacturerVersion) {
+        $nullChar = [string][char]0
+        $cleanTpmVer = $tpm.ManufacturerVersion.Replace($nullChar, "").Trim()
+    }
+
+    return [PSCustomObject]@{
+        hostname   = $env:COMPUTERNAME
+        timestamp  = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        System     = @{ 
+            Manufacturer = $cs.Manufacturer; 
+            Model = $cs.Model; 
+            UUID = $csp.UUID 
         }
-        BaseBoard = [PSCustomObject]@{ Manufacturer = $baseBoard.Manufacturer; Product = $baseBoard.Product; SerialNumber = $baseBoard.SerialNumber }
-        BIOS = [PSCustomObject]@{ Manufacturer = $bios.Manufacturer; Version = $bios.SMBIOSBIOSVersion; SerialNumber = $bios.SerialNumber; ReleaseDate = $bios.ReleaseDate }
-        CPU = @( $processors | ForEach-Object { [PSCustomObject]@{ Name=$_.Name; Manufacturer=$_.Manufacturer; NumberOfCores=$_.NumberOfCores; NumberOfLogicalProcessors=$_.NumberOfLogicalProcessors } } )
-        Memory = @( $memoryModules | ForEach-Object { [PSCustomObject]@{ Manufacturer=$_.Manufacturer; PartNumber=$_.PartNumber; SerialNumber=$_.SerialNumber; Capacity=$_.Capacity; Speed=$_.Speed } } )
-        NetworkAdapters = @( $networkAdapters | ForEach-Object { [PSCustomObject]@{ Name=$_.Name; Manufacturer=$_.Manufacturer; MACAddress=$_.MACAddress; Speed=$_.Speed; NetEnabled=$_.NetEnabled; PNPDeviceID=$_.PNPDeviceID } } )
-        Disks = @( $physicalDisks | ForEach-Object { [PSCustomObject]@{ Source='Get-PhysicalDisk'; Name=$_.FriendlyName; SerialNumber=$_.SerialNumber; BusType=$_.BusType; Size=$_.Size; MediaType=$_.MediaType; HealthStatus=$_.HealthStatus } } )
-        TPM = [PSCustomObject]@{ TpmPresent=$tpm.TpmPresent; TpmReady=$tpm.TpmReady; ManufacturerId=$tpm.ManufacturerId; ManufacturerVersion=$tpm.ManufacturerVersion }
-        SecureBoot = [PSCustomObject]@{ Enabled = $secureBoot }
+        BIOS       = @{ 
+            Vendor = $bios.Manufacturer; 
+            Version = $bios.SMBIOSBIOSVersion; 
+            Serial = $bios.SerialNumber 
+        }
+        BaseBoard  = @{ 
+            Product = $bb.Product; 
+            Serial = $bb.SerialNumber 
+        }
+        CPU        = $procs | ForEach-Object { @{ Name = $_.Name; Cores = $_.NumberOfCores; Threads = $_.NumberOfLogicalProcessors } }
+        Memory     = $mem | ForEach-Object { @{ CapacityGB = [Math]::Round($_.Capacity / 1GB, 2); Speed = $_.Speed; PartNumber = $_.PartNumber.Trim() } }
+        Disks      = $disks | ForEach-Object { @{ FriendlyName = $_.FriendlyName; SizeGB = [Math]::Round($_.Size / 1GB, 2); Media = $_.MediaType; Health = $_.HealthStatus } }
+        TPM        = @{ 
+            Present = if($null -ne $tpm){$tpm.TpmPresent}else{$false}; 
+            Ready = if($null -ne $tpm){$tpm.TpmReady}else{$false}; 
+            Version = $cleanTpmVer 
+        }
+        SecureBoot = @{ Enabled = $sb }
     }
 }
 
-# 5. Loop through all targets
-$results = @()
-foreach ($Target in $ComputerName) {
-    Write-Host "`nProcessing target: $Target" -ForegroundColor Cyan
-    $result = $null
+# Execution Loop
+foreach ($Target in $ComputerNames) {
+    Write-Host "`n[?] Processing Host: ${Target}" -ForegroundColor Cyan
+    $Result = $null
+    $IsLocal = Test-LocalTarget -Target $Target
 
-    # Attempt 1: Try current user context
     try {
-        $result = Invoke-Command -ComputerName $Target -ScriptBlock $InventoryScript -ErrorAction Stop
-        if ($null -ne $result) {
-            $results += $result
-            Write-Host "Success (Current Context): $Target" -ForegroundColor Green
+        if ($IsLocal) {
+            $Result = & $HardwareInventoryScriptBlock
+        } else {
+            $Result = Invoke-Command -ComputerName $Target -ScriptBlock $HardwareInventoryScriptBlock -ErrorAction Stop
         }
-    }
-    catch {
-        Write-Host "Current context failed for $Target, requesting credentials..." -ForegroundColor DarkGray
+    } catch {
+        Write-Host "[-] Connection failed for ${Target}. Attempting credential fallback..." -ForegroundColor Gray
     }
 
-    # Attempt 2: Use provided credentials if the first attempt failed
-    if ($null -eq $result) {
+    if ($null -eq $Result -and -not $IsLocal) {
         try {
-            $TargetCredential = Read-CliCredentialForTarget -Target $Target
-            $result = Invoke-Command -ComputerName $Target -ScriptBlock $InventoryScript -Credential $TargetCredential -ErrorAction Stop
-            if ($null -ne $result) {
-                $results += $result
-                Write-Host "Success (Provided Credentials): $Target" -ForegroundColor Green
-            }
+            $Cred = Read-CliCredentialForTarget -Target $Target
+            $Result = Invoke-Command -ComputerName $Target -ScriptBlock $HardwareInventoryScriptBlock -Credential $Cred -ErrorAction Stop
+        } catch {
+            Write-Host "[!] Failed to collect from ${Target}: $($_.Exception.Message)" -ForegroundColor Red
+            continue
         }
-        catch {
-            Write-Host "Failed to collect from $Target : $($_.Exception.Message)" -ForegroundColor Red
+    }
+
+    if ($null -ne $Result) {
+        $FinalHost = if ($null -ne $Result.hostname) { $Result.hostname } else { $Target }
+        $SafeName = $FinalHost -replace '[\\/:*?"<>|]', '_'
+        $Path = Join-Path $OutputDir "${SafeName}-hardware_inventory.json"
+        
+        try {
+            $Result | ConvertTo-Json -Depth 5 | Out-File $Path -Encoding UTF8 -Force
+            Write-Host "[+] Inventory saved: $((Get-Item $Path).FullName)" -ForegroundColor Green
+        } catch {
+            Write-Host "[!] IO Error for ${FinalHost}: $($_.Exception.Message)" -ForegroundColor Red
         }
     }
 }
 
-# 6. Save results to disk
-foreach ($result in $results) {
-    if (-not [string]::IsNullOrWhiteSpace($result.Hostname)) {
-        $outputPath = Join-Path -Path $OutputDirectory -ChildPath "$($result.Hostname)-hardware-inventory.json"
-        $result | ConvertTo-Json -Depth 6 | Out-File -FilePath $outputPath -Encoding utf8
-        Write-Host "Inventory saved: $outputPath" -ForegroundColor Yellow
-    }
-}
+Write-Host "`n[*] Hardware inventory tasks completed." -ForegroundColor White
 ```
 
 {% hint style="info" %}
-Save & Execute (Run as administrator)
+Save & Execute
 {% endhint %}
 
-```powershell
-notepad .\remote-hardware-inventory.ps1
-.\remote-hardware-inventory.ps1
+```bash
+notepad .\hardware-component-inventory.ps1
+.\hardware-component-inventory.ps1 # Local Inventory
+.\hardware-component-inventory.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
 
-### Linux Local Hardware Inventory
+### Local & Remote Linux Hardware Component Inventory
 
-#### Bash
+#### [dmidecode](https://github.com/mirror/dmidecode) & [lscpu](https://man7.org/linux/man-pages/man1/lscpu.1.html) & [lspci](https://man7.org/linux/man-pages/man8/lspci.8.html) & [lsblk](https://man7.org/linux/man-pages/man8/lsblk.8.html) & [free](https://man7.org/linux/man-pages/man1/free.1.html) & [ip](https://man7.org/linux/man-pages/man8/ip.8.html) & [lshw](https://github.com/lyonel/lshw)
 
 {% hint style="info" %}
-Gather BIOS, CPU, PCI, Disks, Memory, Network Adapters and Hardware Information
+Collect BIOS, CPU, PCI devices, disk (block device), memory slot and usage, network interface, and consolidated LSHW hardware inventory data
 {% endhint %}
 
 ```bash
@@ -288,153 +203,151 @@ Gather BIOS, CPU, PCI, Disks, Memory, Network Adapters and Hardware Information
 
 set -u
 
-HOSTNAME_SHORT="$(hostname)"
-OUTPUT_FILE="${HOSTNAME_SHORT}-hardware-inventory.txt"
-
-run_section() {
-    local title="$1"
-    shift
-
-    {
-        echo
-        echo "============================================================"
-        echo "=== ${title} ==="
-        echo "============================================================"
-    } | tee -a "$OUTPUT_FILE"
-
-    "$@" 2>&1 | tee -a "$OUTPUT_FILE"
-}
-
-run_memory_dmidecode() {
-    sudo dmidecode -t memory | awk '
-BEGIN { RS=""; ORS="\n\n" }
-$0 !~ /Installed Size:[[:space:]]*Not Installed/ &&
-$0 !~ /Size:[[:space:]]*No Module Installed/ { print }
-'
-}
-
-: > "$OUTPUT_FILE"
-
-echo "Linux Hardware Inventory" | tee -a "$OUTPUT_FILE"
-echo "Hostname: ${HOSTNAME_SHORT}" | tee -a "$OUTPUT_FILE"
-echo "Collection Time: $(date -Is)" | tee -a "$OUTPUT_FILE"
-
-run_section "BIOS INFO" sudo dmidecode -t bios
-
-run_section "CPU INFO" lscpu
-
-run_section "PCI INFO" lspci
-
-run_section "DISK INFO" lsblk
-
-{
-    echo
-    echo "============================================================"
-    echo "=== MEMORY INFO DMIDECODE ==="
-    echo "============================================================"
-} | tee -a "$OUTPUT_FILE"
-
-run_memory_dmidecode 2>&1 | tee -a "$OUTPUT_FILE"
-
-run_section "MEMORY INFO FREE" free -h
-
-run_section "NETWORK INFO" ip addr
-
-run_section "LSHW JSON" sudo lshw -json
-
-echo
-echo "Inventory text output saved to: ${OUTPUT_FILE}"
-```
-
-{% hint style="info" %}
-Save & Execute (Run with sudo)
-{% endhint %}
-
-```bash
-sudo chmod +x local-hardware-inventory.sh
-./local-hardware-inventory.sh
-```
-
-### Linux Remote Hardware Inventory (SSH)
-
-#### Bash
-
-{% hint style="info" %}
-Gather BIOS, CPU, PCI, Disks, Memory, Network Adapters and Hardware Information
-{% endhint %}
-
-```bash
-#!/bin/bash
-
-# Usage check
-if [ -z "$1" ]; then
-    echo "Usage: $0 <user@remote-target-ip>"
-    echo "Example: $0 ubuntu-user1@192.168.109.150"
-    exit 1
+if [ -z "${1:-}" ]; then
+    REMOTE_MODE=false
+else
+    REMOTE_MODE=true
+    TARGET="$1"
 fi
 
-# Configuration
-TARGET="$1"
-LOCAL_DIR="./hardware_inventory_results"
-mkdir -p "$LOCAL_DIR"
+collect_inventory() {
+    local hostname
+    hostname=$(hostname)
 
-echo "Connecting to $TARGET to perform hardware inventory..."
+    sudo dmidecode -t bios > /tmp/_bios.txt 2>&1
+    lscpu > /tmp/_cpu.txt 2>&1
+    lspci > /tmp/_pci.txt 2>&1
+    lsblk --json > /tmp/_disk.json 2>&1
+    sudo dmidecode -t memory 2>&1 | awk 'BEGIN{RS="";ORS="\n\n"} $0!~/Installed Size:[[:space:]]*Not Installed/ && $0!~/Size:[[:space:]]*No Module Installed/{print}' > /tmp/_mem.txt
+    free -h > /tmp/_free.txt 2>&1
+    ip addr > /tmp/_net.txt 2>&1
+    sudo lshw -json > /tmp/_lshw.json 2>&1
 
-# Execute command block remotely.
-# - ssh -t allocates a TTY so sudo can ask for a password if needed.
-# - The inventory file is created on the remote host using its hostname.
-ssh -t "$TARGET" '
-    REMOTE_HOSTNAME=$(hostname)
-    FILE_NAME="${REMOTE_HOSTNAME}-hardware-inventory.txt"
+    python3 - <<'PYEOF'
+import json, re, socket
 
-    (
-        echo "=== BIOS INFO ==="
-        sudo dmidecode -t bios
+def read(path):
+    try:
+        with open(path) as f: return f.read().strip()
+    except: return ""
 
-        echo -e "\n\n=== CPU INFO ==="
-        lscpu
+def parse_lshw():
+    try:
+        with open("/tmp/_lshw.json") as f: return json.load(f)
+    except: return {}
 
-        echo -e "\n\n=== PCI INFO ==="
-        lspci
+def parse_lscpu():
+    out = {}
+    for line in read("/tmp/_cpu.txt").splitlines():
+        if ":" in line:
+            k, _, v = line.partition(":")
+            out[k.strip()] = v.strip()
+    return out
 
-        echo -e "\n\n=== Disk INFO ==="
-        lsblk
+def parse_lspci():
+    return [line.strip() for line in read("/tmp/_pci.txt").splitlines() if line.strip()]
 
-        echo -e "\n\n=== MEMORY INFO (DMIDECODE) ==="
-        sudo dmidecode -t memory | awk '"'"'BEGIN { RS=""; ORS="\n\n" } $0 !~ /Installed Size:[[:space:]]*Not Installed/ && $0 !~ /Size:[[:space:]]*No Module Installed/ { print }'"'"'
+def parse_lsblk():
+    try:
+        with open("/tmp/_disk.json") as f: return json.load(f)
+    except:
+        return {"raw": read("/tmp/_disk.json")}
 
-        echo -e "\n\n=== MEMORY INFO (FREE) ==="
-        free -h
+def parse_mem_free():
+    lines = read("/tmp/_free.txt").splitlines()
+    result = {}
+    if len(lines) >= 2:
+        headers = lines[0].split()
+        for row in lines[1:]:
+            parts = row.split()
+            if parts:
+                result[parts[0].rstrip(":")] = dict(zip(headers, parts[1:]))
+    return result
 
-        echo -e "\n\n=== NETWORK INFO ==="
-        ip addr
+def parse_dmidecode_sections(path):
+    text = read(path)
+    sections = []
+    for block in re.split(r'\n\n+', text):
+        if block.strip():
+            obj = {}
+            for line in block.splitlines():
+                if ":" in line and not line.startswith("\t\t"):
+                    k, _, v = line.partition(":")
+                    obj[k.strip()] = v.strip()
+            if obj:
+                sections.append(obj)
+    return sections
 
-        echo -e "\n\n=== LSHW (JSON) ==="
-        sudo lshw -json
-    ) > "$FILE_NAME"
-'
+result = {
+    "hostname": socket.gethostname(),
+    "bios": parse_dmidecode_sections("/tmp/_bios.txt"),
+    "cpu": parse_lscpu(),
+    "pci": parse_lspci(),
+    "disks": parse_lsblk(),
+    "memory_slots": parse_dmidecode_sections("/tmp/_mem.txt"),
+    "memory_free": parse_mem_free(),
+    "network": read("/tmp/_net.txt"),
+    "lshw": parse_lshw(),
+}
 
-# Extract the hostname from the remote machine to verify the filename for SCP
-REMOTE_HOST_NAME=$(ssh "$TARGET" "hostname")
+print(json.dumps(result, indent=2))
+PYEOF
+}
 
-# Retrieve the file
-echo "Retrieving ${REMOTE_HOST_NAME}-hardware-inventory.txt..."
-scp "$TARGET:${REMOTE_HOST_NAME}-hardware-inventory.txt" "$LOCAL_DIR/"
+OUTPUT_DIR="./inventory_results"
+mkdir -p "$OUTPUT_DIR"
 
-# Cleanup: Remove file from remote host
-echo "Cleaning up remote host..."
-ssh "$TARGET" "rm -f '${REMOTE_HOST_NAME}-hardware-inventory.txt'"
+if [ "$REMOTE_MODE" = false ]; then
+    HOSTNAME_SHORT=$(hostname)
+    OUTPUT_FILE="${OUTPUT_DIR}/${HOSTNAME_SHORT}-hardware-component-inventory-results.json"
+    collect_inventory > "$OUTPUT_FILE"
+    echo "Saved: $OUTPUT_FILE"
+else
+    CONTROL_PATH="/tmp/ssh_ctrl_$$"
 
-echo "Inventory complete. Saved to: $LOCAL_DIR/${REMOTE_HOST_NAME}-hardware-inventory.txt"
+    cleanup() {
+        ssh -o ControlPath="$CONTROL_PATH" -O exit "$TARGET" 2>/dev/null
+        rm -f "$CONTROL_PATH"
+    }
+    trap cleanup EXIT
+
+    ssh -M -f -N \
+        -o ControlMaster=auto \
+        -o ControlPath="$CONTROL_PATH" \
+        -o ControlPersist=60 \
+        "$TARGET"
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to establish SSH master connection to $TARGET" >&2
+        exit 1
+    fi
+
+    REMOTE_SCRIPT=$(declare -f collect_inventory)
+    REMOTE_SCRIPT+=$'\n'
+    REMOTE_SCRIPT+='echo "___HOSTNAME_MARKER___$(hostname)"'
+    REMOTE_SCRIPT+=$'\n'
+    REMOTE_SCRIPT+='collect_inventory'
+
+    RAW_OUTPUT=$(ssh -o ControlPath="$CONTROL_PATH" "$TARGET" "bash -s" <<< "$REMOTE_SCRIPT")
+
+    REMOTE_HOSTNAME=$(echo "$RAW_OUTPUT" | grep '___HOSTNAME_MARKER___' | sed 's/___HOSTNAME_MARKER___//')
+    JSON_OUTPUT=$(echo "$RAW_OUTPUT" | grep -v '___HOSTNAME_MARKER___')
+
+    OUTPUT_FILE="${OUTPUT_DIR}/${REMOTE_HOSTNAME}-hardware-component-inventory-results.json"
+    echo "$JSON_OUTPUT" > "$OUTPUT_FILE"
+
+    echo "Saved: $OUTPUT_FILE"
+fi
 ```
 
 {% hint style="info" %}
-Save & Execute (Run with sudo)
+Save & Execute
 {% endhint %}
 
 ```bash
-sudo chmod +x remote-hardware-inventory.sh
-./remote-hardware-inventory.sh username@1.2.3.4
+sudo chmod +x hardware_component_inventory.sh
+./hardware_component_inventory.sh # Local Inventory
+./hardware_component_inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```
 
 ### Cisco Products
