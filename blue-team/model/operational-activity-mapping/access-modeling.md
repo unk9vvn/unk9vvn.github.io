@@ -1026,9 +1026,9 @@ Save & Execute
 {% endhint %}
 
 ```bash
-sudo chmod +x access-modeling.sh
-sudo ./access-modeling.sh # Local Inventory
-sudo ./access-modeling.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
+sudo chmod +x access_modeling.sh
+sudo ./access_modeling.sh # Local Inventory
+sudo ./access_modeling.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```
 
 ### Local & Remote Linux Access Control List Inventory
@@ -1449,9 +1449,9 @@ Save & Execute
 {% endhint %}
 
 ```bash
-sudo chmod +x linux-acl-inventory.sh
-sudo ./linux-acl-inventory.sh # Local Inventory
-sudo ./linux-acl-inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
+sudo chmod +x linux_acl_inventory.sh
+sudo ./linux_acl_inventory.sh # Local Inventory
+sudo ./linux_acl_inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```
 
 {% hint style="info" %}

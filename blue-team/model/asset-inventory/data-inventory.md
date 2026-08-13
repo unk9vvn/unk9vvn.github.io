@@ -678,6 +678,6 @@ Save & Execute
 
 ```bash
 sudo chmod +x data-inventory.sh
-sudo ./data-inventory.sh # Local Inventory
-sudo ./data-inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
+sudo ./data_inventory.sh # Local Inventory
+sudo ./data_inventory.sh ubuntu-clone@192.168.109.150 # Remote Inventory via SSH
 ```

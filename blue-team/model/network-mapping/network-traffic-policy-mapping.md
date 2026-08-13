@@ -333,8 +333,8 @@ Save & Execute
 
 ```bash
 notepad network_traffic_policy_mapping.ps1
-.\network_traffic_policy_mapping.ps1 # Local Inventory
-.\network_traffic_policy_mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
+.\network-traffic-policy-mapping.ps1 # Local Inventory
+.\network-traffic-policy-mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
 
 ### Local & Remote Linux Network Traffic Policy Mapping

@@ -201,7 +201,7 @@ notepad data-exchange-mapping.ps1
 .\data-exchange-mapping.ps1 WIN-E31P99E3C3J # Remote Inventory via WinRM
 ```
 
-### Local & Remote Windows Data Exchange Mapping
+### Local & Remote Linux Data Exchange Mapping
 
 #### [netstat](https://www.netstat.net/index.html) & [route](https://man7.org/linux/man-pages/man8/route.8.html)
 
