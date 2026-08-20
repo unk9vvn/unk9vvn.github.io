@@ -410,3 +410,11 @@ show vlan brief
 show interfaces trunk
 ```
 
+#### [Nessus](https://www.tenable.com/products/nessus)
+
+1. Click New Scan
+2. Select one of the templates in the Discovery section.
+3. In the Settings section, enter a name for the scan in the Name field and specify the IP address or addresses in the Targets field.
+4. In the Discover tab, you can select a scan type. By choosing Custom, you can customize the scan by selecting options such as TCP Scan, UDP Scan, Scan Fragile Devices, and other available settings.
+5. Click Save.
+6. Click the Start icon to begin the scan.
