@@ -1,6 +1,6 @@
 # Operational Risk Assessment
 
-## Cheatsheet
+## Cheat Sheet
 
 ### [Splunk](https://www.splunk.com/)
 
