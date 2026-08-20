@@ -418,3 +418,4 @@ show interfaces trunk
 4. In the Discover tab, you can select a scan type. By choosing Custom, you can customize the scan by selecting options such as TCP Scan, UDP Scan, Scan Fragile Devices, and other available settings.
 5. Click Save.
 6. Click the Start icon to begin the scan.
+7. Once the scan is complete, click on it to view the results.
