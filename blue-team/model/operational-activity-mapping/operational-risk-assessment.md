@@ -46,7 +46,7 @@ Review system warnings and security logs
 journalctl -p warning
 ```
 
-#### last
+#### [last](https://man7.org/linux/man-pages/man1/last.1.html)
 
 {% hint style="info" %}
 Audit recent user login sessions
