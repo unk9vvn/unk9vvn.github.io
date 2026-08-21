@@ -1,6 +1,6 @@
 # Operational Dependency Mapping
 
-## Cheaatsheet
+## Cheat Sheet
 
 #### [Kubernetes](https://kubernetes.io/)
 

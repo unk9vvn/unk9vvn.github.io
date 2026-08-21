@@ -1,13 +1,15 @@
 # Access Modeling
 
-## Cheatsheet
 
-### Checklist
+
+## Check List
 
 * [ ] Identify and record the access rights to each system, application, service, and so on.
 * [ ] Each recorded access right must be reviewed based on its level of importance and its relationship to the others.
 * [ ] For websites, identify and document the roles used by the application
 * [ ] Review the granularity of those roles and the needs behind the permissions granted.
+
+## Cheat Sheet
 
 ### Local & Remote Windows Access Modeling
 

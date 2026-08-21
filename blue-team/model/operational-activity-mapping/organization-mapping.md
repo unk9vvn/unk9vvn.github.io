@@ -1,6 +1,6 @@
 # Organization Mapping
 
-## Checklist
+## Check List
 
 * [ ] Study the organizational chart.
 * [ ] Based on the organizational chart, record the people, groups, and their roles.

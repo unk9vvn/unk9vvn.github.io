@@ -1,6 +1,6 @@
 # Configuration Inventory
 
-## Checklist
+## Check List
 
 * [ ] Always check the configuration files of important software.
 

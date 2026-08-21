@@ -1,6 +1,6 @@
 # Data Exchange Mapping
 
-## Cheatsheet
+## Cheat Sheet
 
 ### Local & Remote Windows Data Exchange Mapping
 

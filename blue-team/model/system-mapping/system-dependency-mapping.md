@@ -1,10 +1,10 @@
 # System Dependency Mapping
 
-## Checklist
+## Check List
 
 * [ ] You can use the outputs of the Service Dependency Mapping cheat sheets and the Network Mapping topics along with the outputs of the cheat sheets in this section, since these topics are related and can help with a more accurate analysis
 
-## Cheatsheet
+## Cheat Sheet
 
 ### Local & Remote Windows System Dependency Mapping
 

@@ -1,6 +1,6 @@
 # Network Traffic Policy Mapping
 
-## Cheatsheet
+## Cheat Sheet
 
 ### Local & Remote Windows Network Traffic Policy Mapping
 

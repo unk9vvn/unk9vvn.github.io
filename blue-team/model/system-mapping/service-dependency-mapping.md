@@ -1,6 +1,6 @@
 # Service Dependency Mapping
 
-## Cheatsheet
+## Cheat Sheet
 
 ### Local & Remote Windows Service Dependency Mapping
 
