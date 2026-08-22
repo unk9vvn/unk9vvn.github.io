@@ -97,6 +97,24 @@ sudo -l
 grep -R "NOPASSWD" /etc/sudoers /etc/sudoers.d/
 ```
 
+#### [w](https://man7.org/linux/man-pages/man1/w.1.html)
+
+{% hint style="info" %}
+Display logged-in users and system activity:
+{% endhint %}
+
+```bash
+w
+```
+
+{% hint style="info" %}
+Display pid of the login process
+{% endhint %}
+
+```bash
+w -p
+```
+
 ### Windows Operational Risk Assessment
 
 #### [auditpol](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/auditpol)
