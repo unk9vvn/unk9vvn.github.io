@@ -11,22 +11,38 @@
 * [ ] Assign risk owners and document mitigation or acceptance decisions.
 * [ ] Review and update the assessment after significant operational or environmental changes.
 
-
-
-
-
 ## Cheat Sheet
 
 ### [Splunk](https://www.splunk.com/)
 
 {% hint style="info" %}
-Assess logging coverage across the infrastructure
+Assess host logging coverage and data freshness
 {% endhint %}
 
 ```bash
 | metadata type=hosts index=* 
 | eval age_hours=round((now()-recentTime)/3600,2) 
 | table host, totalCount, age_hours
+```
+
+{% hint style="info" %}
+Assess log source coverage and data freshness
+{% endhint %}
+
+```bash
+| metadata type=sources index=* 
+| eval age_hours=round((now()-recentTime)/3600,2) 
+| table source, totalCount, age_hours
+```
+
+{% hint style="info" %}
+Assess sourcetype coverage and data freshness
+{% endhint %}
+
+```bash
+| metadata type=sourcetypes index=* 
+| eval age_hours=round((now()-recentTime)/3600,2) 
+| table sourcetype, totalCount, age_hours
 ```
 
 {% hint style="info" %}
