@@ -1,5 +1,15 @@
 # Data Inventory
 
+## Check List
+
+* [ ] Find and analyze unreferenced files that might contain sensitive information.&#x20;
+* [ ] Identify data storage locations across local and remote systems.
+* [ ] Record file names, paths, and storage volumes.
+* [ ] Classify data by file type and format.
+* [ ] Measure file sizes and total storage usage.
+* [ ] Document data owners, groups, and access permissions. Record file modification dates and metadata.&#x20;
+* [ ] Maintain the inventory in a structured, searchable format.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Data Inventory

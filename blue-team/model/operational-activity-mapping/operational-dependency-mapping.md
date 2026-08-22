@@ -1,5 +1,18 @@
 # Operational Dependency Mapping
 
+## Check List
+
+* [ ] Identify organizational activities and their business objectives.
+* [ ] Map each activity to its responsible people, systems, applications, and services.
+* [ ] Document dependencies between higher-level and lower-level activities.
+* [ ] Model upstream and downstream dependencies across organizational layers.
+* [ ] Classify dependencies by criticality, type, and required availability.
+* [ ] Identify single points of failure and concentrated dependencies.
+* [ ] Validate dependency relationships with process owners and technical evidence.
+* [ ] Record dependency owners, interfaces, assumptions, and recovery requirements.
+* [ ] Assess the impact of performer or service failure on dependent activities.
+* [ ] Review and update the dependency model after organizational or technical changes.
+
 ## Cheat Sheet
 
 #### [Kubernetes](https://kubernetes.io/)

@@ -1,5 +1,13 @@
 # Network Node Inventory
 
+## Check List
+
+* [ ] Define authorized network scopes, segments, and IP ranges; identify all approved network nodes and asset types.&#x20;
+* [ ] Collect and correlate node identity, IP/MAC address, hostname, interfaces, routes, gateways, vendors, services, and management interfaces.&#x20;
+* [ ] Use approved sources such as WMI, MI/CIM, SNMP, SSH, DNS, DHCP, CMDB, virtualization platforms, and cloud APIs.&#x20;
+* [ ] Perform controlled host discovery and limited port/service enumeration with strict timeout, rate, and concurrency limits.&#x20;
+* [ ] Compare results with authoritative inventories and security baselines to detect unknown, stale, duplicate, or unauthorized assets.
+
 ## Cheat Sheet
 
 ### Inventory using Linux

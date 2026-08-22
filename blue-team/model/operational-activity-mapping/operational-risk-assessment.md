@@ -2,7 +2,14 @@
 
 ## Check List
 
-* [ ] asdsadasdasdasd
+* [ ] Identify critical organizational activities and their business impact.
+* [ ] Identify threats, vulnerabilities, and failure conditions affecting each activity.
+* [ ] Assess risks to people, systems, services, processes, and supporting assets.
+* [ ] Evaluate likelihood, impact, exposure, and existing control effectiveness.
+* [ ] Model dependencies, cascading failures, and systemic operational risks.
+* [ ] Identify single points of failure and unacceptable risk concentrations.
+* [ ] Assign risk owners and document mitigation or acceptance decisions.
+* [ ] Review and update the assessment after significant operational or environmental changes.
 
 
 

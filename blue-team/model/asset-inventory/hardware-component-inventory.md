@@ -1,5 +1,14 @@
 # Hardware Component Inventory
 
+## Check List
+
+* [ ] Enumerate processors, memory modules, storage devices, system buses, and hardware virtualization components.&#x20;
+* [ ] Enumerate NICs, wireless adapters, MAC addresses, network interfaces, and connected peripherals.&#x20;
+* [ ] Record hardware manufacturer, model, serial number, firmware version, driver version, and operational status.&#x20;
+* [ ] Identify removable media, USB devices, docking stations, biometric devices, and other externally connected components.&#x20;
+* [ ] Correlate discovered hardware with hostnames, asset owners, locations, operating systems, and authorized inventory records.&#x20;
+* [ ] Detect unknown, disabled, obsolete, modified, or unauthorized hardware components and investigate discrepancies.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Hardware Component Inventory

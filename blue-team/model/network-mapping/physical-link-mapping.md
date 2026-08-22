@@ -1,5 +1,17 @@
 # Physical Link Mapping
 
+## Check List
+
+* [ ] Inventory all network devices, ports, transceivers, patch panels, and cable identifiers.&#x20;
+* [ ] Inspect and document physical links between switches, routers, firewalls, servers, and endpoints.&#x20;
+* [ ] Record cable type, connection endpoints, interface identifiers, and link status.&#x20;
+* [ ] Use LLDP/CDP or authorized active probing to validate device-to-device connectivity.&#x20;
+* [ ] Reconcile observed links with switch configuration, interface descriptions, and network documentation.&#x20;
+* [ ] Identify undocumented, redundant, disconnected, and unauthorized physical connections.&#x20;
+* [ ] Verify link paths across racks, rooms, floors, buildings, and physical security zones.&#x20;
+* [ ] Maintain the physical topology map and update it after infrastructure changes.&#x20;
+* [ ] Use manual inspection when automated discovery cannot reliably determine physical connectivity.
+
 ## Cheat Sheet
 
 ### Active Physical Link Mapping

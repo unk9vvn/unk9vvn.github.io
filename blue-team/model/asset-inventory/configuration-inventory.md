@@ -2,7 +2,13 @@
 
 ## Check List
 
-* [ ] Always check the configuration files of important software.
+* [ ] Review the applications’ configurations set across the network and validate that they are not vulnerable.
+*[ ]   Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.
+*[ ]   Ensure that defaults and known files have been removed.
+*[ ]   Review and validate the policy files.
+*[ ]   Review the Content-Security-Policy header or meta element to identify misconfigurations.
+*[ ]   Make sure application paths are configured correctly.
+*[ ]   Assess that the access control configuration for the storage services is properly in place.
 
 ## Cheat Sheet
 

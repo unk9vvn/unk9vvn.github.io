@@ -1,5 +1,15 @@
 # Logical Link Mapping
 
+## Check List
+
+* [ ] Collect LLDP/CDP, MAC, ARP, routing, DNS, NetFlow, firewall, and network-management telemetry.&#x20;
+* [ ] Use authenticated, encrypted management protocols, preferably SNMPv3, with reliable push-based telemetry where supported.&#x20;
+* [ ] Validate logical paths with controlled active probes and passive sources.&#x20;
+* [ ] Correlate source, destination, protocol, port, timestamp, route, and service to build the node-to-node logical-link model.&#x20;
+* [ ] Compare observed links with the approved architecture to identify unauthorized flows, unexpected paths, segmentation violations, and unknown services.&#x20;
+* [ ] Monitor link, route, VLAN, and traffic-pattern changes; document, investigate, and periodically update the model.&#x20;
+* [ ] Obtain authorization and use OT-safe methods before active scanning in operational technology networks.
+
 ## Cheat Sheet
 
 ### Active Logical Link Mapping

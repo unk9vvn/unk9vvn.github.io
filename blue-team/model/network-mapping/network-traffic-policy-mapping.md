@@ -1,5 +1,18 @@
 # Network Traffic Policy Mapping
 
+## Check List
+
+* [ ] Identify network segments, assets, and trust boundaries.
+* [ ] Enumerate listening services, ports, protocols, and owning processes.
+* [ ] Document approved inbound, outbound, and lateral traffic flows.
+* [ ] Review firewall, ACL, security-group, proxy, NAT, and routing policies.
+* [ ] Validate default inbound and outbound actions.
+* [ ] Compare observed traffic with documented and approved pathways.
+* [ ] Test for unauthorized access, segmentation bypass, and policy conflicts.
+* [ ] Verify application-layer controls, encryption, and authentication requirements.
+* [ ] Review policy exceptions, shadow rules, stale rules, and overly broad scopes.
+* [ ] Confirm logging, alerting, rule ownership, and periodic policy recertification.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Network Traffic Policy Mapping

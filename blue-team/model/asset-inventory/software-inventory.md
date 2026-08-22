@@ -1,5 +1,13 @@
 # Software Inventory
 
+## Check List
+
+* [ ] Collect installed applications, packages, libraries, services, drivers, agents, containers, and software components through administrative or management tools.&#x20;
+* [ ] Record software name, version, vendor, architecture, installation path, package source, execution status, host identity, and collection timestamp.&#x20;
+* [ ] Identify software installed outside standard package managers, including manually deployed binaries, scripts, portable applications, and unauthorized components.&#x20;
+* [ ] Normalize and correlate results from endpoint, network, package-manager, and configuration-management sources; resolve duplicates and incomplete records.&#x20;
+* [ ] Compare the collected inventory with approved baselines and vulnerability, license, lifecycle, and support data to identify unauthorized, outdated, vulnerable, or unsupported software.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Software Inventory
