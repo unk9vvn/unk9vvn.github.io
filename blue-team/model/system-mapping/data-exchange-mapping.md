@@ -1,5 +1,16 @@
 # Data Exchange Mapping
 
+## Check List
+
+* [ ] Identify all source and destination systems.&#x20;
+* [ ] Document data types, formats, volumes, and exchange frequency.
+* [ ] Record protocols, APIs, ports, interfaces, and network paths.
+* [ ] Verify authentication, authorization, encryption, and trust relationships.&#x20;
+* [ ] Compare observed exchanges with the approved data-flow design.&#x20;
+* [ ] Identify unauthorized, undocumented, or excessive data flows.&#x20;
+* [ ] Record evidence, owners, risks, and required remediation.&#x20;
+* [ ] Review the mapping after system or policy changes.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Data Exchange Mapping

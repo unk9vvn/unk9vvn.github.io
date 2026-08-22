@@ -2,6 +2,14 @@
 
 ## Check List
 
+* [ ] Collect and inventory software, hardware, and product components.
+* [ ] Identify internal components and model their structural relationships.  \
+  Map process, library, driver, kernel-module, service, timer, and network dependencies.
+* [ ] Correlate dependencies with package managers and trusted knowledge bases.
+*[ ]   Consult architecture documentation and subject-matter experts to confirm essential dependencies.
+*[ ]   Prioritize dependencies supporting critical systems and organizational activities.
+*[ ]   Assess dependency ownership, configuration constraints, failure impact, and supply-chain risk.
+*[ ]   Maintain a centralized, versioned dependency model with evidence and review status.
 * [ ] You can use the outputs of the Service Dependency Mapping cheat sheets and the Network Mapping topics along with the outputs of the cheat sheets in this section, since these topics are related and can help with a more accurate analysis
 
 ## Cheat Sheet

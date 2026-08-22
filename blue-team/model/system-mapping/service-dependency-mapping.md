@@ -1,5 +1,18 @@
 # Service Dependency Mapping
 
+## Check List
+
+* [ ] Identify critical services and their service consumers.
+* [ ] Document intended dependencies using architecture artifacts and SME input.
+* [ ] Discover runtime dependencies through logs, telemetry, and distributed tracing.
+* [ ] Map service-to-service protocols, ports, endpoints, and authentication methods.
+* [ ] Record upstream, downstream, synchronous, and asynchronous dependencies.
+* [ ] Validate discovered dependencies against approved architecture and service ownership.
+* [ ] Prioritize dependencies supporting critical organizational activities.\
+  Assess third-party, cloud, SaaS, and supply-chain service dependencies.
+* [ ] Identify undocumented, unnecessary, obsolete, or single-point-of-failure dependencies.
+* [ ] Maintain and periodically update the dependency map after service changes.
+
 ## Cheat Sheet
 
 ### Local & Remote Windows Service Dependency Mapping
