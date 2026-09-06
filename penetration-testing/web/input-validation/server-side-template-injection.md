@@ -146,6 +146,66 @@ If the response reflects the calculation (49), SSTI is confirmed.&#x20;
 
 ***
 
+####
+
+{% stepper %}
+{% step %}
+Enter the target page in admin role
+{% endstep %}
+
+{% step %}
+Look for features related to "customizing outgoing email templates," then open the editor and check which default settings the feature uses—for example
+
+```twig
+{% if %} … {% elseif %} … {% endif %}
+{{invoice.balance|number_format(2)}}
+```
+{% endstep %}
+
+{% step %}
+Inject a basic expression such as `ARITHMETIC[{{7*7}}]` and verify whether the output becomes `ARITHMETIC[49]`; also read the value back to confirm it was actually stored
+{% endstep %}
+
+{% step %}
+If direct rendering is blocked, rejected, or sanitized, identify another server-side rendering point such as Preview, Pre-render, Email Composer, Export, or PDF generation and test the same payload there
+{% endstep %}
+
+{% step %}
+Confirm real server-side evaluation with a benign engine/runtime-specific expression, for example `PHP[{{constant("PHP_VERSION")}}]` → `PHP[8.2.28]`, rather than relying only on arithmetic
+{% endstep %}
+
+{% step %}
+Enumerate the template context and inspect available variables, arrays, objects, and properties, for example `{{_context|json_encode}}` or equivalent context-dumping functionality
+{% endstep %}
+
+{% step %}
+Enumerate accessible functions, filters, methods, loaders, extensions, and special template objects, testing harmless expressions such as `{{function_name(...)}}` or `{{value|filter_name}}`
+{% endstep %}
+
+{% step %}
+Determine whether any reachable primitive enables file access, template inclusion, callable execution, command execution, or code execution; test capabilities such as `source()`, `include`, loaders, or callable objects only where supported by the engine
+{% endstep %}
+
+{% step %}
+If no RCE primitive exists, pivot to information disclosure and inspect the context for internal application data such as users, sessions, tokens, credentials, configuration, and database records
+{% endstep %}
+
+{% step %}
+Compare exposed objects with their normal API/UI representation to identify raw database rows or sensitive fields that are normally removed,\
+&#x20;`{{users[0].saas_password}}`, `{{users[0].saas_salt}}`, or `{{users[0].login_token}}`.
+{% endstep %}
+
+{% step %}
+Determine whether exposed secrets are usable by tracing where they are accepted, for example whether a disclosed `login_token` is accepted by a login/recovery endpoint; validate only with controlled accounts
+{% endstep %}
+
+{% step %}
+Reproduce the complete attack chain and determine the actual security boundary crossed: `SSTI → Context Access → Sensitive Data Disclosure → Token/Credential Disclosure → Unauthorized Access`, then classify it as same-user, cross-user, privilege escalation, or cross-tenant
+{% endstep %}
+{% endstepper %}
+
+***
+
 ### White Box
 
 #### Identity Takeover via i18n Fallback Synthesis in Micro-Frontend BFFs
