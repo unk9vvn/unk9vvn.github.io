@@ -6762,41 +6762,40 @@ main()
 			;;
 		esac
 
-		# Development tools and programming languages
-		apt install -qy \
-		    build-essential g++ gcc clang cmake automake autoconf pkg-config \
-		    mingw-w64 rustup golang qtchooser default-jdk golang \
-		    nodejs npm python3 python3-full python3-pip python2 pypy3-venv \
+		# Base packages across dev, virtualization, web, multimedia and desktop.
+		# Installed one-by-one so a single broken or conflicting package cannot
+		# abort the whole set (common on rolling Kali). python2 (removed from the
+		# archives) and rustup (conflicts with the distro cargo/rustc) are omitted.
+		APT_PACKAGES=(
+		    build-essential g++ gcc clang cmake automake autoconf pkg-config
+		    mingw-w64 golang qtchooser default-jdk
+		    nodejs npm python3 python3-full python3-pip pypy3-venv
 		    dotnet-sdk-6.0 mono-complete mono-devel rlwrap
-
-		# Virtualization and container tools
-		apt install -qy \
 		    docker.io docker-compose open-vm-tools
-
-		# Web servers and database engines
-		apt install -qy \
 		    apache2 mariadb-server php tomcat10
+		    imagemagick exiftool exiv2 pngcrush ffmpeg zipalign xxd
+		    gnome-terminal apt-utils htop nload bleachbit remmina
+		    filezilla thunderbird code cmatrix wine winetricks winbind
+		    redis-tools p7zip p7zip-full rar zip
+		)
+		for pkg in "${APT_PACKAGES[@]}"; do
+		    if apt-get install -qy "$pkg"; then
+		        success "Installed $pkg"
+		    else
+		        warning "Skipped (unavailable or conflicting): $pkg"
+		    fi
+		done
 
-		# Multimedia and file analysis tools
-		apt install -qy \
-		    imagemagick exiftool exiv2 pngcrush ffmpeg \
-		    zipalign xxd
-
-		# Desktop utilities and general tools
-		apt install -qy \
-		    gnome-terminal apt-utils \
-		    htop nload bleachbit remmina \
-		    filezilla thunderbird code cmatrix \
-		    wine winetricks winbind redis-tools \
-		    p7zip p7zip-full rar zip
-
-		# install Python2 pip
-		if [ ! -f "/usr/local/bin/pip2" ]; then
+		# install Python2 pip (only when a python2 interpreter is actually
+		# present; python2 is gone from current archives, so this is normally
+		# skipped instead of erroring out)
+		if command -v python2.7 >/dev/null 2>&1 && [ ! -f "/usr/local/bin/pip2" ]; then
 			wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py;python2.7 /tmp/get-pip.py;rm -f /tmp/get-pip.py;apt reinstall -qy python3-pip
 		fi
 
 		# upgrade pips
-		pip2 install --upgrade pip;pip3 install --upgrade pip --break-system-packages
+		command -v pip2 >/dev/null 2>&1 && pip2 install --upgrade pip
+		pip3 install --upgrade pip --break-system-packages
 
 	fi
 
