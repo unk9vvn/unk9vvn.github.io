@@ -1,0 +1,5 @@
+# Keep shell scripts and the version marker LF-only so they run on Linux and
+# are served byte-for-byte correct via raw.githubusercontent.com (a CRLF in
+# the version file was triggering the self-update to re-run every time).
+*.sh text eol=lf
+version text eol=lf

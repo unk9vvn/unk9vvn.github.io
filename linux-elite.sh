@@ -6811,7 +6811,7 @@ cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		success "Successfully Installed $name"
-	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version)" != "$ver" ]; then
+	elif [ "$(curl -s https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/version | tr -d '[:space:]')" != "$ver" ]; then
 		local name="linux-elite"
 		curl -s -o /usr/share/$name/$name.sh https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/linux-elite.sh
 		chmod 755 /usr/share/$name/*
@@ -6821,7 +6821,13 @@ cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		success "Successfully Updating $name"
-		bash /usr/share/$name/$name.sh
+		# only re-run the freshly downloaded copy if it is syntactically intact
+		# (a truncated download on a slow link must not be executed)
+		if bash -n /usr/share/$name/$name.sh 2>/dev/null; then
+			bash /usr/share/$name/$name.sh
+		else
+			warning "Updated $name failed a syntax check (incomplete download?); not running it"
+		fi
 	fi
 }
 
