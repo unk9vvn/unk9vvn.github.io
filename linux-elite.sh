@@ -3,7 +3,7 @@ ver="5.0"
 
 # Global variables (menu paths: XDG base dirs, same on Ubuntu and Kali)
 GOPROXY="https://goproxy.cn,direct"
-USERS=$(ls /home | head -1)
+USERS="${SUDO_USER:-$(ls /home 2>/dev/null | head -1)}"
 LAN=$(hostname -I | awk '{print $1}')
 BASE="/home/$USERS"
 CONFIG_MENU="$BASE/.config/menus"
@@ -118,14 +118,16 @@ create_menu()
     local SUB_MENU="$2"
     shift 2
     local SUB_MENU_ITEMS=("$@")
+    local menu_file="$CONFIG_MENU/xfce-applications.menu"
+    local tmp_file="$CONFIG_MENU/xfce-applications.tmp"
 
-    # Download the main icon
-    curl -s -o "$IMAGES/${SUB_MENU}.png" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png"
+    # Download the submenu icon (best-effort; failure is non-fatal)
+    curl -fsS --max-time 30 -o "$IMAGES/${SUB_MENU}.png" \
+        "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/${SUB_MENU}.png" \
+        || warning "Could not download icon for ${SUB_MENU}"
 
-    # Create the main menu folder
+    # Create the submenu folder and its .directory entry
     mkdir -p "$APPLICATIONS/Unk9vvN/$SUB_MENU"
-
-    # Create the .directory file for the main menu
     cat > "$DESKTOP_DIRECTORIES/${SUB_MENU}.directory" << EOF
 [Desktop Entry]
 Name=${SUB_MENU}
@@ -133,16 +135,21 @@ Comment=${TOPIC_MENU}
 Icon=$IMAGES/${SUB_MENU}.png
 Type=Directory
 EOF
-    # Add the main menu to the XML file
-    xmlstarlet ed \
-        -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
-        -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Name" -v "$SUB_MENU" \
-        -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}.directory" \
-        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
 
-    # Create separate submenu for each item (batch directory files and XML edits)
-    local SUBMENU_ED_OPTS=() LAYOUT_OPTS=()
+    # Register the submenu under Unk9vvN (idempotent)
+    if ! xmlstarlet sel -Q -t -v "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" "$menu_file"; then
+        xmlstarlet ed \
+            -s "/Menu/Menu[Name='Unk9vvN']" -t elem -n "Menu" -v "" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Name" -v "$SUB_MENU" \
+            -s "/Menu/Menu[Name='Unk9vvN']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}.directory" \
+            "$menu_file" > "$tmp_file" && mv "$tmp_file" "$menu_file"
+    fi
+
+    local base="/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']"
+
+    # Create each leaf submenu with a Category-based Include (freedesktop menu spec).
+    # Tools drop into the menu purely via their own Categories= key, so adding a
+    # tool later needs no edit of this XML at all.
     for ITEM in "${SUB_MENU_ITEMS[@]}"; do
         mkdir -p "$APPLICATIONS/Unk9vvN/$SUB_MENU/$ITEM"
         cat > "$DESKTOP_DIRECTORIES/${SUB_MENU}-${ITEM}.directory" << EOF
@@ -152,27 +159,33 @@ Comment=${SUB_MENU}
 Icon=folder
 Type=Directory
 EOF
-        SUBMENU_ED_OPTS+=(-s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Menu" -v "" \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
-            -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Menu[last()]" -t elem -n "Include" -v "")
-        LAYOUT_OPTS+=(-s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}")
+        if ! xmlstarlet sel -Q -t -v "$base/Menu[Name='${SUB_MENU}-${ITEM}']" "$menu_file"; then
+            xmlstarlet ed \
+                -s "$base" -t elem -n "Menu" -v "" \
+                -s "$base/Menu[last()]" -t elem -n "Name" -v "${SUB_MENU}-${ITEM}" \
+                -s "$base/Menu[last()]" -t elem -n "Directory" -v "${SUB_MENU}-${ITEM}.directory" \
+                -s "$base/Menu[last()]" -t elem -n "Include" -v "" \
+                -s "$base/Menu[last()]/Include" -t elem -n "Category" -v "X-Unk9vvN-${SUB_MENU}-${ITEM}" \
+                "$menu_file" > "$tmp_file" && mv "$tmp_file" "$menu_file"
+        fi
     done
 
-    # Batch add all submenus to XML (one file write instead of N)
-    xmlstarlet ed "${SUBMENU_ED_OPTS[@]}" "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
-
-    # Add Layout and batch all Menuname entries (one write for Layout, one for all Menunames)
-    xmlstarlet ed \
-        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']" -t elem -n "Layout" -v "" \
-        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge" -t attr -n "type" -v "menus" \
-        "${LAYOUT_OPTS[@]}" \
-        -s "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout" -t elem -n "Merge" -v "" \
-        -i "/Menu/Menu[Name='Unk9vvN']/Menu[Name='$SUB_MENU']/Layout/Merge[last()]" -t attr -n "type" -v "files" \
-        "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-        mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
+    # Add the submenu Layout once (idempotent)
+    if ! xmlstarlet sel -Q -t -v "$base/Layout" "$menu_file"; then
+        local layout_opts=(
+            -s "$base" -t elem -n "Layout" -v ""
+            -s "$base/Layout" -t elem -n "Merge" -v ""
+            -i "$base/Layout/Merge" -t attr -n "type" -v "menus"
+        )
+        for ITEM in "${SUB_MENU_ITEMS[@]}"; do
+            layout_opts+=(-s "$base/Layout" -t elem -n "Menuname" -v "${SUB_MENU}-${ITEM}")
+        done
+        layout_opts+=(
+            -s "$base/Layout" -t elem -n "Merge" -v ""
+            -i "$base/Layout/Merge[last()]" -t attr -n "type" -v "files"
+        )
+        xmlstarlet ed "${layout_opts[@]}" "$menu_file" > "$tmp_file" && mv "$tmp_file" "$menu_file"
+    fi
 }
 
 # main menu
@@ -286,39 +299,25 @@ menu_entry()
     local category="$2"
     local tool="$3"
     local command="$4"
+    local dir="$APPLICATIONS/Unk9vvN/${category}/${sub_category}"
 
-    # Create the .desktop file for the tool
-    cat > "$APPLICATIONS/Unk9vvN/${category}/${sub_category}/${tool}.desktop" << EOF
+    # Category-based desktop entry (freedesktop menu spec): the file carries its
+    # own Categories= key and OnlyShowIn=XFCE, so the XFCE menu picks it up with
+    # no edit of xfce-applications.menu -- far faster and far more robust than
+    # rewriting the menu XML once per tool.
+    mkdir -p "$dir"
+    cat > "$dir/${tool}.desktop" << EOF
 [Desktop Entry]
+Version=1.0
+Type=Application
 Name=${tool}
 Exec=${command}
 Comment=
 Terminal=true
 Icon=gnome-panel-launcher
-Type=Application
+Categories=X-Unk9vvN-${category}-${sub_category};
+OnlyShowIn=XFCE;
 EOF
-
-    # Find the correct menu path for this subcategory
-    local menu_path="/Menu/Menu[Name='Unk9vvN']/Menu[Name='${category}']/Menu[Name='${category}-${sub_category}']"
-    
-    # Check if Include element exists (use count(); empty Include would make -v output nothing and add duplicate)
-    local include_count
-    include_count=$(xmlstarlet sel -Q -t -v "count(${menu_path}/Include)" "$CONFIG_MENU/xfce-applications.menu" 2>/dev/null) || include_count=0
-    [ -z "$include_count" ] && include_count=0
-    if [ "$include_count" -eq 0 ]; then
-        xmlstarlet ed \
-            -s "${menu_path}" -t elem -n "Include" -v "" \
-            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
-    fi
-
-    # Add the tool to the existing Include section if it doesn't already exist
-    if ! xmlstarlet sel -Q -t -v "${menu_path}/Include/Filename[text()='${tool}.desktop']" "$CONFIG_MENU/xfce-applications.menu"; then
-        xmlstarlet ed \
-            -s "${menu_path}/Include" -t elem -n "Filename" -v "${tool}.desktop" \
-            "$CONFIG_MENU/xfce-applications.menu" > "$CONFIG_MENU/xfce-applications.tmp" && \
-            mv "$CONFIG_MENU/xfce-applications.tmp" "$CONFIG_MENU/xfce-applications.menu"
-    fi
 }
 
 # pip installer
@@ -326,19 +325,16 @@ pip_installer()
 {
     local sub_category="$1"
     local category="$2"
-    local pip_string="${3:-}"  # Receive the list of packages as a string
+    local pip_string="${3:-}"
 
     [ -z "$pip_string" ] && return 0
-    # Iterate over the space-separated packages in the string
     for package in $pip_string; do
-        # Add a menu entry for the package
         menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
-
-        # Run the pip installation command
-        pip3 install --break-system-packages "${package}"
-
-        # Print a success message
-        success "Successfully Installed ${package}"
+        if pip3 install --break-system-packages "${package}"; then
+            success "Successfully Installed ${package}"
+        else
+            warning "Failed to install ${package}"
+        fi
     done
 }
 
@@ -351,14 +347,12 @@ npm_installer()
 
     [ -z "$npm_string" ] && return 0
     for package in $npm_string; do
-        # Add a menu entry for the package
         menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
-
-        # Run the npm installation command
-        npm install -g "${package}"
-
-        # Print a success message
-        success "Successfully Installed ${package}"
+        if npm install -g "${package}"; then
+            success "Successfully Installed ${package}"
+        else
+            warning "Failed to install ${package}"
+        fi
     done
 }
 
@@ -371,14 +365,12 @@ gem_installer()
 
     [ -z "$gem_string" ] && return 0
     for package in $gem_string; do
-        # Add a menu entry for the package
         menu_entry "${sub_category}" "${category}" "${package}" "$exec_shell sudo $package -h"
-
-        # Run the gem installation command
-        gem install "${package}"
-
-        # Print a success message
-        success "Successfully Installed ${package}"
+        if gem install "${package}"; then
+            success "Successfully Installed ${package}"
+        else
+            warning "Failed to install ${package}"
+        fi
     done
 }
 
@@ -391,22 +383,23 @@ go_installer()
 
     [ -z "$commands" ] && return 0
     while IFS= read -r line; do
-        # Parse the Go binary name if a symbolic link is present
+        [ -z "$line" ] && continue
+        binary=""
+        # Parse the Go binary name when a symbolic link is present
         if [[ $line == *"ln -fs"* ]]; then
             symlink=$(echo "$line" | awk '{print $NF}')
             symlink=${symlink#/}
             symlink=${symlink%/}
             binary=$(basename "$symlink")
-
-            # Add a menu entry for the binary
             menu_entry "${sub_category}" "${category}" "${binary}" "$exec_shell sudo $binary -h"
-
-            # Print a success message for the binary
-            success "Successfully Installed ${binary}"
         fi
 
-        # Execute the Go installation or linking command
-        eval "$line"
+        # Execute the Go installation / linking command and report truthfully
+        if eval "$line"; then
+            [ -n "$binary" ] && success "Successfully Installed ${binary}"
+        else
+            warning "Failed: $line"
+        fi
     done <<< "$commands"
 }
 
