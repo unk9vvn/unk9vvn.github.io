@@ -117,7 +117,10 @@ create_menu()
     local TOPIC_MENU="$1"
     local SUB_MENU="$2"
     shift 2
-    local SUB_MENU_ITEMS=("$@")
+    # Items arrive as one space-separated string (e.g. "Web Mobile Cloud");
+    # split it into individual submenu names (names themselves contain no spaces).
+    local SUB_MENU_ITEMS
+    read -ra SUB_MENU_ITEMS <<< "$*"
     local menu_file="$CONFIG_MENU/xfce-applications.menu"
     local tmp_file="$CONFIG_MENU/xfce-applications.tmp"
 
