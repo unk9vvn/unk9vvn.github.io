@@ -322,8 +322,11 @@ Comment=
 Terminal=true
 Icon=gnome-panel-launcher
 Categories=X-Unk9vvN-${category}-${sub_category};
-OnlyShowIn=XFCE;
 EOF
+    # Restrict the entry to XFCE only where the custom XFCE menu is used (Kali).
+    # On Ubuntu/GNOME menu_only_show_in is empty, so the launcher stays visible
+    # in the app grid instead of being hidden by OnlyShowIn=XFCE.
+    [ -n "${menu_only_show_in:-}" ] && printf 'OnlyShowIn=%s;\n' "$menu_only_show_in" >> "$dir/${tool}.desktop"
 }
 
 # pip installer
@@ -5918,7 +5921,7 @@ EOF
 	if [ ! -f "/etc/apt/sources.list.d/atomic.list" ]; then
 		local name="ossec"
 		wget -q -O - https://www.atomicorp.com/RPM-GPG-KEY.atomicorp.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/atomicorp.gpg > /dev/null
-		echo "deb https://updates.atomicorp.com/channels/atomic/debian $DISTRIB_CODENAME main" >>  /etc/apt/sources.list.d/atomic.list
+		echo "deb https://updates.atomicorp.com/channels/atomic/debian bookworm main" >>  /etc/apt/sources.list.d/atomic.list
 		apt-get update;apt-get install -y ossec-hids-server ossec-hids-agent
 		success "Successfully Installed $name"
 	fi
@@ -6776,6 +6779,30 @@ main()
 			*) error "Unsupported OS detected: $ID"
 			;;
 		esac
+
+		# A working terminal-exec wrapper for the menu launchers: kali-menu's
+		# exec-in-shell exists on a Kali XFCE desktop; on Ubuntu/GNOME or a
+		# minimal install it does not, so fall back to a portable wrapper that
+		# runs the command in the terminal and keeps the window open.
+		if [ ! -x "$exec_shell" ]; then
+			cat > /usr/local/bin/unk9vvn-exec-in-shell <<'WRAP'
+#!/bin/bash
+"$@"
+echo
+read -rp "Press Enter to close..."
+WRAP
+			chmod +x /usr/local/bin/unk9vvn-exec-in-shell
+			exec_shell="/usr/local/bin/unk9vvn-exec-in-shell"
+		fi
+
+		# XFCE (Kali) uses the custom nested menu, so entries are scoped to XFCE.
+		# On Ubuntu's default GNOME they must stay unscoped or they get hidden;
+		# the tools then appear as searchable entries in the app grid.
+		if [ "$ID" = "kali" ]; then
+			menu_only_show_in="XFCE"
+		else
+			menu_only_show_in=""
+		fi
 
 		# Base packages across dev, virtualization, web, multimedia and desktop.
 		# Installed one-by-one so a single broken or conflicting package cannot
