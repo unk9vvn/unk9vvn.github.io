@@ -208,9 +208,6 @@ menu()
 	    # If the default file doesn't exist, create a simple menu file
 	    cat > "$CONFIG_MENU/xfce-applications.menu" << EOF
 <?xml version="1.0" ?>
-<!DOCTYPE Menu
-  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
-  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
 <Menu>
         <Name>Xfce</Name>
         <MergeFile type="parent">/etc/xdg/menus/xfce-applications.menu</MergeFile>
@@ -257,6 +254,12 @@ EOF
         
         chmod 664 "$CONFIG_MENU/xfce-applications.menu"
     fi
+
+    # Strip any external DOCTYPE: it points at an on-line DTD that libxml2
+    # (xmlstarlet) tries to fetch on every call -- flooding stderr and stalling
+    # on slow/offline networks. The menu parses fine without it. Handles both
+    # single-line and multi-line DOCTYPE declarations.
+    sed -i '/<!DOCTYPE/{:a;/>/!{N;ba};d}' "$CONFIG_MENU/xfce-applications.menu"
 
     # Initialize Unk9vvN menu
     curl -s -o "$IMAGES/unk9vvn-logo.jpg" "https://raw.githubusercontent.com/unk9vvn/unk9vvn.github.io/main/images/unk9vvn-logo.jpg"
