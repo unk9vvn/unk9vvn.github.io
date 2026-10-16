@@ -409,13 +409,28 @@ go_installer()
     done <<< "$commands"
 }
 
+# apt installer (resilient: installs one package at a time so a single broken
+# or conflicting package cannot abort the rest -- each section installs its own
+# tool set through this)
+apt_installer()
+{
+    local pkg
+    for pkg in "$@"; do
+        if apt-get install -qy "$pkg"; then
+            success "Successfully Installed ${pkg}"
+        else
+            warning "Skipped (unavailable or conflicting): ${pkg}"
+        fi
+    done
+}
+
 # penetration testing tools
 penetrating_testing()
 {
 	echo -e "${YELLOW}# --------------------------------------Web-Penetration-Testing-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader dirsearch nuclei s3scanner rainbowcrack payloadsallthethings hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
+	apt_installer tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader dirsearch nuclei s3scanner rainbowcrack payloadsallthethings hakrawler netexec gobuster ripgrep davtest httprint ffuf gvm seclists subfinder amass arjun metagoofil sublist3r cupp gifsicle aria2 phpggc emailharvester osrframework jq pngtools gitleaks trufflehog maryam dosbox wig eyewitness oclgausscrack websploit inspy pigz massdns gospider proxify dotdotpwn goofile firewalk bing-ip2hosts webhttrack oathtool tcptrack tnscmd10g getallurls padbuster feroxbuster subjack cyberchef whatweb xmlstarlet sslscan assetfinder dnsgen mdbtools pocsuite3 masscan dnsx gsutil libmemcached-tools dnsrecon 
 
 	# install Python3 pip
 	web_pip="pyjwt arjun py-altdns uro defaultcreds-cheat-sheet pymultitor autosubtakeover kube-hunter jsbeautifier bbot droopescan crlfsuite ggshield selenium proxyhub njsscan detect-secrets regexploit h8mail huntsman nodejsscan hashpumpy bhedak gitfive pyexfil wsgidav defaultcreds-cheat-sheet hiphp pasteme-cli aiodnsbrute semgrep smbclientng graphinder wsrepl apachetomcatscanner dotdotfarm pymetasec theharvester chiasmodon puncia slither-analyzer mythril ja3"
@@ -1956,7 +1971,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------Mobile-Penetration-Testing------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy jd-gui adb apksigner apktool android-tools-adb jadx 
+	apt_installer jd-gui adb apksigner apktool android-tools-adb jadx 
 
 	# install Python3 pip
 	mobile_pip="frida-tools objection mitmproxy reflutter androguard apkleaks mvt kiwi androset quark-engine drozer gplaycli"
@@ -2051,7 +2066,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------Cloud-Penetration-Testing-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy awscli trivy s3scanner gsutil cloudbrute 
+	apt_installer awscli trivy s3scanner gsutil cloudbrute 
 
 	# install Python3 pip
 	cloud_pip="sceptre aclpwn cloudshovel powerpwn ggshield pacu whispers kube-hunter roadrecon roadlib gcp_scanner roadtx festin cloudsplaining c7n trailscraper lambdaguard airiam access-undenied-aws n0s1 aws-gate cloudscraper acltoolkit-ad prowler bloodhound aiodnsbrute gorilla-cli knowsmore checkov scoutsuite endgame timberlake punch-q s3-account-search"
@@ -2322,7 +2337,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------Network-Penetration-Testing------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader cme amap bettercap dsniff arpwatch python3-pwntools netexec sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
+	apt_installer tor obfs4proxy proxychains polipo snmp snmp-mibs-downloader cme amap bettercap dsniff arpwatch python3-pwntools netexec sslstrip sherlock parsero routersploit slowhttptest dnsmasq sshuttle haproxy smb4k pptpd xplico dosbox lldb zmap checksec kerberoast etherape ismtp ismtp privoxy ident-user-enum goldeneye oclgausscrack multiforcer crowbar brutespray isr-evilgrade smtp-user-enum pigz gdb isc-dhcp-server firewalk bing-ip2hosts sipvicious netstress tcptrack tnscmd10g darkstat naabu cyberchef nbtscan sslscan wireguard nasm ropper above libmemcached-tools 
 
 	# install Python3 pip
 	network_pip="networkx ropper defaultcreds-cheat-sheet mitmproxy mikrot8over mitm6 pymultitor scapy smbclientng slowloris brute raccoon-scanner baboossh ciphey zeratool impacket aiodnsbrute ssh-mitm ivre angr angrop boofuzz ropgadget pwntools capstone atheris iac-scan-runner"
@@ -2718,7 +2733,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------Wireless-Penetration-Testing------------------------------------ #${RESET}"
 
 	# install Repository Tools
-	apt install -qy airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph pskracker 
+	apt_installer airgeddon crackle kalibrate-rtl eaphammer rtlsdr-scanner wifiphisher airgraph-ng multimon-ng gr-gsm ridenum airspy gqrx-sdr btscanner bluesnarfer ubertooth blueranger wifipumpkin3 spooftooph pskracker 
 
 	# install Python3 pip
 	wireless_pip="btlejack scapy wpspin"
@@ -2798,7 +2813,7 @@ EOF
 	echo -e "${YELLOW}# --------------------------------------IoT-Penetration-Testing-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy arduino gnuradio blue-hydra e2tools mtools
+	apt_installer arduino gnuradio blue-hydra e2tools mtools
 
 	# install Python3 pip
 	iot_pip="scapy uefi_firmware unblob ubi_reader"
@@ -2918,7 +2933,7 @@ red_team()
 	echo -e "${YELLOW}# --------------------------------------Reconnaissance-Red-Team-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy theharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
+	apt_installer theharvester metagoofil amass osrframework gitleaks trufflehog maryam ismtp ident-user-enum eyewitness googler inspy smtp-user-enum goofile bing-ip2hosts webhttrack tnscmd10g getallurls feroxbuster subjack whatweb assetfinder instaloader ligolo-ng 
 
 	# install Python3 pip
 	reconnaissance_pip="censys ggshield bbot raccoon-scanner mailspoof h8mail twint thorndyke gitfive shodan postmaniac socialscan huntsman chiasmodon"
@@ -3021,7 +3036,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------Resource-Development-Red-Team----------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy sharpshooter 
+	apt_installer sharpshooter 
 
 	# install Python3 pip
 	# resource_development_pip=""
@@ -3085,7 +3100,7 @@ EOF
 	echo -e "${YELLOW}# --------------------------------------Initial-Access-Red-Team-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
+	apt_installer qrencode multiforcer crowbar brutespray arduino isr-evilgrade wifiphisher airgraph-ng 
 
 	# install Python3 pip
 	initial_access_pip="rarce baboossh dnstwist pasteme-cli"
@@ -3355,7 +3370,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------------Execution-Red-Team---------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy shellnoob
+	apt_installer shellnoob
 
 	# install Python3 pip
 	execution_pip="donut-shellcode xortool pwncat"
@@ -3433,7 +3448,7 @@ EOF
 	echo -e "${YELLOW}# ----------------------------------------Persistence-Red-Team--------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	persistence_pip="hiphp"
@@ -3493,7 +3508,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------Privilege-Escalation-Red-Team----------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy linux-exploit-suggester peass oscanner 
+	apt_installer linux-exploit-suggester peass oscanner 
 
 	# install Python3 pip
 	privilege_escalation_pip="cve-bin-tool"
@@ -3585,7 +3600,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------Defense-Evasion-Red-Team-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy shellter unicorn veil veil-catapult veil-evasion osslsigncode upx-ucl 
+	apt_installer shellter unicorn veil veil-catapult veil-evasion osslsigncode upx-ucl 
 
 	# install Python3 pip
 	defense_evasion_pip="auto-py-to-exe certipy sysplant pinject"
@@ -3819,7 +3834,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------Credential-Access-Red-Team------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy pdfcrack fcrackzip rarcrack 
+	apt_installer pdfcrack fcrackzip rarcrack 
 
 	# install Python3 pip
 	credential_access_pip="adidnsdump detect-secrets impacket cloudscraper knowsmore ssh-mitm donpapi lsassy dploot"
@@ -3916,7 +3931,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------------Discovery-Red-Team---------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy bloodhound 
+	apt_installer bloodhound 
 
 	# install Python3 pip
 	discovery_pip="networkx bloodhound acltoolkit-ad"
@@ -3969,7 +3984,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------Lateral-Movement-Red-Team------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy pptpd kerberoast isr-evilgrade evil-winrm 
+	apt_installer pptpd kerberoast isr-evilgrade evil-winrm 
 
 	# install Python3 pip
 	lateral_movement_pip="coercer krbjack pivotnacci"
@@ -4019,7 +4034,7 @@ EOF
 	echo -e "${YELLOW}# ----------------------------------------Collection-Red-Team---------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy tigervnc-viewer 
+	apt_installer tigervnc-viewer 
 
 	# install Python3 pip
 	# collection_pip=""
@@ -4071,7 +4086,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------Command-and-Control-Red-Team----------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
+	apt_installer powershell-empire koadic chisel poshc2 ibombshell silenttrinity merlin poshc2 
 
 	# install Python3 pip
 	command_and_control_pip="deathstar-empire praw powerhub"
@@ -4516,7 +4531,7 @@ EOF
 	echo -e "${YELLOW}# ---------------------------------------Exfiltration-Red-Team--------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy haproxy xplico certbot stunnel4 httptunnel onionshare proxify privoxy 
+	apt_installer haproxy xplico certbot stunnel4 httptunnel onionshare proxify privoxy 
 
 	# install Python3 pip
 	exfiltration_pip="updog pivotnacci"
@@ -4776,7 +4791,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------------Impact-Red-Team------------------------------------------ #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# impact_pip=""
@@ -4803,7 +4818,7 @@ ics_security()
 	echo -e "${YELLOW}# ----------------------------------Penetration-Testing-ICS-Security--------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# penetration_testing_pip=""
@@ -4878,7 +4893,7 @@ EOF
 	echo -e "${YELLOW}# ----------------------------------------Red-Team-ICS-Security-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# red_team_pip=""
@@ -4900,7 +4915,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------------Digital-Forensic-ICS-Security---------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# digital_forensic_pip=""
@@ -4937,7 +4952,7 @@ EOF
 	echo -e "${YELLOW}# ---------------------------------------Blue-Team-ICS-Security-------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	blue_team_pip="conpot"
@@ -4964,7 +4979,7 @@ digital_forensic()
 	echo -e "${YELLOW}# --------------------------------Reverse-Engineering-Digital-Forensic------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy ghidra foremost qpdf kafkacat gdb pspy llvm zydis-tools
+	apt_installer ghidra foremost qpdf kafkacat gdb pspy llvm zydis-tools
 
 	# install Python3 pip
 	reverse_engineering_pip="capstone decompyle3 uncompyle6 Depix andriller radare2 peepdf-3 pngcheck qiling fwhunt-scan"
@@ -5013,7 +5028,7 @@ digital_forensic()
 	echo -e "${YELLOW}# ----------------------------------Malware-Analysis-Digital-Forensic-------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic bpftool pev readpe 
+	apt_installer autopsy exiftool inetsim outguess steghide steghide-doc hexyl audacity stenographer stegosuite dnstwist rkhunter tesseract-ocr feh strace sonic bpftool pev readpe 
 
 	# install Python3 pip
 	malware_analysis_pip="stegcracker dnschef-ng stego-lsb ghidriff stegoveritas stegano xortool stringsifter oletools dnfile dotnetfile malchive mwcp chepy unipacker rekall ioc-fanger ioc-scan"
@@ -5040,7 +5055,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
     		--no-default-keyring --keyring ./fpf-apt-tools-archive-keyring.gpg \
     		--recv-keys "DE28 AB24 1FA4 8260 FAC9 B8BA A7C9 B385 2260 4281"
 		mkdir -p /etc/apt/keyrings/;mv fpf-apt-tools-archive-keyring.gpg /etc/apt/keyrings
-		apt update;apt install -qy $name
+		apt update;apt_installer $name
 		success "Success installing Dangerzone"
 	else
 		success "Success installed Dangerzone"
@@ -5285,7 +5300,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------------Threat-Hunting-Digital-Forensic--------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3 arkime bpftrace auditd audispd-plugins 
+	apt_installer sigma-align httpry logwatch nebula cacti tcpdump procmon sigma ja3 arkime bpftrace auditd audispd-plugins 
 
 	# install Python3 pip
 	threat_hunting_pip="pastehunter libcsce phishing-tracker"
@@ -5451,7 +5466,7 @@ EOF
 	echo -e "${YELLOW}# ----------------------------------Incident-Response-Digital-Forensic------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy thehive 
+	apt_installer thehive 
 
 	# install Python3 pip
 	incident_response_pip="dissect aws_ir intelmq otx-misp threat_intel"
@@ -5525,7 +5540,7 @@ EOF
 	echo -e "${YELLOW}# ---------------------------------Threat-Intelligence-Digital-Forensic------------------------------ #${RESET}"
 
 	# install Repository Tools
-	apt install -qy opentaxii 
+	apt_installer opentaxii 
 
 	# install Python3 pip
 	threat_intelligence_pip="threatingestor stix stix-validator stix2 stix2-matcher stix2-elevator attackcti iocextract threatbus apiosintDS sigmatools msticpy"
@@ -5630,7 +5645,7 @@ blue_team()
 	echo -e "${YELLOW}# -------------------------------------------Harden-Blue-Team---------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible ansible-core 
+	apt_installer fail2ban fscrypt encfs age pwgen apparmor ufw firewalld firejail sshguard cilium-cli buildah ansible ansible-core 
 
 	# install Python3 pip
 	harden_pip="kernel-hardening-checker"
@@ -5703,7 +5718,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------------Detect-Blue-Team---------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer cyberchef snort rspamd prometheus stenographer cacti 
+	apt_installer bubblewrap suricata zeek tripwire aide clamav chkrootkit sentrypeer cyberchef snort rspamd prometheus stenographer cacti 
 
 	# install Python3 pip
 	detect_pip="adversarial-robustness-toolbox metabadger flare-capa sigma ja3"
@@ -5978,7 +5993,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------------Isolate-Blue-Team--------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy openvpn wireguard 
+	apt_installer openvpn wireguard 
 
 	# install Python3 pip
 	# isolate_pip=""
@@ -6020,7 +6035,7 @@ go install github.com/casbin/casbin/v2@latest;ln -fs ~/go/bin/casbin /usr/bin/ca
 		local name="guacamole"
 		local guac_ver="1.5.5"
 		# Build dependencies for guacamole-server (required: cairo, libjpeg-turbo, libpng, libtool, uuid; optional: freerdp, pango, libssh2, libvncserver for RDP/SSH/VNC)
-		apt install -qy libcairo2-dev libjpeg-turbo8-dev libpng-dev libtool-bin uuid-dev \
+		apt_installer libcairo2-dev libjpeg-turbo8-dev libpng-dev libtool-bin uuid-dev \
 			libfreerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libssl-dev libtelnet-dev
 		# guacamole-server: build from source
 		mkdir -p /usr/share/guacamole-server
@@ -6067,7 +6082,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------------Deceive-Blue-Team--------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	deceive_pip="thug conpot honeypots heralding"
@@ -6135,7 +6150,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------------------Evict-Blue-Team----------------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# evict_pip=""
@@ -6162,7 +6177,7 @@ security_audit()
 	echo -e "${YELLOW}# ----------------------------Preliminary-Audit-Assessment-Security-Audit---------------------------- #${RESET}"
 
 	# install Repository Tools
-	apt install -qy flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible ansible-core auditd audispd-plugins 
+	apt_installer flawfinder afl++ gvm openvas lynis cppcheck findbugs sudo-rs ansible ansible-core auditd audispd-plugins 
 
 	# install Python3 pip
 	preliminary_audit_assessment_pip="google-generativeai scancode-toolkit mythril"
@@ -6302,7 +6317,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------Planning-and-Preparation-Security-Audit------------------------------ #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# planning_and_preparation_pip=""
@@ -6324,7 +6339,7 @@ EOF
 	echo -e "${YELLOW}# ----------------------------Establishing-Audit-Objectives-Security-Audit--------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# establishing_audit_objectives_pip=""
@@ -6490,7 +6505,7 @@ EOF
 	echo -e "${YELLOW}# -------------------------------Performing-the-Review-Security-Audit-------------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	performing_the_review_pip="ruff"
@@ -6655,7 +6670,7 @@ EOF
 	echo -e "${YELLOW}# -----------------------------Preparing-the-Audit-Report-Security-Audit----------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# preparing_the_audit_report_pip=""
@@ -6677,7 +6692,7 @@ EOF
 	echo -e "${YELLOW}# ------------------------------Issuing-the-Review-Report-Security-Audit----------------------------- #${RESET}"
 
 	# install Repository Tools
-	# apt install -qy 
+	# apt_installer 
 
 	# install Python3 pip
 	# issuing_the_review_report_pip=""
@@ -6821,8 +6836,6 @@ cd /usr/share/$name;bash $name.sh "\$@"
 EOF
 		chmod +x /usr/bin/$name
 		success "Successfully Updating $name"
-		# only re-run the freshly downloaded copy if it is syntactically intact
-		# (a truncated download on a slow link must not be executed)
 		if bash -n /usr/share/$name/$name.sh 2>/dev/null; then
 			bash /usr/share/$name/$name.sh
 		else
