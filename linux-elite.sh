@@ -1143,6 +1143,7 @@ EOF
 	# install hashpump
 	if [ ! -d "/usr/share/hashpump" ]; then
 		local name="hashpump"
+		apt_installer libssl-dev python3-dev
 		git clone https://github.com/mheistermann/HashPump-partialhash /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name
@@ -1154,6 +1155,7 @@ EOF
 	# install pixload
 	if [ ! -d "/usr/share/pixload" ]; then
 		local name="pixload"
+		apt_installer libgd-perl
 		git clone https://github.com/sighook/pixload /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name
@@ -1581,6 +1583,7 @@ EOF
 	# install pemcrack
 	if [ ! -d "/usr/share/pemcrack" ]; then
 		local name="pemcrack"
+		apt_installer libssl-dev
 		git clone https://github.com/robertdavidgraham/pemcrack /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;gcc pemcrack.c -o pemcrack -lssl -lcrypto
@@ -1593,6 +1596,7 @@ EOF
 	# install c-jwt-cracker
 	if [ ! -d "/usr/share/c-jwt-cracker" ]; then
 		local name="c-jwt-cracker"
+		apt_installer libssl-dev
 		git clone https://github.com/brendan-rius/c-jwt-cracker /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name && sudo make
