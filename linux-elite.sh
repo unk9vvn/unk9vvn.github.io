@@ -790,7 +790,7 @@ EOF
     # install mhddos
     if [ ! -d "/usr/share/mhddos" ]; then
         local name="mhddos"
-        apt -y install curl wget libcurl4 libssl-dev python3 python3-pip make cmake automake autoconf m4 build-essential git zmap
+        apt_insstaller install curl wget libcurl4 libssl-dev python3 python3-pip make cmake automake autoconf m4 build-essential git zmap
         git clone https://github.com/MatrixTM/MHDDoS /usr/share/$name
         chmod 755 /usr/share/$name/*
         pip3 install -r /usr/share/$name/requirements.txt --break-system-packages
@@ -1858,6 +1858,7 @@ EOF
 	# install hash_extender
 	if [ ! -d "/usr/share/hash_extender" ]; then
 		local name="hash_extender"
+		apt_installer libssl-dev
 		git clone https://github.com/iagox86/hash_extender /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		sed -i "s|-Werror -Wno-deprecated||g" /usr/share/$name/Makefile
@@ -2032,6 +2033,7 @@ EOF
 	# install ideviceinstaller
 	if [ ! -d "/usr/share/ideviceinstaller" ]; then
 		local name="ideviceinstaller"
+		apt_installer libimobiledevice-dev libplist-dev libzip-dev libtool
 		git clone https://github.com/libimobiledevice/ideviceinstaller /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;make;make install
@@ -5103,6 +5105,7 @@ go install github.com/tomchop/unxor@latest;ln -fs ~/go/bin/unxor /usr/bin/unxor"
 	# install audiostego
 	if [ ! -d "/usr/share/audiostego" ]; then
 		local name="audiostego"
+		apt_installer libboost-all-dev
 		git clone https://github.com/danielcardeenas/AudioStego /usr/share/$name
 		cd /usr/share/$name;mkdir build;cd build;cmake ..;make
 		chmod 755 /usr/share/$name/*
@@ -5417,6 +5420,7 @@ EOF
 	# install aiengine
 	if [ ! -d "/usr/share/aiengine" ]; then
 		local name="aiengine"
+		apt_installer libpcap-dev libboost-all-dev libpcre3-dev libpcre2-dev libjson-c-dev python3-dev
 		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
@@ -5847,6 +5851,7 @@ EOF
 	# install ndpi
 	if [ ! -d "/usr/share/ndpi" ]; then
 		local name="ndpi"
+		apt_installer libpcap-dev libgcrypt20-dev libtool
 		git clone https://github.com/ntop/nDPI /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make;make install
@@ -5900,6 +5905,7 @@ EOF
 	# install aiengine
 	if [ ! -d "/usr/share/aiengine" ]; then
 		local name="aiengine"
+		apt_installer libpcap-dev libboost-all-dev libpcre3-dev libpcre2-dev libjson-c-dev python3-dev
 		git clone https://bitbucket.org/camp0/aiengine /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;./autogen.sh;./configure;make
@@ -6231,6 +6237,7 @@ EOF
 	# install aflplusplus
 	if [ ! -d "/usr/share/afl" ]; then
 		local name="afl"
+		apt_installer llvm-dev python3-dev flex bison libglib2.0-dev libpixman-1-dev
 		git clone https://github.com/AFLplusplus/AFLplusplus /usr/share/$name
 		chmod 755 /usr/share/$name/*
 		cd /usr/share/$name;make distrib;make install
