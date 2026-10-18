@@ -2,7 +2,7 @@
 ver="5.0"
 
 # Global variables (menu paths: XDG base dirs, same on Ubuntu and Kali)
-GOPROXY="https://goproxy.cn,direct"
+export GOPROXY="https://goproxy.cn,direct"
 USERS="${SUDO_USER:-$(ls /home 2>/dev/null | head -1)}"
 LAN=$(hostname -I | awk '{print $1}')
 BASE="/home/$USERS"
@@ -5786,7 +5786,7 @@ go install github.com/crissyfield/troll-a@latest;ln -fs ~/go/bin/troll-a /usr/bi
 		cat > /etc/apt/sources.list.d/falcosecurity.list << EOF
 deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main
 EOF
-		apt-get update -y;apt-get install -y dkms make linux-headers-$(uname -r) dialog;apt-get install -y $name
+		apt-get update -y;apt-get install -y dkms make "linux-headers-$(uname -r)" dialog;apt-get install -y $name
 		success "Successfully Installed $name"
 	fi
 
