@@ -156,20 +156,30 @@ Collect Windows security, access, and automation configuration data, including M
 ```powershell
 <#
 .SYNOPSIS
-    Windows Configuration Inventory Script.
+    Installed software and potential configuration directories inventory.
 
 .DESCRIPTION
-    Collects Windows configuration data from local and remote hosts and
-    writes one pretty-printed JSON file per host.
+    Collects installed software from uninstall registry keys.
+    Finds existing potential configuration directories without reading
+    configuration file contents.
+
+    Writes one plain-text report per host on the executing computer.
 
 .EXAMPLE
-    .\conf-inv.ps1
+    .\apps-inv.ps1
 
 .EXAMPLE
-    .\conf-inv.ps1 HOST-01,HOST-02,192.168.1.10
+    .\apps-inv.ps1 -Targets "HOST-01,HOST-02"
 
-.OUTPUT
-    <script-directory>\inventory_results\<hostname>-configuration_inventory_results.json
+.OUTPUTS
+    C:\inventory_results\<hostname>-configuration-inventory-results.txt
+
+.NOTES
+    Run using 64-bit PowerShell.
+    Remote collection requires PowerShell Remoting.
+    HKCU and AppData belong to the account performing collection.
+    Configuration directories are candidates, not verified settings paths.
+    Portable and Microsoft Store applications may not be included.
 #>
 
 [CmdletBinding()]
@@ -181,35 +191,17 @@ param(
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = "Continue"
 
-# Resolve the output directory relative to the script location.
-# This prevents output behavior from depending on the current PowerShell path.
-$ScriptRoot = $PSScriptRoot
-
-if ([string]::IsNullOrWhiteSpace($ScriptRoot)) {
-    $ScriptRoot = (Get-Location).Path
-}
-
-$OutputDir = Join-Path `
-    -Path $ScriptRoot `
-    -ChildPath "inventory_results"
+$OutputDir = "C:\inventory_results"
 
 try {
-    if (-not (Test-Path `
-        -LiteralPath $OutputDir `
-        -PathType Container `
-        -ErrorAction Stop)) {
-
-        New-Item `
-            -Path $OutputDir `
-            -ItemType Directory `
-            -Force `
-            -ErrorAction Stop |
-            Out-Null
+    if (-not (Test-Path -LiteralPath $OutputDir -PathType Container `
+                -ErrorAction Stop)) {
+        New-Item -Path $OutputDir -ItemType Directory -Force `
+            -ErrorAction Stop | Out-Null
     }
 }
 catch {
-    Write-Host "[!] Cannot create output directory '$OutputDir'." -ForegroundColor Red
-    Write-Host "[!] $($_.Exception.Message)" -ForegroundColor Red
+    Write-Error "Cannot create '$OutputDir': $($_.Exception.Message)"
     exit 1
 }
 
@@ -218,498 +210,418 @@ if ([string]::IsNullOrWhiteSpace($Targets)) {
 }
 else {
     $ComputerNames = @(
-        $Targets -split ',' |
-            ForEach-Object {
-                $_.Trim().Replace("`r", "").Replace("`n", "")
-            } |
-            Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
-            } |
+        $Targets -split "," |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
             Select-Object -Unique
     )
 }
 
 if ($ComputerNames.Count -eq 0) {
-    Write-Host "[!] No valid computer name was provided." -ForegroundColor Red
+    Write-Error "No valid target was provided."
     exit 1
 }
 
-function Read-CliCredentialForTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
+$CollectSoftware = {
+    Set-StrictMode -Version 2.0
 
-    Write-Host "`n[!] Credentials required for $Target" -ForegroundColor Yellow
+    function Get-RegistryText {
+        param(
+            [AllowNull()]
+            [object]$Item,
 
-    $UserName = Read-Host `
-        "Username for $Target (Format: DOMAIN\User or $Target\User)"
+            [string]$Name
+        )
 
-    if ([string]::IsNullOrWhiteSpace($UserName)) {
-        throw "Username cannot be empty."
+        # Get-ItemProperty can return no object for an empty key.
+        if ($null -eq $Item) {
+            return ""
+        }
+
+        $Property = $Item.PSObject.Properties[$Name]
+
+        if ($null -eq $Property) {
+            return ""
+        }
+
+        if ($null -eq $Property.Value) {
+            return ""
+        }
+
+        return [string]$Property.Value
     }
 
-    $Password = Read-Host `
-        "Password for $Target" `
-        -AsSecureString
-
-    return New-Object `
-        System.Management.Automation.PSCredential `
-        ($UserName, $Password)
-}
-
-function Test-LocalTarget {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Target
-    )
-
-    $NormalizedTarget = $Target.Trim().ToLowerInvariant()
-    $LocalComputerName = $env:COMPUTERNAME.Trim().ToLowerInvariant()
-
-    return (
-        $NormalizedTarget -eq "localhost" -or
-        $NormalizedTarget -eq "." -or
-        $NormalizedTarget -eq $LocalComputerName
-    )
-}
-
-$ConfigurationInventoryScriptBlock = {
-    $Results = New-Object System.Collections.Generic.List[object]
-
-    function ConvertTo-PlainObject {
+    function Test-SafeDirectoryName {
         param(
-            [Parameter(Mandatory = $false)]
-            [object]$InputObject
+            [AllowNull()]
+            [AllowEmptyString()]
+            [string]$Name
         )
 
-        if ($null -eq $InputObject) {
-            return $null
+        if ([string]::IsNullOrWhiteSpace($Name)) {
+            return $false
         }
 
-        if (
-            $InputObject -is [string] -or
-            $InputObject -is [char] -or
-            $InputObject -is [bool] -or
-            $InputObject -is [byte] -or
-            $InputObject -is [sbyte] -or
-            $InputObject -is [int16] -or
-            $InputObject -is [int32] -or
-            $InputObject -is [int64] -or
-            $InputObject -is [uint16] -or
-            $InputObject -is [uint32] -or
-            $InputObject -is [uint64] -or
-            $InputObject -is [single] -or
-            $InputObject -is [double] -or
-            $InputObject -is [decimal] -or
-            $InputObject -is [datetime] -or
-            $InputObject -is [guid] -or
-            $InputObject -is [timespan]
-        ) {
-            return $InputObject
+        if ($Name -eq "." -or $Name -eq "..") {
+            return $false
         }
 
-        if ($InputObject -is [System.Enum]) {
-            return $InputObject.ToString()
-        }
+        return (
+            $Name.IndexOfAny(
+                [System.IO.Path]::GetInvalidFileNameChars()
+            ) -lt 0
+        )
+    }
 
-        if ($InputObject -is [System.Collections.IDictionary]) {
-            $DictionaryObject = [ordered]@{}
-
-            foreach ($Key in $InputObject.Keys) {
-                $DictionaryObject[[string]$Key] =
-                    ConvertTo-PlainObject -InputObject $InputObject[$Key]
-            }
-
-            return [PSCustomObject]$DictionaryObject
-        }
-
-        if (
-            $InputObject -is [System.Collections.IEnumerable] -and
-            -not ($InputObject -is [string])
-        ) {
-            $ArrayObject = New-Object System.Collections.Generic.List[object]
-
-            foreach ($Item in $InputObject) {
-                [void]$ArrayObject.Add(
-                    (ConvertTo-PlainObject -InputObject $Item)
-                )
-            }
-
-            return @($ArrayObject.ToArray())
-        }
-
-        $ExcludedProperties = @(
-            "CimClass",
-            "CimInstanceProperties",
-            "CimSystemProperties",
-            "PSComputerName",
-            "RunspaceId",
-            "PSShowComputerName",
-            "PSSourceJobInstanceId",
-            "PSStatus",
-            "PSState",
-            "PSBeginTime",
-            "PSEndTime",
-            "PSJobTypeName",
-            "Output"
+    function Find-ConfigurationDirectories {
+        param(
+            [string]$Name,
+            [string]$Publisher,
+            [string]$InstallLocation
         )
 
-        $PropertyBag = [ordered]@{}
+        $Candidates = New-Object 'System.Collections.Generic.List[string]'
+        $DirectoryNames = @($Name)
 
-        foreach ($Property in $InputObject.PSObject.Properties) {
-            if ($Property.Name -in $ExcludedProperties) {
-                continue
-            }
+        # Only use absolute filesystem installation paths.
+        $ValidInstallPath = (
+            -not [string]::IsNullOrWhiteSpace($InstallLocation) -and
+            $InstallLocation -match '^(?:[A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)'
+        )
 
-            if (-not $Property.IsGettable) {
-                continue
-            }
-
+        if ($ValidInstallPath) {
             try {
-                $PropertyBag[$Property.Name] =
-                    ConvertTo-PlainObject -InputObject $Property.Value
+                $InstallFolderName = Split-Path `
+                    -Path $InstallLocation.TrimEnd('\') `
+                    -Leaf `
+                    -ErrorAction Stop
+
+                if (Test-SafeDirectoryName $InstallFolderName) {
+                    $DirectoryNames += $InstallFolderName
+                }
             }
             catch {
-                $PropertyBag[$Property.Name] = $null
+                Write-Warning "Cannot inspect installation path '$InstallLocation': $($_.Exception.Message)"
             }
         }
 
-        return [PSCustomObject]$PropertyBag
-    }
-
-    function Add-InventoryRecord {
-        param(
-            [Parameter(Mandatory = $true)]
-            [string]$ConfigDomain,
-
-            [Parameter(Mandatory = $true)]
-            [string]$ConfigCategory,
-
-            [Parameter(Mandatory = $true)]
-            [string]$ConfigItem,
-
-            [Parameter(Mandatory = $true)]
-            [string]$CollectionCommand,
-
-            [Parameter(Mandatory = $false)]
-            [object]$ConfigValue = $null,
-
-            [Parameter(Mandatory = $false)]
-            [string]$CollectionStatus = "success",
-
-            [Parameter(Mandatory = $false)]
-            [string]$ErrorMessage = $null
+        $DirectoryNames = @(
+            $DirectoryNames |
+                Where-Object { Test-SafeDirectoryName $_ } |
+                Select-Object -Unique
         )
 
-        $InventoryItem = [PSCustomObject]@{
-            hostname           = [string]$env:COMPUTERNAME
-            asset_type         = "windows_configuration"
-            config_domain      = $ConfigDomain
-            config_category    = $ConfigCategory
-            config_item        = $ConfigItem
-            collection_command = $CollectionCommand
-            collection_status  = $CollectionStatus
-            error_message      = $ErrorMessage
-            config_value       = $ConfigValue
-            collection_time    = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+        $DataRoots = @(
+            @(
+                $env:ProgramData
+                $env:APPDATA
+                $env:LOCALAPPDATA
+            ) |
+                Where-Object {
+                    -not [string]::IsNullOrWhiteSpace($_)
+                } |
+                Select-Object -Unique
+        )
+
+        foreach ($Root in $DataRoots) {
+            foreach ($DirectoryName in $DirectoryNames) {
+                try {
+                    [void]$Candidates.Add(
+                        (Join-Path -Path $Root -ChildPath $DirectoryName `
+                            -ErrorAction Stop)
+                    )
+
+                    if (Test-SafeDirectoryName $Publisher) {
+                        $PublisherRoot = Join-Path `
+                            -Path $Root `
+                            -ChildPath $Publisher `
+                            -ErrorAction Stop
+
+                        [void]$Candidates.Add(
+                            (Join-Path -Path $PublisherRoot `
+                                -ChildPath $DirectoryName -ErrorAction Stop)
+                        )
+                    }
+                }
+                catch {
+                    Write-Warning "Cannot build configuration candidate for '$Name': $($_.Exception.Message)"
+                }
+            }
         }
 
-        [void]$Results.Add($InventoryItem)
-    }
-
-    try {
-        $DefenderStatus = Get-MpComputerStatus -ErrorAction Stop
-
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Endpoint Protection Configuration" `
-            -ConfigItem "Microsoft Defender Computer Status" `
-            -CollectionCommand "Get-MpComputerStatus" `
-            -ConfigValue (
-                ConvertTo-PlainObject -InputObject $DefenderStatus
-            )
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Endpoint Protection Configuration" `
-            -ConfigItem "Microsoft Defender Computer Status" `
-            -CollectionCommand "Get-MpComputerStatus" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
-    }
-
-    try {
-        $BitLockerVolumes = @(
-            Get-BitLockerVolume -ErrorAction Stop
-        )
-
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Disk Encryption Configuration" `
-            -ConfigItem "BitLocker Volume Configuration" `
-            -CollectionCommand "Get-BitLockerVolume" `
-            -ConfigValue (
-                ConvertTo-PlainObject -InputObject $BitLockerVolumes
-            )
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Disk Encryption Configuration" `
-            -ConfigItem "BitLocker Volume Configuration" `
-            -CollectionCommand "Get-BitLockerVolume" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
-    }
-
-    try {
-        $SystemMitigation = Get-ProcessMitigation `
-            -System `
-            -ErrorAction Stop
-
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Exploit Protection Configuration" `
-            -ConfigItem "System Process Mitigation Configuration" `
-            -CollectionCommand "Get-ProcessMitigation -System" `
-            -ConfigValue (
-                ConvertTo-PlainObject -InputObject $SystemMitigation
-            )
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Exploit Protection Configuration" `
-            -ConfigItem "System Process Mitigation Configuration" `
-            -CollectionCommand "Get-ProcessMitigation -System" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
-    }
-
-    try {
-        $AuditPolicyLines = @(
-            auditpol /get /category:* 2>&1 |
-                ForEach-Object {
-                    $_.ToString()
+        if ($ValidInstallPath) {
+            foreach ($Subdirectory in @(
+                "config", "configs", "configuration", "settings"
+            )) {
+                try {
+                    [void]$Candidates.Add(
+                        (Join-Path -Path $InstallLocation `
+                            -ChildPath $Subdirectory -ErrorAction Stop)
+                    )
                 }
-        )
-
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Audit Policy Configuration" `
-            -ConfigItem "Advanced Audit Policy Configuration" `
-            -CollectionCommand "auditpol /get /category:*" `
-            -ConfigValue $AuditPolicyLines
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Security Configuration" `
-            -ConfigCategory "Audit Policy Configuration" `
-            -ConfigItem "Advanced Audit Policy Configuration" `
-            -CollectionCommand "auditpol /get /category:*" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
-    }
-
-    try {
-        $WinRmConfigLines = @(
-            winrm get winrm/config 2>&1 |
-                ForEach-Object {
-                    $_.ToString()
+                catch {
+                    Write-Warning "Cannot build configuration candidate under '$InstallLocation': $($_.Exception.Message)"
                 }
-        )
+            }
+        }
 
-        Add-InventoryRecord `
-            -ConfigDomain "Account / Access Configuration" `
-            -ConfigCategory "Remote Management Configuration" `
-            -ConfigItem "WinRM Service Configuration" `
-            -CollectionCommand "winrm get winrm/config" `
-            -ConfigValue $WinRmConfigLines
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Account / Access Configuration" `
-            -ConfigCategory "Remote Management Configuration" `
-            -ConfigItem "WinRM Service Configuration" `
-            -CollectionCommand "winrm get winrm/config" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
-    }
-
-    try {
-        $ScheduledTasksLines = @(
-            schtasks /query /fo LIST /v 2>&1 |
-                ForEach-Object {
-                    $_.ToString()
+        foreach ($Path in ($Candidates.ToArray() | Sort-Object -Unique)) {
+            try {
+                if (Test-Path -LiteralPath $Path -PathType Container `
+                        -ErrorAction Stop) {
+                    $Path
                 }
-        )
-
-        Add-InventoryRecord `
-            -ConfigDomain "Task / Automation Configuration" `
-            -ConfigCategory "Scheduled Task Configuration" `
-            -ConfigItem "Windows Scheduled Tasks Detailed Configuration" `
-            -CollectionCommand "schtasks /query /fo LIST /v" `
-            -ConfigValue $ScheduledTasksLines
-    }
-    catch {
-        Add-InventoryRecord `
-            -ConfigDomain "Task / Automation Configuration" `
-            -ConfigCategory "Scheduled Task Configuration" `
-            -ConfigItem "Windows Scheduled Tasks Detailed Configuration" `
-            -CollectionCommand "schtasks /query /fo LIST /v" `
-            -CollectionStatus "failed" `
-            -ErrorMessage $_.Exception.Message
+            }
+            catch {
+                Write-Warning "Cannot inspect configuration candidate '$Path': $($_.Exception.Message)"
+            }
+        }
     }
 
-    # The unary comma keeps the complete result array as one pipeline object.
-    return ,$Results.ToArray()
+    if (
+        [Environment]::Is64BitOperatingSystem -and
+        -not [Environment]::Is64BitProcess
+    ) {
+        Write-Warning "Collection is running in 32-bit PowerShell; some 64-bit applications may be missing."
+    }
+
+    $Roots = @(
+        'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall'
+    )
+
+    $Apps = New-Object 'System.Collections.Generic.List[object]'
+
+    foreach ($Root in $Roots) {
+        try {
+            if (-not (Test-Path -LiteralPath $Root -ErrorAction Stop)) {
+                continue
+            }
+
+            # Keep any accessible keys even if another key causes an error.
+            $KeyErrors = @()
+            $Keys = @(
+                Get-ChildItem -LiteralPath $Root `
+                    -ErrorAction SilentlyContinue `
+                    -ErrorVariable KeyErrors
+            )
+
+            foreach ($KeyError in $KeyErrors) {
+                Write-Warning "Cannot fully enumerate '$Root': $($KeyError.Exception.Message)"
+            }
+        }
+        catch {
+            Write-Warning "Cannot read '$Root': $($_.Exception.Message)"
+            continue
+        }
+
+        foreach ($Key in $Keys) {
+            try {
+                $Item = Get-ItemProperty -LiteralPath $Key.PSPath `
+                    -ErrorAction Stop
+
+                # Empty registry keys are not application records.
+                if ($null -eq $Item) {
+                    continue
+                }
+
+                $Name = Get-RegistryText -Item $Item -Name "DisplayName"
+
+                if ([string]::IsNullOrWhiteSpace($Name)) {
+                    continue
+                }
+
+                $InstallLocation = Get-RegistryText `
+                    -Item $Item -Name "InstallLocation"
+
+                $InstallLocation = $InstallLocation.Trim().Trim('"')
+
+                if (-not [string]::IsNullOrWhiteSpace($InstallLocation)) {
+                    $InstallLocation =
+                        [Environment]::ExpandEnvironmentVariables(
+                            $InstallLocation
+                        )
+                }
+
+                [void]$Apps.Add([pscustomobject]@{
+                    Name            = $Name.Trim()
+                    Version         = Get-RegistryText $Item "DisplayVersion"
+                    Publisher       = Get-RegistryText $Item "Publisher"
+                    InstallLocation = $InstallLocation
+                })
+            }
+            catch {
+                Write-Warning "Cannot read '$($Key.Name)': $($_.Exception.Message)"
+            }
+        }
+    }
+
+    # Preserve installations with different installation paths.
+    $SortedApps = @(
+        $Apps.ToArray() |
+            Sort-Object Name, Version, Publisher, InstallLocation -Unique
+    )
+
+    $Results = @(
+        foreach ($App in $SortedApps) {
+            $ConfigurationPaths = @(
+                Find-ConfigurationDirectories `
+                    -Name $App.Name `
+                    -Publisher $App.Publisher `
+                    -InstallLocation $App.InstallLocation
+            )
+
+            [pscustomobject]@{
+                Name                        = $App.Name
+                Version                     = $App.Version
+                Publisher                   = $App.Publisher
+                InstallLocation             = $App.InstallLocation
+                ConfigurationPathCandidates = $ConfigurationPaths
+            }
+        }
+    )
+
+    # Hostname is used only to name the output file.
+    [pscustomobject]@{
+        Hostname     = [string]$env:COMPUTERNAME
+        Applications = $Results
+    }
 }
 
 foreach ($Target in $ComputerNames) {
-    Write-Host "`n[?] Processing Host: $Target" -ForegroundColor Cyan
+    Write-Host "`n[?] Processing: $Target" -ForegroundColor Cyan
 
-    $InventoryRecords = $null
-    $FinalHostName = $Target
-    $IsLocalTarget = Test-LocalTarget -Target $Target
+    $IsLocal = (
+        $Target -eq "." -or
+        $Target -eq "localhost" -or
+        $Target -eq $env:COMPUTERNAME
+    )
+
+    $Inventory = $null
 
     try {
-        if ($IsLocalTarget) {
-            $InventoryRecords = & $ConfigurationInventoryScriptBlock
+        if ($IsLocal) {
+            $Inventory = & $CollectSoftware
         }
         else {
-            $InventoryRecords = Invoke-Command `
+            $Inventory = Invoke-Command `
                 -ComputerName $Target `
-                -ScriptBlock $ConfigurationInventoryScriptBlock `
+                -ScriptBlock $CollectSoftware `
                 -ErrorAction Stop
         }
     }
     catch {
-        if ($IsLocalTarget) {
-            Write-Host `
-                "[!] Local inventory collection failed: $($_.Exception.Message)" `
-                -ForegroundColor Red
-
+        if ($IsLocal) {
+            Write-Warning "Local collection failed: $($_.Exception.Message)"
             continue
         }
 
-        Write-Host `
-            "[-] Current user context failed for $Target. Requesting credentials..." `
-            -ForegroundColor DarkGray
-    }
+        Write-Warning "Remote collection failed: $($_.Exception.Message)"
 
-    if ($null -eq $InventoryRecords -and -not $IsLocalTarget) {
         try {
-            $Credential = Read-CliCredentialForTarget -Target $Target
+            $Credential = Get-Credential `
+                -Message "Enter credentials for $Target" `
+                -ErrorAction Stop
 
-            $InventoryRecords = Invoke-Command `
+            if ($null -eq $Credential) {
+                throw "Credentials were not provided."
+            }
+
+            $Inventory = Invoke-Command `
                 -ComputerName $Target `
-                -ScriptBlock $ConfigurationInventoryScriptBlock `
+                -ScriptBlock $CollectSoftware `
                 -Credential $Credential `
                 -ErrorAction Stop
         }
         catch {
-            Write-Host `
-                "[!] Failed to collect from ${Target}: $($_.Exception.Message)" `
-                -ForegroundColor Red
-
+            Write-Warning "Collection failed for ${Target}: $($_.Exception.Message)"
             continue
         }
     }
 
-    if ($null -eq $InventoryRecords) {
-        Write-Host `
-            "[!] No inventory result was returned for $Target." `
-            -ForegroundColor Red
-
+    if ($null -eq $Inventory) {
+        Write-Warning "No result returned for $Target."
         continue
     }
 
-    $InventoryRecords = @($InventoryRecords)
+    $HostNameForFile = [string]$Inventory.Hostname
 
-    if (
-        $InventoryRecords.Count -gt 0 -and
-        $null -ne $InventoryRecords[0].hostname -and
-        -not [string]::IsNullOrWhiteSpace(
-            [string]$InventoryRecords[0].hostname
-        )
-    ) {
-        $FinalHostName = [string]$InventoryRecords[0].hostname
+    if ([string]::IsNullOrWhiteSpace($HostNameForFile)) {
+        $HostNameForFile = $Target
     }
 
-    if ($InventoryRecords.Count -eq 0) {
-        Write-Host `
-            "[!] No records collected from $Target." `
-            -ForegroundColor Yellow
+    $SafeHostName = $HostNameForFile.Trim() -replace '[\\/:*?"<>|]', '_'
 
-        continue
-    }
+    $OutputFile = Join-Path -Path $OutputDir `
+        -ChildPath "${SafeHostName}-configuration-inventory-results.txt"
 
-    $FinalHostName = $FinalHostName.Trim()
+    $Lines = New-Object 'System.Collections.Generic.List[string]'
 
-    if ([string]::IsNullOrWhiteSpace($FinalHostName)) {
-        $FinalHostName = $Target.Trim()
-    }
-
-    $SafeHostName = $FinalHostName -replace '[\\/:*?"<>|]', '_'
-
-    $OutputFilePath = Join-Path `
-        -Path $OutputDir `
-        -ChildPath "${SafeHostName}-configuration_inventory_results.json"
-
-    try {
-        $JsonOutput = $InventoryRecords |
-            ConvertTo-Json -Depth 20
-
-        if ([string]::IsNullOrWhiteSpace($JsonOutput)) {
-            throw "ConvertTo-Json returned an empty result."
+    foreach ($App in @($Inventory.Applications)) {
+        if ($null -eq $App) {
+            continue
         }
 
-        $Utf8NoBom = New-Object `
-            System.Text.UTF8Encoding($false)
+        [void]$Lines.Add("Name: $($App.Name)")
+        [void]$Lines.Add("Version: $($App.Version)")
+        [void]$Lines.Add("Publisher: $($App.Publisher)")
 
-        [System.IO.File]::WriteAllText(
-            $OutputFilePath,
-            $JsonOutput,
+        $Location = [string]$App.InstallLocation
+
+        if ([string]::IsNullOrWhiteSpace($Location)) {
+            $Location = "Not registered"
+        }
+
+        [void]$Lines.Add("Installation path: $Location")
+        [void]$Lines.Add("Potential configuration directories (unverified):")
+
+        $Paths = @(
+            $App.ConfigurationPathCandidates |
+                Where-Object {
+                    -not [string]::IsNullOrWhiteSpace([string]$_)
+                } |
+                Sort-Object -Unique
+        )
+
+        if ($Paths.Count -eq 0) {
+            [void]$Lines.Add(
+                "  Not found by directory-name matching; settings may exist elsewhere."
+            )
+        }
+        else {
+            foreach ($Path in $Paths) {
+                [void]$Lines.Add("  $Path")
+            }
+        }
+
+        [void]$Lines.Add(('-' * 80))
+    }
+
+    if ($Lines.Count -eq 0) {
+        Write-Warning "No applications collected for $Target; no new report written. Any existing report remains unchanged."
+        continue
+    }
+
+    try {
+        $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+        [System.IO.File]::WriteAllLines(
+            $OutputFile,
+            $Lines.ToArray(),
             $Utf8NoBom
         )
 
-        $FileExists = Test-Path `
-            -LiteralPath $OutputFilePath `
-            -PathType Leaf `
-            -ErrorAction Stop
+        $SavedFile = Get-Item -LiteralPath $OutputFile -ErrorAction Stop
 
-        if (-not $FileExists) {
-            throw "The output file was not created."
-        }
-
-        $OutputFile = Get-Item `
-            -LiteralPath $OutputFilePath `
-            -ErrorAction Stop
-
-        if ($OutputFile.Length -eq 0) {
+        if ($SavedFile.Length -eq 0) {
             throw "The output file is empty."
         }
 
-        Write-Host `
-            "[+] Inventory saved for ${FinalHostName}: $($OutputFile.FullName)" `
-            -ForegroundColor Green
-
-        Write-Host `
-            "[+] Total records collected: $($InventoryRecords.Count)" `
-            -ForegroundColor Gray
+        Write-Host "[+] Saved: $($SavedFile.FullName)" -ForegroundColor Green
     }
     catch {
-        Write-Host `
-            "[!] Failed to write output for ${FinalHostName}: $($_.Exception.Message)" `
-            -ForegroundColor Red
-
-        Write-Host `
-            "[!] Expected output path: $OutputFilePath" `
-            -ForegroundColor Yellow
-
-        continue
+        Write-Warning "Cannot write '${OutputFile}': $($_.Exception.Message)"
     }
 }
 
