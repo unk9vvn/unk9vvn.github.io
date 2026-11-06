@@ -1,6 +1,6 @@
 $schema: https://api.gitbook.com/gitbook-docs.yaml
 site:
-  title: Penetration Testing
+  title: Blue Team
   structure:
     - type: space
       key: space-1
