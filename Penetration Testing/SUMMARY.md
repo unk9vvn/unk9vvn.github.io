@@ -29,6 +29,12 @@
   * [Cloud Storage](web/misconfiguration/cloud-storage.md)
   * [Content Security Policy](web/misconfiguration/content-security-policy.md)
   * [Path Confusion](web/misconfiguration/path-confusion.md)
+* [Identity Management](web/identity-management/README.md)
+  * [Role Definitions](web/identity-management/role-definitions.md)
+  * [User Registration](web/identity-management/user-registration.md)
+  * [Account Provisioning](web/identity-management/account-provisioning.md)
+  * [Account Enumeration](web/identity-management/account-enumeration.md)
+  * [Weak Username Policy](web/identity-management/weak-username-policy.md)
 
 ## Group 1
 
