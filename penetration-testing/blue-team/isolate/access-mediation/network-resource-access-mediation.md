@@ -1,2 +1,0 @@
-# Network Resource Access Mediation
-

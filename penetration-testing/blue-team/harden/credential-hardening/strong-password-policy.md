@@ -1,2 +1,0 @@
-# Strong Password Policy
-

@@ -1,2 +1,0 @@
-# Firmware Embedded Monitoring Code
-

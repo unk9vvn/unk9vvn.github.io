@@ -1,2 +1,0 @@
-# privilege-escalation
-

@@ -1,2 +1,0 @@
-# Decoy Network Resource
-

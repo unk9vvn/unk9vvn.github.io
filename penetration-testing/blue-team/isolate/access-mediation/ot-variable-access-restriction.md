@@ -1,2 +1,0 @@
-# OT Variable Access Restriction
-

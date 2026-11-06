@@ -1,2 +1,0 @@
-# Hardware-based Write Protection
-

@@ -1,2 +1,0 @@
-# Broadcast Domain Isolation
-

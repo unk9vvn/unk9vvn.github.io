@@ -1,2 +1,0 @@
-# System Configuration Permissions
-

@@ -1,2 +1,0 @@
-# planning-and-preparation
-

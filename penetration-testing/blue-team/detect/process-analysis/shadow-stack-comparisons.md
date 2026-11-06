@@ -1,2 +1,0 @@
-# Shadow Stack Comparisons
-

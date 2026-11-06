@@ -1,2 +1,0 @@
-# Electronic Lock Monitoring
-

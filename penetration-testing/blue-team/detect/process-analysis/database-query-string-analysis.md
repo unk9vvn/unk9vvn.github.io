@@ -1,2 +1,0 @@
-# Database Query String Analysis
-
