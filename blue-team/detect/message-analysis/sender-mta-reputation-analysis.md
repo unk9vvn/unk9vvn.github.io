@@ -1,2 +1,0 @@
-# Sender MTA Reputation Analysis
-

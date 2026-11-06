@@ -1,2 +1,0 @@
-# Indirect Branch Call Analysis
-

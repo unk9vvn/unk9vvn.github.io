@@ -1,2 +1,0 @@
-# Protocol Metadata Anomaly Detection
-

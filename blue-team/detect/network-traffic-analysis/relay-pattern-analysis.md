@@ -1,2 +1,0 @@
-# Relay Pattern Analysis
-

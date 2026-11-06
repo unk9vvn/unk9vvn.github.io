@@ -1,2 +1,0 @@
-# Proximity Sensor Monitoring
-

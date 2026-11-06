@@ -1,2 +1,0 @@
-# Variable Type Validation
-

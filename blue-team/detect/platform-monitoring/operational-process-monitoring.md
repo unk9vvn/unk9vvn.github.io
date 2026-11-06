@@ -1,2 +1,0 @@
-# Operational Process Monitoring
-

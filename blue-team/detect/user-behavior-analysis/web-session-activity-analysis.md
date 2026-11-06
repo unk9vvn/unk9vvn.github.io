@@ -1,2 +1,0 @@
-# Web Session Activity Analysis
-
