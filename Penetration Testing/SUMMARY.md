@@ -35,6 +35,18 @@
   * [Account Provisioning](web/identity-management/account-provisioning.md)
   * [Account Enumeration](web/identity-management/account-enumeration.md)
   * [Weak Username Policy](web/identity-management/weak-username-policy.md)
+* [Broken Authentication](web/broken-authentication/README.md)
+  * [Credentials Encrypted Channel](web/broken-authentication/credentials-encrypted-channel.md)
+  * [Default Credentials](web/broken-authentication/default-credentials.md)
+  * [Weak Lock Out Mechanism](web/broken-authentication/weak-lock-out-mechanism.md)
+  * [Bypassing Authentication Schema](web/broken-authentication/bypassing-authentication-schema.md)
+  * [Vulnerable Remember Password](web/broken-authentication/vulnerable-remember-password.md)
+  * [Browser Cache Weaknesses](web/broken-authentication/browser-cache-weaknesses.md)
+  * [Weak Password Policy](web/broken-authentication/weak-password-policy.md)
+  * [Weak Security Question Answer](web/broken-authentication/weak-security-question-answer.md)
+  * [Weak Password Reset Functionalities](web/broken-authentication/weak-password-reset-functionalities.md)
+  * [Weaker Authentication in Alternative Channel](web/broken-authentication/weaker-authentication-in-alternative-channel.md)
+  * [Multi-Factor Authentication](web/broken-authentication/multi-factor-authentication.md)
 
 ## Group 1
 
