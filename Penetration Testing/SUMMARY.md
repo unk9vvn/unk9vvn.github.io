@@ -15,6 +15,22 @@
 * [Open Source Intelligence](web/open-source-intelligence/README.md)
   * [People Investigation](web/open-source-intelligence/people-investigation.md)
   * [Infrastructure](web/open-source-intelligence/infrastructure.md)
+* [Misconfiguration](web/misconfiguration/README.md)
+  * [Network Configuration](web/misconfiguration/network-configuration.md)
+  * [App Platform Configuration](web/misconfiguration/app-platform-configuration.md)
+  * [File Extensions Handling](web/misconfiguration/file-extensions-handling.md)
+  * [Review Old Backup](web/misconfiguration/review-old-backup.md)
+  * [Enumerate Admin Interfaces](web/misconfiguration/enumerate-admin-interfaces.md)
+  * [HTTP Methods](web/misconfiguration/http-methods.md)
+  * [HTTP Strict Transport Security](web/misconfiguration/http-strict-transport-security.md)
+  * [RIA Cross Domain Policy](web/misconfiguration/ria-cross-domain-policy.md)
+  * [File Permission](web/misconfiguration/file-permission.md)
+  * [Subdomain Takeover](web/misconfiguration/subdomain-takeover.md)
+  * [Cloud Storage](web/misconfiguration/cloud-storage.md)
+  * [Content Security Policy](web/misconfiguration/content-security-policy.md)
+  * [Path Confusion](web/misconfiguration/path-confusion.md)
+
+## Group 1
 
 ## Mobile
 
