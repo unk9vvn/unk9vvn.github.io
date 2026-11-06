@@ -1,2 +1,0 @@
-# Identifying Insecure Cryptographic Algorithms
-
