@@ -47,6 +47,12 @@
   * [Weak Password Reset Functionalities](web/broken-authentication/weak-password-reset-functionalities.md)
   * [Weaker Authentication in Alternative Channel](web/broken-authentication/weaker-authentication-in-alternative-channel.md)
   * [Multi-Factor Authentication](web/broken-authentication/multi-factor-authentication.md)
+* [Broken Authorization](web/broken-authorization/README.md)
+  * [bypassing authorization schema](web/broken-authorization/bypassing-authorization-schema.md)
+  * [directory traversal file include](web/broken-authorization/directory-traversal-file-include.md)
+  * [insecure direct object references](web/broken-authorization/insecure-direct-object-references.md)
+  * [oauth weaknesses](web/broken-authorization/oauth-weaknesses.md)
+  * [privilege escalation](web/broken-authorization/privilege-escalation.md)
 
 ## Group 1
 
