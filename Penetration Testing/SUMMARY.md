@@ -88,8 +88,13 @@
   * [Mass Assignment](web/input-validation/mass-assignment.md)
   * [Regular Expression DoS](web/input-validation/regular-expression-dos.md)
   * [Web Cache Poisoning](web/input-validation/web-cache-poisoning.md)
-
-## Group 1
+* [Error Handling](web/error-handling/README.md)
+  * [Improper Error Handling](web/error-handling/improper-error-handling.md)
+* [Weak Cryptography](web/weak-cryptography/README.md)
+  * [Weak Transport Layer Security](web/weak-cryptography/weak-transport-layer-security.md)
+  * [Padding Oracle Attack](web/weak-cryptography/padding-oracle-attack.md)
+  * [Information Unencrypted Channel](web/weak-cryptography/information-unencrypted-channel.md)
+  * [Weak Encryption](web/weak-cryptography/weak-encryption.md)
 
 ## Mobile
 
