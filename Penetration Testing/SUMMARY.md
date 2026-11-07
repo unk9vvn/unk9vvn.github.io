@@ -104,6 +104,22 @@
   * [Upload of Unexpected File Types](web/business-logic/upload-of-unexpected-file-types.md)
   * [Upload of Malicious Files](web/business-logic/upload-of-malicious-files.md)
   * [Payment Functionality](web/business-logic/payment-functionality.md)
+* [Client-Side](web/client-side/README.md)
+  * [Dom Based Cross Site Scripting](web/client-side/dom-based-cross-site-scripting.md)
+  * [Javascript Execution](web/client-side/javascript-execution.md)
+  * [HTML Injection](web/client-side/html-injection.md)
+  * [Client Side URL Redirect](web/client-side/client-side-url-redirect.md)
+  * [CSS Injection](web/client-side/css-injection.md)
+  * [Client Side Resource Manipulation](web/client-side/client-side-resource-manipulation.md)
+  * [Cross Origin Resource Sharing](web/client-side/cross-origin-resource-sharing.md)
+  * [Client Side Template Injection](web/client-side/client-side-template-injection.md)
+  * [Cross Site Flashing](web/client-side/cross-site-flashing.md)
+  * [Clickjacking](web/client-side/clickjacking.md)
+  * [WebSockets](web/client-side/websockets.md)
+  * [Web Messaging](web/client-side/web-messaging.md)
+  * [Browser Storage](web/client-side/browser-storage.md)
+  * [Cross Site Script Inclusion](web/client-side/cross-site-script-inclusion.md)
+  * [Reverse Tabnabbing](web/client-side/reverse-tabnabbing.md)
 
 ## Mobile
 
