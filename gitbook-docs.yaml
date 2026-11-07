@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Penetration Testing
+  structure:
+    - type: space
+      key: space-1
+      title: Penetration Testing
+      path: penetration-testing
+      default: true
+      content:
+        directory: ./Penetration Testing
