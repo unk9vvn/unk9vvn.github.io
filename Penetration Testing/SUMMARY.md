@@ -120,6 +120,17 @@
   * [Browser Storage](web/client-side/browser-storage.md)
   * [Cross Site Script Inclusion](web/client-side/cross-site-script-inclusion.md)
   * [Reverse Tabnabbing](web/client-side/reverse-tabnabbing.md)
+* [API Attacks](web/api-attacks/README.md)
+  * [Broken Object Level Authorization](web/api-attacks/broken-object-level-authorization.md)
+  * [Broken Authentication](web/api-attacks/broken-authentication.md)
+  * [Excessive Data Exposure](web/api-attacks/excessive-data-exposure.md)
+  * [Lack of Resources and Rate Limiting](web/api-attacks/lack-of-resources-and-rate-limiting.md)
+  * [Broken Function Level Authorization](web/api-attacks/broken-function-level-authorization.md)
+  * [Mass Assignment](web/api-attacks/mass-assignment.md)
+  * [Security Misconfiguration](web/api-attacks/security-misconfiguration.md)
+  * [Injection Attack](web/api-attacks/injection-attack.md)
+  * [IImproper Assets Management](web/api-attacks/iimproper-assets-management.md)
+  * [Insufficient Logging and Monitoring](web/api-attacks/insufficient-logging-and-monitoring.md)
 
 ## Mobile
 
