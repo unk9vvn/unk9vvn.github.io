@@ -1,10 +1,10 @@
 $schema: https://api.gitbook.com/gitbook-docs.yaml
 site:
-  title: Penetration Testing
+  title: Blue Team
   structure:
     - type: space
       key: space-1
-      title: Penetration Testing
+      title: Blue Team
       path: penetration-testing
       default: true
       content:
