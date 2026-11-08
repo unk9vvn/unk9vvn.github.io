@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Blue Team
+  structure:
+    - type: space
+      key: space-1
+      title: Blue Team
+      path: penetration-testing
+      default: true
+      content:
+        directory: ./penetration-testing
