@@ -5,7 +5,7 @@ site:
     - type: space
       key: space-1
       title: Blue Team
-      path: penetration-testing
+      path: blue-team
       default: true
       content:
         directory: ./blue-team
