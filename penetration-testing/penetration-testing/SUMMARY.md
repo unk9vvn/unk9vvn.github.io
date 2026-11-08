@@ -134,20 +134,12 @@
 
 ## Mobile
 
-* [Page 2](mobile/page-2.md)
-
-## Cloud
-
-* [Page 3](cloud/page-3.md)
-
-## Network
-
-* [Page 4](network/page-4.md)
-
-## Wireless
-
-* [Page 5](wireless/page-5.md)
-
-## IOT
-
-* [Page 6](iot/page-6.md)
+* [Mobile App Taxonomy](mobile/page-2/README.md)
+  * [Native App](mobile/page-2/native-app.md)
+  * [Web App](mobile/page-2/web-app.md)
+  * [Hybrid App](mobile/page-2/hybrid-app.md)
+  * [Progressive Web App](mobile/page-2/progressive-web-app.md)
+* [Mobile App Security Testing](mobile/mobile-app-security-testing.md)
+* [General](mobile/general.md)
+* [Android](mobile/android.md)
+* [iOS](mobile/ios.md)
