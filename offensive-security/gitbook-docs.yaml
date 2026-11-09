@@ -8,4 +8,4 @@ site:
       path: penetration-testing
       default: true
       content:
-        directory: ./penetration-testing
+        directory: ./
