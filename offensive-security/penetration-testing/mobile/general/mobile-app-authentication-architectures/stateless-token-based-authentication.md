@@ -1,2 +1,0 @@
-# Stateless (Token-Based) Authentication
-

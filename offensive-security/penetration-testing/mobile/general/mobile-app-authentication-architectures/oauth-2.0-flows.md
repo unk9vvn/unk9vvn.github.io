@@ -1,2 +1,0 @@
-# OAuth 2.0 Flows
-

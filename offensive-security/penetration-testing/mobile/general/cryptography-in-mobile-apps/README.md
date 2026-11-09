@@ -1,2 +1,0 @@
-# Cryptography in Mobile Apps
-
