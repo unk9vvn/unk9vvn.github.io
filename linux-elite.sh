@@ -493,7 +493,7 @@ go install github.com/trickest/dsieve@latest;ln -fs ~/go/bin/dsieve /usr/bin/dsi
 go install github.com/gwen001/github-subdomains@latest;ln -fs ~/go/bin/github-subdomains /usr/bin/github-subdomains
 go install github.com/d3mondev/puredns/v2@latest;ln -fs ~/go/bin/puredns /usr/bin/puredns
 go install github.com/nytr0gen/deduplicate@latest;ln -fs ~/go/bin/deduplicate /usr/bin/deduplicate
-go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
+go install github.com/projectdiscovery/vulnx/v2/cmd/vulnx@latest;ln -fs ~/go/bin/vulnx /usr/bin/vulnx
 go install github.com/tomnomnom/gf@latest;ln -fs ~/go/bin/gf /usr/bin/gf
 go install github.com/tomnomnom/gron@latest;ln -fs ~/go/bin/gron /usr/bin/gron
 go install github.com/projectdiscovery/chaos-client/cmd/chaos@latest;ln -fs ~/go/bin/chaos /usr/bin/chaos
@@ -2961,7 +2961,7 @@ red_team()
 go install github.com/x1sec/commit-stream@latest;ln -fs ~/go/bin/commit-stream /usr/bin/commit-stream
 go install github.com/eth0izzle/shhgit@latest;ln -fs ~/go/bin/shhgit /usr/bin/shhgit
 go install github.com/harleo/asnip@latest;ln -fs ~/go/bin/asnip /usr/bin/asnip
-go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
+go install github.com/projectdiscovery/vulnx/v2/cmd/vulnx@latest;ln -fs ~/go/bin/vulnx /usr/bin/vulnx
 go install github.com/hakluke/haktrails@latest;ln -fs ~/go/bin/haktrails /usr/bin/haktrails
 go install github.com/lanrat/certgraph@latest;ln -fs ~/go/bin/certgraph /usr/bin/certgraph
 go install github.com/aydinnyunus/PackageSpy@latest;ln -fs ~/go/bin/packagespy /usr/bin/packagespy"
@@ -6207,7 +6207,7 @@ security_audit()
 	# install Golang
 	preliminary_audit_assessment_golang="
 go install github.com/google/osv-scanner/cmd/osv-scanner@latest;ln -fs ~/go/bin/osv-scanner /usr/bin/osv-scanner
-go install github.com/projectdiscovery/cvemap/cmd/cvemap@latest;ln -fs ~/go/bin/cvemap /usr/bin/cvemap
+go install github.com/projectdiscovery/vulnx/v2/cmd/vulnx@latest;ln -fs ~/go/bin/vulnx /usr/bin/vulnx
 go install github.com/go-delve/delve/cmd/dlv@latest;ln -fs ~/go/bin/dlv /usr/bin/dlv"
 	go_installer "Preliminary-Audit-Assessment" "Security-Audit" "$preliminary_audit_assessment_golang"
 
