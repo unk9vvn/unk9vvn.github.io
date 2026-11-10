@@ -1,2 +1,0 @@
-# Logs for Sensitive Data
-

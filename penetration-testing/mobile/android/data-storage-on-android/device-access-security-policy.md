@@ -1,2 +1,0 @@
-# Device-Access-Security Policy
-

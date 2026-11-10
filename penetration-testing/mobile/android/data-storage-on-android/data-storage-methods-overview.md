@@ -1,2 +1,0 @@
-# Data Storage Methods Overview
-
