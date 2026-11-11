@@ -1,2 +1,0 @@
-# iOS Anti-Reversing Defenses
-

@@ -1,2 +1,0 @@
-# Local Authentication on Android
-

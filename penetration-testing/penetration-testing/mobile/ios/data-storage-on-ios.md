@@ -1,2 +1,0 @@
-# Data Storage on iOS
-
